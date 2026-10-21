@@ -1,0 +1,31 @@
+{
+  "name": "@mypickuae/auth-service",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "start": "bun run dist/index.js",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@elysiajs/bearer": "^1.2.0",
+    "@elysiajs/jwt": "^1.2.0",
+    "@mypickuae/config": "workspace:*",
+    "@mypickuae/database": "workspace:*",
+    "@mypickuae/dto": "workspace:*",
+    "@mypickuae/guards": "workspace:*",
+    "@mypickuae/plugins": "workspace:*",
+    "@mypickuae/utils": "workspace:*",
+    "elysia": "^1.2.0",
+    "redis": "^5.11.0",
+    "twilio": "^5.0.0",
+    "typeorm": "^0.3.0"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.3.0",
+    "typescript": "^5.7.0"
+  }
+}

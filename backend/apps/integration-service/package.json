@@ -1,0 +1,32 @@
+{
+  "name": "@mypickuae/integration-service",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun run --watch src/index.ts",
+    "start": "bun run src/index.ts",
+    "build": "bun build src/index.ts --target=bun --outdir=dist",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.600.0",
+    "@mypickuae/config": "workspace:*",
+    "@mypickuae/database": "workspace:*",
+    "@mypickuae/guards": "workspace:*",
+    "@mypickuae/integration-events": "workspace:*",
+    "@mypickuae/integration-mapper": "workspace:*",
+    "@mypickuae/plugins": "workspace:*",
+    "@mypickuae/utils": "workspace:*",
+    "bullmq": "^5.0.0",
+    "elysia": "^1.2.0",
+    "google-auth-library": "^10.6.2",
+    "jsonwebtoken": "^9.0.3",
+    "redis": "^5.11.0",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.10"
+  }
+}

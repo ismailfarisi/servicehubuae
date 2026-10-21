@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "lib": ["ESNext"],
+    "target": "ESNext",
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": false,
+    "paths": {
+      "@mypickuae/dto": ["./libs/dto/src/index.ts"],
+      "@mypickuae/guards": ["./libs/guards/src/index.ts"],
+      "@mypickuae/plugins": ["./libs/plugins/src/index.ts"],
+      "@mypickuae/utils": ["./libs/utils/src/index.ts"],
+      "@mypickuae/config": ["./libs/config/src/index.ts"],
+      "@mypickuae/database": ["./libs/database/src/index.ts"],
+      "@mypickuae/bulk-jobs": ["./libs/bulk-jobs/src/index.ts"],
+      "@mypickuae/integration-mapper": ["./libs/integration-mapper/src/index.ts"],
+      "@mypickuae/integration-events": ["./libs/integration-events/src/index.ts"]
+    }
+  }
+}

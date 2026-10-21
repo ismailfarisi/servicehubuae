@@ -1,0 +1,23 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "input=$(cat); cmd=$(echo \"$input\" | bun -e \"const d=JSON.parse(await Bun.stdin.text()); process.stdout.write(d.tool_input.command)\"); if echo \"$cmd\" | grep -qE '^git push'; then cd \"$CLAUDE_PROJECT_DIR/backend\" && bunx --bun @biomejs/biome@1.9.4 check . --reporter=summary 2>&1; code=$?; if [ $code -ne 0 ]; then echo '{\"continue\":false,\"stopReason\":\"Biome lint failed. Fix errors before pushing.\"}'; exit 1; fi; fi",
+            "if": "Bash(git push*)",
+            "timeout": 60,
+            "statusMessage": "Running biome lint before push..."
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "feature-dev@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true
+  }
+}
