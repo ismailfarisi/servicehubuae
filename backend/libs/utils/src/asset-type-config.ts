@@ -6,6 +6,7 @@ export type MediaAssetType =
   | "vendor_logo"
   | "vendor_banner"
   | "kyc_document"
+  | "kyc_application_document"
   | "category_image"
   | "category_icon"
   | "category_banner"
@@ -124,6 +125,17 @@ export const ASSET_TYPE_CONFIG: Record<MediaAssetType, AssetTypeConfig> = {
     requiresVendorId: true,
     requiresUserId: false,
   },
+  // Uploaded by a vendor applicant before any vendor row exists; POST /vendors/apply
+  // only accepts keys under the applicant's own prefix (see kycApplicantPrefix).
+  kyc_application_document: {
+    bucketKind: "private",
+    keyPrefix: "private/kyc/applicants/{userId}/",
+    allowedContentTypes: ["image/jpeg", "image/png", "application/pdf"],
+    maxBytes: 10 * 1024 * 1024,
+    process: "none",
+    requiresVendorId: false,
+    requiresUserId: true,
+  },
   user_avatar: {
     bucketKind: "public",
     keyPrefix: "users/{userId}/avatar/",
@@ -144,6 +156,10 @@ export const ASSET_TYPE_CONFIG: Record<MediaAssetType, AssetTypeConfig> = {
     requiresUserId: true,
   },
 };
+
+export function kycApplicantPrefix(userId: string): string {
+  return ASSET_TYPE_CONFIG.kyc_application_document.keyPrefix.replace("{userId}", userId);
+}
 
 export function isAssetType(value: string): value is MediaAssetType {
   return Object.prototype.hasOwnProperty.call(ASSET_TYPE_CONFIG, value);

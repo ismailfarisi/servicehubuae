@@ -74,3 +74,28 @@ export const vendorServiceReviewRoutes = new Elysia({ prefix: "/vendor/booking/r
       },
     ),
   );
+
+// GET /booking/services/:id/reviews — public storefront read of an offering's
+// approved reviews (newest first) plus its rating summary. Reaches
+// booking-service through the gateway's existing `/booking*` prefix, the same
+// way the public `/booking/vendors/:id/locations` read does.
+export const serviceReviewPublicRoutes = new Elysia({ prefix: "/booking" }).use(container).get(
+  "/services/:id/reviews",
+  // biome-ignore lint/suspicious/noExplicitAny: container context
+  async ({ params, query, serviceReviewPublicService, set }: any) => {
+    set.headers["cache-control"] = "public, max-age=60";
+    return ok(
+      await serviceReviewPublicService.listForOffering(params.id, {
+        page: query.page,
+        limit: query.limit,
+      }),
+    );
+  },
+  {
+    params: t.Object({ id: t.String({ format: "uuid" }) }),
+    query: t.Object({
+      page: t.Optional(t.Numeric({ minimum: 1 })),
+      limit: t.Optional(t.Numeric({ minimum: 1, maximum: 50 })),
+    }),
+  },
+);

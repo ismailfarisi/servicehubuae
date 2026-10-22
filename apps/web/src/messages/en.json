@@ -151,7 +151,7 @@
     },
     "bookings": "Bookings",
     "creatorApplyTitle": "Become a Creator",
-    "creatorApplyIntro": "Share your beauty content, tag products, and earn commission. Apply below — our team reviews every application.",
+    "creatorApplyIntro": "Share videos about the services you love and collaborate with vendors on MyPickUAE. Apply below — our team reviews every application.",
     "creatorApplyDisplayName": "Creator name",
     "creatorApplyBio": "Short bio",
     "creatorApplyCategory": "Primary niche",
@@ -342,6 +342,48 @@
       "homeVisitIn": "Comes to you in {areas}",
       "emptyTitle": "No services yet",
       "emptyHint": "There are no bookable services matching this right now."
+    },
+    "detail": {
+      "breadcrumbLabel": "Breadcrumb",
+      "breadcrumbHome": "Home",
+      "photoN": "Show photo {n}",
+      "reviewCount": "{count, plural, one {# review} other {# reviews}}",
+      "byVendor": "by {vendor}",
+      "aboutService": "About this service",
+      "bookNow": "Book now",
+      "facts": {
+        "homeVisit": "They come to you",
+        "atPremises": "At their premises",
+        "moreAreas": "+{count} more",
+        "payAtVenue": "Pay at the appointment",
+        "payAtVenueDetail": "No card needed to book.",
+        "deposit": "Small deposit to confirm",
+        "prepay": "Pay online to confirm",
+        "freeCancellation": "Free cancellation up to {hours}h before",
+        "instantConfirm": "Instant confirmation",
+        "vendorConfirms": "The vendor confirms your request",
+        "liveSlots": "Only real open slots are shown."
+      },
+      "vendor": {
+        "title": "About the vendor",
+        "verified": "Verified vendor",
+        "ratings": "({count, plural, one {# rating} other {# ratings}})",
+        "viewVendor": "View vendor profile"
+      },
+      "reviews": {
+        "title": "Customer reviews",
+        "empty": "No reviews yet. Reviews come only from customers who booked through MyPickUAE.",
+        "starsLabel": "{rating} out of 5 stars",
+        "basedOn": "Based on {count, plural, one {# verified booking} other {# verified bookings}}",
+        "vendorReply": "Reply from the vendor",
+        "verifiedBooking": "Verified booking",
+        "showing": "Showing {shown} of {total} reviews"
+      },
+      "similar": {
+        "title": "Similar services from other vendors",
+        "subtitle": "Compare prices and ratings before you book.",
+        "viewAll": "View all"
+      }
     }
   },
   "booking": {
@@ -583,6 +625,12 @@
     },
     "errors": {
       "submitFailed": "Something went wrong. Please try again."
+    },
+    "categories": {
+      "booking": "Booking",
+      "payment": "Payment",
+      "service": "Service",
+      "account": "Account"
     }
   }
 }

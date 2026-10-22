@@ -5,10 +5,11 @@ import type { NavTab } from "@/lib/api/navigation";
 import { useRecordSearch } from "@/hooks/use-record-search";
 import { useRecentSearches } from "@/lib/queries/recent-searches";
 import { searchResultsHref, useSearchSuggest } from "@/lib/queries/search";
-import { ArrowLeft, Search, X } from "lucide-react";
+import { ArrowLeft, MapPin, Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { AreaSelect } from "./area-select";
 import { EmptySearchState } from "./empty-search-state";
 import { SearchAutocompleteResults } from "./search-autocomplete-results";
 
@@ -23,6 +24,7 @@ export function MobileSearchOverlay({ open, onClose, tabs }: Props) {
 	const locale = useLocale();
 	const router = useRouter();
 	const [query, setQuery] = useState("");
+	const [area, setArea] = useState("");
 	const inputRef = useRef<HTMLInputElement>(null);
 	const debouncedQuery = useDebouncedValue(query, 200);
 	const { data } = useSearchSuggest(debouncedQuery);
@@ -55,9 +57,16 @@ export function MobileSearchOverlay({ open, onClose, tabs }: Props) {
 	function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		const q = query.trim();
-		if (!q) return;
-		recordSearch(q);
-		router.push(searchResultsHref(locale, q));
+		if (!q && !area) return;
+		if (q) recordSearch(q);
+		router.push(searchResultsHref(locale, q, area));
+		onClose();
+	}
+
+	// Same as the desktop header: picking an area searches straight away.
+	function handleAreaChange(slug: string) {
+		setArea(slug);
+		router.push(searchResultsHref(locale, query.trim(), slug));
 		onClose();
 	}
 
@@ -89,7 +98,7 @@ export function MobileSearchOverlay({ open, onClose, tabs }: Props) {
 						type="text"
 						value={query}
 						onChange={(e) => setQuery(e.target.value)}
-						placeholder={`${t("search")}...`}
+						placeholder={t("search")}
 						className="w-full bg-muted/50 border border-border/50 rounded-full ps-10 pr-4 py-2 text-base outline-none focus:bg-background focus:border-primary/30"
 					/>
 				</form>
@@ -106,6 +115,14 @@ export function MobileSearchOverlay({ open, onClose, tabs }: Props) {
 						<X className="h-5 w-5" />
 					</button>
 				)}
+			</div>
+			<div className="flex items-center gap-2 border-b border-border/50 px-4 py-2">
+				<MapPin className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+				<AreaSelect
+					value={area}
+					onChange={handleAreaChange}
+					className="w-full bg-transparent py-1 text-base outline-none"
+				/>
 			</div>
 			<div className="flex-1 overflow-y-auto p-2">
 				{hasAnyResults && data ? (

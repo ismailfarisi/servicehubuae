@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
-  ArrowRight,
   ChartLineUp,
   CheckCircle,
   Package,
@@ -22,14 +21,13 @@ import {
   FormLabel,
   FormMessage,
   Input,
-  Textarea,
 } from "@mypickuae/ui";
-import { useLogin } from "@/lib/queries/auth";
-import {
-  buildVendorInterestSummary,
-  type VendorInterestFormValues,
-  vendorInterestSchema,
-} from "@/lib/vendor-interest";
+import { ApplicationStatus } from "@/components/auth/application-status";
+import { VendorApplicationForm } from "@/components/auth/vendor-application-form";
+import { api } from "@/lib/api";
+import { getMembershipsFromToken, hasAccessTokenCookie } from "@/lib/auth";
+import { useLogin, useLogout, useMe } from "@/lib/queries/auth";
+import { useVendorApplication } from "@/lib/queries/vendor-application";
 import { useAuthStore } from "@/stores/auth";
 
 const loginSchema = z.object({
@@ -73,50 +71,57 @@ function LoginForm() {
   const searchParams = useSearchParams();
   const returnTo = searchParams.get("returnTo") || "/";
   const { mutate: login, isPending, error } = useLogin();
+  const { mutate: logout, isPending: signingOut } = useLogout();
+  const user = useAuthStore((s) => s.user);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const [interestSummary, setInterestSummary] = useState<string | null>(null);
+  const [reapplying, setReapplying] = useState(false);
+
+  // Restore an existing session (e.g. an applicant coming back to check on
+  // their application). Read after mount: cookies don't exist during SSR.
+  const [hasSession, setHasSession] = useState(false);
+  useEffect(() => setHasSession(hasAccessTokenCookie()), []);
+  const { isPending: meLoading } = useMe(hasSession);
+  // Hold the signed-out UI back until we know whether the cookie is still valid.
+  const checkingSession = hasSession && !isAuthenticated && meLoading;
+
+  // Only vendor members (and admins) get into the dashboard. Everyone else who
+  // is signed in is an applicant: redirecting them would bounce straight back
+  // here from the dashboard layout.
+  const canEnterDashboard =
+    isAuthenticated &&
+    (getMembershipsFromToken().length > 0 ||
+      user?.role === "admin" ||
+      user?.role === "super_admin");
+  const isApplicant = isAuthenticated && !canEnterDashboard;
+  const { data: application, isLoading: applicationLoading } =
+    useVendorApplication(isApplicant);
+  const inReview =
+    application?.status === "pending" || application?.status === "under_review";
+  const showApplicantForm =
+    isApplicant &&
+    !applicationLoading &&
+    (application === null || (application?.status === "rejected" && reapplying));
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (canEnterDashboard) {
       router.replace(returnTo);
     }
-  }, [isAuthenticated, returnTo, router]);
+  }, [canEnterDashboard, returnTo, router]);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: { email: "", password: "" },
   });
 
-  const interestForm = useForm<VendorInterestFormValues>({
-    resolver: zodResolver(vendorInterestSchema),
-    defaultValues: {
-      brandName: "",
-      contactName: "",
-      email: "",
-      category: "",
-      website: "",
-      message: "",
-    },
-  });
-
   function onSubmit(values: LoginFormValues) {
-    login(values, {
-      onSuccess: () => {
-        router.replace(returnTo);
-      },
-    });
+    // The redirect effect above takes vendor members to the dashboard.
+    login(values);
   }
 
-  function onInterestSubmit(values: VendorInterestFormValues) {
-    setInterestSummary(buildVendorInterestSummary(values));
-    interestForm.reset({
-      brandName: "",
-      contactName: "",
-      email: "",
-      category: "",
-      website: "",
-      message: "",
-    });
+  async function openDashboard() {
+    // Approval bumps the token version; refresh so the new token carries the membership.
+    await api.post("/auth/refresh", {}).catch(() => undefined);
+    router.replace(returnTo);
   }
 
   return (
@@ -147,15 +152,15 @@ function LoginForm() {
 
             <div className="max-w-4xl space-y-5">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber">
-                Register interest
+                Become a vendor
               </p>
               <h1 className="max-w-3xl text-4xl font-semibold leading-[0.98] text-linen sm:text-5xl lg:text-7xl">
                 Grow your service business with a dashboard built for bookings.
               </h1>
               <p className="max-w-2xl text-base leading-7 text-pearl/82 sm:text-lg">
-                Tell us about your business and the MyPickUAE team will review
-                category fit, operational needs, and the best path into the
-                vendor program.
+                Apply with your business details and trade licence. The
+                MyPickUAE team reviews every application before your services go
+                live.
               </p>
             </div>
 
@@ -187,165 +192,37 @@ function LoginForm() {
                   New vendor
                 </p>
                 <h2 className="mt-1 text-2xl font-semibold text-linen">
-                  Register interest
+                  Apply to sell on MyPickUAE
                 </h2>
               </div>
               <p className="max-w-xs text-sm leading-6 text-pearl/70">
-                This is not account creation. We will follow up after review.
+                Creates your vendor account. You can sign in to check your
+                application while we review it.
               </p>
             </div>
 
-            {interestSummary ? (
+            {checkingSession ? null : isApplicant && inReview ? (
               <div className="border border-amber/40 bg-linen/[0.06] p-4">
                 <div className="flex items-start gap-3">
                   <CheckCircle className="mt-0.5 h-6 w-6 text-amber" weight="thin" />
                   <div>
-                    <h3 className="font-semibold text-linen">Interest received</h3>
+                    <h3 className="font-semibold text-linen">Application received</h3>
                     <p className="mt-1 text-sm leading-6 text-pearl/75">
-                      We recorded your interest for {interestSummary}. The vendor
-                      team will contact you with next steps.
+                      Thanks for applying with {application?.name}. We will email{" "}
+                      {user?.email} once our team has reviewed your trade licence
+                      and details.
                     </p>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="mt-4"
-                      onClick={() => setInterestSummary(null)}
-                    >
-                      Send another request
-                    </Button>
                   </div>
                 </div>
               </div>
-            ) : (
-              <Form {...interestForm}>
-                <form
-                  onSubmit={interestForm.handleSubmit(onInterestSubmit)}
-                  className="grid gap-4 text-linen"
-                >
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <FormField
-                      control={interestForm.control}
-                      name="brandName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Brand name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Sparkle Home Services"
-                              autoComplete="organization"
-                              className="border-pearl/25 bg-linen/95"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={interestForm.control}
-                      name="contactName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Contact name</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Sara Vendor"
-                              autoComplete="name"
-                              className="border-pearl/25 bg-linen/95"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <FormField
-                      control={interestForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Work email</FormLabel>
-                          <FormControl>
-                            <Input
-                              type="email"
-                              placeholder="founder@brand.com"
-                              autoComplete="email"
-                              className="border-pearl/25 bg-linen/95"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={interestForm.control}
-                      name="category"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Service category</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="Cleaning, AC repair, salon"
-                              autoComplete="off"
-                              className="border-pearl/25 bg-linen/95"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <FormField
-                    control={interestForm.control}
-                    name="website"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Website or Instagram</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="https://brand.com or @brand"
-                            autoComplete="url"
-                            className="border-pearl/25 bg-linen/95"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={interestForm.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>What should we know?</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Share the services you offer, the areas you cover, or your goals."
-                            className="min-h-24 resize-none border-pearl/25 bg-linen/95 text-cacao"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button type="submit" className="h-11 w-full">
-                    Register interest
-                    <ArrowRight className="h-4 w-4" weight="thin" />
-                  </Button>
-                </form>
-              </Form>
-            )}
+            ) : !isApplicant ? (
+              <VendorApplicationForm />
+            ) : showApplicantForm && user ? (
+              <VendorApplicationForm
+                signedInEmail={user.email}
+                previous={application?.status === "rejected" ? application : null}
+              />
+            ) : null}
           </div>
         </section>
 
@@ -358,7 +235,7 @@ function LoginForm() {
               </div>
               <div className="text-right">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber">
-                  Returning vendor
+                  {isApplicant ? "Vendor applicant" : "Returning vendor"}
                 </p>
                 <p className="mt-1 text-xs text-taupe">Private workspace</p>
               </div>
@@ -366,12 +243,28 @@ function LoginForm() {
             <h2 className="text-3xl font-semibold text-cacao">
               Vendor Dashboard
             </h2>
-            <p className="mt-3 text-sm leading-6 text-taupe">
-              Sign in to manage your MyPickUAE store. Redirected vendors return
-              to the requested dashboard page after authentication.
-            </p>
+            {!isApplicant && (
+              <p className="mt-3 text-sm leading-6 text-taupe">
+                Sign in to manage your MyPickUAE store. Redirected vendors return
+                to the requested dashboard page after authentication.
+              </p>
+            )}
           </div>
 
+          {checkingSession ? (
+            <div className="h-40 animate-pulse rounded-xl bg-pearl/40" />
+          ) : isApplicant && user ? (
+            <ApplicationStatus
+              email={user.email}
+              application={application}
+              isLoading={applicationLoading}
+              onReapply={() => setReapplying(true)}
+              onOpenDashboard={openDashboard}
+              onSignOut={() => logout()}
+              signingOut={signingOut}
+            />
+          ) : (
+          <>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
@@ -437,6 +330,8 @@ function LoginForm() {
               </span>
             </div>
           </div>
+          </>
+          )}
         </div>
         </aside>
       </div>

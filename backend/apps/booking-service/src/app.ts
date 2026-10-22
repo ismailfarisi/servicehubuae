@@ -15,6 +15,7 @@ import { manageBookingActionsRoutes } from "./domain/manage/manage-booking-actio
 import { manageCalendarRoutes } from "./domain/manage/manage-calendar.routes.ts";
 import { manualBookingRoutes } from "./domain/manage/manual-booking.routes.ts";
 import {
+  serviceReviewPublicRoutes,
   serviceReviewRoutes,
   vendorServiceReviewRoutes,
 } from "./domain/reviews/service-review.routes.ts";
@@ -48,4 +49,5 @@ export const app = new Elysia()
   .use(adminBookingRoutes)
   .use(bookingRoutes)
   .use(serviceReviewRoutes)
+  .use(serviceReviewPublicRoutes)
   .use(vendorServiceReviewRoutes);

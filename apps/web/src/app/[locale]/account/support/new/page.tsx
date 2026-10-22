@@ -3,10 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { useCreateTicket } from "@/lib/queries/support";
+import {
+  SUPPORT_CATEGORIES,
+  type SupportCategory,
+  useCreateTicket,
+} from "@/lib/queries/support";
 import { Eyebrow } from "@/components/ui/maison-primitives";
-
-const CATEGORIES = ["order", "payment", "product", "account"] as const;
 
 const FIELD_CLASS =
   "w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3.5 py-2.5 text-sm text-nl-cacao outline-none transition-colors focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20";
@@ -17,7 +19,7 @@ export default function NewTicketPage() {
   const locale = useLocale();
   const create = useCreateTicket();
   const [subject, setSubject] = useState("");
-  const [category, setCategory] = useState<(typeof CATEGORIES)[number] | "">("");
+  const [category, setCategory] = useState<SupportCategory | "">("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState<string | null>(null);
 
@@ -48,9 +50,11 @@ export default function NewTicketPage() {
         <input className={FIELD_CLASS} placeholder={t("form.subject")}
           value={subject} onChange={(e) => setSubject(e.target.value)} required />
         <select className={FIELD_CLASS} value={category}
-          onChange={(e) => setCategory(e.target.value as any)}>
+          onChange={(e) => setCategory(e.target.value as SupportCategory | "")}>
           <option value="">{t("form.category")}</option>
-          {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+          {SUPPORT_CATEGORIES.map((c) => (
+            <option key={c} value={c}>{t(`categories.${c}`)}</option>
+          ))}
         </select>
         <textarea className={FIELD_CLASS} rows={5} placeholder={t("form.message")}
           value={message} onChange={(e) => setMessage(e.target.value)} required />

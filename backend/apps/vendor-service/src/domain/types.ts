@@ -20,17 +20,21 @@ export interface VendorApplyData {
   businessAddress: {
     street: string;
     city: string;
-    state: string;
+    state?: string;
     country: string;
-    postalCode: string;
+    postal_code?: string;
   };
   taxRegistrationNumber?: string;
+  tradeLicenseNumber?: string;
+  /** Primary service category slug; stored on vendors.business_type. */
+  businessType?: string;
+  websiteUrl?: string;
+  description?: string;
   documents: Array<{
     type: string;
     s3Key: string;
-    fileName: string;
   }>;
-  bankAccount: {
+  bankAccount?: {
     bankName: string;
     accountHolderName: string;
     accountNumber: string;

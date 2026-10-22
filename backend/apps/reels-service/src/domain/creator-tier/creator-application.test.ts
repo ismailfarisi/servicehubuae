@@ -5,8 +5,8 @@ import { CreatorApplicationService } from "./creator-application.service.ts";
 
 const baseDto = {
   display_name: "Aisha Glow",
-  bio: "Skincare tips",
-  primary_category: "Skincare",
+  bio: "Home cleaning tips",
+  primary_category: "Home Cleaning",
   social_links: { instagram: "@aishaglow" },
   follower_estimate: 1200,
   sample_urls: ["https://example.com/reel/1"],

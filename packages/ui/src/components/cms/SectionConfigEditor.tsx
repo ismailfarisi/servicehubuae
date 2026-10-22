@@ -50,7 +50,7 @@ function ImageField({
 	label: string;
 	value: string;
 	onChange: (url: string) => void;
-	assetType?: Exclude<MediaAssetType, "product_image" | "kyc_document">;
+	assetType?: Exclude<MediaAssetType, "product_image" | "kyc_document" | "kyc_application_document">;
 	placeholder?: string;
 }) {
 	const { client, vendorId } = useContext(UploadContext);

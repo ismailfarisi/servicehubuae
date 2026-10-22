@@ -11,7 +11,7 @@ describe("creator directory auth wiring", () => {
 
   it("401s an unauthenticated search request too", async () => {
     const res = await creatorDirectoryRoutes.handle(
-      new Request("http://local/vendor/reels/creators?q=glow&category=Makeup", { method: "GET" }),
+      new Request("http://local/vendor/reels/creators?q=glow&category=Fitness", { method: "GET" }),
     );
     expect(res.status).toBe(401);
   });

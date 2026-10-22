@@ -118,7 +118,7 @@ export default function VendorsPage() {
     },
   ];
 
-  const queueTotal: number = queueVendors.length;
+  const queueTotal: number = queueData?.total ?? queueVendors.length;
   const queuePageCount = Math.max(1, Math.ceil(queueTotal / pagination.pageSize));
 
   return (
@@ -140,9 +140,9 @@ export default function VendorsPage() {
         <TabsList>
           <TabsTrigger value="queue">
             Approval Queue
-            {queueVendors.length > 0 && (
+            {queueTotal > 0 && (
               <span className="ml-1.5 inline-flex items-center justify-center w-5 h-5 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-700">
-                {queueVendors.length}
+                {queueTotal}
               </span>
             )}
           </TabsTrigger>

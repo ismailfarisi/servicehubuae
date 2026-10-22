@@ -7,10 +7,10 @@ import {
 export const metadata: Metadata = {
 	title: "Privacy Policy — MyPickUAE",
 	description:
-		"How MyPickUAE collects, uses, stores and protects your personal data, in line with UAE Federal Decree-Law No. 45 of 2021.",
+		"How MyPickUAE collects, uses, shares and protects your personal data when you browse, book and request quotations for services, in line with UAE Federal Decree-Law No. 45 of 2021.",
 };
 
-const LAST_UPDATED = "25 May 2026";
+const LAST_UPDATED = "22 October 2026";
 
 export default function PrivacyPage() {
 	return (
@@ -23,9 +23,11 @@ export default function PrivacyPage() {
 				<p>
 					MyPickUAE FZ-LLC (&ldquo;MyPickUAE&rdquo;, &ldquo;we&rdquo;,
 					&ldquo;us&rdquo;) is registered in Dubai, United Arab Emirates,
-					and operates the mypickuae.com storefront and mobile apps. We
-					are the data controller for personal data processed in
-					connection with your shopping account and orders.
+					and operates the mypickuae.com services marketplace and mobile
+					apps. We are the data controller for personal data processed in
+					connection with your account, bookings and quotation requests.
+					The vendor you book is responsible for the personal data they
+					receive to deliver your service.
 				</p>
 			</StaticSection>
 
@@ -33,19 +35,27 @@ export default function PrivacyPage() {
 				<ul className="list-disc ps-5 space-y-2">
 					<li>
 						<strong className="text-nl-cacao">Account data</strong> —
-						name, email, mobile number, password hash, language and
-						currency preferences.
+						name, email, mobile number, password hash, language
+						preference and saved addresses.
 					</li>
 					<li>
-						<strong className="text-nl-cacao">Order data</strong> —
-						items purchased, prices, shipping address, billing
-						address, delivery instructions.
+						<strong className="text-nl-cacao">Booking data</strong> —
+						the service you book, the vendor, the service address and
+						area, your preferred date and time, notes or photos you add
+						for the vendor, and the price and booking status.
+					</li>
+					<li>
+						<strong className="text-nl-cacao">Quotation data</strong> —
+						the job description and attachments you send when requesting
+						quotations, the quotations you receive, and your chat
+						messages with vendors.
 					</li>
 					<li>
 						<strong className="text-nl-cacao">Payment data</strong> —
-						card brand and last four digits only; full card details
-						are processed by our PCI-compliant payment providers and
-						never stored on our servers.
+						whether a booking is paid at the venue or online and, for
+						online payments, the payment status and reference. Card
+						details are entered on our payment processor&rsquo;s secure
+						page and are never stored on our servers.
 					</li>
 					<li>
 						<strong className="text-nl-cacao">Usage data</strong> —
@@ -54,30 +64,34 @@ export default function PrivacyPage() {
 					</li>
 					<li>
 						<strong className="text-nl-cacao">Communications</strong>{" "}
-						— messages with customer care, reviews you publish,
-						questions you post on product pages.
+						— support tickets, reviews you publish, and reels or other
+						content you post.
 					</li>
 				</ul>
 			</StaticSection>
 
 			<StaticSection heading="3. Why we use it">
 				<ul className="list-disc ps-5 space-y-2">
-					<li>To process orders, payments, shipping and returns.</li>
 					<li>
-						To run your account: login, wishlists, saved searches,
-						loyalty.
+						To arrange bookings and quotations: checking availability,
+						passing your request to the vendor, and handling
+						rescheduling, cancellations and refunds.
 					</li>
 					<li>
-						To personalise the storefront — recommendations, recently
-						viewed, what to show on the home page.
+						To run your account: login, saved addresses, favourites and
+						recent searches.
 					</li>
 					<li>
-						To send transactional messages (order updates, password
-						resets) and, with your consent, marketing emails and push
-						notifications.
+						To personalise the marketplace — relevant services, vendors
+						near your area and what to show on the home page.
 					</li>
 					<li>
-						To prevent fraud, abuse and to comply with UAE consumer
+						To send service messages (booking confirmations, reminders,
+						quotation updates, verification codes) and, with your
+						consent, marketing emails and push notifications.
+					</li>
+					<li>
+						To prevent fraud and abuse, and to comply with UAE consumer
 						protection and tax law.
 					</li>
 				</ul>
@@ -86,24 +100,27 @@ export default function PrivacyPage() {
 			<StaticSection heading="4. Sharing">
 				<p>
 					We share personal data only where necessary, with categories
-					of recipients including: vendors (for orders they fulfil),
-					payment processors (Stripe, Checkout.com, Tamara),
-					logistics providers, cloud infrastructure (AWS in UAE / EU
-					regions), analytics and crash reporting tools, and
-					authorities where required by law.
+					of recipients including: the vendor you book or request a
+					quotation from (your name, contact number, service address,
+					preferred time and notes, so they can deliver the service);
+					our payment processor, MyFatoorah, when you pay online;
+					messaging providers that deliver our email, SMS and WhatsApp
+					messages; cloud infrastructure, analytics and crash reporting
+					providers; and authorities where required by law.
 				</p>
 				<p>
 					We do not sell your personal data. Vendors receive only the
-					data needed to fulfil and support your order from them.
+					data needed to deliver and support the service you booked with
+					them, and may use it only for that purpose.
 				</p>
 			</StaticSection>
 
 			<StaticSection heading="5. International transfers">
 				<p>
-					Personal data is processed in the UAE and the European Union.
-					Transfers outside the UAE rely on adequacy decisions or
-					standard contractual clauses as recognised under UAE Federal
-					Decree-Law No. 45 of 2021 on the Protection of Personal
+					Some of our service providers may process personal data outside
+					the UAE. Such transfers rely on adequacy decisions or
+					appropriate contractual safeguards as recognised under UAE
+					Federal Decree-Law No. 45 of 2021 on the Protection of Personal
 					Data.
 				</p>
 			</StaticSection>
@@ -113,8 +130,8 @@ export default function PrivacyPage() {
 					Account data is kept while your account is open and for 24
 					months after closure, except where longer retention is
 					required by tax, accounting or fraud-prevention law (up to
-					seven years for invoices). Marketing data is kept until you
-					withdraw consent.
+					seven years for invoices and payment records). Marketing data
+					is kept until you withdraw consent.
 				</p>
 			</StaticSection>
 
@@ -140,9 +157,9 @@ export default function PrivacyPage() {
 			<StaticSection heading="8. Cookies">
 				<p>
 					We use strictly-necessary cookies to keep you signed in and
-					your cart safe. Analytics and marketing cookies are loaded
-					only after you accept them in the consent banner. You can
-					change your choice any time in account settings.
+					your booking in progress safe. Analytics and marketing cookies
+					are loaded only after you accept them in the consent banner.
+					You can change your choice any time in account settings.
 				</p>
 			</StaticSection>
 

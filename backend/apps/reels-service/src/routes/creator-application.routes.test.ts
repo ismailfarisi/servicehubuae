@@ -29,8 +29,8 @@ describe("creator application route auth wiring", () => {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           display_name: "Aisha Glow",
-          bio: "Skincare tips",
-          primary_category: "Skincare",
+          bio: "Home cleaning tips",
+          primary_category: "Home Cleaning",
           social_links: { instagram: "@aishaglow" },
           agreed_to_terms: true,
         }),

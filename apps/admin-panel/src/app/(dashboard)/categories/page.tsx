@@ -10,6 +10,7 @@ import {
 	useToggleCategoryActive,
 	useUpdateCategory,
 } from "@/lib/queries/categories";
+import { s3UploadClient } from "@/lib/s3-upload-client";
 import {
 	Button,
 	Dialog,
@@ -19,6 +20,7 @@ import {
 	DialogTitle,
 	EmptyState,
 	Input,
+	S3ImageUploadField,
 	SimpleSelect,
 	Skeleton,
 	Switch,
@@ -29,6 +31,7 @@ import {
 	ChevronDown,
 	ChevronRight,
 	FolderTree,
+	ImageIcon,
 	Pencil,
 	Plus,
 	Trash2,
@@ -82,6 +85,9 @@ interface FormState {
 	sort_order: number;
 	is_active: boolean;
 	description: string;
+	image_url: string | null;
+	icon_url: string | null;
+	banner_url: string | null;
 }
 
 export default function CategoriesPage() {
@@ -104,6 +110,9 @@ export default function CategoriesPage() {
 		sort_order: 0,
 		is_active: true,
 		description: "",
+		image_url: null,
+		icon_url: null,
+		banner_url: null,
 	});
 	const [formError, setFormError] = useState("");
 
@@ -138,6 +147,9 @@ export default function CategoriesPage() {
 			sort_order: 0,
 			is_active: true,
 			description: "",
+			image_url: null,
+			icon_url: null,
+			banner_url: null,
 		});
 		setFormError("");
 		setDialogOpen(true);
@@ -151,6 +163,9 @@ export default function CategoriesPage() {
 			sort_order: c.sort_order ?? 0,
 			is_active: c.is_active !== false,
 			description: c.description ?? "",
+			image_url: c.image_url ?? null,
+			icon_url: c.icon_url ?? null,
+			banner_url: c.banner_url ?? null,
 		});
 		setFormError("");
 		setDialogOpen(true);
@@ -170,6 +185,9 @@ export default function CategoriesPage() {
 			parent_id,
 			is_active: form.is_active,
 			description: form.description.trim() || null,
+			image_url: form.image_url,
+			icon_url: form.icon_url,
+			banner_url: form.banner_url,
 		};
 		try {
 			let id: string;
@@ -259,6 +277,20 @@ export default function CategoriesPage() {
 							</button>
 						) : (
 							<span className="w-5" />
+						)}
+						{c.image_url ? (
+							<img
+								src={c.image_url}
+								alt=""
+								className="h-8 w-8 shrink-0 rounded object-cover border border-stone-200"
+							/>
+						) : (
+							<span
+								className="h-8 w-8 shrink-0 rounded border border-dashed border-stone-300 flex items-center justify-center text-stone-300"
+								title="No image"
+							>
+								<ImageIcon size={14} />
+							</span>
 						)}
 						<div className="flex-1 min-w-0">
 							<span
@@ -369,7 +401,7 @@ export default function CategoriesPage() {
 			)}
 
 			<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-				<DialogContent className="max-w-md">
+				<DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
 					<DialogHeader>
 						<DialogTitle>{editing ? "Edit Category" : "Add Category"}</DialogTitle>
 					</DialogHeader>
@@ -452,6 +484,31 @@ export default function CategoriesPage() {
 								value={form.description}
 								onChange={(e) => field("description", e.target.value)}
 								rows={3}
+							/>
+						</div>
+
+						<S3ImageUploadField
+							assetType="category_image"
+							value={form.image_url}
+							onChange={(url) => field("image_url", url)}
+							client={s3UploadClient}
+							label="Image"
+						/>
+
+						<div className="grid grid-cols-2 gap-3">
+							<S3ImageUploadField
+								assetType="category_icon"
+								value={form.icon_url}
+								onChange={(url) => field("icon_url", url)}
+								client={s3UploadClient}
+								label="Icon"
+							/>
+							<S3ImageUploadField
+								assetType="category_banner"
+								value={form.banner_url}
+								onChange={(url) => field("banner_url", url)}
+								client={s3UploadClient}
+								label="Banner"
 							/>
 						</div>
 					</div>

@@ -129,7 +129,7 @@
     },
     "bookings": "بکنگز",
     "creatorApplyTitle": "کریئیٹر بنیں",
-    "creatorApplyIntro": "اپنا بیوٹی مواد شیئر کریں، مصنوعات کو ٹیگ کریں، اور کمیشن کمائیں۔ نیچے درخواست دیں — ہماری ٹیم ہر درخواست کا جائزہ لیتی ہے۔",
+    "creatorApplyIntro": "اپنی پسندیدہ سروسز کے بارے میں ویڈیوز شیئر کریں اور MyPickUAE پر وینڈرز کے ساتھ مل کر کام کریں۔ نیچے درخواست دیں — ہماری ٹیم ہر درخواست کا جائزہ لیتی ہے۔",
     "creatorApplyDisplayName": "کریئیٹر کا نام",
     "creatorApplyBio": "مختصر تعارف",
     "creatorApplyCategory": "بنیادی زمرہ",
@@ -299,6 +299,48 @@
       "cancellationDepositForfeit": "مکمل رقم کی واپسی کے لیے اپائنٹمنٹ سے {hours} گھنٹے پہلے منسوخ کریں۔ اس کے بعد، آپ کا ڈپازٹ ضبط کر لیا جائے گا۔",
       "cancellationPercent": "مکمل رقم کی واپسی کے لیے اپائنٹمنٹ سے {hours} گھنٹے پہلے منسوخ کریں۔ اس کے بعد، {percent}% منسوخی فیس لاگو ہوگی۔",
       "reschedule": "اپائنٹمنٹ سے {hours} گھنٹے پہلے تک مفت میں دوبارہ شیڈول کریں۔"
+    },
+    "detail": {
+      "breadcrumbLabel": "بریڈ کرمب",
+      "breadcrumbHome": "ہوم",
+      "photoN": "تصویر {n} دکھائیں",
+      "reviewCount": "{count, plural, one {# جائزہ} other {# جائزے}}",
+      "byVendor": "{vendor} کی جانب سے",
+      "aboutService": "اس سروس کے بارے میں",
+      "bookNow": "ابھی بک کریں",
+      "facts": {
+        "homeVisit": "وہ آپ کے پاس آتے ہیں",
+        "atPremises": "ان کے مقام پر",
+        "moreAreas": "+{count} مزید",
+        "payAtVenue": "اپائنٹمنٹ پر ادائیگی کریں",
+        "payAtVenueDetail": "بکنگ کے لیے کارڈ کی ضرورت نہیں۔",
+        "deposit": "تصدیق کے لیے معمولی ڈپازٹ",
+        "prepay": "تصدیق کے لیے آن لائن ادائیگی کریں",
+        "freeCancellation": "{hours} گھنٹے پہلے تک مفت منسوخی",
+        "instantConfirm": "فوری تصدیق",
+        "vendorConfirms": "وینڈر آپ کی درخواست کی تصدیق کرتا ہے",
+        "liveSlots": "صرف واقعی دستیاب سلاٹس دکھائے جاتے ہیں۔"
+      },
+      "vendor": {
+        "title": "وینڈر کے بارے میں",
+        "verified": "تصدیق شدہ وینڈر",
+        "ratings": "({count, plural, one {# ریٹنگ} other {# ریٹنگز}})",
+        "viewVendor": "وینڈر پروفائل دیکھیں"
+      },
+      "reviews": {
+        "title": "صارفین کے جائزے",
+        "empty": "ابھی کوئی جائزہ نہیں۔ جائزے صرف ان صارفین سے آتے ہیں جنہوں نے MyPickUAE کے ذریعے بک کیا۔",
+        "starsLabel": "5 میں سے {rating} ستارے",
+        "basedOn": "{count, plural, one {# تصدیق شدہ بکنگ} other {# تصدیق شدہ بکنگز}} کی بنیاد پر",
+        "vendorReply": "وینڈر کا جواب",
+        "verifiedBooking": "تصدیق شدہ بکنگ",
+        "showing": "{total} میں سے {shown} جائزے دکھائے جا رہے ہیں"
+      },
+      "similar": {
+        "title": "دوسرے وینڈرز کی ملتی جلتی سروسز",
+        "subtitle": "بک کرنے سے پہلے قیمتوں اور ریٹنگز کا موازنہ کریں۔",
+        "viewAll": "سب دیکھیں"
+      }
     }
   },
   "booking": {
@@ -495,6 +537,14 @@
         "alreadyReviewed": "آپ اس بکنگ کا جائزہ پہلے ہی دے چکے ہیں۔",
         "genericError": "ہم آپ کا جائزہ جمع نہیں کر سکے۔ براہ کرم دوبارہ کوشش کریں۔"
       }
+    }
+  },
+  "support": {
+    "categories": {
+      "booking": "بکنگ",
+      "payment": "ادائیگی",
+      "service": "سروس",
+      "account": "اکاؤنٹ"
     }
   }
 }

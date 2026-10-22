@@ -153,6 +153,22 @@ describe("MediaController.generatePresignedUrl", () => {
     );
     expect((media.calls[0] as Record<string, unknown>).vendorId).toBe("v-99");
   });
+
+  test("vendor applicants without a vendor row can upload licence documents under their own user id", async () => {
+    await ctl.generatePresignedUrl(
+      "customer",
+      {
+        asset_type: "kyc_application_document",
+        filename: "licence.pdf",
+        content_type: "application/pdf",
+        vendor_id: "v-99",
+      },
+      noVendorUser,
+    );
+    const call = media.calls[0] as Record<string, unknown>;
+    expect(call.userId).toBe("user-no-vendor");
+    expect(call.vendorId).toBeUndefined();
+  });
 });
 
 describe("MediaController.processAsset", () => {

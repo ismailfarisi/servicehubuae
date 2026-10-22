@@ -24,6 +24,13 @@ export const vendorRoutes = new Elysia({ prefix: "/vendors" })
   // does not yet have a vendor membership when applying.
   .use(requireRole("customer"))
 
+  // The applicant's latest application (null if none). Lets the vendor
+  // dashboard show "under review" / "rejected" to users with no membership yet.
+  .get("/application", async ({ user, vendorController }) => {
+    const application = await vendorController.getApplication(user!.id);
+    return { statusCode: 200, data: application, timestamp: new Date().toISOString() };
+  })
+
   .post(
     "/apply",
     async ({ body, user, vendorController, set }) => {
@@ -41,30 +48,37 @@ export const vendorRoutes = new Elysia({ prefix: "/vendors" })
         business_name: t.String({ minLength: 2, maxLength: 200 }),
         business_name_ar: t.Optional(t.String()),
         business_email: t.String({ format: "email" }),
-        business_phone: t.String(),
+        business_phone: t.String({ minLength: 5, maxLength: 20 }),
         business_address: t.Object({
           street: t.String(),
           city: t.String(),
-          state: t.String(),
+          state: t.Optional(t.String()),
           country: t.String(),
-          postal_code: t.String(),
+          postal_code: t.Optional(t.String()),
         }),
-        tax_registration_number: t.Optional(t.String()),
+        tax_registration_number: t.Optional(t.String({ maxLength: 50 })),
+        trade_license_number: t.Optional(t.String({ maxLength: 100 })),
+        business_type: t.Optional(t.String({ maxLength: 100 })),
+        website_url: t.Optional(t.String({ maxLength: 512 })),
+        description: t.Optional(t.String({ maxLength: 2000 })),
         documents: t.Array(
           t.Object({
             type: t.String(),
             s3_key: t.String(),
           }),
-          { minItems: 1 },
+          { minItems: 1, maxItems: 5 },
         ),
-        bank_account: t.Object({
-          bank_name: t.String(),
-          account_holder_name: t.String(),
-          account_number: t.String(),
-          iban: t.String(),
-          swift_code: t.Optional(t.String()),
-          currency: t.Optional(t.String()),
-        }),
+        // Optional: vendors can add bank details in Settings after approval.
+        bank_account: t.Optional(
+          t.Object({
+            bank_name: t.String(),
+            account_holder_name: t.String(),
+            account_number: t.String(),
+            iban: t.String(),
+            swift_code: t.Optional(t.String()),
+            currency: t.Optional(t.String()),
+          }),
+        ),
       }),
     },
   )

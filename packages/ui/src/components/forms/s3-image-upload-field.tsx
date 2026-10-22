@@ -8,7 +8,7 @@ import {
 import { ImageUploader } from "./image-uploader";
 
 export interface S3ImageUploadFieldProps {
-	assetType: Exclude<MediaAssetType, "product_image" | "kyc_document">;
+	assetType: Exclude<MediaAssetType, "product_image" | "kyc_document" | "kyc_application_document">;
 	value: string | null;
 	onChange: (url: string | null) => void;
 	client: S3UploadClient;

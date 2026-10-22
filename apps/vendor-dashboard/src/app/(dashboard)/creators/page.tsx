@@ -5,11 +5,22 @@ import { useEffect, useState } from "react";
 import { creatorDisplayName } from "@/lib/creator-display-name";
 import { useCreatorDirectory } from "@/lib/queries/creator-content";
 
-// The 7 marketplace categories, byte-identical to apps/web's CATEGORIES in
+// Creator niches, identical to apps/web's CATEGORIES in
 // src/app/[locale]/account/creator/apply/page.tsx. The two Next.js apps share
 // no source, so this duplication is deliberate — if that list changes, change
 // it here too.
-const CATEGORIES = ["Skincare", "Makeup", "Fragrance", "Hair", "Body", "Wellness", "Tools"];
+const CATEGORIES = [
+  "AC & Home Maintenance",
+  "Home Cleaning",
+  "Beauty & Wellness",
+  "Fitness",
+  "Pest Control & Pets",
+  "Moving",
+  "Car Care",
+  "Events",
+  "Fit-out & Construction",
+  "Lifestyle",
+];
 
 function initials(name: string): string {
   return name

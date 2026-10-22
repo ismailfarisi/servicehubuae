@@ -26,11 +26,15 @@ export interface Ticket {
   messages?: TicketMessage[];
 }
 
+// Mirrors the cms-service POST /support/tickets body (support.routes.ts).
+export const SUPPORT_CATEGORIES = ["booking", "payment", "service", "account"] as const;
+export type SupportCategory = (typeof SUPPORT_CATEGORIES)[number];
+
 export interface CreateTicketPayload {
   subject: string;
-  category: "order" | "payment" | "product" | "account" | null;
+  category: SupportCategory | null;
   message: string;
-  order_id?: string | null;
+  booking_id?: string | null;
   guest_email?: string;
   guest_name?: string;
 }

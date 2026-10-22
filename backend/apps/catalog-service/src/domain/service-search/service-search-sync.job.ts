@@ -37,10 +37,12 @@ export async function enqueueServiceSearchSync(
 ): Promise<void> {
   // Dedup key: rapid successive edits to the same vendor or offering collapse
   // into one job instead of a fan-out storm. BullMQ ignores an add() whose
-  // jobId already exists and is still waiting.
+  // jobId already exists and is still waiting. `_`, not `:`: bullmq rejects a
+  // custom jobId containing ':' unless it splits into exactly 3 parts, and the
+  // catch below would swallow that, silently skipping every index update.
   const jobId =
     opts?.jobId ??
-    (data.type === "resync_vendor" ? `vendor:${data.vendorId}` : `offering:${data.offeringId}`);
+    (data.type === "resync_vendor" ? `vendor_${data.vendorId}` : `offering_${data.offeringId}`);
   try {
     // getServiceSearchSyncQueue() is INSIDE the try too: a malformed
     // redisUrl (or any other `new Queue(...)` construction failure) must be

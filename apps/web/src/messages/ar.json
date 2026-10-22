@@ -147,7 +147,7 @@
     },
     "bookings": "الحجوزات",
     "creatorApplyTitle": "كن منشئ محتوى",
-    "creatorApplyIntro": "شارك محتوى الجمال الخاص بك، وسم المنتجات، واكسب عمولة. قدم طلبك أدناه — يقوم فريقنا بمراجعة كل طلب.",
+    "creatorApplyIntro": "شارك مقاطع فيديو عن الخدمات التي تحبها وتعاون مع المزوّدين على MyPickUAE. قدّم طلبك أدناه — يقوم فريقنا بمراجعة كل طلب.",
     "creatorApplyDisplayName": "اسم المنشئ",
     "creatorApplyBio": "نبذة قصيرة",
     "creatorApplyCategory": "المجال الأساسي",
@@ -339,6 +339,48 @@
       "homeVisitIn": "يأتون إليك في {areas}",
       "emptyTitle": "لا توجد خدمات بعد",
       "emptyHint": "لا توجد خدمات قابلة للحجز تطابق هذا البحث حالياً."
+    },
+    "detail": {
+      "breadcrumbLabel": "مسار التنقل",
+      "breadcrumbHome": "الرئيسية",
+      "photoN": "عرض الصورة {n}",
+      "reviewCount": "{count, plural, zero {لا توجد مراجعات} one {مراجعة واحدة} two {مراجعتان} few {# مراجعات} many {# مراجعة} other {# مراجعة}}",
+      "byVendor": "من {vendor}",
+      "aboutService": "عن هذه الخدمة",
+      "bookNow": "احجز الآن",
+      "facts": {
+        "homeVisit": "يأتون إليك",
+        "atPremises": "في مقر مقدم الخدمة",
+        "moreAreas": "+{count} أخرى",
+        "payAtVenue": "الدفع عند الموعد",
+        "payAtVenueDetail": "لا حاجة لبطاقة للحجز.",
+        "deposit": "عربون بسيط لتأكيد الحجز",
+        "prepay": "الدفع عبر الإنترنت لتأكيد الحجز",
+        "freeCancellation": "إلغاء مجاني حتى {hours} ساعة قبل الموعد",
+        "instantConfirm": "تأكيد فوري",
+        "vendorConfirms": "يؤكد مقدم الخدمة طلبك",
+        "liveSlots": "تُعرض المواعيد المتاحة فعليًا فقط."
+      },
+      "vendor": {
+        "title": "عن مقدم الخدمة",
+        "verified": "مقدم خدمة موثّق",
+        "ratings": "({count, plural, zero {لا تقييمات} one {تقييم واحد} two {تقييمان} few {# تقييمات} many {# تقييمًا} other {# تقييم}})",
+        "viewVendor": "عرض ملف مقدم الخدمة"
+      },
+      "reviews": {
+        "title": "آراء العملاء",
+        "empty": "لا توجد مراجعات بعد. تأتي المراجعات فقط من العملاء الذين حجزوا عبر MyPickUAE.",
+        "starsLabel": "{rating} من 5 نجوم",
+        "basedOn": "بناءً على {count, plural, zero {لا حجوزات} one {حجز موثّق واحد} two {حجزين موثّقين} few {# حجوزات موثّقة} many {# حجزًا موثّقًا} other {# حجز موثّق}}",
+        "vendorReply": "رد مقدم الخدمة",
+        "verifiedBooking": "حجز موثّق",
+        "showing": "عرض {shown} من أصل {total} مراجعة"
+      },
+      "similar": {
+        "title": "خدمات مشابهة من مزوّدين آخرين",
+        "subtitle": "قارن الأسعار والتقييمات قبل الحجز.",
+        "viewAll": "عرض الكل"
+      }
     }
   },
   "booking": {
@@ -580,6 +622,12 @@
     },
     "errors": {
       "submitFailed": "حدث خطأ ما. يرجى المحاولة مرة أخرى."
+    },
+    "categories": {
+      "booking": "الحجز",
+      "payment": "الدفع",
+      "service": "الخدمة",
+      "account": "الحساب"
     }
   }
 }

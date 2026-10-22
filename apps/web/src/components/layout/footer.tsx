@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Instagram, Linkedin, Youtube } from "lucide-react";
 import type { SVGProps } from "react";
+import { ONLINE_PAYMENTS_ENABLED } from "@/lib/booking/online-payments";
 import { VENDOR_REGISTER_URL } from "@/lib/vendor-dashboard";
 
 // Inline brand glyphs for marks lucide-react doesn't ship: the post-rebrand
@@ -79,8 +80,7 @@ const SOCIALS = [
 	{
 		Icon: Youtube,
 		// @MyPickUAEuae is NOT ours — it resolves to an unrelated personal
-		// channel (@Keerthanasuresh123). The real one is @MYPICKUAE-UAE
-		// ("MyPickUAE Beauty").
+		// channel. The official MyPickUAE channel is @MYPICKUAE-UAE.
 		href: "https://www.youtube.com/@MYPICKUAE-UAE",
 		label: "YouTube",
 	},
@@ -96,9 +96,11 @@ const SOCIALS = [
 	},
 ];
 
-// Online card payments arrive with MyFatoorah (M2); until then bookings are
-// paid at the venue.
-const PAYMENT_METHODS = ["Visa", "Mastercard", "Apple Pay", "Pay at venue"];
+// Online card payments arrive with MyFatoorah (M2) behind
+// ONLINE_PAYMENTS_ENABLED; until then bookings are paid at the venue only.
+const PAYMENT_METHODS = ONLINE_PAYMENTS_ENABLED
+	? ["Visa", "Mastercard", "Apple Pay", "Pay at venue"]
+	: ["Pay at venue"];
 
 export async function Footer() {
 	const t = await getTranslations("footer");
@@ -188,7 +190,7 @@ export async function Footer() {
 							</span>
 						))}
 					</div>
-					<span>Dubai · Abu Dhabi · Sharjah</span>
+					<span>Serving all seven emirates</span>
 				</div>
 			</div>
 		</footer>

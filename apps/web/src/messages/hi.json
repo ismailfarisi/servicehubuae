@@ -136,7 +136,7 @@
     },
     "bookings": "बुकिंग्स",
     "creatorApplyTitle": "क्रिएटर बनें",
-    "creatorApplyIntro": "अपना ब्यूटी कंटेंट साझा करें, उत्पादों को टैग करें, और कमीशन कमाएं। नीचे आवेदन करें — हमारी टीम हर आवेदन की समीक्षा करती है।",
+    "creatorApplyIntro": "अपनी पसंदीदा सेवाओं के बारे में वीडियो साझा करें और MyPickUAE पर वेंडरों के साथ मिलकर काम करें। नीचे आवेदन करें — हमारी टीम हर आवेदन की समीक्षा करती है।",
     "creatorApplyDisplayName": "क्रिएटर नाम",
     "creatorApplyBio": "संक्षिप्त परिचय",
     "creatorApplyCategory": "मुख्य श्रेणी",
@@ -310,6 +310,48 @@
     "listing": {
       "intro": "पूरे UAE में भरोसेमंद वेंडरों से सेवाएं बुक करें।",
       "atPremisesIn": "{areas} में उनके परिसर पर"
+    },
+    "detail": {
+      "breadcrumbLabel": "ब्रेडक्रम्ब",
+      "breadcrumbHome": "होम",
+      "photoN": "फ़ोटो {n} दिखाएँ",
+      "reviewCount": "{count, plural, one {# समीक्षा} other {# समीक्षाएँ}}",
+      "byVendor": "{vendor} द्वारा",
+      "aboutService": "इस सेवा के बारे में",
+      "bookNow": "अभी बुक करें",
+      "facts": {
+        "homeVisit": "वे आपके पास आते हैं",
+        "atPremises": "उनके परिसर में",
+        "moreAreas": "+{count} और",
+        "payAtVenue": "अपॉइंटमेंट पर भुगतान करें",
+        "payAtVenueDetail": "बुक करने के लिए कार्ड की ज़रूरत नहीं।",
+        "deposit": "पुष्टि के लिए छोटा डिपॉज़िट",
+        "prepay": "पुष्टि के लिए ऑनलाइन भुगतान करें",
+        "freeCancellation": "{hours} घंटे पहले तक मुफ़्त रद्दीकरण",
+        "instantConfirm": "तुरंत पुष्टि",
+        "vendorConfirms": "विक्रेता आपके अनुरोध की पुष्टि करता है",
+        "liveSlots": "केवल वास्तव में खाली स्लॉट दिखाए जाते हैं।"
+      },
+      "vendor": {
+        "title": "विक्रेता के बारे में",
+        "verified": "सत्यापित विक्रेता",
+        "ratings": "({count, plural, one {# रेटिंग} other {# रेटिंग}})",
+        "viewVendor": "विक्रेता प्रोफ़ाइल देखें"
+      },
+      "reviews": {
+        "title": "ग्राहक समीक्षाएँ",
+        "empty": "अभी कोई समीक्षा नहीं। समीक्षाएँ केवल उन ग्राहकों से आती हैं जिन्होंने MyPickUAE से बुक किया।",
+        "starsLabel": "5 में से {rating} स्टार",
+        "basedOn": "{count, plural, one {# सत्यापित बुकिंग} other {# सत्यापित बुकिंग}} पर आधारित",
+        "vendorReply": "विक्रेता का जवाब",
+        "verifiedBooking": "सत्यापित बुकिंग",
+        "showing": "{total} में से {shown} समीक्षाएँ दिखाई जा रही हैं"
+      },
+      "similar": {
+        "title": "दूसरे विक्रेताओं की मिलती-जुलती सेवाएँ",
+        "subtitle": "बुक करने से पहले कीमत और रेटिंग की तुलना करें।",
+        "viewAll": "सभी देखें"
+      }
     }
   },
   "booking": {
@@ -508,6 +550,14 @@
         "alreadyReviewed": "आपने पहले ही इस बुकिंग की समीक्षा कर दी है।",
         "genericError": "हम आपकी समीक्षा सबमिट नहीं कर सके। कृपया फिर से प्रयास करें।"
       }
+    }
+  },
+  "support": {
+    "categories": {
+      "booking": "बुकिंग",
+      "payment": "भुगतान",
+      "service": "सेवा",
+      "account": "खाता"
     }
   }
 }

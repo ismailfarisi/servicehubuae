@@ -67,6 +67,10 @@ export function isPublicRoute(path: string, method: string): boolean {
   // exact prefix+suffix shape — not a broad /booking/ prefix (vendor booking
   // management lives under /vendor/booking and stays gated).
   if (isRead && path.startsWith("/booking/offerings/") && path.endsWith("/staff")) return true;
+  // Booking — public storefront read of an offering's approved reviews
+  // (GET /booking/services/:id/reviews). Exactly one id segment; the review
+  // writes (POST /bookings/:id/review, /vendor/booking/reviews/:id/reply) stay gated.
+  if (isRead && /^\/booking\/services\/[^/]+\/reviews$/.test(path)) return true;
   if (path.startsWith("/vendors/") && path.endsWith("/profile")) return true;
   if (path.startsWith("/vendors/by-slug/")) return true;
   // Section-type registry is public metadata (read-only)

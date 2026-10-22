@@ -7,25 +7,25 @@ import {
 export const metadata: Metadata = {
 	title: "Careers at MyPickUAE",
 	description:
-		"Build the beauty marketplace of the Gulf. Open roles, what we look for, and how we hire at MyPickUAE.",
+		"Help build the UAE's services marketplace. What we look for, how we work and how we hire at MyPickUAE.",
 };
 
 const VALUES = [
 	{
 		t: "Customers first, always",
-		d: "Every decision starts with the shopper opening the box. Speed, accuracy and care beat clever-for-its-own-sake.",
+		d: "Every decision starts with the person waiting for the technician at their door. Reliability, clarity and care beat clever-for-its-own-sake.",
 	},
 	{
 		t: "Region-native, global standard",
-		d: "We build for the UAE — Arabic-first, AED-first, hyperlocal — at a quality bar that travels.",
+		d: "We build for the UAE — Arabic-first, AED-first, multilingual — at a quality bar that travels.",
 	},
 	{
 		t: "Vendors as partners",
-		d: "Our brands grow, we grow. Tools, payouts and listings are designed around vendor success, not friction.",
+		d: "When service businesses grow, we grow. Listings, scheduling, quotations and payouts are designed around vendor success, not friction.",
 	},
 	{
 		t: "Operate, don't theorise",
-		d: "Small, accountable teams. Ship daily. Numbers on the wall. Theatre off the calendar.",
+		d: "Small, accountable teams. Ship often. Measure what matters. Theatre off the calendar.",
 	},
 ];
 
@@ -33,15 +33,16 @@ export default function CareersPage() {
 	return (
 		<StaticPageLayout
 			eyebrow="Careers"
-			title="Build the beauty marketplace of the Gulf."
-			intro="We're growing the team that powers MyPickUAE — from product and engineering in Dubai to merchandising and creator partnerships across the UAE."
+			title="Build the UAE's services marketplace."
+			intro="We're growing the team that powers MyPickUAE — from product and engineering in Dubai to vendor partnerships and customer support across the UAE."
 		>
 			<StaticSection heading="How we work">
 				<p>
-					Small, full-stack teams own outcomes end-to-end. Most engineering
-					ships to production daily behind feature flags. Merchandising and
-					operations are paired tightly with engineering so changes to the
-					storefront, the warehouse and the vendor portal move together.
+					Small, full-stack teams own outcomes end-to-end. Engineering
+					ships to production frequently behind feature flags. Vendor
+					partnerships and operations work closely with engineering, so
+					changes to the customer app, booking flow and vendor dashboard
+					move together.
 				</p>
 			</StaticSection>
 
@@ -67,8 +68,8 @@ export default function CareersPage() {
 				<p>
 					We aren&rsquo;t actively hiring through a public board right now,
 					but we always make room for exceptional product engineers,
-					full-stack engineers, beauty merchandisers and creator partnership
-					leads based in the UAE.
+					full-stack engineers, vendor partnership managers and customer
+					support specialists based in the UAE.
 				</p>
 				<p>
 					Send a short note and what you&rsquo;ve shipped to{" "}

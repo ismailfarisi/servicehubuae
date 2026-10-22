@@ -10,6 +10,7 @@ export type MediaAssetType =
 	| "vendor_logo"
 	| "vendor_banner"
 	| "kyc_document"
+	| "kyc_application_document"
 	| "category_image"
 	| "category_icon"
 	| "category_banner";
@@ -62,7 +63,8 @@ export function useS3Upload(opts: {
 
 				if (
 					opts.assetType === "product_image" ||
-					opts.assetType === "kyc_document"
+					opts.assetType === "kyc_document" ||
+					opts.assetType === "kyc_application_document"
 				) {
 					return { key };
 				}

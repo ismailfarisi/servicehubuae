@@ -69,6 +69,8 @@ export class MediaController {
       filename: body.filename,
       contentType: body.content_type,
       vendorId,
+      // User-scoped assets always go under the caller's own prefix.
+      ...(cfg.requiresUserId ? { userId: user.id } : {}),
     });
   }
 

@@ -1039,6 +1039,27 @@ export default function VendorDetailPage() {
 													</div>
 												</div>
 											)}
+											{vendor.business_type && vendor.business_type !== "general" && (
+												<div>
+													<p className="text-xs text-taupe mb-0.5">
+														Main Service Category
+													</p>
+													<p className="text-sm text-cacao">
+														{vendor.business_type}
+													</p>
+												</div>
+											)}
+											{vendor.address &&
+												(vendor.address.street || vendor.address.city) && (
+													<div>
+														<p className="text-xs text-taupe mb-0.5">Address</p>
+														<p className="text-sm text-cacao">
+															{[vendor.address.street, vendor.address.city]
+																.filter(Boolean)
+																.join(", ")}
+														</p>
+													</div>
+												)}
 											{vendor.vat_number && (
 												<div>
 													<p className="text-xs text-taupe mb-0.5">

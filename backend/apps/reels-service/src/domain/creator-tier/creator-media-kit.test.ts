@@ -28,13 +28,13 @@ function makeService(rows: unknown[] = []) {
 }
 
 const kit = (over: Record<string, unknown> = {}) => ({
-  headline: "Beauty & Makeup Creator",
+  headline: "Home & Cleaning Creator",
   pull_quote: "Be your own kind of beautiful",
   about: "Beauty lover & content creator.",
   location_label: "Dubai, UAE",
   collaboration_note: "Open to brand collaborations.",
   stats: [{ label: "Followers", value: "68K+" }],
-  content_types: ["Makeup Tutorials"],
+  content_types: ["How-to Videos"],
   audience: [{ label: "Women 18-24", percent: 72 }],
   top_locations: [{ label: "UAE", percent: 61 }],
   is_published: true,
@@ -44,8 +44,8 @@ const kit = (over: Record<string, unknown> = {}) => ({
 const row = (over: Record<string, unknown> = {}) => ({
   id: "u1",
   display_name: "Aisha Glow",
-  bio: "Skincare tips",
-  primary_category: "Skincare",
+  bio: "Home cleaning tips",
+  primary_category: "Home Cleaning",
   avatar_url: "https://cdn/u1.webp",
   intro_video_url: "https://cdn/u1-intro.mp4",
   kit: kit(),
@@ -124,7 +124,7 @@ describe("CreatorMediaKitService.getForVendor — what a vendor may see", () => 
     const detail = (await svc.getForVendor("u1")) as CreatorMediaKitDetail;
     expect(detail.display_name).toBe("Aisha Glow");
     expect(detail.has_media_kit).toBe(true);
-    expect(detail.headline).toBe("Beauty & Makeup Creator");
+    expect(detail.headline).toBe("Home & Cleaning Creator");
     expect(detail.stats).toEqual([{ label: "Followers", value: "68K+" }]);
     expect(detail.audience).toEqual([{ label: "Women 18-24", percent: 72 }]);
     expect(detail.intro_video_url).toBe("https://cdn/u1-intro.mp4");
@@ -179,7 +179,7 @@ describe("CreatorMediaKitService.upsert — merge semantics", () => {
       headline: "Beauty Creator",
       about: "About me",
       stats: [{ label: "Followers", value: "68K+" }],
-      content_types: ["Makeup Tutorials"],
+      content_types: ["How-to Videos"],
       audience: [],
       top_locations: [],
       is_published: false,

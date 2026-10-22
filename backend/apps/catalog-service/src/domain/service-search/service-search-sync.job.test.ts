@@ -102,6 +102,13 @@ describe("enqueueServiceSearchSync — job options", () => {
     const calls: Array<{ name: string; data: unknown; opts: any }> = [];
     const queue = {
       add: async (name: string, data: unknown, opts: any) => {
+        // Same rule as bullmq's Job#validateOptions: a custom jobId may only
+        // contain ':' if it splits into exactly 3 parts (its repeatable-job
+        // format). `offering:<id>` used to trip this, the error was swallowed
+        // by enqueueServiceSearchSync, and no vendor edit reached the index.
+        if (opts?.jobId?.includes(":") && opts.jobId.split(":").length !== 3) {
+          throw new Error("Custom Id cannot contain :");
+        }
         calls.push({ name, data, opts });
         // The real Queue#add resolves with a Job; the fake only needs to
         // satisfy the return type, since callers here only inspect `calls`.
@@ -111,29 +118,29 @@ describe("enqueueServiceSearchSync — job options", () => {
     return { queue, calls };
   }
 
-  it("uses vendor:<id> as the deterministic jobId for resync_vendor", async () => {
+  it("uses vendor_<id> as the deterministic jobId for resync_vendor", async () => {
     const { queue, calls } = makeFakeQueue();
     await enqueueServiceSearchSync({ type: "resync_vendor", vendorId: "v1" }, { queue });
     expect(calls).toHaveLength(1);
     const call = calls[0];
     expect(call).toBeDefined();
-    expect(call?.opts.jobId).toBe("vendor:v1");
+    expect(call?.opts.jobId).toBe("vendor_v1");
   });
 
-  it("uses offering:<id> as the deterministic jobId for upsert_offering", async () => {
+  it("uses offering_<id> as the deterministic jobId for upsert_offering", async () => {
     const { queue, calls } = makeFakeQueue();
     await enqueueServiceSearchSync({ type: "upsert_offering", offeringId: "o1" }, { queue });
     const call = calls[0];
     expect(call).toBeDefined();
-    expect(call?.opts.jobId).toBe("offering:o1");
+    expect(call?.opts.jobId).toBe("offering_o1");
   });
 
-  it("uses offering:<id> as the deterministic jobId for delete_offering", async () => {
+  it("uses offering_<id> as the deterministic jobId for delete_offering", async () => {
     const { queue, calls } = makeFakeQueue();
     await enqueueServiceSearchSync({ type: "delete_offering", offeringId: "o2" }, { queue });
     const call = calls[0];
     expect(call).toBeDefined();
-    expect(call?.opts.jobId).toBe("offering:o2");
+    expect(call?.opts.jobId).toBe("offering_o2");
   });
 
   it("regression: removeOnComplete and removeOnFail are both true, not a retention count", async () => {
@@ -153,11 +160,11 @@ describe("enqueueServiceSearchSync — job options", () => {
     const { queue, calls } = makeFakeQueue();
     await enqueueServiceSearchSync(
       { type: "upsert_offering", offeringId: "o1" },
-      { queue, jobId: "custom:1" },
+      { queue, jobId: "custom_1" },
     );
     const call = calls[0];
     expect(call).toBeDefined();
-    expect(call?.opts.jobId).toBe("custom:1");
+    expect(call?.opts.jobId).toBe("custom_1");
   });
 
   // Minor-3: enqueueServiceSearchSync is awaited by ServiceOfferingService's

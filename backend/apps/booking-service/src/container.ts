@@ -88,6 +88,7 @@ import {
   getNotificationEventsQueue,
 } from "./domain/reminders/booking-reminder.job.ts";
 import { ReminderScheduler } from "./domain/reminders/reminder-scheduler.ts";
+import { ServiceReviewPublicService } from "./domain/reviews/service-review-public.service.ts";
 import { ServiceReviewRatingService } from "./domain/reviews/service-review-rating.service.ts";
 import { ServiceReviewController } from "./domain/reviews/service-review.controller.ts";
 import { ServiceReviewService } from "./domain/reviews/service-review.service.ts";
@@ -462,6 +463,9 @@ const serviceReviewService = new ServiceReviewService(
   serviceReviewRatingService,
 );
 const serviceReviewController = new ServiceReviewController(serviceReviewService);
+const serviceReviewPublicService = new ServiceReviewPublicService(
+  AppDataSource.query.bind(AppDataSource),
+);
 
 // ─── Manual walk-in / phone booking (Phase 6 Task 1) — capacity-only, no
 // commission/payment wiring (see manual-booking.service.ts's header comment).
@@ -612,6 +616,7 @@ export const container = new Elysia({ name: "booking-service-container" })
   .decorate("bookingStatusService", bookingStatusService)
   .decorate("bookingController", bookingController)
   .decorate("serviceReviewController", serviceReviewController)
+  .decorate("serviceReviewPublicService", serviceReviewPublicService)
   .decorate("manualBookingController", manualBookingController)
   .decorate("blockTimeController", blockTimeController)
   .decorate("manageCalendarController", manageCalendarController)

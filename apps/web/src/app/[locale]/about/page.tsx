@@ -5,65 +5,66 @@ import {
 } from "@/components/layout/static-page-layout";
 
 export const metadata: Metadata = {
-	title: "About MyPickUAE — UAE's Beauty Marketplace",
+	title: "About MyPickUAE — The UAE's Services Marketplace",
 	description:
-		"MyPickUAE is a curated multi-vendor beauty marketplace built for the Gulf, bringing trusted beauty, fragrance and wellness vendors into one UAE shopping address.",
+		"MyPickUAE is a UAE services marketplace: browse 440+ services, compare trusted independent vendors side by side, then book a time slot or request quotations.",
 };
 
 export default function AboutPage() {
 	return (
 		<StaticPageLayout
 			eyebrow="Our story"
-			title="A house of brands, built for the Gulf."
-			intro="MyPickUAE gathers the rituals, formulas and houses that shape modern Arabian beauty — from heritage attar makers to clean-skin founders — and brings them into one trusted address."
+			title="Every service your home and life need, in one place."
+			intro="MyPickUAE brings the UAE's independent service businesses — cleaners, technicians, salons, trainers, movers and more — into one marketplace where you can compare them honestly and book with confidence."
 		>
 			<StaticSection heading="Why we exist">
 				<p>
-					Beauty in the UAE is plural. A skincare regimen begins in Seoul,
-					travels through Paris, and ends with an oud sprayed in Sharjah.
-					Buying it should feel that effortless — one cart, one delivery,
-					one customer service line, in the language you actually speak.
+					Finding a good AC technician, a reliable cleaner or a mover you
+					can trust usually means a string of phone calls, half-answered
+					WhatsApp messages and quotes that are hard to compare. We think
+					it should feel as simple as choosing a time that suits you.
 				</p>
 				<p>
-					MyPickUAE exists so customers don&rsquo;t have to choose between
-					a global edit and a regional one. We work directly with vendors
-					to surface only authentic stock, ship from inside the country,
-					and price in fils, not guesses.
+					MyPickUAE puts services, prices and vendors side by side. For
+					everyday jobs you pick a vendor and book a slot; for bigger jobs
+					you describe what you need, receive quotations from vendors and
+					chat with them before you decide.
 				</p>
 			</StaticSection>
 
 			<StaticSection heading="What we promise">
 				<ul className="list-disc ps-5 space-y-2">
 					<li>
-						<strong className="text-nl-cacao">Authentic only.</strong>{" "}
-						Every vendor is vetted; counterfeit listings are removed and
-						the seller is offboarded.
+						<strong className="text-nl-cacao">Vetted vendors.</strong>{" "}
+						Every vendor goes through onboarding and licence checks before
+						their services go live, and listings that breach our standards
+						are removed.
 					</li>
 					<li>
-						<strong className="text-nl-cacao">Same-day in the city.</strong>{" "}
-						Hyperlocal delivery across Dubai, Abu Dhabi and Sharjah for
-						in-stock items ordered before 4pm.
+						<strong className="text-nl-cacao">Clear choices.</strong>{" "}
+						Compare up to three eligible vendors on price, reviews and
+						availability before you book.
 					</li>
 					<li>
-						<strong className="text-nl-cacao">Five languages.</strong>{" "}
-						The whole storefront — search, checkout, support — works in
-						Arabic, English, Hindi, Urdu and Malayalam.
+						<strong className="text-nl-cacao">Arabic and English.</strong>{" "}
+						Search, booking and support work in both languages, with
+						right-to-left layouts for Arabic.
 					</li>
 					<li>
-						<strong className="text-nl-cacao">Flexible payment.</strong>{" "}
-						Card, Apple Pay, and Buy Now Pay Later via Tamara
-						on eligible carts.
+						<strong className="text-nl-cacao">Simple payment.</strong>{" "}
+						Pay the vendor at the time of service today, with secure
+						online card payment coming soon.
 					</li>
 				</ul>
 			</StaticSection>
 
-			<StaticSection heading="By the numbers">
+			<StaticSection heading="At a glance">
 				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 not-prose">
 					{[
-						{ n: "Curated", l: "vendor network" },
-						{ n: "7", l: "categories" },
-						{ n: "5", l: "languages" },
-						{ n: "3", l: "emirates served same-day" },
+						{ n: "440+", l: "services" },
+						{ n: "Up to 3", l: "vendors compared side by side" },
+						{ n: "2", l: "ways to book: slot or quotation" },
+						{ n: "7", l: "emirates in our service areas" },
 					].map((stat) => (
 						<div key={stat.l} className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 shadow-sm">
 							<div className="font-display font-bold tracking-tight text-3xl md:text-4xl text-nl-amber-text">
@@ -79,9 +80,10 @@ export default function AboutPage() {
 
 			<StaticSection heading="Where we are">
 				<p>
-					MyPickUAE is headquartered in Dubai, with fulfilment partners in
-					Abu Dhabi and Sharjah. The team is a mix of operators, engineers
-					and merchandisers from across the Gulf, South Asia and Europe.
+					MyPickUAE is headquartered in Dubai and built for customers and
+					vendors across the United Arab Emirates. The team brings
+					together operators, engineers and vendor partnership specialists
+					who know the UAE services market first-hand.
 				</p>
 			</StaticSection>
 		</StaticPageLayout>

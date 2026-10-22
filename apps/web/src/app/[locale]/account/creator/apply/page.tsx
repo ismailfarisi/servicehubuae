@@ -17,16 +17,21 @@ import { Eyebrow, MaisonCheck } from "@/components/ui/maison-primitives";
 const ALLOWED_AVATAR_TYPES = ["image/jpeg", "image/png", "image/webp"];
 const MAX_AVATAR_BYTES = 2 * 1024 * 1024;
 
-// Aligned with the 7 marketplace categories (Skincare, Makeup, Fragrance,
-// Hair, Body, Wellness, Tools) — see project_marketplace_category_scope.
+// Creator niches, aligned with the top-level service categories seeded in
+// backend/libs/database/src/seeds/index.ts plus a few lifestyle niches.
+// Duplicated verbatim in apps/vendor-dashboard/src/app/(dashboard)/creators/
+// page.tsx (the creator directory filter) — change both together.
 const CATEGORIES = [
-  "Skincare",
-  "Makeup",
-  "Fragrance",
-  "Hair",
-  "Body",
-  "Wellness",
-  "Tools",
+  "AC & Home Maintenance",
+  "Home Cleaning",
+  "Beauty & Wellness",
+  "Fitness",
+  "Pest Control & Pets",
+  "Moving",
+  "Car Care",
+  "Events",
+  "Fit-out & Construction",
+  "Lifestyle",
 ];
 
 interface FormState {

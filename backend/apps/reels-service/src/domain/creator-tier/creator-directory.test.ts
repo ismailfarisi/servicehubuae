@@ -27,8 +27,8 @@ function makeService(rows: unknown[] = []) {
 const row = (over: Record<string, unknown> = {}) => ({
   id: "u1",
   display_name: "Aisha Glow",
-  bio: "Skincare tips",
-  primary_category: "Skincare",
+  bio: "Home cleaning tips",
+  primary_category: "Home Cleaning",
   avatar_url: "https://cdn/u1.webp",
   intro_video_url: "https://cdn/u1-intro.mp4",
   sample_count: 3,
@@ -99,17 +99,17 @@ describe("CreatorDirectoryService.list — search", () => {
 describe("CreatorDirectoryService.list — category", () => {
   it("filters on an exact primary_category match", async () => {
     const svc = makeService();
-    await svc.list({ category: "Makeup" });
+    await svc.list({ category: "Fitness" });
     const { sql, args } = svc.calls[0]!;
     expect(sql).toContain("ca.primary_category = $3");
-    expect(args[2]).toBe("Makeup");
+    expect(args[2]).toBe("Fitness");
   });
 
   it("numbers placeholders correctly when search and category are combined", async () => {
     const svc = makeService();
-    await svc.list({ search: "glow", category: "Makeup" });
+    await svc.list({ search: "glow", category: "Fitness" });
     const { sql, args } = svc.calls[0]!;
-    expect(args).toEqual([24, 0, "%glow%", "Makeup"]);
+    expect(args).toEqual([24, 0, "%glow%", "Fitness"]);
     expect(sql).toContain("ca.primary_category = $4");
   });
 });
@@ -144,8 +144,8 @@ describe("CreatorDirectoryService.list — row mapping", () => {
       {
         id: "u1",
         display_name: "Aisha Glow",
-        bio: "Skincare tips",
-        primary_category: "Skincare",
+        bio: "Home cleaning tips",
+        primary_category: "Home Cleaning",
         avatar_url: "https://cdn/u1.webp",
         intro_video_url: "https://cdn/u1-intro.mp4",
         sample_count: 3,

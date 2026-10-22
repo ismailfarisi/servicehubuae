@@ -4,6 +4,7 @@ export {
   ASSET_TYPE_CONFIG,
   buildAssetKey,
   isAssetType,
+  kycApplicantPrefix,
   type AssetTypeConfig,
   type MediaAssetType,
 } from "./asset-type-config.ts";

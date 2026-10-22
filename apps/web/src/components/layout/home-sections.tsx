@@ -7,7 +7,6 @@
  */
 import Link from "next/link";
 import {
-  ArrowRight,
   CalendarCheck,
   CircleCheck,
   Clock,
@@ -107,7 +106,6 @@ export async function ServiceSearchHeroAdapter({ settings, data }: SectionProps)
   const eyebrow = pick(settings.eyebrow, locale) || t("heroEyebrow");
   const title = pick(settings.title, locale) || t("heroTitle");
   const subtitle = pick(settings.subtitle, locale) || t("heroSubtitle");
-  const placeholder = pick(settings.search_placeholder, locale) || t("searchPlaceholder");
 
   return (
     <section className="bg-gradient-to-b from-nl-pearl to-nl-linen px-5 py-12 md:px-14 md:py-20" data-section="service-search-hero">
@@ -119,56 +117,10 @@ export async function ServiceSearchHeroAdapter({ settings, data }: SectionProps)
         {subtitle}
       </p>
 
-      <form
-        action={`/${locale}/services`}
-        method="get"
-        className="mt-8 flex flex-col md:flex-row md:items-center gap-2 md:gap-0 max-w-[880px] rounded-2xl bg-nl-linen border border-nl-cacao/10 p-2 shadow-[0_20px_50px_-24px_hsl(var(--nl-cacao)/0.35)] focus-within:border-nl-amber/40 transition-colors"
-      >
-        <label className="flex flex-1 items-center gap-3 px-3 min-h-[52px]">
-          <Search className="h-5 w-5 shrink-0 text-nl-russet" strokeWidth={1.75} aria-hidden="true" />
-          <span className="sr-only">{t("searchLabel")}</span>
-          <input
-            type="search"
-            name="q"
-            placeholder={placeholder}
-            className="w-full bg-transparent text-[15px] text-nl-cacao placeholder:text-nl-russet/70 outline-none"
-          />
-        </label>
-        {groups.length > 0 && (
-          <label className="flex items-center gap-2 px-3 min-h-[52px] rounded-xl bg-nl-pearl md:bg-transparent md:rounded-none md:border-s border-nl-cacao/10">
-            <MapPin className="h-5 w-5 shrink-0 text-nl-russet" strokeWidth={1.75} aria-hidden="true" />
-            <span className="sr-only">{t("areaLabel")}</span>
-            <select
-              name="area"
-              defaultValue=""
-              className="w-full md:w-[200px] bg-transparent text-sm text-nl-cacao outline-none cursor-pointer"
-            >
-              <option value="">{t("allAreas")}</option>
-              {await Promise.all(
-                groups.map(async (g) => (
-                  <optgroup key={g.emirate} label={await emirateLabel(g.emirate)}>
-                    {g.areas.map((a) => (
-                      <option key={a.slug} value={a.slug}>
-                        {a.name}
-                      </option>
-                    ))}
-                  </optgroup>
-                )),
-              )}
-            </select>
-          </label>
-        )}
-        <button
-          type="submit"
-          className="inline-flex items-center justify-center gap-2 min-h-[52px] px-7 rounded-xl bg-nl-amber text-white text-sm font-semibold shadow-sm hover:bg-nl-amber/90 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nl-amber"
-        >
-          {t("searchButton")}
-          <ArrowRight className="h-4 w-4 rtl:rotate-180" strokeWidth={2} aria-hidden="true" />
-        </button>
-      </form>
-
+      {/* No search form here: the header search (with its area picker) is the
+          one search box on the page. */}
       {popular.length > 0 && (
-        <div className="mt-5 flex flex-wrap items-center gap-2">
+        <div className="mt-8 flex flex-wrap items-center gap-2">
           <span className="text-sm font-medium text-nl-russet me-1">
             {t("popularSearches")}
           </span>

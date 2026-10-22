@@ -36,7 +36,7 @@ describe("evaluateEligibility", () => {
   it("names each unmet requirement, in a stable order", () => {
     const r = evaluateEligibility(
       creator({ reach: 500 }),
-      reqs({ min_follower_count: 10_000, required_categories: ["Fragrance"] }),
+      reqs({ min_follower_count: 10_000, required_categories: ["Car Care"] }),
     );
     expect(r.eligible).toBe(false);
     expect(r.reasons).toEqual(["below_min_followers", "category_mismatch"]);
@@ -66,7 +66,7 @@ describe("evaluateEligibility", () => {
   it("needs only one of several required categories to match", () => {
     const r = evaluateEligibility(
       creator({ categories: ["Beauty"] }),
-      reqs({ required_categories: ["Fragrance", "Beauty", "Tech"] }),
+      reqs({ required_categories: ["Car Care", "Beauty", "Tech"] }),
     );
     expect(r.eligible).toBe(true);
   });

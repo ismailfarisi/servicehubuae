@@ -47,7 +47,8 @@ export async function notifyVendorAreasChanged(vendorId: string): Promise<void> 
       // still exists, so a retained completed/failed job would permanently
       // swallow every later fan-out for that vendor. Verified against the
       // bullmq Lua scripts; see the same fix in service-search-sync.job.ts.
-      { jobId: `vendor:${vendorId}`, removeOnComplete: true, removeOnFail: true },
+      // `_`, not `:` — bullmq rejects `vendor:<id>` ("Custom Id cannot contain :").
+      { jobId: `vendor_${vendorId}`, removeOnComplete: true, removeOnFail: true },
     );
   } catch (err) {
     // A Redis blip must not fail the vendor's branch edit. The nightly

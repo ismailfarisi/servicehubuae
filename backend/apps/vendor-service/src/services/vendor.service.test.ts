@@ -270,6 +270,21 @@ describe("VendorService.transition — approve", () => {
     expect(memberUpdate!.sql).toContain("status IN ('pending', 'active')");
   });
 
+  test("reads the owner from the real driver's [rows, rowCount] UPDATE result", async () => {
+    clearCalls();
+    appDataSourceQueryReturns.set("RETURNING user_id", [[{ user_id: USER_ID }], 1]);
+
+    const vendor: any = { id: VENDOR_ID, status: "under_review", address: {} };
+    const service = makeService({
+      vendorRepo: { findOne: mock(async () => vendor), save: mock(async (v: any) => v) },
+      userRepo: { findOne: mock(async () => null) },
+    });
+
+    const approved = await service.transition(VENDOR_ID, "approved");
+    expect(approved.status).toBe("approved");
+    expect(bumpTokenVersionCalls).toEqual([USER_ID]);
+  });
+
   test("throws OWNER_MEMBERSHIP_MISSING when no pending/active owner row exists", async () => {
     clearCalls();
     // Override the UPDATE...RETURNING to return no rows.
@@ -486,5 +501,127 @@ describe("VendorService.createByAdmin", () => {
     } finally {
       (AppDataSource as any).transaction = origTransaction;
     }
+  });
+});
+
+// ── apply() — self-registration ────────────────────────────────────────────────
+
+describe("VendorService.apply", () => {
+  const applyPayload = (overrides: Record<string, unknown> = {}) => ({
+    userId: USER_ID,
+    businessName: "Sparkle Home Services",
+    businessEmail: "hello@sparkle.example",
+    businessPhone: "+971500000000",
+    businessAddress: { street: "Al Quoz 1", city: "Dubai", country: "AE" },
+    tradeLicenseNumber: "CN-123456",
+    businessType: "home-cleaning",
+    documents: [
+      { type: "trade_license", s3Key: `private/kyc/applicants/${USER_ID}/abc/licence.pdf` },
+    ],
+    ...overrides,
+  });
+
+  function applyService() {
+    return makeService({
+      vendorRepo: { findOne: mock(async () => null) },
+      userRepo: { findOne: mock(async () => ({ id: USER_ID, email: APPLICANT_EMAIL })) },
+    });
+  }
+
+  test("creates a pending vendor with licence, category and a pending owner row", async () => {
+    clearCalls();
+    const vendor = await applyService().apply(applyPayload() as any);
+
+    expect(vendor.status).toBe("pending");
+    expect(vendor.trade_license_number).toBe("CN-123456");
+    expect(vendor.business_type).toBe("home-cleaning");
+    const ownerInsert = appDataSourceQueryCalls.find((c) =>
+      c.sql.includes("INSERT INTO vendor_members"),
+    );
+    expect(ownerInsert).toBeDefined();
+    expect(ownerInsert!.params[2]).toBe(APPLICANT_EMAIL);
+  });
+
+  test("rejects document keys outside the applicant's own upload prefix", async () => {
+    clearCalls();
+    const payload = applyPayload({
+      documents: [
+        { type: "trade_license", s3Key: "private/kyc/applicants/someone-else/x/licence.pdf" },
+      ],
+    });
+    await expect(applyService().apply(payload as any)).rejects.toMatchObject({
+      statusCode: 422,
+      code: "INVALID_DOCUMENT_KEY",
+    });
+  });
+
+  test("rejects unknown document types", async () => {
+    clearCalls();
+    const payload = applyPayload({
+      documents: [{ type: "selfie", s3Key: `private/kyc/applicants/${USER_ID}/x/me.png` }],
+    });
+    await expect(applyService().apply(payload as any)).rejects.toMatchObject({
+      statusCode: 422,
+      code: "INVALID_DOCUMENT_TYPE",
+    });
+  });
+
+  test("409 while an application is pending", async () => {
+    clearCalls();
+    appDataSourceQueryReturns.set("vm.status IN ('pending', 'active')", [
+      { id: VENDOR_ID, status: "pending" },
+    ]);
+    await expect(applyService().apply(applyPayload() as any)).rejects.toMatchObject({
+      statusCode: 409,
+      code: "VENDOR_EXISTS",
+    });
+  });
+
+  test("re-applying after rejection reuses the rejected vendor and clears the reason", async () => {
+    clearCalls();
+    appDataSourceQueryReturns.set("vm.status IN ('pending', 'active')", [
+      { id: VENDOR_ID, status: "rejected" },
+    ]);
+
+    const { AppDataSource } = await import("@mypickuae/database");
+    const origTransaction = (AppDataSource as any).transaction;
+    const rejected = { id: VENDOR_ID, status: "rejected", rejection_reason: "Licence expired" };
+    (AppDataSource as any).transaction = async (cb: (m: any) => Promise<any>) =>
+      cb({
+        create: (_Entity: any, data: any) => data,
+        save: async (_Entity: any, data: any) => data,
+        findOne: async () => rejected,
+        query: async (sql: string, params: any[]) => {
+          appDataSourceQueryCalls.push({ sql, params });
+          return [];
+        },
+      });
+
+    try {
+      const vendor = await applyService().apply(applyPayload() as any);
+      expect(vendor.id).toBe(VENDOR_ID);
+      expect(vendor.status).toBe("pending");
+      expect(vendor.rejection_reason).toBeNull();
+      expect(
+        appDataSourceQueryCalls.some((c) => c.sql.includes("INSERT INTO vendor_members")),
+      ).toBe(false);
+    } finally {
+      (AppDataSource as any).transaction = origTransaction;
+    }
+  });
+});
+
+describe("VendorService.findApplicationByUserId", () => {
+  test("returns the latest owned application, or null", async () => {
+    clearCalls();
+    const service = makeService({});
+    expect(await service.findApplicationByUserId(USER_ID)).toBeNull();
+
+    appDataSourceQueryReturns.set("ORDER BY v.created_at DESC", [
+      { id: VENDOR_ID, name: "Sparkle", status: "rejected", rejection_reason: "Blurry licence" },
+    ]);
+    const app = await service.findApplicationByUserId(USER_ID);
+    expect(app?.status).toBe("rejected");
+    expect(app?.rejection_reason).toBe("Blurry licence");
   });
 });

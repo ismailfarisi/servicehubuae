@@ -28,3 +28,8 @@ export function getMembershipsFromToken(): VendorMembership[] {
     return [];
   }
 }
+
+/** True when a vendor-dashboard session cookie is present (it may still be expired). */
+export function hasAccessTokenCookie(): boolean {
+  return getCookie(COOKIE_ACCESS_TOKEN) !== null;
+}

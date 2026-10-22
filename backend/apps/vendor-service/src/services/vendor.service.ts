@@ -5,12 +5,13 @@ import {
   UserStatus,
   Vendor,
   VendorDocument,
+  VendorDocumentType,
   VendorStatus,
   VendorTranslation,
 } from "@mypickuae/database";
 import { bumpTokenVersion } from "@mypickuae/guards";
 import { HttpError } from "@mypickuae/plugins";
-import { generateSlug } from "@mypickuae/utils";
+import { generateSlug, kycApplicantPrefix } from "@mypickuae/utils";
 import { type VendorApplyData, isValidTransition } from "../domain/types.ts";
 import type { PaymentProviderAdapter } from "../providers/payment/payment-provider.interface.ts";
 
@@ -64,7 +65,27 @@ export class VendorService {
            LIMIT 1`,
           [data.userId],
         )) as Array<{ id: string }>);
-    const reuseVendorId = rejectedRows[0]?.id ?? null;
+    // reject() leaves the owner row pending, so a rejected application usually
+    // shows up in existingRows rather than rejectedRows.
+    const reuseVendorId =
+      existingRows[0]?.status === "rejected" ? existingRows[0].id : (rejectedRows[0]?.id ?? null);
+
+    // Applicants upload licence documents before a vendor row exists, under
+    // their own prefix (kyc_application_document). Refuse anyone else's keys.
+    const applicantPrefix = kycApplicantPrefix(data.userId);
+    const documentTypes = Object.values(VendorDocumentType) as string[];
+    for (const doc of data.documents) {
+      if (!doc.s3Key?.startsWith(applicantPrefix)) {
+        throw new HttpError(
+          422,
+          "Document was not uploaded by this applicant",
+          "INVALID_DOCUMENT_KEY",
+        );
+      }
+      if (!documentTypes.includes(doc.type)) {
+        throw new HttpError(422, `Unknown document type: ${doc.type}`, "INVALID_DOCUMENT_TYPE");
+      }
+    }
 
     // Generate unique slug
     let slug = generateSlug(data.businessName);
@@ -87,10 +108,13 @@ export class VendorService {
         slug,
         status: VendorStatus.pending,
         business_name: data.businessName,
-        business_type: "general",
+        business_type: data.businessType || "general",
         contact_email: data.businessEmail,
         contact_phone: data.businessPhone,
         vat_number: data.taxRegistrationNumber ?? null,
+        trade_license_number: data.tradeLicenseNumber ?? null,
+        website_url: data.websiteUrl || null,
+        description: data.description || null,
         address: data.businessAddress,
       };
 
@@ -101,6 +125,7 @@ export class VendorService {
         if (!existing) throw new HttpError(404, "Vendor not found", "VENDOR_NOT_FOUND");
         Object.assign(existing, vendorData);
         existing.status = "pending" as any;
+        existing.rejection_reason = null;
         existing.deleted_at = null;
         vendor = await manager.save(Vendor, existing);
 
@@ -142,6 +167,40 @@ export class VendorService {
 
       return vendor;
     });
+  }
+
+  /**
+   * The applicant's own view of their latest vendor application, or null when
+   * they have never applied. Readable before approval, when the user has no
+   * active membership yet and the vendor dashboard is closed to them.
+   */
+  async findApplicationByUserId(userId: string) {
+    const rows = (await AppDataSource.query(
+      `SELECT v.id, v.name, v.status, v.rejection_reason, v.business_type,
+              v.trade_license_number, v.contact_phone, v.address, v.website_url,
+              v.description, v.created_at, v.updated_at
+         FROM vendors v
+         JOIN vendor_members vm ON vm.vendor_id = v.id
+        WHERE vm.user_id = $1 AND vm.role = 'owner' AND vm.deleted_at IS NULL
+          AND v.deleted_at IS NULL
+        ORDER BY v.created_at DESC
+        LIMIT 1`,
+      [userId],
+    )) as Array<{
+      id: string;
+      name: string;
+      status: string;
+      rejection_reason: string | null;
+      business_type: string;
+      trade_license_number: string | null;
+      contact_phone: string;
+      address: Record<string, unknown> | null;
+      website_url: string | null;
+      description: string | null;
+      created_at: Date;
+      updated_at: Date;
+    }>;
+    return rows[0] ?? null;
   }
 
   async findById(id: string) {
@@ -245,14 +304,18 @@ export class VendorService {
       vendor.verified_at = new Date();
       // Phase 3b: applicant is the user_id on the pending owner membership row
       // (created in apply()). Activate that row; no need to read vendor.user_id.
-      const ownerRows = (await AppDataSource.query(
+      const result = await AppDataSource.query(
         `UPDATE vendor_members
             SET status = 'active', accepted_at = NOW(), updated_at = NOW()
           WHERE vendor_id = $1 AND role = 'owner' AND deleted_at IS NULL
             AND status IN ('pending', 'active')
         RETURNING user_id`,
         [vendor.id],
-      )) as Array<{ user_id: string | null }>;
+      );
+      // TypeORM's postgres driver returns [rows, rowCount] for UPDATE.
+      const ownerRows = (Array.isArray(result[0]) ? result[0] : result) as Array<{
+        user_id: string | null;
+      }>;
       const ownerUserId = ownerRows[0]?.user_id ?? null;
       if (!ownerUserId) {
         throw new HttpError(

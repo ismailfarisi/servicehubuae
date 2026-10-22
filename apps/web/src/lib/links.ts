@@ -3,9 +3,16 @@
  * both server and client components can import it.
  */
 
-/** Results page for a free-text query: the service listing filtered by `q`. */
-export function searchResultsHref(locale: string, q: string): string {
-	return `/${locale}/services?q=${encodeURIComponent(q)}`;
+/**
+ * Results page for a free-text query: the service listing filtered by `q`,
+ * and by `area` (an area slug) when one is picked. Either may be empty.
+ */
+export function searchResultsHref(locale: string, q: string, area = ""): string {
+	const params = [
+		q && `q=${encodeURIComponent(q)}`,
+		area && `area=${encodeURIComponent(area)}`,
+	].filter(Boolean);
+	return `/${locale}/services${params.length ? `?${params.join("&")}` : ""}`;
 }
 
 /** Service listing filtered to one category (replaces the old /c/:slug pages). */

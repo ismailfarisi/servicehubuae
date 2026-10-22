@@ -209,8 +209,7 @@ export class SupportService {
         "assignedToUser.first_name",
         "assignedToUser.last_name",
       ])
-      .leftJoin("t.order", "order")
-      .addSelect(["order.id", "order.order_number"])
+      // booking_id is a plain column (no relation), so it comes back as-is.
       .where("t.id = :id", { id: ticketId })
       .getOne();
     if (!ticket) throw new HttpError(404, "Ticket not found", "TICKET_NOT_FOUND");

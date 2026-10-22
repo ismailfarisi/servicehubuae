@@ -7,16 +7,19 @@ import {
 export const metadata: Metadata = {
 	title: "Press & Media — MyPickUAE",
 	description:
-		"Press contacts, brand assets and the MyPickUAE story for journalists, partners and creators.",
+		"Press contacts, brand assets and the MyPickUAE story for journalists, partners and creators covering the UAE services market.",
 };
 
 const FACTS = [
-	{ k: "Founded", v: "2025, Dubai" },
 	{ k: "Headquarters", v: "Dubai, United Arab Emirates" },
-	{ k: "Markets", v: "UAE (Dubai, Abu Dhabi, Sharjah)" },
-	{ k: "Categories", v: "Skincare · Makeup · Fragrance · Hair · Body · Wellness · Tools" },
-	{ k: "Languages", v: "Arabic · English · Hindi · Urdu · Malayalam" },
-	{ k: "Marketplace model", v: "Curated multi-vendor beauty marketplace" },
+	{ k: "Market", v: "United Arab Emirates" },
+	{
+		k: "Services",
+		v: "440+ services across home maintenance, cleaning, beauty & wellness, pest control & pets, fit-out and business services",
+	},
+	{ k: "Ways to book", v: "Instant slot booking · Quotations from up to 3 vendors" },
+	{ k: "Languages", v: "Arabic · English" },
+	{ k: "Marketplace model", v: "Multi-vendor services marketplace" },
 ];
 
 export default function PressPage() {
@@ -28,11 +31,12 @@ export default function PressPage() {
 		>
 			<StaticSection heading="The short version">
 				<p>
-					MyPickUAE is a UAE-based multi-vendor beauty marketplace. We work
-					directly with skincare, makeup, fragrance and wellness brands —
-					regional founders and global houses — to bring authentic stock
-					to Gulf customers with hyperlocal same-day delivery, Arabic-first
-					commerce, and BNPL options native to the region.
+					MyPickUAE is a UAE-based services marketplace. Customers browse
+					a catalogue of everyday and specialist services, compare
+					independent vendors side by side, and either book a time slot
+					straight away or request quotations and chat with vendors before
+					choosing. Vendors manage their listings, availability, bookings
+					and quotations in one dashboard.
 				</p>
 			</StaticSection>
 
@@ -54,8 +58,8 @@ export default function PressPage() {
 
 			<StaticSection heading="Media contacts">
 				<p>
-					Press, interviews and regional beauty commentary, plus brand
-					partnerships, creator collaborations and retail tie-ins:{" "}
+					Press, interviews and commentary on the UAE services market,
+					plus vendor partnerships and creator collaborations:{" "}
 					<a
 						href="mailto:info@mypickuae.com"
 						className="font-medium text-nl-amber-text hover:underline"
@@ -67,7 +71,7 @@ export default function PressPage() {
 
 			<StaticSection heading="Brand assets">
 				<p>
-					Logo lockups, founder portraits and approved photography are
+					Logo lockups, product screenshots and approved photography are
 					available on request. Please email{" "}
 					<a
 						href="mailto:info@mypickuae.com"

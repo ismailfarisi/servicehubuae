@@ -21,21 +21,33 @@ export class VendorController {
       businessPhone: body.business_phone,
       businessAddress: body.business_address,
       taxRegistrationNumber: body.tax_registration_number,
-      documents: body.documents,
-      bankAccount: body.bank_account,
+      tradeLicenseNumber: body.trade_license_number,
+      businessType: body.business_type,
+      websiteUrl: body.website_url,
+      description: body.description,
+      documents: body.documents.map((doc: { type: string; s3_key: string }) => ({
+        type: doc.type,
+        s3Key: doc.s3_key,
+      })),
     });
 
-    // Create initial bank account
-    await this.bankAccountService.create(vendor.id, {
-      bankName: body.bank_account.bank_name,
-      accountHolderName: body.bank_account.account_holder_name,
-      accountNumber: body.bank_account.account_number,
-      iban: body.bank_account.iban,
-      swiftCode: body.bank_account.swift_code,
-      currency: body.bank_account.currency,
-    });
+    // Bank details are optional at apply time; vendors can add them in Settings.
+    if (body.bank_account) {
+      await this.bankAccountService.create(vendor.id, {
+        bankName: body.bank_account.bank_name,
+        accountHolderName: body.bank_account.account_holder_name,
+        accountNumber: body.bank_account.account_number,
+        iban: body.bank_account.iban,
+        swiftCode: body.bank_account.swift_code,
+        currency: body.bank_account.currency,
+      });
+    }
 
     return vendor;
+  }
+
+  async getApplication(userId: string) {
+    return this.vendorService.findApplicationByUserId(userId);
   }
 
   async getProfile(userId: string) {
@@ -51,7 +63,12 @@ export class VendorController {
   }
 
   async approve(vendorId: string, adminId: string, message?: string) {
-    const _vendor = await this.vendorService.transition(vendorId, "under_review");
+    // Pending applications pass through under_review; under_review and
+    // suspended (reactivation) vendors approve directly.
+    const vendor = await this.vendorService.findById(vendorId);
+    if (vendor.status === "pending") {
+      await this.vendorService.transition(vendorId, "under_review");
+    }
     const approved = await this.vendorService.transition(vendorId, "approved", adminId);
     // Phase 3b: owner identity is in vendor_members, not on the vendor row.
     const ownerUserId = await this.vendorService.findOwnerUserId(approved.id);
