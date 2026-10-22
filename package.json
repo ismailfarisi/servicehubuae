@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "turbo run dev --concurrency 15",
     "dev:local": "bun scripts/dev-local.ts",
+    "prod:local": "bun scripts/dev-local.ts --prod",
     "dev:web": "turbo run dev --filter=@mypickuae/web",
     "dev:vendor": "turbo run dev --filter=@mypickuae/vendor-dashboard",
     "dev:admin": "turbo run dev --filter=@mypickuae/admin-panel",

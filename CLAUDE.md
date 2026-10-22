@@ -38,6 +38,7 @@ bun install
 docker compose -f backend/docker-compose.yml up postgres redis   # or point backend/.env at a running Postgres
 cd backend/libs/database && bun run migrate && bun run src/seeds/index.ts
 bun run dev:local                            # one command: docker infra + migrate + seed + search index + all services + apps
+bun run prod:local                           # same, but production builds of the apps (fast pages, low memory, no hot reload)
 bun run dev                                  # all services + apps (turbo), infra already running
 cd backend && bunx --bun @biomejs/biome@1.9.4 check .   # lint before push
 cd backend/apps/<service> && bun test        # unit tests; integration tests need BOOKING_LIVE_DB=1 and a live DB

@@ -1,8 +1,9 @@
 #!/usr/bin/env bun
 /**
- * One-command local dev launcher.
+ * One-command local launcher.
  *
  *   bun scripts/dev-local.ts            # infra + migrations + seed + search + all services + 3 web apps
+ *   bun scripts/dev-local.ts --prod     # same, but production builds of the web apps (`bun run prod:local`)
  *   bun scripts/dev-local.ts --no-web   # backend only
  *   bun scripts/dev-local.ts --reindex  # force a full Typesense service_offerings reindex first
  *   bun scripts/dev-local.ts --stop     # stop the docker infra containers
@@ -19,9 +20,13 @@
  *  5. Start every backend service and the web, vendor and admin apps through
  *     turbo with `--env-mode=loose`. Turbo 2's strict mode would drop
  *     undeclared vars such as DB_PORT.
+ *     With --prod: `next build` the three apps through turbo (cached, so an
+ *     unchanged app is not rebuilt), then run each backend service from source
+ *     without file watching and each app with `next start`. Faster pages and
+ *     far less memory than dev, but no hot reload.
  * Ctrl+C stops the services. The docker infra keeps running (use --stop).
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { connect } from "node:net";
 import { join } from "node:path";
 
@@ -29,6 +34,12 @@ const ROOT = join(import.meta.dir, "..");
 const BACKEND = join(ROOT, "backend");
 const BUN = process.execPath;
 const args = new Set(process.argv.slice(2));
+const PROD = args.has("--prod");
+const WEB_APPS = [
+	{ name: "web", pkg: "@mypickuae/web", port: 4000 },
+	{ name: "vendor-dashboard", pkg: "@mypickuae/vendor-dashboard", port: 4001 },
+	{ name: "admin-panel", pkg: "@mypickuae/admin-panel", port: 4002 },
+];
 const INFRA = [
 	"postgres",
 	"redis",
@@ -269,9 +280,7 @@ if (
 			"reindex failed",
 			(reindex.err || reindex.out).trim().split("\n").slice(-8).join("\n    "),
 		);
-	ok(
-		reindex.out.match(/Reindexed .*/)?.[0] ?? "service_offerings reindexed",
-	);
+	ok(reindex.out.match(/Reindexed .*/)?.[0] ?? "service_offerings reindexed");
 } else {
 	ok(
 		`service_offerings collection has ${servicesCollection.num_documents} document(s) (use --reindex to rebuild)`,
@@ -279,39 +288,14 @@ if (
 }
 
 // ── 5. Services ───────────────────────────────────────────────────────────
-step("Starting services (Ctrl+C to stop)");
-const filters = ["--filter=./backend/apps/*"];
-if (!args.has("--no-web")) {
-	filters.push(
-		"--filter=@mypickuae/web",
-		"--filter=@mypickuae/vendor-dashboard",
-		"--filter=@mypickuae/admin-panel",
-	);
-}
-const services = Bun.spawn(
-	[
-		BUN,
-		"x",
-		"turbo",
-		"run",
-		"dev",
-		...filters,
-		"--concurrency",
-		"20",
-		"--env-mode=loose",
-	],
-	{ cwd: ROOT, env, stdout: "inherit", stderr: "inherit", stdin: "inherit" },
-);
-const stop = () => services.kill();
-process.on("SIGINT", stop);
-process.on("SIGTERM", stop);
+const withWeb = !args.has("--no-web");
 
-// Announce once the gateway (and web apps) answer; turbo keeps streaming logs.
-(async () => {
+// Announce once the gateway (and web apps) answer; logs keep streaming.
+async function announce() {
 	const targets: [string, string][] = [
 		["API gateway", "http://localhost:3000/health"],
 	];
-	if (!args.has("--no-web")) {
+	if (withWeb) {
 		targets.push(
 			["Storefront", "http://localhost:4000/en"],
 			["Vendor dashboard", "http://localhost:4001/"],
@@ -325,7 +309,8 @@ process.on("SIGTERM", stop);
 			await Bun.sleep(2000);
 		}
 	}
-	console.log(`\n${c.green}${c.bold}✓ MyPickUAE is running${c.off}`);
+	const mode = PROD ? " (production build)" : "";
+	console.log(`\n${c.green}${c.bold}✓ MyPickUAE is running${mode}${c.off}`);
 	for (const [name, url] of targets)
 		console.log(`  ${name.padEnd(17)} ${url.replace(/\/health$/, "")}`);
 	console.log(
@@ -337,6 +322,150 @@ process.on("SIGTERM", stop);
 	if (existsSync(join(ROOT, "local-credentials.md"))) {
 		console.log(`  ${c.dim}Logins: see local-credentials.md${c.off}`);
 	}
-})();
+}
 
-process.exit(await services.exited);
+if (!PROD) {
+	step("Starting services (Ctrl+C to stop)");
+	const filters = ["--filter=./backend/apps/*"];
+	if (withWeb) filters.push(...WEB_APPS.map((a) => `--filter=${a.pkg}`));
+	const services = Bun.spawn(
+		[
+			BUN,
+			"x",
+			"turbo",
+			"run",
+			"dev",
+			...filters,
+			"--concurrency",
+			"20",
+			"--env-mode=loose",
+		],
+		{ cwd: ROOT, env, stdout: "inherit", stderr: "inherit", stdin: "inherit" },
+	);
+	const stop = () => services.kill();
+	process.on("SIGINT", stop);
+	process.on("SIGTERM", stop);
+	announce();
+	process.exit(await services.exited);
+}
+
+// --prod: Next must see NODE_ENV=production (backend/.env says development),
+// and LOCAL_MEDIA lets the build accept the local S3 / Stream image hosts.
+const nextEnv: Record<string, string | undefined> = {
+	...env,
+	NODE_ENV: undefined,
+	LOCAL_MEDIA: "1",
+};
+
+if (withWeb) {
+	step("Building web apps (production)");
+	const build = Bun.spawn(
+		[
+			BUN,
+			"x",
+			"turbo",
+			"run",
+			"build",
+			...WEB_APPS.map((a) => `--filter=${a.pkg}`),
+			"--env-mode=loose",
+		],
+		{ cwd: ROOT, env: nextEnv, stdout: "inherit", stderr: "inherit" },
+	);
+	if ((await build.exited) !== 0)
+		fail("web app build failed (see output above)");
+	ok("web apps built");
+}
+
+step("Starting services (Ctrl+C to stop)");
+const procs: { name: string; proc: ReturnType<typeof Bun.spawn> }[] = [];
+
+async function pipeLines(stream: ReadableStream<Uint8Array>, prefix: string) {
+	const decoder = new TextDecoder();
+	let buf = "";
+	for await (const chunk of stream) {
+		buf += decoder.decode(chunk, { stream: true });
+		let nl = buf.indexOf("\n");
+		while (nl >= 0) {
+			process.stdout.write(`${prefix}${buf.slice(0, nl)}\n`);
+			buf = buf.slice(nl + 1);
+			nl = buf.indexOf("\n");
+		}
+	}
+	if (buf) process.stdout.write(`${prefix}${buf}\n`);
+}
+
+function start(
+	name: string,
+	cmd: string[],
+	cwd: string,
+	procEnv: Record<string, string | undefined>,
+) {
+	const proc = Bun.spawn(cmd, {
+		cwd,
+		env: procEnv,
+		stdout: "pipe",
+		stderr: "pipe",
+	});
+	const prefix = `${c.dim}${name.padEnd(20)}│${c.off} `;
+	pipeLines(proc.stdout, prefix);
+	pipeLines(proc.stderr, prefix);
+	procs.push({ name, proc });
+}
+
+// Each service runs from source without --watch (Bun executes TypeScript
+// directly; the bundled `start` scripts are not used locally).
+const backendApps = readdirSync(join(BACKEND, "apps"), { withFileTypes: true })
+	.filter(
+		(d) =>
+			d.isDirectory() &&
+			existsSync(join(BACKEND, "apps", d.name, "src/index.ts")),
+	)
+	.map((d) => d.name);
+for (const app of backendApps) {
+	start(app, [BUN, "run", "src/index.ts"], join(BACKEND, "apps", app), env);
+}
+if (withWeb) {
+	for (const app of WEB_APPS) {
+		start(
+			app.name,
+			[BUN, "x", "next", "start", "--port", String(app.port)],
+			join(ROOT, "apps", app.name),
+			nextEnv,
+		);
+	}
+}
+
+// On Windows a plain kill leaves `next start`'s node child running, so stop
+// whole process trees.
+function stopAll() {
+	for (const { proc } of procs) {
+		if (proc.exitCode !== null) continue;
+		if (process.platform === "win32") {
+			Bun.spawnSync(["taskkill", "/PID", String(proc.pid), "/T", "/F"], {
+				stdout: "ignore",
+				stderr: "ignore",
+			});
+		} else {
+			proc.kill();
+		}
+	}
+}
+process.on("SIGINT", () => {
+	stopAll();
+	process.exit(0);
+});
+process.on("SIGTERM", () => {
+	stopAll();
+	process.exit(0);
+});
+
+announce();
+// Like turbo: if any process dies, stop the rest so nothing is left half-up.
+const first = await Promise.race(
+	procs.map(({ name, proc }) => proc.exited.then((code) => ({ name, code }))),
+);
+console.error(
+	`\n  ${c.red}✗ ${first.name} exited (${first.code}); stopping everything${c.off}`,
+);
+stopAll();
+process.exit(first.code || 1);
