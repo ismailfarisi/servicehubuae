@@ -1,16 +1,10 @@
 import { useAuthModalStore } from "@/stores/auth-modal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { act, render, waitFor } from "@testing-library/react";
+import { act, render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import messages from "../../messages/en.json";
 import { AuthModal } from "./auth-modal";
-
-const mockFire = vi.fn();
-
-vi.mock("@/lib/channels/use-channel-events", () => ({
-  useChannelEvents: () => ({ fire: mockFire }),
-}));
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
@@ -35,7 +29,6 @@ function renderModal() {
 
 describe("AuthModal", () => {
   beforeEach(() => {
-    mockFire.mockReset();
     useAuthModalStore.setState({
       isOpen: false,
       mode: "login",
@@ -43,24 +36,19 @@ describe("AuthModal", () => {
     });
   });
 
-  test("fires AuthModalOpen channel event when modal opens", async () => {
+  test("shows the phone sign-in form when the modal opens", async () => {
     renderModal();
 
-    expect(mockFire).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: /send code/i })).not.toBeInTheDocument();
 
     act(() => {
       useAuthModalStore.setState({
         isOpen: true,
         mode: "login",
-        returnTo: "/checkout",
+        returnTo: "/account/bookings",
       });
     });
 
-    await waitFor(() => {
-      expect(mockFire).toHaveBeenCalledWith("AuthModalOpen", {
-        mode: "login",
-        returnTo: "/checkout",
-      });
-    });
+    expect(await screen.findByRole("button", { name: /send code/i })).toBeInTheDocument();
   });
 });

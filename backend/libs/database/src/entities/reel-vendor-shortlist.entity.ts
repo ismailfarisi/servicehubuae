@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -13,6 +14,12 @@ import type { User } from "./user.entity.ts";
 import type { Vendor } from "./vendor.entity.ts";
 
 @Entity("reel_vendor_shortlists")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_reel_vendor_shortlists_vendor", ["vendor_id"], { where: "deleted_at IS NULL" })
+@Index("uq_reel_vendor_shortlists_active", ["vendor_id", "reel_id"], {
+  unique: true,
+  where: "deleted_at IS NULL",
+})
 export class ReelVendorShortlist {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

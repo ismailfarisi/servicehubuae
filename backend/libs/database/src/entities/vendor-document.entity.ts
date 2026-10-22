@@ -53,7 +53,7 @@ export class VendorDocument {
   @Column({ type: "uuid", nullable: true })
   verified_by!: string | null;
 
-  @ManyToOne("User", { nullable: true })
+  @ManyToOne("User", { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "verified_by" })
   verifiedByUser!: User | null;
 

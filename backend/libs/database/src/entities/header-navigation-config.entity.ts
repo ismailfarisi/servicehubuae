@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -49,6 +50,11 @@ export interface HeaderNavConfig {
 }
 
 @Entity("header_navigation_configs")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("uniq_header_nav_published", ["status"], {
+  unique: true,
+  where: "status = 'published' AND deleted_at IS NULL",
+})
 export class HeaderNavigationConfig {
   @PrimaryGeneratedColumn("uuid") id!: string;
   @Column({ type: "integer", default: 1 }) version!: number;

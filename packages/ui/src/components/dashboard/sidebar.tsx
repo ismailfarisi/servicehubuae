@@ -57,10 +57,10 @@ function NavLink({
 		<Link
 			href={item.href}
 			className={cn(
-				"flex items-center gap-3 px-3 py-2 rounded-sm text-sm font-medium transition-colors",
+				"flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
 				isActive
-					? "bg-amber/10 text-amber border-l-2 border-amber"
-					: "text-pearl hover:bg-pearl/10 hover:text-linen",
+					? "bg-accent text-amber font-semibold"
+					: "text-taupe hover:bg-background hover:text-cacao",
 				indented && !collapsed && "pl-10",
 			)}
 			title={collapsed ? item.label : undefined}
@@ -73,7 +73,7 @@ function NavLink({
 						<span
 							className={cn(
 								"ml-auto text-xs font-semibold px-2 py-0.5 rounded-full",
-								isActive ? "bg-amber/20 text-amber" : "bg-pearl/20 text-pearl",
+								isActive ? "bg-amber text-linen" : "bg-pearl text-taupe",
 							)}
 						>
 							{item.badge}
@@ -113,10 +113,10 @@ function NavGroup({
 			<Link
 				href={firstChild?.href ?? "#"}
 				className={cn(
-					"flex items-center justify-center px-3 py-2 rounded-sm text-sm font-medium transition-colors",
+					"flex items-center justify-center px-3 py-2 rounded-md text-sm font-medium transition-colors",
 					isChildActive
-						? "bg-amber/10 text-amber border-l-2 border-amber"
-						: "text-pearl hover:bg-pearl/10 hover:text-linen",
+						? "bg-accent text-amber font-semibold"
+						: "text-taupe hover:bg-background hover:text-cacao",
 				)}
 				title={group.label}
 			>
@@ -131,10 +131,10 @@ function NavGroup({
 				type="button"
 				onClick={() => setOpen((o) => !o)}
 				className={cn(
-					"w-full flex items-center gap-3 px-3 py-2 rounded-sm text-sm font-medium transition-colors",
+					"w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
 					isChildActive
 						? "text-amber"
-						: "text-pearl hover:bg-pearl/10 hover:text-linen",
+						: "text-taupe hover:bg-background hover:text-cacao",
 				)}
 			>
 				<span className="flex-shrink-0">{group.icon}</span>
@@ -178,12 +178,12 @@ export function Sidebar({
 					type="button"
 					aria-label="Close menu"
 					onClick={onMobileClose}
-					className="fixed inset-0 z-40 bg-espresso/50 lg:hidden"
+					className="fixed inset-0 z-40 bg-espresso/40 backdrop-blur-sm lg:hidden"
 				/>
 			)}
 			<aside
 				className={cn(
-					"flex flex-col h-full bg-cacao border-r border-pearl/14 transition-all duration-300",
+					"flex flex-col h-full bg-linen border-r border-pearl transition-all duration-300",
 					// Mobile: fixed slide-in drawer, full width
 					"fixed inset-y-0 left-0 z-50 w-64",
 					mobileOpen ? "translate-x-0" : "-translate-x-full",
@@ -193,17 +193,17 @@ export function Sidebar({
 				)}
 			>
 				{/* App name / logo */}
-				<div className="flex items-center gap-2 px-6 py-5 border-b border-pearl/14 overflow-hidden">
-					<span className="flex-shrink-0 w-8 h-8 rounded-lg bg-amber flex items-center justify-center text-espresso font-bold text-sm">
+				<div className="flex items-center gap-2 px-6 py-5 border-b border-pearl overflow-hidden">
+					<span className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-amber to-caramel flex items-center justify-center text-linen font-bold text-sm shadow-sm">
 						{appName.charAt(0).toUpperCase()}
 					</span>
 					{!collapsed && (
 						<div className="flex flex-col min-w-0">
-							<span className="font-semibold text-sm text-amber truncate">
+							<span className="font-semibold text-sm text-cacao truncate">
 								{appName}
 							</span>
 							{roleBadge && (
-								<span className="text-xs text-pearl truncate">{roleBadge}</span>
+								<span className="text-xs text-taupe truncate">{roleBadge}</span>
 							)}
 						</div>
 					)}
@@ -231,11 +231,11 @@ export function Sidebar({
 				</nav>
 
 				{/* Toggle button */}
-				<div className="border-t border-pearl/14 p-2 hidden lg:block">
+				<div className="border-t border-pearl p-2 hidden lg:block">
 					<button
 						type="button"
 						onClick={onToggle}
-						className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-sm text-sm text-pearl hover:bg-pearl/10 hover:text-linen transition-colors"
+						className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm text-taupe hover:bg-background hover:text-cacao transition-colors"
 						aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
 					>
 						{collapsed ? (

@@ -26,7 +26,7 @@ export function AuthoritySelector({ label, value, onChange }: AuthoritySelectorP
               className={[
                 "px-4 py-1.5 rounded-full text-sm font-medium capitalize",
                 "transition-colors duration-200",
-                active ? "bg-amber text-espresso" : "bg-pearl/30 text-cacao hover:bg-pearl/50",
+                active ? "bg-amber text-linen" : "bg-pearl/30 text-cacao hover:bg-pearl/50",
               ].join(" ")}
             >
               {opt.charAt(0).toUpperCase() + opt.slice(1)}

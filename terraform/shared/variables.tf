@@ -19,8 +19,7 @@ variable "services" {
   default = [
     "api-gateway",
     "auth-service",
-    "product-service",
-    "order-service",
+    "catalog-service",
     "vendor-service",
     "notification-service",
     "cms-service",

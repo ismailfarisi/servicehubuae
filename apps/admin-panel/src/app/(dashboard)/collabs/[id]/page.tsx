@@ -21,7 +21,8 @@ function formatDate(iso: string | null) {
 }
 
 const TYPE_LABEL: Record<string, string> = {
-	product_seeding: "Product Seeding",
+	// No longer creatable (products are gone); kept so older rows still read well.
+	product_seeding: "Product Seeding (legacy)",
 	paid_campaign: "Paid Campaign",
 	event_appearance: "Event Appearance",
 };
@@ -80,15 +81,6 @@ export default function CollabDetailPage() {
 					<Field label="Visibility" value={opportunity.visibility} />
 					<Field label="Slots" value={`${opportunity.slots_filled} / ${opportunity.slots_total}`} />
 					<Field label="Created" value={formatDate(opportunity.created_at)} />
-					{opportunity.type === "product_seeding" && (
-						<>
-							<Field
-								label="Seeded Product"
-								value={opportunity.seeded_product_name ?? opportunity.seeded_product_id ?? "—"}
-							/>
-							<Field label="Qty per Creator" value={opportunity.seeded_qty ?? "—"} />
-						</>
-					)}
 					{(opportunity.type === "paid_campaign" || opportunity.type === "event_appearance") && (
 						<Field
 							label="Fee"

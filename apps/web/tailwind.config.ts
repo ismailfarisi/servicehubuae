@@ -13,8 +13,11 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        serif: ["var(--font-playfair)", "Playfair Display", "Georgia", "serif"],
-        sans: ["var(--font-dm-sans)", "DM Sans", "system-ui", "sans-serif"],
+        sans: ["var(--font-inter)", "var(--font-arabic)", "system-ui", "sans-serif"],
+        // Headings. `serif` is kept as an alias so any leftover font-serif
+        // renders in the modern display face instead of a serif.
+        display: ["var(--font-jakarta)", "var(--font-arabic)", "system-ui", "sans-serif"],
+        serif: ["var(--font-jakarta)", "var(--font-arabic)", "system-ui", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -63,6 +66,7 @@ const config: Config = {
           cacao: "hsl(var(--nl-cacao))",
           russet: "hsl(var(--nl-russet))",
           amber: "hsl(var(--nl-amber))",
+          "amber-text": "hsl(var(--nl-amber-text))",
           espresso: "hsl(var(--nl-espresso))",
         },
       },
@@ -70,6 +74,8 @@ const config: Config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        xl: "calc(var(--radius) + 4px)",
+        "2xl": "calc(var(--radius) + 8px)",
       },
     },
   },

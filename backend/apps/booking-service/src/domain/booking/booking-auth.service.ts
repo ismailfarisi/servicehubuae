@@ -7,25 +7,21 @@
 // can never expire before `completed` captures it (Stripe card
 // authorizations are valid ~7 days).
 //
-// Money boundary (spec §3): this NEVER talks to Stripe directly — it calls
-// `BookingPaymentClient.authorize()`, which is a thin HTTP wrapper around
-// order-service's `/internal/booking-payments/authorize` route (Task 2). The
-// one piece of Stripe-shaped data booking-service DOES read directly is the
-// `payments` row itself (`stripe_customer_id`/`payment_method_id` inside
-// `gateway_response`) — booking-service and order-service already share one
-// Postgres instance and booking-reaper.service.ts already reads
-// `payments.gateway_payment_id` the same way to resolve a deposit's PI id.
-// That is a read of already-stored, non-money data, not a write and not a
-// Stripe call.
+// Money boundary: this NEVER talks to a payment provider directly — it calls
+// `BookingPaymentGateway.authorize()`. The one piece of card data
+// booking-service DOES read directly is the `payments` row itself (the saved
+// customer/payment-method ids inside `gateway_response`), the same way
+// booking-reaper.service.ts reads `payments.gateway_payment_id` to resolve a
+// deposit's payment id. That is a read of already-stored, non-money data, not
+// a write and not a provider call. Until online payments ship (M2) no prepay
+// booking can be created, so this job has nothing to authorize.
 import { config } from "@mypickuae/config";
 import type { Booking } from "@mypickuae/database";
 import { BookingStatus, NotificationType, ServicePaymentMode } from "@mypickuae/database";
 import type {
-  BookingPaymentAuthorizeInput,
   BookingPaymentAuthorizeResult,
-  BookingPaymentVoidInput,
-  BookingPaymentVoidResult,
-} from "./booking-payment.client.ts";
+  BookingPaymentGateway,
+} from "./booking-payment.gateway.ts";
 
 // ─── Fire-time math (pure — no Date.now() here; the caller stamps "now" at
 // the edge when it schedules, per the Phase 4 plan's Self-Review checklist) ──
@@ -206,7 +202,7 @@ export function authSupportsCaptureDeadline(authCreatedAt: Date, captureDeadline
 }
 
 // ─── DI seams (narrow interfaces so this file never imports the concrete
-// BookingStatusService/BookingPaymentClient/TypeORM Repository classes —
+// BookingStatusService/payment gateway/TypeORM Repository classes —
 // booking-status.service.ts injects itself as a StatusTransitioner and vice
 // versa via BookingAuthHook, avoiding a circular module import between the
 // two files) ─────────────────────────────────────────────────────────────
@@ -220,14 +216,10 @@ export interface StatusTransitioner {
   ): Promise<Booking>;
 }
 
-export interface AuthPaymentClient {
-  authorize(input: BookingPaymentAuthorizeInput): Promise<BookingPaymentAuthorizeResult>;
-  // Task 3 (reschedule): voids a stale authorization whose validity a
-  // far-future reschedule has outrun, before re-entering the standard auth
-  // scheduling path. The real BookingPaymentClient.void already has this
-  // exact shape (order-service /internal/booking-payments/void).
-  void(input: BookingPaymentVoidInput): Promise<BookingPaymentVoidResult>;
-}
+// authorize() for the off-session auth job; void() (Task 3, reschedule) for a
+// stale authorization whose validity a far-future reschedule has outrun,
+// before re-entering the standard auth scheduling path.
+export type AuthPaymentClient = Pick<BookingPaymentGateway, "authorize" | "void">;
 
 export interface BookingAuthQueueLike {
   add(
@@ -637,7 +629,7 @@ export class BookingAuthService {
     // never schedules THIS job for one) and never has a payment_id, so the
     // `!saved` branch above already returns first. Kept as an explicit guard
     // (not a cast) so a null customer_user_id fails loud here instead of
-    // silently reaching order-service with `userId: null`.
+    // silently reaching the payment gateway with `userId: null`.
     if (!booking.customer_user_id) {
       await this.handleAuthFailure(
         booking.id,
@@ -660,7 +652,7 @@ export class BookingAuthService {
         currency: "AED",
       });
     } catch (err) {
-      // Sync failure (network/order-service down/validation) — same failure
+      // Sync failure (network/gateway unavailable/validation) — same failure
       // path as a business-level decline.
       await this.handleAuthFailure(
         booking.id,
@@ -712,9 +704,8 @@ export class BookingAuthService {
     }
 
     // A business-outcome decline/SCA-required result, not a thrown error —
-    // BookingPaymentClient.authorize() (order-service's
-    // createBookingOffSessionAuthorization) deliberately returns these
-    // rather than throwing (see that method's docstring).
+    // BookingPaymentGateway.authorize() deliberately returns these rather
+    // than throwing.
     await this.handleAuthFailure(
       booking.id,
       result.failureReason ?? `Off-session authorization returned status "${result.status}"`,

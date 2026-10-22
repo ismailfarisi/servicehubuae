@@ -12,6 +12,11 @@ import { vendorRoutes } from "./routes/vendor.routes.ts";
 export const app = new Elysia()
   .use(requestLogger)
   .use(errorHandler)
+  .get("/health", () => ({
+    status: "ok",
+    service: "vendor-service",
+    timestamp: new Date().toISOString(),
+  }))
   .use(vendorRoutes)
   .use(vendorAdminRoutes)
   .use(rolePermissionsAdminRoutes)

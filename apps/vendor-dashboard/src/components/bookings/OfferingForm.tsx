@@ -1,6 +1,8 @@
 "use client";
 
 import { api } from "@/lib/api";
+import { s3UploadClient } from "@/lib/s3-upload-client";
+import { useActiveVendor } from "@/stores/active-vendor";
 import {
 	depositValueToFormUnits,
 	depositValueToPayloadUnits,
@@ -38,8 +40,9 @@ import {
 	Switch,
 	Textarea,
 	toast,
+	useS3Upload,
 } from "@mypickuae/ui";
-import { Plus, Trash } from "@phosphor-icons/react";
+import { ImageSquare, Plus, Trash } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -100,6 +103,24 @@ const CANCELLATION_POLICY_OPTIONS: Array<{
 	},
 ];
 
+// Card payments (prepay/deposit) need MyFatoorah (M2). Until the backend's
+// ONLINE_PAYMENTS_ENABLED is on it rejects any other mode with 422
+// "online_payment_unavailable", so the form only offers pay at venue. Flip
+// NEXT_PUBLIC_ONLINE_PAYMENTS_ENABLED=true together with the backend flag.
+const ONLINE_PAYMENTS_ENABLED =
+	process.env.NEXT_PUBLIC_ONLINE_PAYMENTS_ENABLED === "true";
+
+function isOnlinePaymentMode(mode: PaymentMode | undefined): boolean {
+	return mode === "prepay" || mode === "deposit";
+}
+
+const ONLINE_PAYMENT_UNAVAILABLE = "online_payment_unavailable";
+
+// Service photos reuse the vendor-scoped public image type (single WebP,
+// max 1920px); there is no dedicated service image type in ASSET_TYPE_CONFIG.
+const SERVICE_IMAGE_ASSET_TYPE = "vendor_banner" as const;
+const SERVICE_IMAGE_ACCEPT = "image/jpeg,image/png,image/webp";
+
 const LOCATION_MODE_OPTIONS: Array<{ value: LocationMode; label: string }> = [
 	{ value: "at_premises", label: "At premises" },
 	{ value: "home_visit", label: "Home visit" },
@@ -113,7 +134,7 @@ const DEPOSIT_TYPE_OPTIONS: Array<{ value: DepositType; label: string }> = [
 
 const NO_CATEGORY = "__none__";
 
-// These render as public media on the storefront once published — validate
+// These render as public media on the service page once published — validate
 // format client-side (task-4-review.md M-2). Blank rows are allowed (dropped
 // before the payload is built) and don't produce an error.
 const mediaUrlSchema = z.string().trim().url("Enter a valid URL, e.g. https://example.com/photo.jpg");
@@ -257,7 +278,9 @@ function defaultsFor(offering?: ServiceOffering): OfferingFormValues {
 			cancellation_window_hours: 24,
 			reschedule_window_hours: 24,
 			auto_approve: true,
-			payment_mode: undefined,
+			// No default while card payments are live (the vendor must choose);
+			// pay at venue is the only valid choice until then.
+			payment_mode: ONLINE_PAYMENTS_ENABLED ? undefined : "pay_at_venue",
 			deposit_type: "none",
 			deposit_value: 0,
 			cancellation_refund_policy: undefined,
@@ -386,6 +409,37 @@ export function OfferingForm({ offering, canWrite }: OfferingFormProps) {
 	const [mediaUrls, setMediaUrls] = useState<string[]>(offering?.media_urls ?? []);
 	const [categories, setCategories] = useState<Array<{ id: string; label: string }>>([]);
 
+	const activeVendorId = useActiveVendor((s) => s.activeVendorId);
+	const imageInputRef = useRef<HTMLInputElement>(null);
+	const {
+		upload: uploadImage,
+		isUploading: uploadingImage,
+		progress: uploadProgress,
+	} = useS3Upload({
+		assetType: SERVICE_IMAGE_ASSET_TYPE,
+		vendorId: activeVendorId ?? undefined,
+		client: s3UploadClient,
+	});
+
+	async function handleImageFile(file: File | undefined) {
+		if (!file) return;
+		try {
+			const result = await uploadImage(file);
+			if ("url" in result) {
+				setMediaUrls((prev) => [...prev, result.url]);
+			}
+		} catch (err: unknown) {
+			const e = err as { response?: { data?: { message?: string } }; message?: string };
+			toast({
+				title: "Could not upload image",
+				description: e?.response?.data?.message ?? e?.message ?? "Please try again.",
+				variant: "destructive",
+			});
+		} finally {
+			if (imageInputRef.current) imageInputRef.current.value = "";
+		}
+	}
+
 	useEffect(() => {
 		let cancelled = false;
 		api
@@ -462,10 +516,30 @@ export function OfferingForm({ offering, canWrite }: OfferingFormProps) {
 			}
 			router.push("/services");
 		} catch (err: unknown) {
-			const e = err as { response?: { data?: { message?: string } } };
+			const e = err as {
+				response?: {
+					status?: number;
+					data?: { message?: string; code?: string; error?: string };
+				};
+			};
+			const data = e?.response?.data;
+			const onlinePaymentRejected =
+				e?.response?.status === 422 &&
+				[data?.message, data?.code, data?.error].includes(ONLINE_PAYMENT_UNAVAILABLE);
+			if (onlinePaymentRejected) {
+				const message =
+					"Card payments are coming soon. Choose Pay at venue to save this service.";
+				form.setError("payment_mode", { type: "server", message });
+				toast({
+					title: "Card payments aren't available yet",
+					description: message,
+					variant: "destructive",
+				});
+				return;
+			}
 			toast({
 				title: "Could not save service",
-				description: e?.response?.data?.message ?? "Please try again.",
+				description: data?.message ?? "Please try again.",
 				variant: "destructive",
 			});
 		}
@@ -546,7 +620,7 @@ export function OfferingForm({ offering, canWrite }: OfferingFormProps) {
 								)}
 							/>
 							<div>
-								<Label className="mb-2 block">Media URLs</Label>
+								<Label className="mb-2 block">Photos</Label>
 								<div className="space-y-2">
 									{mediaUrls.map((url, i) => (
 										// biome-ignore lint/suspicious/noArrayIndexKey: list is append/remove only, no reordering
@@ -579,14 +653,36 @@ export function OfferingForm({ offering, canWrite }: OfferingFormProps) {
 											)}
 										</div>
 									))}
-									<Button
-										type="button"
-										variant="outline"
-										size="sm"
-										onClick={() => setMediaUrls([...mediaUrls, ""])}
-									>
-										<Plus size={14} className="mr-1" /> Add media URL
-									</Button>
+									<div className="flex flex-wrap items-center gap-2">
+										<Button
+											type="button"
+											variant="outline"
+											size="sm"
+											disabled={uploadingImage}
+											onClick={() => imageInputRef.current?.click()}
+										>
+											<ImageSquare size={14} className="mr-1" />
+											{uploadingImage ? `Uploading… ${uploadProgress}%` : "Upload image"}
+										</Button>
+										<Button
+											type="button"
+											variant="outline"
+											size="sm"
+											onClick={() => setMediaUrls([...mediaUrls, ""])}
+										>
+											<Plus size={14} className="mr-1" /> Add image URL
+										</Button>
+										<input
+											ref={imageInputRef}
+											type="file"
+											accept={SERVICE_IMAGE_ACCEPT}
+											className="hidden"
+											onChange={(e) => handleImageFile(e.target.files?.[0])}
+										/>
+									</div>
+									<p className="text-xs text-muted-foreground">
+										JPEG, PNG or WebP, up to 5 MB.
+									</p>
 								</div>
 							</div>
 						</CardContent>
@@ -761,7 +857,7 @@ export function OfferingForm({ offering, canWrite }: OfferingFormProps) {
 								control={form.control}
 								name="auto_approve"
 								render={({ field }) => (
-									<FormItem className="col-span-2 flex items-center justify-between rounded-lg border border-pearl/28 p-3">
+									<FormItem className="col-span-2 flex items-center justify-between rounded-lg border border-input p-3">
 										<div>
 											<FormLabel>Auto-approve bookings</FormLabel>
 											<p className="text-xs text-muted-foreground">
@@ -790,34 +886,51 @@ export function OfferingForm({ offering, canWrite }: OfferingFormProps) {
 								render={({ field }) => (
 									<FormItem>
 										<FormLabel>Payment mode *</FormLabel>
+										{!ONLINE_PAYMENTS_ENABLED && isOnlinePaymentMode(field.value) && (
+											<p className="rounded-lg border border-amber/30 bg-amber/10 px-3 py-2 text-xs text-cacao">
+												Card payments are coming soon. Switch this service to Pay at
+												venue to save your changes.
+											</p>
+										)}
 										<div className="space-y-2">
-											{PAYMENT_MODE_OPTIONS.map((opt) => (
-												<label
-													key={opt.value}
-													className={cn(
-														"flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors",
-														field.value === opt.value
-															? "border-amber bg-amber/10"
-															: "border-pearl/28",
-													)}
-												>
-													<input
-														type="radio"
-														name="payment_mode"
-														className="mt-1"
-														checked={field.value === opt.value}
-														onChange={() => field.onChange(opt.value)}
-													/>
-													<span>
-														<span className="block text-sm font-medium">
-															{opt.label}
+											{PAYMENT_MODE_OPTIONS.map((opt) => {
+												const unavailable =
+													!ONLINE_PAYMENTS_ENABLED && isOnlinePaymentMode(opt.value);
+												return (
+													<label
+														key={opt.value}
+														className={cn(
+															"flex items-start gap-3 rounded-lg border p-3 transition-colors",
+															unavailable ? "cursor-not-allowed opacity-60" : "cursor-pointer",
+															field.value === opt.value
+																? "border-amber bg-amber/10"
+																: "border-input",
+														)}
+													>
+														<input
+															type="radio"
+															name="payment_mode"
+															className="mt-1"
+															checked={field.value === opt.value}
+															disabled={unavailable}
+															onChange={() => field.onChange(opt.value)}
+														/>
+														<span>
+															<span className="block text-sm font-medium">
+																{opt.label}
+																{unavailable && (
+																	<span className="ml-2 text-xs font-normal text-muted-foreground">
+																		Card payments coming soon
+																	</span>
+																)}
+															</span>
+															<span className="block text-xs text-muted-foreground">
+																{opt.description}
+															</span>
 														</span>
-														<span className="block text-xs text-muted-foreground">
-															{opt.description}
-														</span>
-													</span>
-												</label>
-											))}
+													</label>
+												);
+											})}
 										</div>
 										<FormMessage />
 									</FormItem>
@@ -825,7 +938,7 @@ export function OfferingForm({ offering, canWrite }: OfferingFormProps) {
 							/>
 
 							{paymentMode === "deposit" && (
-								<div className="grid grid-cols-2 gap-4 rounded-lg border border-pearl/28 p-3">
+								<div className="grid grid-cols-2 gap-4 rounded-lg border border-input p-3">
 									<FormField
 										control={form.control}
 										name="deposit_type"
@@ -888,7 +1001,7 @@ export function OfferingForm({ offering, canWrite }: OfferingFormProps) {
 														"flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors",
 														field.value === opt.value
 															? "border-amber bg-amber/10"
-															: "border-pearl/28",
+															: "border-input",
 													)}
 												>
 													<input

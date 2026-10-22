@@ -3,6 +3,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +14,9 @@ import { PaymentMethod, PaymentStatus } from "../enums.ts";
 import type { User } from "./user.entity.ts";
 
 @Entity("payments")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("Booking", ["booking_id"], ["id"], { name: "fk_payments_booking" })
+@Index("idx_payments_booking", ["booking_id"], { where: "booking_id IS NOT NULL" })
 export class Payment {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

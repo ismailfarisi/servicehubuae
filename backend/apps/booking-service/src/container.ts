@@ -38,7 +38,6 @@ import {
 import { BookingAutoCompleteService } from "./domain/booking/booking-autocomplete.service.ts";
 import { BookingCompletionService } from "./domain/booking/booking-completion.service.ts";
 import { BookingHoldService } from "./domain/booking/booking-hold.service.ts";
-import { BookingPaymentClient } from "./domain/booking/booking-payment.client.ts";
 import { BookingQueryService } from "./domain/booking/booking-query.service.ts";
 import {
   createBookingReaperWorker,
@@ -55,6 +54,7 @@ import { BookingStatusService } from "./domain/booking/booking-status.service.ts
 import { BookingController } from "./domain/booking/booking.controller.ts";
 import { BookingService } from "./domain/booking/booking.service.ts";
 import { CancelService } from "./domain/booking/cancel.service.ts";
+import { LocalBookingPaymentGateway } from "./domain/booking/local-booking-payment.gateway.ts";
 import { NoShowService } from "./domain/booking/no-show.service.ts";
 import { RescheduleService, type VendorOwnerLookup } from "./domain/booking/reschedule.service.ts";
 import { StrikeService } from "./domain/booking/strike.service.ts";
@@ -65,6 +65,7 @@ import {
   scheduleIcalImport,
 } from "./domain/calendar/ical-import.job.ts";
 import { IcalImportService } from "./domain/calendar/ical-import.service.ts";
+import { BookingDashboardService } from "./domain/dashboard/booking-dashboard.service.ts";
 import { EngagementService } from "./domain/engagement/engagement.service.ts";
 import { LocationController } from "./domain/location/location.controller.ts";
 import { LocationService } from "./domain/location/location.service.ts";
@@ -166,12 +167,17 @@ const availabilityController = new AvailabilityController(availabilityService, o
 // offering-staff.controller.ts's header comment for the full rationale. ───
 const offeringStaffController = new OfferingStaffController(offeringRepo, staffService);
 
-// ─── Booking lifecycle (Task 6 state machine; Task 3 wires order-service's
-// webhook -> /internal/bookings/*/confirm|payment-failed to this) + Task 7b's
-// prepay off-session-auth job (booking-auth.service.ts/.job.ts). ───────────
+// ─── Booking lifecycle (Task 6 state machine; the payments webhook calls
+// /internal/bookings/*/confirm|payment-failed) + Task 7b's prepay
+// off-session-auth job (booking-auth.service.ts/.job.ts). ───────────────────
 const bookingRepo = AppDataSource.getRepository(Booking);
 const paymentRepo = AppDataSource.getRepository(Payment);
-const bookingPaymentClient = new BookingPaymentClient();
+// The money boundary. Until the MyFatoorah adapter (M2) ships, the local
+// gateway accrues commissions on completion and answers every card operation
+// with 503 online_payment_unavailable (see local-booking-payment.gateway.ts).
+const bookingPaymentClient = new LocalBookingPaymentGateway(
+  AppDataSource.query.bind(AppDataSource),
+);
 
 // BookingStatusService and BookingAuthService reference each other:
 // BookingStatusService.confirm()/handlePaymentFailed()/the cancelled|expired
@@ -264,8 +270,8 @@ const vendorOwnerLookup: VendorOwnerLookup = {
 };
 
 // ─── Booking completion (Task 9, spec §5.2 step 3 / §5.3 "On completed") —
-// captures the prepay authorization + accrues commission via order-service's
-// /internal/booking-payments/complete, then (Task 8) best-effort emits
+// captures the prepay authorization + accrues commission via the payment
+// gateway's complete(), then (Task 8) best-effort emits
 // booking_completed/booking_review_request to the customer. No value-level
 // cycle here (unlike bookingAuthHook/bookingAuthService above):
 // BookingCompletionService only needs paymentRepo + bookingPaymentClient +
@@ -314,9 +320,8 @@ const _bookingAutoCompleteWorker = createBookingAutoCompleteWorker(bookingAutoCo
 // ─── Pending-booking reaper (Task 7) — expires abandoned pending_payment
 // bookings past config.bookings.pendingExpiryMinutes via
 // BookingStatusService.transition (frees the slot + writes history), then
-// best-effort voids any outstanding deposit PaymentIntent through
-// order-service. Wired as a BullMQ repeatable job the same way order-service
-// wires PendingOrderReaperService in its container.ts. ─────────────────────
+// best-effort voids any outstanding deposit payment through the payment
+// gateway. Wired as a BullMQ repeatable job. ─────────────────────
 const bookingReaperService = new BookingReaperService(
   bookingRepo,
   paymentRepo,
@@ -374,7 +379,7 @@ const bookingStatusHistoryRepo = AppDataSource.getRepository(BookingStatusHistor
 // confirmed->rescheduled->confirmed audit transitions, and re-times all three
 // delayed jobs (reminders / prepay-auth / auto-complete) for the new slot via
 // the reschedule* helpers those services expose. Payment carries over
-// unchanged (no order-service call). Reuses the fully-wired bookingStatusService
+// unchanged (no payment call). Reuses the fully-wired bookingStatusService
 // (so its transition cleanup fires the stale-job removals) plus the same
 // availability engine + hold service create() uses, and the shared
 // vendorOwnerLookup constructed above (ahead of bookingStatusService). ─────
@@ -398,7 +403,7 @@ const rescheduleService = new RescheduleService(
 // bookingStatusService's `cancelled` transition cleanup, then best-effort moves
 // money per the snapshotted policy (void an authorized prepay hold in-window /
 // partial-capture the forfeit out-of-window / refund a deposit) through
-// order-service's booking-payment endpoints. Reuses the same vendorOwnerLookup
+// the payment gateway. Reuses the same vendorOwnerLookup
 // the reschedule flow uses for the vendor-facing notification. ───────────────
 const cancelService = new CancelService(
   bookingRepo,
@@ -412,7 +417,7 @@ const cancelService = new CancelService(
 // ─── No-show (Phase 5 Task 5, spec §5.3) — a vendor/admin marks a confirmed
 // booking (in the [starts_at, ends_at+grace) window) as a no-show: forfeits per
 // the snapshotted policy (best-effort partial-capture/void/keep-deposit through
-// order-service), records the forfeit in the status-history reason, and notifies
+// the payment gateway), records the forfeit in the status-history reason, and notifies
 // the customer with the penalty breakdown + a dispute/support deep link. The
 // no_show transition leaves the engagement untouched (the slot's time has
 // already passed). Reuses the same fully-wired bookingStatusService, paymentRepo,
@@ -589,6 +594,13 @@ const calendarFeedUrlService = new CalendarFeedUrlService(
 );
 const calendarFeedUrlController = new CalendarFeedUrlController(calendarFeedUrlService);
 
+// ─── Dashboards — vendor (/vendor/booking/dashboard) and admin
+// (/admin/bookings/dashboard) KPI tiles, raw SQL aggregates over the shared
+// Postgres (same AppDataSource.query precedent as serviceReviewRatingService). ─
+const bookingDashboardService = new BookingDashboardService(
+  AppDataSource.query.bind(AppDataSource),
+);
+
 // DI container for booking-service. Domain controllers are decorated here and
 // read off the context by route modules. Grows as domains land (Task 8).
 export const container = new Elysia({ name: "booking-service-container" })
@@ -609,4 +621,5 @@ export const container = new Elysia({ name: "booking-service-container" })
   .decorate("icalFeedService", icalFeedService)
   .decorate("calendarFeedUrlController", calendarFeedUrlController)
   .decorate("bookingQueryService", bookingQueryService)
+  .decorate("bookingDashboardService", bookingDashboardService)
   .decorate("bookingStatusHistoryRepo", bookingStatusHistoryRepo);

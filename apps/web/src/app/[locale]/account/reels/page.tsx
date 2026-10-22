@@ -3,51 +3,37 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { getMyReels, type MyReelSummary } from "@/lib/api/reels";
-import {
-  Eyebrow,
-  SerifTitle,
-  MAISON_SERIF,
-  MAISON_SANS,
-} from "@/components/ui/maison-primitives";
+import { Plus, Video } from "lucide-react";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 
 const STATUS_BADGE: Record<
   MyReelSummary["status"],
-  { label: string; color: string; bg: string }
+  { label: string; className: string }
 > = {
   draft: {
     label: "Draft",
-    color: "hsl(var(--nl-russet))",
-    bg: "rgba(44,24,16,0.05)",
+    className: "bg-slate-100 text-slate-600",
   },
   pending_review: {
     label: "In review",
-    color: "hsl(var(--nl-amber))",
-    bg: "rgba(184,115,51,0.08)",
+    className: "bg-amber-50 text-amber-700",
   },
   approved: {
     label: "Published",
-    color: "#3f6f4a",
-    bg: "rgba(63,111,74,0.08)",
+    className: "bg-emerald-50 text-emerald-700",
   },
   rejected: {
     label: "Rejected",
-    color: "#9a3b3b",
-    bg: "rgba(154,59,59,0.08)",
+    className: "bg-red-50 text-red-700",
   },
   removed: {
     label: "Removed",
-    color: "#9a3b3b",
-    bg: "rgba(154,59,59,0.08)",
+    className: "bg-red-50 text-red-700",
   },
 };
 
-const TAG_BASE = {
-  fontFamily: MAISON_SANS,
-  fontSize: 10,
-  letterSpacing: "0.18em",
-  textTransform: "uppercase" as const,
-  padding: "3px 8px",
-};
+const PRIMARY_BUTTON =
+  "inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors";
 
 export default function MyReelsPage({ params }: { params: { locale: string } }) {
   const { locale } = params;
@@ -83,75 +69,38 @@ export default function MyReelsPage({ params }: { params: { locale: string } }) 
 
   return (
     <div>
-      <div className="flex items-end justify-between mb-5">
+      <div className="flex items-end justify-between gap-3 mb-5">
         <div>
-          <Eyebrow>REELS</Eyebrow>
-          <SerifTitle size={26} className="mt-1.5">
+          <Eyebrow>Reels</Eyebrow>
+          <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
             My Reels
-          </SerifTitle>
+          </h1>
         </div>
-        <Link
-          href={`/${locale}/reels/upload`}
-          className="inline-block uppercase shrink-0"
-          style={{
-            background: "hsl(var(--nl-amber))",
-            color: "hsl(var(--nl-espresso))",
-            fontFamily: MAISON_SANS,
-            fontSize: 11,
-            letterSpacing: "0.22em",
-            padding: "13px 30px",
-            border: "none",
-            borderRadius: 0,
-          }}
-        >
+        <Link href={`/${locale}/reels/upload`} className={`${PRIMARY_BUTTON} shrink-0`}>
+          <Plus className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
           Post a reel
         </Link>
       </div>
 
-      {loading && (
-        <div
-          style={{
-            fontFamily: MAISON_SERIF,
-            fontStyle: "italic",
-            fontSize: 16,
-            color: "hsl(var(--nl-russet))",
-          }}
-        >
-          Loading…
-        </div>
-      )}
+      {loading && <div className="text-sm text-nl-russet">Loading…</div>}
       {error && (
         <div
           role="alert"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 13,
-            color: "#9a3b3b",
-          }}
+          className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
         >
           {error}
         </div>
       )}
 
       {!loading && !error && items.length === 0 && (
-        <div
-          className="py-12 text-center"
-          style={{
-            fontFamily: MAISON_SERIF,
-            fontStyle: "italic",
-            fontSize: 16,
-            color: "hsl(var(--nl-russet))",
-          }}
-        >
-          You haven&apos;t posted any reels yet.{" "}
-          <Link
-            href={`/${locale}/reels/upload`}
-            className="underline"
-            style={{ color: "hsl(var(--nl-amber))" }}
-          >
+        <div className="rounded-2xl border border-nl-cacao/10 bg-nl-linen px-6 py-12 text-center shadow-sm">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-nl-pearl text-nl-amber">
+            <Video className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
+          </div>
+          <p className="text-sm text-nl-russet">You haven&apos;t posted any reels yet.</p>
+          <Link href={`/${locale}/reels/upload`} className={`${PRIMARY_BUTTON} mt-4`}>
             Post your first reel
           </Link>
-          .
         </div>
       )}
 
@@ -166,77 +115,37 @@ export default function MyReelsPage({ params }: { params: { locale: string } }) 
             return (
               <li
                 key={r.id}
-                className="flex items-center gap-4 p-3 transition-colors"
-                style={{
-                  border: "1px solid rgba(44,24,16,0.10)",
-                  background: "rgba(44,24,16,0.02)",
-                }}
+                className="flex items-center gap-4 rounded-2xl border border-nl-cacao/10 bg-nl-linen p-3 shadow-sm transition-shadow hover:shadow-md"
               >
                 <Link href={href} className="flex items-center gap-4 flex-1">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={r.thumbnail_url}
                     alt=""
-                    className="w-20 h-32 object-cover shrink-0"
-                    style={{ background: "rgba(44,24,16,0.07)" }}
+                    className="w-20 h-32 object-cover shrink-0 rounded-xl bg-nl-pearl"
                   />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2.5 mb-1.5">
                       <span
-                        style={{
-                          ...TAG_BASE,
-                          color: badge.color,
-                          background: badge.bg,
-                        }}
+                        className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${badge.className}`}
                       >
                         {badge.label}
                       </span>
-                      <span
-                        style={{
-                          fontFamily: MAISON_SANS,
-                          fontSize: 11,
-                          color: "hsl(var(--nl-russet))",
-                        }}
-                      >
+                      <span className="text-xs text-nl-russet">
                         {new Date(r.created_at).toLocaleDateString()}
                       </span>
                     </div>
-                    <div
-                      className="line-clamp-2"
-                      style={{
-                        fontFamily: MAISON_SERIF,
-                        fontSize: 15,
-                        color: "hsl(var(--nl-cacao))",
-                      }}
-                    >
+                    <div className="line-clamp-2 text-sm font-medium text-nl-cacao">
                       {r.caption || (
-                        <em style={{ color: "hsl(var(--nl-russet))" }}>
-                          No caption
-                        </em>
+                        <span className="font-normal text-nl-russet">No caption</span>
                       )}
                     </div>
                     {r.status === "rejected" && r.rejection_reason && (
-                      <div
-                        className="mt-1"
-                        style={{
-                          fontFamily: MAISON_SANS,
-                          fontSize: 11,
-                          color: "#9a3b3b",
-                        }}
-                      >
+                      <div className="mt-1 text-xs text-red-700">
                         Reason: {r.rejection_reason}
                       </div>
                     )}
-                    <div
-                      className="mt-1"
-                      style={{
-                        fontFamily: MAISON_SANS,
-                        fontSize: 11,
-                        color: "hsl(var(--nl-russet))",
-                      }}
-                    >
-                      {r.tags?.length ?? 0} tag
-                      {(r.tags?.length ?? 0) === 1 ? "" : "s"} ·{" "}
+                    <div className="mt-1 text-xs text-nl-russet">
                       {r.video_duration_seconds}s
                     </div>
                   </div>
@@ -244,17 +153,7 @@ export default function MyReelsPage({ params }: { params: { locale: string } }) 
                 {canEdit && (
                   <Link
                     href={`/${locale}/reels/edit/${r.id}`}
-                    className="inline-block uppercase shrink-0"
-                    style={{
-                      background: "transparent",
-                      border: "1px solid rgba(44,24,16,0.4)",
-                      color: "hsl(var(--nl-cacao))",
-                      fontFamily: MAISON_SANS,
-                      fontSize: 11,
-                      letterSpacing: "0.22em",
-                      padding: "9px 20px",
-                      borderRadius: 0,
-                    }}
+                    className="inline-flex shrink-0 items-center justify-center rounded-lg border border-nl-cacao/15 bg-nl-linen px-4 py-2 text-sm font-semibold text-nl-cacao hover:bg-nl-pearl transition-colors"
                   >
                     Edit
                   </Link>

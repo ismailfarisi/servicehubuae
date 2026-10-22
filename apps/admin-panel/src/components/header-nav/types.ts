@@ -6,6 +6,10 @@ export interface LocaleField {
 	ur?: string;
 }
 
+/**
+ * Commerce-era field. Brands no longer exist and the storefront ignores it, but
+ * cms-service still requires it on every tab, so tabs carry an empty one.
+ */
 export interface HeaderNavBrandList {
 	title: LocaleField;
 	see_all_href: string;

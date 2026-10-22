@@ -45,7 +45,7 @@ function CopyRow({ label, value }: { label: string; value: string }) {
     <div>
       <p className="text-xs uppercase tracking-wide text-taupe mb-1">{label}</p>
       <div className="flex items-center gap-2">
-        <code className="flex-1 rounded-md border border-pearl/14 bg-pearl/30 px-3 py-2 font-mono text-sm text-cacao break-all">
+        <code className="flex-1 rounded-md border border-pearl bg-pearl/30 px-3 py-2 font-mono text-sm text-cacao break-all">
           {value}
         </code>
         <Button type="button" variant="outline" size="sm" onClick={handleCopy} className="shrink-0">

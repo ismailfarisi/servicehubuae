@@ -1,6 +1,20 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ForeignKey,
+  Index,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity("daily_creator_metrics")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("User", ["creator_id"], ["id"], {
+  name: "daily_creator_metrics_creator_id_fkey",
+  onDelete: "CASCADE",
+})
+@Index("idx_dcm_bucket_date", ["bucket_date"])
 export class DailyCreatorMetrics {
   @PrimaryColumn({ type: "uuid" })
   creator_id!: string;

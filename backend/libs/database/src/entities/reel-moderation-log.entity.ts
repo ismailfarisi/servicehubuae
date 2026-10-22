@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,8 @@ import type { Reel } from "./reel.entity.ts";
 import type { User } from "./user.entity.ts";
 
 @Entity("reel_moderation_log")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_moderation_log_reel", ["reel_id", "created_at"])
 export class ReelModerationLog {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

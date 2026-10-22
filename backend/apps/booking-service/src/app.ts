@@ -6,6 +6,7 @@ import { bookingRoutes } from "./domain/booking/booking.routes.ts";
 import { internalBookingRoutes } from "./domain/booking/internal-booking.routes.ts";
 import { manageBookingRoutes } from "./domain/booking/manage-booking.routes.ts";
 import { icalFeedRoutes } from "./domain/calendar/ical-feed.routes.ts";
+import { vendorBookingDashboardRoutes } from "./domain/dashboard/booking-dashboard.routes.ts";
 import { locationPublicRoutes, locationRoutes } from "./domain/location/location.routes.ts";
 import { blockTimeRoutes } from "./domain/manage/block-time.routes.ts";
 import { calendarFeedUrlRoutes } from "./domain/manage/calendar-feed-url.routes.ts";
@@ -29,6 +30,7 @@ export const app = new Elysia()
     timestamp: new Date().toISOString(),
   }))
   .use(locationRoutes)
+  .use(vendorBookingDashboardRoutes)
   .use(locationPublicRoutes)
   .use(staffRoutes)
   .use(staffPublicRoutes)

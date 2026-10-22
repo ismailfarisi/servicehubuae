@@ -11,16 +11,14 @@ const ok = (data: unknown, status = 200) => ({
 
 /**
  * booking-service side of the webhook-routing boundary (spec §3/§5.2, Phase
- * 4 Task 3). order-service is the only caller (over internalServiceAuth,
- * `iss=order-service`) — it owns Stripe + the `webhook_events` idempotency
- * guard (apps/order-service/src/domain/checkout/webhook.service.ts
- * `handleStripeWebhook` dedups on `(gateway, event_id)` before dispatching),
- * so a booking-tagged Stripe event only ever reaches these routes once per
- * delivery. `BookingStatusService.confirm()` is ALSO idempotent on top of
- * that (safe no-op on a retried delivery), so double-delivery is covered at
- * both layers. Thin plumbing, matching order-service's
- * internal-booking-payment.routes.ts shape — every handler delegates
- * straight to BookingStatusService.
+ * 4 Task 3), over internalServiceAuth (issuer allowlist in
+ * libs/guards/src/internal-service-auth.ts). The payments webhook handler
+ * (M2, MyFatoorah) is the intended caller and owns the `webhook_events`
+ * idempotency guard (dedup on `(gateway, event_id)` before dispatching).
+ * `BookingStatusService.confirm()` is ALSO idempotent on top of that (safe
+ * no-op on a retried delivery), so double-delivery is covered at both
+ * layers. Thin plumbing — every handler delegates straight to
+ * BookingStatusService.
  */
 export const internalBookingRoutes = new Elysia({ prefix: "/internal/bookings" })
   .use(container)

@@ -27,7 +27,7 @@ export function TargetBuilder({ fields, fieldIds, onChange }: TargetBuilderProps
   }
 
   return (
-    <div className="rounded-lg border border-pearl/14 bg-linen p-4 h-full overflow-auto">
+    <div className="rounded-lg border border-pearl bg-linen p-4 h-full overflow-auto">
       <p className="text-xs uppercase tracking-wide text-taupe mb-3">TARGET FIELDS</p>
 
       {fields.length === 0 ? null : (
@@ -85,7 +85,7 @@ function FieldRow({
       ref={setNodeRef}
       className={[
         "rounded-md border bg-linen p-3 transition-colors duration-200 ease-out",
-        isOver ? "border-amber bg-amber/5" : "border-pearl/14",
+        isOver ? "border-amber bg-amber/5" : "border-pearl",
       ].join(" ")}
     >
       <div className="flex items-center gap-2 mb-2">

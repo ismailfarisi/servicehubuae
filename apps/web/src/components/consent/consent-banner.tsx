@@ -12,7 +12,7 @@ export function ConsentBanner() {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-pearl bg-linen/95 p-4 shadow-lg backdrop-blur-sm"
+      className="fixed inset-x-0 bottom-0 z-50 border-t border-nl-cacao/10 bg-nl-linen/95 p-4 shadow-[0_-8px_30px_hsl(var(--nl-cacao)/0.08)] backdrop-blur-sm"
       role="dialog"
       aria-labelledby="consent-banner-title"
     >
@@ -20,11 +20,11 @@ export function ConsentBanner() {
         <div className="flex-1 space-y-1">
           <h2
             id="consent-banner-title"
-            className="font-semibold text-sm text-espresso"
+            className="font-display font-semibold text-sm text-nl-cacao"
           >
             {t("title")}
           </h2>
-          <p className="text-cacao/70 text-xs">{t("description")}</p>
+          <p className="text-nl-russet text-sm">{t("description")}</p>
         </div>
         <div className="flex gap-2 sm:shrink-0">
           <Button

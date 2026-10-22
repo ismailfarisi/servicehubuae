@@ -6,14 +6,6 @@ export interface ReelUploadResponse {
 	reelId: string;
 }
 
-export interface ReelProductTag {
-	id: string;
-	product_id: string;
-	variant_id?: string | null;
-	timestamp_seconds: string | number;
-	product?: { id: string; name: string; primary_image_url?: string | null };
-}
-
 export interface MyReelSummary {
 	id: string;
 	user_id: string;
@@ -28,16 +20,6 @@ export interface MyReelSummary {
 	rejection_reason: string | null;
 	published_at: string | null;
 	created_at: string;
-	tags?: ReelProductTag[];
-}
-
-export interface TaggableProductRow {
-	product_id: string;
-	name: string;
-	thumbnail_url: string | null;
-	variant_label: string | null;
-	delivered_at: string | null;
-	source: "purchased" | "vendor_owned" | "permission";
 }
 
 export async function requestReelUpload(): Promise<ReelUploadResponse> {
@@ -85,38 +67,6 @@ export async function publishReel(reelId: string): Promise<MyReelSummary> {
 	return data.data as MyReelSummary;
 }
 
-export async function addReelTag(
-	reelId: string,
-	payload: {
-		productId: string;
-		variantId?: string;
-		timestampSeconds: number;
-		displayX?: number;
-		displayY?: number;
-	},
-): Promise<ReelProductTag> {
-	const { data } = await api.post(`/reels/${reelId}/tags`, payload);
-	return data.data as ReelProductTag;
-}
-
-export async function deleteReelTag(
-	reelId: string,
-	tagId: string,
-): Promise<void> {
-	await api.delete(`/reels/${reelId}/tags/${tagId}`);
-}
-
 export async function deleteReel(reelId: string): Promise<void> {
 	await api.delete(`/reels/${reelId}`);
-}
-
-export async function fetchTaggableProducts(
-	q: string,
-	limit = 20,
-): Promise<TaggableProductRow[]> {
-	const { data } = await api.get("/me/reels/taggable-products", {
-		params: { q: q || undefined, limit },
-		timeout: 4000,
-	});
-	return (data?.data?.items as TaggableProductRow[] | undefined) ?? [];
 }

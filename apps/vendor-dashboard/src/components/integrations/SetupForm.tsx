@@ -67,7 +67,7 @@ function SectionHeader({
 // ─── Divider ─────────────────────────────────────────────────────────────────
 
 function Divider() {
-	return <div className="border-t border-pearl/14 mt-8 pt-8" />;
+	return <div className="border-t border-pearl mt-8 pt-8" />;
 }
 
 // ─── Read-only secret row ─────────────────────────────────────────────────────
@@ -86,7 +86,7 @@ function SecretRow({
 		<div className="space-y-1.5">
 			<Label className="text-sm font-medium text-cacao">{label}</Label>
 			<div className="flex items-center gap-3">
-				<code className="flex-1 rounded-md border border-pearl/14 bg-pearl/30 px-3 py-2 font-mono text-sm text-cacao">
+				<code className="flex-1 rounded-md border border-pearl bg-pearl/30 px-3 py-2 font-mono text-sm text-cacao">
 					{masked}
 				</code>
 				<Button
@@ -125,7 +125,7 @@ function InboundUrlRow({ id }: { id: string }) {
 		<div className="space-y-1.5">
 			<Label className="text-sm font-medium text-cacao">Inbound URL</Label>
 			<div className="flex items-center gap-3">
-				<code className="flex-1 rounded-md border border-pearl/14 bg-pearl/30 px-3 py-2 font-mono text-sm text-cacao break-all">
+				<code className="flex-1 rounded-md border border-pearl bg-pearl/30 px-3 py-2 font-mono text-sm text-cacao break-all">
 					{url}
 				</code>
 				<Button
@@ -458,7 +458,7 @@ function SetupFormSkeleton() {
 			<Skeleton className="h-4 w-16" />
 			<Skeleton className="h-10 w-full" />
 			<Skeleton className="h-4 w-32" />
-			<div className="border-t border-pearl/14 mt-8 pt-8 space-y-5">
+			<div className="border-t border-pearl mt-8 pt-8 space-y-5">
 				<Skeleton className="h-4 w-20" />
 				<Skeleton className="h-10 w-full" />
 				<Skeleton className="h-10 w-full" />

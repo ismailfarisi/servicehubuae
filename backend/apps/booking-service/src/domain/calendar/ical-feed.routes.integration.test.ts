@@ -217,7 +217,10 @@ describeLive("GET /calendar/staff/:id/feed.ics (live DB) — outbound iCal feed"
     const events = parseICal(body);
     const uids = events.map((e) => e.uid).sort();
     expect(uids).toEqual(
-      [`engagement-${included1.id}@mypickuae.com`, `engagement-${included2.id}@mypickuae.com`].sort(),
+      [
+        `engagement-${included1.id}@mypickuae.com`,
+        `engagement-${included2.id}@mypickuae.com`,
+      ].sort(),
     );
 
     const summaries = new Map(events.map((e) => [e.uid, e.summary]));

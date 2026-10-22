@@ -48,10 +48,6 @@ export interface CollabOpportunity {
 	rights_scope: RightsScope | null;
 	fee_fils: string | null;
 	funding_source: FundingSource | null;
-	seeded_product_id: string | null;
-	seeded_variant_id: string | null;
-	seeded_qty: number | null;
-	seeding_value_fils: string | null;
 	location_id: string | null;
 	starts_at: string | null;
 	ends_at: string | null;
@@ -117,10 +113,6 @@ export interface CreateCollabInput {
 	rightsScope?: RightsScope | null;
 	feeFils?: number | null;
 	fundingSource?: FundingSource | null;
-	seededProductId?: string | null;
-	seededVariantId?: string | null;
-	seededQty?: number | null;
-	seedingValueFils?: number | null;
 	locationId?: string | null;
 	startsAt?: string | null;
 	endsAt?: string | null;

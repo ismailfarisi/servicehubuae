@@ -7,7 +7,7 @@
  * Pool size caps at 500 per cohort — FeedService paginates within this pool.
  */
 import { config } from "@mypickuae/config";
-import { AppDataSource, Reel, ReelHotCategory, ReelStatus } from "@mypickuae/database";
+import { AppDataSource, Reel, ReelStatus } from "@mypickuae/database";
 import { type Job, Queue, Worker } from "bullmq";
 import type { FeedCacheClient } from "../feed-cache.client.ts";
 
@@ -107,75 +107,6 @@ export class RecomputeCohortFeedsJob {
 
         await this.cache.setCohort(`home:for_you:${lang}:${country}`, entries);
       }
-    }
-
-    // ── Category cohorts ─────────────────────────────────────────────
-    const hotRows = await AppDataSource.getRepository(ReelHotCategory)
-      .createQueryBuilder("rhc")
-      .innerJoin("categories", "c", "c.id = rhc.category_id AND c.deleted_at IS NULL")
-      .select([
-        "rhc.category_id AS category_id",
-        "rhc.language_code AS language_code",
-        "rhc.country_code AS country_code",
-        "c.path AS path",
-      ])
-      .getRawMany<{
-        category_id: string;
-        language_code: string;
-        country_code: string;
-        path: string;
-      }>();
-
-    for (const h of hotRows) {
-      const poolRows = await repo
-        .createQueryBuilder("r")
-        .innerJoin("reel_product_tags", "t", "t.reel_id = r.id")
-        .innerJoin("products", "p", "p.id = t.product_id AND p.deleted_at IS NULL")
-        .innerJoin("categories", "c", "c.id = p.category_id AND c.deleted_at IS NULL")
-        .where("r.status = :s", { s: ReelStatus.approved })
-        .andWhere("r.deleted_at IS NULL")
-        .andWhere("r.language_code = :l", { l: h.language_code })
-        .andWhere("c.path LIKE :path", { path: `${h.path}%` })
-        .groupBy("r.id")
-        .orderBy("MAX(r.ranking_score)", "DESC")
-        .limit(POOL_SIZE)
-        .getMany();
-
-      const newRows = await repo
-        .createQueryBuilder("r")
-        .innerJoin("reel_product_tags", "t", "t.reel_id = r.id")
-        .innerJoin("products", "p", "p.id = t.product_id AND p.deleted_at IS NULL")
-        .innerJoin("categories", "c", "c.id = p.category_id AND c.deleted_at IS NULL")
-        .where("r.status = :s", { s: ReelStatus.approved })
-        .andWhere("r.deleted_at IS NULL")
-        .andWhere("r.language_code = :l", { l: h.language_code })
-        .andWhere("c.path LIKE :path", { path: `${h.path}%` })
-        .andWhere("r.published_at > :since", { since: newReelSince })
-        .andWhere("r.view_count < :vc", { vc: NEW_REEL_VIEW_CEILING })
-        .groupBy("r.id")
-        .orderBy("RANDOM()")
-        .limit(Math.floor(POOL_SIZE / 10))
-        .getMany();
-
-      let injectIdx = 0;
-      const final: Reel[] = [];
-      for (let i = 0; i < poolRows.length; i++) {
-        if (i % 10 === 9 && injectIdx < newRows.length) {
-          final.push(newRows[injectIdx++]!);
-        } else {
-          final.push(poolRows[i]!);
-        }
-      }
-
-      const entries = final.map((r, i) => ({
-        reelId: r.id,
-        score: Number(r.ranking_score) - i * 0.0001,
-      }));
-
-      await this.cache.setCohort(
-        `category:${h.category_id}:${h.language_code}:${h.country_code}`,
-        entries,
-      );
     }
   }
 

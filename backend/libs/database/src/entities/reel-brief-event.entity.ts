@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,8 @@ import type { ReelBrief } from "./reel-brief.entity.ts";
 
 /** Append-only audit of brief/bid lifecycle transitions (mirrors reel_license_offer_events). */
 @Entity("reel_brief_events")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_brief_event_brief_created", ["brief_id", "created_at"])
 export class ReelBriefEvent {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

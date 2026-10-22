@@ -2,10 +2,15 @@
 
 import type { ReactNode } from "react";
 
+// Shared storefront primitives. The `Maison*` / `Serif*` names predate the
+// blue & white redesign; the look is now modern sans with rounded surfaces.
 export const MAISON_SERIF =
-  "var(--font-antic), var(--font-playfair), 'Antic Didone', Georgia, serif";
+  "var(--font-jakarta), var(--font-arabic), system-ui, sans-serif";
 export const MAISON_SANS =
-  "var(--font-inter-tight), var(--font-dm-sans), 'Inter Tight', system-ui, sans-serif";
+  "var(--font-inter), var(--font-arabic), system-ui, sans-serif";
+
+const BORDER = "hsl(var(--nl-cacao) / 0.12)";
+const BORDER_STRONG = "hsl(var(--nl-cacao) / 0.25)";
 
 export function Eyebrow({
   children,
@@ -18,10 +23,8 @@ export function Eyebrow({
 }) {
   return (
     <div
-      className={`uppercase ${className ?? ""}`}
+      className={`text-xs font-semibold ${className ?? ""}`}
       style={{
-        fontSize: 10,
-        letterSpacing: "0.28em",
         color: amber ? "hsl(var(--nl-amber-text))" : "hsl(var(--nl-russet))",
         fontFamily: MAISON_SANS,
       }}
@@ -46,9 +49,9 @@ export function SerifTitle({
       style={{
         fontFamily: MAISON_SERIF,
         fontSize: size,
-        lineHeight: 1.15,
-        letterSpacing: "-0.005em",
-        fontWeight: 400,
+        lineHeight: 1.2,
+        letterSpacing: "-0.02em",
+        fontWeight: 700,
         color: "hsl(var(--nl-cacao))",
       }}
     >
@@ -73,42 +76,16 @@ export function MaisonCard({
   return (
     <div className="mb-6">
       <div className="flex items-baseline justify-between mb-2.5">
-        <div className="flex items-baseline gap-2.5">
-          <Eyebrow>{title}</Eyebrow>
-          {badge && (
-            <span
-              style={{
-                fontFamily: MAISON_SERIF,
-                fontStyle: "italic",
-                fontSize: 14,
-                color: "hsl(var(--nl-russet))",
-              }}
-            >
-              · {badge}
-            </span>
-          )}
+        <div className="flex items-baseline gap-2">
+          <h3 className="text-sm font-semibold text-nl-cacao">{title}</h3>
+          {badge && <span className="text-sm text-nl-russet">· {badge}</span>}
         </div>
         {cta}
       </div>
-      {eyebrowHint && (
-        <div
-          className="mb-2.5"
-          style={{
-            fontFamily: MAISON_SERIF,
-            fontStyle: "italic",
-            fontSize: 12,
-            color: "hsl(var(--nl-amber-text))",
-          }}
-        >
-          {eyebrowHint}
-        </div>
-      )}
+      {eyebrowHint && <div className="mb-2.5 text-xs text-nl-amber-text">{eyebrowHint}</div>}
       <div
-        style={{
-          border: "1px solid rgba(44,24,16,0.08)",
-          background: "rgba(44,24,16,0.015)",
-          padding: 18,
-        }}
+        className="rounded-xl bg-nl-linen shadow-sm"
+        style={{ border: `1px solid ${BORDER}`, padding: 18 }}
       >
         {children}
       </div>
@@ -121,25 +98,16 @@ export function MaisonRadio({ selected }: { selected: boolean }) {
     <span
       className="inline-flex items-center justify-center"
       style={{
-        width: 16,
-        height: 16,
+        width: 18,
+        height: 18,
         borderRadius: "50%",
-        border: `1px solid ${selected ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.3)"}`,
+        border: `${selected ? 5 : 1.5}px solid ${selected ? "hsl(var(--nl-amber))" : BORDER_STRONG}`,
+        background: "hsl(var(--nl-linen))",
         marginTop: 2,
         flexShrink: 0,
+        transition: "border-width 120ms ease",
       }}
-    >
-      {selected && (
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            background: "hsl(var(--nl-amber))",
-          }}
-        />
-      )}
-    </span>
+    />
   );
 }
 
@@ -148,21 +116,24 @@ export function MaisonCheck({ checked }: { checked: boolean }) {
     <span
       className="inline-flex items-center justify-center"
       style={{
-        width: 16,
-        height: 16,
-        border: "1px solid rgba(44,24,16,0.3)",
-        background: checked ? "hsl(var(--nl-amber))" : "transparent",
+        width: 18,
+        height: 18,
+        borderRadius: 5,
+        border: `1.5px solid ${checked ? "hsl(var(--nl-amber))" : BORDER_STRONG}`,
+        background: checked ? "hsl(var(--nl-amber))" : "hsl(var(--nl-linen))",
         flexShrink: 0,
       }}
     >
       {checked && (
         <svg
-          width="10"
-          height="10"
+          width="11"
+          height="11"
           viewBox="0 0 12 12"
           fill="none"
-          stroke="hsl(var(--nl-espresso))"
-          strokeWidth="1.5"
+          stroke="#fff"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
           aria-hidden="true"
         >
           <title>Selected</title>
@@ -191,10 +162,11 @@ export function MaisonTile({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`text-start transition-all w-full disabled:opacity-40 disabled:cursor-not-allowed ${className ?? ""}`}
+      className={`text-start rounded-xl transition-all w-full hover:shadow-sm disabled:opacity-40 disabled:cursor-not-allowed ${className ?? ""}`}
       style={{
-        border: `1px solid ${selected ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.16)"}`,
-        background: selected ? "rgba(184,115,51,0.06)" : "rgba(255,255,255,0.55)",
+        border: `1px solid ${selected ? "hsl(var(--nl-amber))" : BORDER}`,
+        background: selected ? "hsl(var(--nl-pearl))" : "hsl(var(--nl-linen))",
+        boxShadow: selected ? "0 0 0 3px hsl(var(--nl-amber) / 0.15)" : undefined,
       }}
     >
       {children}
@@ -233,64 +205,53 @@ export function MaisonStepper({
 }) {
   return (
     <div
-      className="hidden md:flex items-center"
-      style={{
-        gap: 18,
-        fontSize: 10,
-        letterSpacing: "0.22em",
-        textTransform: "uppercase",
-        fontFamily: MAISON_SANS,
-      }}
+      className="hidden md:flex items-center text-sm font-medium"
+      style={{ gap: 14, fontFamily: MAISON_SANS }}
     >
       {steps.map((s, i) => (
-        <div key={s} className="flex items-center" style={{ gap: 18 }}>
+        <div key={s} className="flex items-center" style={{ gap: 14 }}>
           <span
             className="flex items-center"
             style={{
               gap: 8,
               color:
-                i < active
-                  ? "hsl(var(--nl-russet))"
-                  : i === active
-                    ? "hsl(var(--nl-amber-text))"
-                    : "rgba(44,24,16,0.4)",
+                i === active
+                  ? "hsl(var(--nl-cacao))"
+                  : i < active
+                    ? "hsl(var(--nl-russet))"
+                    : "hsl(var(--nl-cacao) / 0.4)",
             }}
           >
             <span
               className="inline-flex items-center justify-center"
               style={{
-                width: 18,
-                height: 18,
+                width: 24,
+                height: 24,
                 borderRadius: "50%",
-                border: `1px solid ${i === active ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.3)"}`,
-                background: i < active ? "hsl(var(--nl-amber))" : "transparent",
-                color: "hsl(var(--nl-espresso))",
-                fontSize: 9,
+                border: i <= active ? "none" : `1.5px solid ${BORDER_STRONG}`,
+                background: i <= active ? "hsl(var(--nl-amber))" : "transparent",
+                color: i <= active ? "#fff" : "inherit",
+                fontSize: 12,
+                fontWeight: 600,
               }}
             >
               {i < active ? (
                 <svg
-                  width="9"
-                  height="9"
+                  width="11"
+                  height="11"
                   viewBox="0 0 12 12"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="1.5"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   aria-hidden="true"
                 >
                   <title>Completed</title>
                   <path d="M2 6.5 L5 9 L10 3" />
                 </svg>
               ) : (
-                <span
-                  style={{
-                    fontFamily: MAISON_SERIF,
-                    fontSize: 10,
-                    color: i === active ? "hsl(var(--nl-amber-text))" : "inherit",
-                  }}
-                >
-                  {i + 1}
-                </span>
+                i + 1
               )}
             </span>
             {s}
@@ -298,9 +259,10 @@ export function MaisonStepper({
           {i < steps.length - 1 && (
             <span
               style={{
-                width: 36,
-                height: 1,
-                background: "rgba(44,24,16,0.18)",
+                width: 32,
+                height: 2,
+                borderRadius: 2,
+                background: i < active ? "hsl(var(--nl-amber))" : BORDER,
               }}
             />
           )}

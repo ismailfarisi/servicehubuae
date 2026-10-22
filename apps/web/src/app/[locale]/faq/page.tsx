@@ -3,11 +3,12 @@ import {
 	StaticPageLayout,
 	StaticSection,
 } from "@/components/layout/static-page-layout";
+import { VENDOR_REGISTER_URL } from "@/lib/vendor-dashboard";
 
 export const metadata: Metadata = {
 	title: "Frequently Asked Questions — MyPickUAE",
 	description:
-		"Answers to the most common MyPickUAE questions: orders, shipping, returns, payments, vendors and account.",
+		"Answers to the most common MyPickUAE questions: booking services, changes and cancellations, payments, vendors and account.",
 };
 
 const FAQ_GROUPS: Array<{
@@ -15,74 +16,71 @@ const FAQ_GROUPS: Array<{
 	items: Array<{ q: string; a: React.ReactNode }>;
 }> = [
 	{
-		heading: "Orders & shipping",
+		heading: "Booking a service",
 		items: [
 			{
-				q: "When will my order arrive?",
+				q: "How does booking work?",
 				a: (
 					<>
-						In-stock items ordered before 4pm GST are delivered same-day
-						in Dubai, Abu Dhabi and Sharjah. Other emirates and remote
-						addresses ship in 1–3 working days. See{" "}
-						<a href="shipping" className="text-nl-amber hover:underline">
-							Shipping Info
-						</a>{" "}
-						for the full breakdown.
-					</>
-				),
-			},
-			{
-				q: "How much is shipping?",
-				a: (
-					<>
-						Standard shipping is free on orders of AED 150 or more.
-						Below that, a flat AED 15 applies. Same-day in-city
-						delivery is AED 29 regardless of cart value.
-					</>
-				),
-			},
-			{
-				q: "Can I track my order?",
-				a: (
-					<>
-						Yes — every shipment has a tracking link in your order
-						confirmation email and under{" "}
-						<a
-							href="account/orders"
-							className="text-nl-amber hover:underline"
-						>
-							My orders
+						Browse or search{" "}
+						<a href="services" className="font-medium text-nl-amber-text hover:underline">
+							Services
 						</a>
-						.
+						, compare vendors on price, rating and availability, then pick
+						a time slot. Your slot is held while you confirm, and the
+						booking appears under{" "}
+						<a
+							href="account/bookings"
+							className="font-medium text-nl-amber-text hover:underline"
+						>
+							My bookings
+						</a>{" "}
+						as soon as it is placed.
+					</>
+				),
+			},
+			{
+				q: "Can the vendor come to me?",
+				a: (
+					<>
+						Many services are offered as home visits. Choose &ldquo;They
+						come to me&rdquo; and your area when browsing, and you will
+						only see vendors who cover it.
+					</>
+				),
+			},
+			{
+				q: "What if I need a quotation instead of a fixed price?",
+				a: (
+					<>
+						Larger jobs such as fit-out or maintenance contracts are
+						quoted: you send one request and receive quotations from up
+						to three vendors, then chat with them before you decide.
 					</>
 				),
 			},
 		],
 	},
 	{
-		heading: "Returns & refunds",
+		heading: "Changes & cancellations",
 		items: [
 			{
-				q: "What is your returns policy?",
+				q: "Can I reschedule or cancel?",
 				a: (
 					<>
-						You have <strong>7 days</strong> from delivery to request
-						a return on unopened, unused items. Hygiene-sealed and
-						personalised products are not eligible. Full details on the{" "}
-						<a href="returns" className="text-nl-amber hover:underline">
-							Returns
-						</a>{" "}
-						page.
+						Yes, from the booking&rsquo;s page under My bookings. Each
+						vendor sets its own reschedule and cancellation window, shown
+						before you book; changes inside the window may not be
+						possible or may carry a fee.
 					</>
 				),
 			},
 			{
-				q: "When will I get my refund?",
+				q: "What happens if the vendor cancels?",
 				a: (
 					<>
-						Once the return is received and inspected, refunds go back
-						to the original payment method within 5–10 working days.
-						Wallet credit refunds are instant.
+						You are notified straight away and anything you have paid
+						online is refunded in full to the original payment method.
 					</>
 				),
 			},
@@ -92,12 +90,12 @@ const FAQ_GROUPS: Array<{
 		heading: "Payments",
 		items: [
 			{
-				q: "Which payment methods do you accept?",
+				q: "How do I pay?",
 				a: (
 					<>
-						Visa, Mastercard, Amex, Apple Pay and Buy Now Pay Later via
-						Tamara (subject to cart-total eligibility). Cash on
-						delivery is not currently supported.
+						Right now bookings are paid at the venue (or to the vendor on
+						a home visit). Secure online card payment is coming soon; the
+						payment options for each service are shown before you book.
 					</>
 				),
 			},
@@ -105,9 +103,9 @@ const FAQ_GROUPS: Array<{
 				q: "Are my card details safe?",
 				a: (
 					<>
-						Card details are processed by PCI-DSS Level 1 payment
-						providers (Stripe, Checkout.com) and never stored on
-						MyPickUAE&rsquo;s servers.
+						Online payments are handled by a PCI-DSS compliant payment
+						provider. Card details are never stored on MyPickUAE&rsquo;s
+						servers.
 					</>
 				),
 			},
@@ -115,9 +113,8 @@ const FAQ_GROUPS: Array<{
 				q: "What currency am I charged in?",
 				a: (
 					<>
-						All prices are in AED at checkout. You can change the
-						display currency in the top bar, but the charge is always
-						processed in AED.
+						All prices are in AED. You can change the display currency in
+						the top bar, but the charge is always in AED.
 					</>
 				),
 			},
@@ -127,12 +124,12 @@ const FAQ_GROUPS: Array<{
 		heading: "Account & vendors",
 		items: [
 			{
-				q: "Do I need an account to buy?",
+				q: "Do I need an account to book?",
 				a: (
 					<>
-						You can browse as a guest, but checkout requires an account
-						so we can email order updates and let you re-order, track
-						and return.
+						You can browse as a guest, but booking requires an account so
+						we can send confirmations and reminders and let you manage
+						your bookings.
 					</>
 				),
 			},
@@ -140,15 +137,15 @@ const FAQ_GROUPS: Array<{
 				q: "How do I become a vendor on MyPickUAE?",
 				a: (
 					<>
-						Vendor onboarding lives on{" "}
+						Register your interest on the{" "}
 						<a
-							href="https://sellers.mypickuae.com"
-							className="text-nl-amber hover:underline"
+							href={VENDOR_REGISTER_URL}
+							className="font-medium text-nl-amber-text hover:underline"
 						>
-							sellers.mypickuae.com
+							vendor dashboard
 						</a>
-						. Submit a short application and our merchandising team
-						will reach out within three business days.
+						. Our team reviews your trade licence and services and gets
+						back to you within three business days.
 					</>
 				),
 			},
@@ -165,19 +162,19 @@ export default function FaqPage() {
 		>
 			{FAQ_GROUPS.map((group) => (
 				<StaticSection key={group.heading} heading={group.heading}>
-					<div className="not-prose divide-y divide-nl-cacao/10 border-y border-nl-cacao/10">
+					<div className="not-prose divide-y divide-nl-cacao/10 rounded-2xl border border-nl-cacao/10 bg-nl-linen px-5 md:px-6 shadow-sm">
 						{group.items.map((item) => (
 							<details key={item.q} className="group py-4">
 								<summary className="cursor-pointer list-none flex items-center justify-between gap-4 text-nl-cacao font-medium text-[15px] md:text-base">
 									<span>{item.q}</span>
 									<span
 										aria-hidden
-										className="text-nl-amber transition-transform group-open:rotate-45 text-2xl leading-none"
+										className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-nl-pearl text-nl-amber-text transition-transform group-open:rotate-45 text-xl leading-none"
 									>
 										+
 									</span>
 								</summary>
-								<div className="mt-3 text-nl-russet text-[14px] md:text-[15px] leading-[1.7]">
+								<div className="mt-3 text-nl-russet text-sm md:text-[15px] leading-relaxed">
 									{item.a}
 								</div>
 							</details>

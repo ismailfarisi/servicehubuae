@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { MAISON_SANS } from "@/components/ui/maison-primitives";
 import { CollabCard } from "@/components/creator/collab-card";
 import {
   Body,
@@ -17,6 +16,7 @@ import {
   SMALL_SECONDARY,
 } from "@/components/creator/maison-ui";
 import {
+  ACTIVE_COLLAB_TYPES,
   type BoardRow,
   type CollabType,
   type EligibilityReason,
@@ -49,6 +49,8 @@ export function OpportunitiesTab() {
   const [busy, setBusy] = useState(false);
   const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
 
+  // product_seeding is legacy (no new ones can be created) but still labelled
+  // so older rows render sensibly; it is not offered as a filter.
   const typeLabel: Record<CollabType, string> = {
     product_seeding: t("collabTypeSeeding"),
     paid_campaign: t("collabTypeCampaign"),
@@ -102,7 +104,7 @@ export function OpportunitiesTab() {
         <FilterChip active={typeFilter === ""} onClick={() => setTypeFilter("")}>
           {t("collabAllTypes")}
         </FilterChip>
-        {(Object.keys(typeLabel) as CollabType[]).map((type) => (
+        {ACTIVE_COLLAB_TYPES.map((type) => (
           <FilterChip
             key={type}
             active={typeFilter === type}
@@ -144,15 +146,7 @@ export function OpportunitiesTab() {
                   </>
                 }
               >
-                <p
-                  className="whitespace-pre-wrap normal-case tracking-normal"
-                  style={{
-                    fontFamily: MAISON_SANS,
-                    fontSize: 12.5,
-                    lineHeight: 1.5,
-                    color: "hsl(var(--nl-russet))",
-                  }}
-                >
+                <p className="whitespace-pre-wrap normal-case tracking-normal text-sm leading-relaxed text-nl-russet">
                   {o.description}
                 </p>
 
@@ -163,12 +157,7 @@ export function OpportunitiesTab() {
                     {eligibility.reasons.map((r) => (
                       <li
                         key={r}
-                        className="normal-case tracking-normal"
-                        style={{
-                          fontFamily: MAISON_SANS,
-                          fontSize: 11.5,
-                          color: "hsl(var(--nl-amber-text))",
-                        }}
+                        className="normal-case tracking-normal text-xs font-medium text-nl-amber-text"
                       >
                         {reasonLabel[r]}
                       </li>
@@ -178,14 +167,7 @@ export function OpportunitiesTab() {
 
                 <div className="mt-3">
                   {alreadyApplied ? (
-                    <span
-                      className="normal-case tracking-normal"
-                      style={{
-                        fontFamily: MAISON_SANS,
-                        fontSize: 12.5,
-                        color: "hsl(140,30%,32%)",
-                      }}
-                    >
+                    <span className="inline-flex items-center rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium normal-case tracking-normal text-emerald-700">
                       {t("collabApplied")}
                     </span>
                   ) : applyingTo === o.id ? (

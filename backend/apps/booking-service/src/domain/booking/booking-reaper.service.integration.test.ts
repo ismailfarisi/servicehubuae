@@ -4,20 +4,14 @@
 // .integration.test.ts's fixture pattern: seeds `pending_payment` bookings +
 // engagements DIRECTLY (bypassing BookingService.create's
 // hold->availability->pay flow), so the core reap-and-free-slot behavior
-// (Task 7 brief bullets 1 and 2) needs neither Redis nor a running
-// order-service — only docker-compose's postgres.
+// (Task 7 brief bullets 1 and 2) needs neither Redis nor a payment provider
+// — only docker-compose's postgres.
 //
-// The "payment-void failure doesn't block expiry" scenario (bullet 3) is
-// tested with an INJECTED FAKE BookingPaymentClient whose void() throws —
-// this deliberately avoids depending on a live order-service for the
-// required assertion (booking still expires; the void failure is
-// best-effort). A REAL end-to-end void through order-service's
-// /internal/booking-payments/void is exercised separately, gated behind an
-// order-service reachability probe (same itOrderService pattern as
-// booking.service.integration.test.ts), and skipped with a clear message if
-// order-service isn't running.
+// The deposit void-failure scenario (fail-closed: the booking is NOT
+// expired) is tested with an INJECTED FAKE gateway whose void() throws (see
+// BookingReaperService.reapOne, Phase 7 review fix #2). The production
+// LocalBookingPaymentGateway wiring is exercised by the last scenario.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
 import {
   AppDataSource,
   Booking,
@@ -43,31 +37,15 @@ import {
   ensureDatabase,
 } from "@mypickuae/database";
 import { EngagementService } from "../engagement/engagement.service.ts";
-import type { BookingPaymentClient } from "./booking-payment.client.ts";
+import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";
 import { BookingReaperService } from "./booking-reaper.service.ts";
 import { BookingStatusService } from "./booking-status.service.ts";
+import { LocalBookingPaymentGateway } from "./local-booking-payment.gateway.ts";
 
 const LIVE_DB = process.env.BOOKING_LIVE_DB === "1";
 const describeLive = LIVE_DB ? describe : describe.skip;
 
 const unique = Date.now();
-
-// order-service reachability probe (mirrors booking.service.integration
-// .test.ts) — only the real-void end-to-end test needs it.
-const ORDER_SERVICE_BASE_URL =
-  process.env.ORDER_SERVICE_URL ?? `http://${config.serviceHost.order}:${config.port.order}`;
-let orderServiceReachable = false;
-if (LIVE_DB) {
-  try {
-    await fetch(ORDER_SERVICE_BASE_URL, { signal: AbortSignal.timeout(2_000) });
-    orderServiceReachable = true;
-  } catch (err) {
-    console.warn(
-      `[skip] the real-void reaper test requires order-service running on ${ORDER_SERVICE_BASE_URL} (set ORDER_SERVICE_URL); start it with: bun --env-file=.env apps/order-service/src/index.ts — probe error: ${(err as Error).message}`,
-    );
-  }
-}
-const itOrderService = orderServiceReachable ? it : it.skip;
 
 // Fixed base day, far enough out to be inert to any OTHER reaper/job logic;
 // each scenario gets its own offset slot so engagement ranges never overlap
@@ -402,7 +380,7 @@ describeLive("BookingReaperService (live DB)", () => {
       bookingRepo(),
       paymentRepo(),
       statusService,
-      fakeClient as unknown as BookingPaymentClient,
+      fakeClient as unknown as BookingPaymentGateway,
       1,
     );
 
@@ -439,7 +417,7 @@ describeLive("BookingReaperService (live DB)", () => {
       bookingRepo(),
       paymentRepo(),
       statusService,
-      fakeClient as unknown as BookingPaymentClient,
+      fakeClient as unknown as BookingPaymentGateway,
       60,
     );
 
@@ -452,7 +430,7 @@ describeLive("BookingReaperService (live DB)", () => {
     expect(dbEngagement?.status).toBe(EngagementStatus.held);
   });
 
-  it("a payment-void failure does not block expiry: booking still expires + slot still frees, errored is counted", async () => {
+  it("a deposit void failure is fail-closed: booking stays pending_payment, slot stays held, errored is counted", async () => {
     const { booking, engagement } = await seedPendingBooking({
       offeringId: offeringDepositId,
       paymentMode: ServicePaymentMode.deposit,
@@ -462,63 +440,54 @@ describeLive("BookingReaperService (live DB)", () => {
 
     const throwingClient = {
       void: async () => {
-        throw new Error("order-service unreachable (simulated)");
+        throw new Error("payment gateway unreachable (simulated)");
       },
     };
     const reaper = new BookingReaperService(
       bookingRepo(),
       paymentRepo(),
       statusService,
-      throwingClient as unknown as BookingPaymentClient,
+      throwingClient as unknown as BookingPaymentGateway,
       1,
     );
 
     const summary = await reaper.reapExpired();
 
-    expect(summary.expired).toBeGreaterThanOrEqual(1);
+    // Phase 7 review fix #2 (BookingReaperService.reapOne): void FIRST, expire
+    // second — a void that throws may mean the deposit was already captured,
+    // so the booking is left for the next sweep / a late webhook.
     expect(summary.errored).toBeGreaterThanOrEqual(1);
 
     const dbBooking = await bookingRepo().findOne({ where: { id: booking.id } });
-    expect(dbBooking?.status).toBe(BookingStatus.expired);
+    expect(dbBooking?.status).toBe(BookingStatus.pending_payment);
 
     const dbEngagement = await engagementRepo().findOne({ where: { id: engagement.id } });
-    expect(dbEngagement?.status).toBe(EngagementStatus.released);
+    expect(dbEngagement?.status).toBe(EngagementStatus.held);
   });
 
-  // Real end-to-end void through order-service's
-  // /internal/booking-payments/void — requires a running order-service
-  // (BOOKING_LIVE_DB=1 + `bun --env-file=.env apps/order-service/src/index.ts`).
-  // Skipped with a clear message (via itOrderService) when it isn't reachable.
-  itOrderService(
-    "voids a real (fake-gateway-id) deposit PaymentIntent through order-service on expiry",
-    async () => {
-      const { BookingPaymentClient: RealClient } = await import("./booking-payment.client.ts");
-      const { booking } = await seedPendingBooking({
-        offeringId: offeringDepositId,
-        paymentMode: ServicePaymentMode.deposit,
-        ageMinutes: 5,
-      });
-      await seedFakePaymentFor(booking.id, `pi_nonexistent_${unique}_2`);
+  // The production wiring: the pre-M2 local gateway's void() is a no-op (no
+  // live authorization can exist), so expiry succeeds with nothing errored.
+  it("expires a deposit booking through the local payment gateway without erroring", async () => {
+    const { booking } = await seedPendingBooking({
+      offeringId: offeringDepositId,
+      paymentMode: ServicePaymentMode.deposit,
+      ageMinutes: 5,
+    });
+    await seedFakePaymentFor(booking.id, `pi_nonexistent_${unique}_2`);
 
-      const reaper = new BookingReaperService(
-        bookingRepo(),
-        paymentRepo(),
-        statusService,
-        new RealClient(),
-        1,
-      );
+    const reaper = new BookingReaperService(
+      bookingRepo(),
+      paymentRepo(),
+      statusService,
+      new LocalBookingPaymentGateway(AppDataSource.query.bind(AppDataSource)),
+      1,
+    );
 
-      // The gateway_payment_id is a fake pi_ that never existed at Stripe, so
-      // order-service's paymentIntents.cancel call will itself fail — this
-      // still proves the wiring (client -> order-service -> Stripe call
-      // attempted) without needing a genuine live PaymentIntent fixture, and
-      // exercises the exact best-effort catch path this task requires.
-      const summary = await reaper.reapExpired();
-      expect(summary.expired).toBeGreaterThanOrEqual(1);
+    const summary = await reaper.reapExpired();
+    expect(summary.expired).toBeGreaterThanOrEqual(1);
+    expect(summary.errored).toBe(0);
 
-      const dbBooking = await bookingRepo().findOne({ where: { id: booking.id } });
-      expect(dbBooking?.status).toBe(BookingStatus.expired);
-    },
-    20_000,
-  );
+    const dbBooking = await bookingRepo().findOne({ where: { id: booking.id } });
+    expect(dbBooking?.status).toBe(BookingStatus.expired);
+  });
 });

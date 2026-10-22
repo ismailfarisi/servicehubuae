@@ -40,8 +40,7 @@ export function ChatWidget() {
         // Sits above the mobile tab bar (h-14 + safe area), which is lg:hidden —
         // at lg+ the bar is gone and the launcher drops back to the corner.
         // Same offset the filter pill uses, so the two stack consistently.
-        className="fixed bottom-[calc(4.25rem+env(safe-area-inset-bottom))] lg:bottom-5 end-5 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg"
-        style={{ background: "hsl(var(--nl-espresso))", color: "hsl(var(--nl-linen))" }}
+        className="fixed bottom-[calc(4.25rem+env(safe-area-inset-bottom))] lg:bottom-5 end-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-nl-amber text-white shadow-lg transition-colors hover:bg-nl-amber/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nl-amber"
       >
         <MessageCircle size={24} />
       </button>
@@ -53,19 +52,24 @@ export function ChatWidget() {
             aria-label={t("chat.close")}
             onClick={close}
             className="fixed inset-0 z-40"
-            style={{ background: "rgba(0,0,0,0.2)" }}
+            style={{ background: "hsl(var(--nl-espresso) / 0.35)" }}
           />
           {/* biome-ignore lint/a11y/useSemanticElements: native <dialog> brings its own positioning/backdrop semantics that conflict with this slide-over layout */}
           <aside
             role="dialog"
             aria-modal="true"
             aria-label={t("chat.title")}
-            className="fixed bottom-0 end-0 z-50 flex h-[70vh] w-full max-w-sm flex-col rounded-t-2xl shadow-2xl sm:bottom-5 sm:end-5 sm:h-[520px] sm:rounded-2xl"
-            style={{ background: "hsl(var(--nl-linen))", fontFamily: MAISON_SANS }}
+            className="fixed bottom-0 end-0 z-50 flex h-[70vh] w-full max-w-sm flex-col overflow-hidden rounded-t-2xl border border-nl-cacao/10 bg-nl-linen text-nl-cacao shadow-2xl sm:bottom-5 sm:end-5 sm:h-[520px] sm:rounded-2xl"
+            style={{ fontFamily: MAISON_SANS }}
           >
-            <header className="flex items-center justify-between border-b px-4 py-3">
-              <span style={{ fontWeight: 600 }}>{t("chat.title")}</span>
-              <button type="button" onClick={close} aria-label={t("chat.close")}>
+            <header className="flex items-center justify-between bg-nl-amber px-4 py-3 text-white">
+              <span className="font-display text-base font-semibold">{t("chat.title")}</span>
+              <button
+                type="button"
+                onClick={close}
+                aria-label={t("chat.close")}
+                className="flex h-8 w-8 items-center justify-center rounded-full transition-colors hover:bg-white/15"
+              >
                 <X size={20} />
               </button>
             </header>
@@ -74,7 +78,9 @@ export function ChatWidget() {
               {activeTicketId && ticket ? (
                 <MessageThread messages={ticket.messages ?? []} />
               ) : activeTicketId ? (
-                <p style={{ fontFamily: MAISON_SANS, fontSize: 14, opacity: 0.6 }}>…</p>
+                <p className="text-sm text-nl-russet" style={{ fontFamily: MAISON_SANS }}>
+                  …
+                </p>
               ) : (
                 <StartConversation
                   isGuest={!isAuthenticated}
@@ -124,11 +130,11 @@ function StartConversation({
 
   return (
     <form onSubmit={submit} className="flex flex-col gap-3">
-      <p style={{ fontSize: 14 }}>{t("chat.intro")}</p>
+      <p className="text-sm text-nl-russet">{t("chat.intro")}</p>
       {isGuest && (
         <>
           <input
-            className="rounded border px-3 py-2"
+            className="rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2 text-sm text-nl-cacao outline-none placeholder:text-nl-russet/60 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
             placeholder={t("chat.namePlaceholder")}
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -136,7 +142,7 @@ function StartConversation({
           />
           <input
             type="email"
-            className="rounded border px-3 py-2"
+            className="rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2 text-sm text-nl-cacao outline-none placeholder:text-nl-russet/60 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
             placeholder={t("chat.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -145,19 +151,18 @@ function StartConversation({
         </>
       )}
       <textarea
-        className="rounded border px-3 py-2"
+        className="rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2 text-sm text-nl-cacao outline-none placeholder:text-nl-russet/60 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
         placeholder={t("chat.messagePlaceholder")}
         value={message}
         onChange={(e) => setMessage(e.target.value)}
         required
         rows={3}
       />
-      {error && <p style={{ color: "hsl(var(--nl-russet))", fontSize: 13 }}>{error}</p>}
+      {error && <p className="text-sm text-destructive">{error}</p>}
       <button
         type="submit"
         disabled={create.isPending}
-        className="rounded px-4 py-2"
-        style={{ background: "hsl(var(--nl-espresso))", color: "hsl(var(--nl-linen))" }}
+        className="inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {create.isPending ? t("chat.sending") : t("chat.start")}
       </button>
@@ -183,9 +188,9 @@ function Composer({ ticketId }: { ticketId: string }) {
   }
 
   return (
-    <form onSubmit={submit} className="flex items-center gap-2 border-t p-3">
+    <form onSubmit={submit} className="flex items-center gap-2 border-t border-nl-cacao/10 p-3">
       <input
-        className="flex-1 rounded border px-3 py-2"
+        className="flex-1 rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2 text-sm text-nl-cacao outline-none placeholder:text-nl-russet/60 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
         placeholder={t("chat.replyPlaceholder")}
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -193,8 +198,7 @@ function Composer({ ticketId }: { ticketId: string }) {
       <button
         type="submit"
         disabled={send.isPending}
-        className="rounded px-3 py-2"
-        style={{ background: "hsl(var(--nl-amber))", color: "hsl(var(--nl-espresso))" }}
+        className="inline-flex items-center justify-center rounded-lg bg-nl-amber px-4 py-2 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {t("chat.send")}
       </button>

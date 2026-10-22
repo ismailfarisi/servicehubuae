@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { useTicket, useSendMessage, useTicketStream } from "@/lib/queries/support";
 import { MessageThread } from "@/components/support/message-thread";
 import { TicketTimeline } from "@/components/support/ticket-timeline";
-import { Eyebrow, SerifTitle } from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 
 export default function SupportDetailPage() {
   const t = useTranslations("support");
@@ -16,7 +16,7 @@ export default function SupportDetailPage() {
   const [text, setText] = useState("");
   useTicketStream(id, true);
 
-  if (isLoading || !ticket) return <p>…</p>;
+  if (isLoading || !ticket) return <p className="text-sm text-nl-russet">…</p>;
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,18 +34,27 @@ export default function SupportDetailPage() {
     <div className="flex flex-col gap-4">
       <div>
         <Eyebrow>{t("detail.ticketNumber")} {ticket.ticket_number}</Eyebrow>
-        <SerifTitle size={24}>{ticket.subject}</SerifTitle>
+        <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
+          {ticket.subject}
+        </h1>
       </div>
       <TicketTimeline currentStatus={ticket.status} />
-      <div className="rounded border p-4">
+      <div className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-4 shadow-sm">
         <MessageThread messages={ticket.messages ?? []} />
       </div>
       {ticket.status !== "closed" && (
         <form onSubmit={submit} className="flex items-center gap-2">
-          <input className="flex-1 rounded border px-3 py-2" value={text}
-            onChange={(e) => setText(e.target.value)} placeholder={t("chat.replyPlaceholder")} />
-          <button type="submit" disabled={send.isPending} className="rounded px-4 py-2"
-            style={{ background: "hsl(var(--nl-amber))", color: "hsl(var(--nl-espresso))" }}>
+          <input
+            className="flex-1 rounded-lg border border-nl-cacao/15 bg-nl-linen px-3.5 py-2.5 text-sm text-nl-cacao outline-none transition-colors focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={t("chat.replyPlaceholder")}
+          />
+          <button
+            type="submit"
+            disabled={send.isPending}
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors disabled:opacity-50"
+          >
             {t("chat.send")}
           </button>
         </form>

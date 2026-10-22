@@ -33,7 +33,7 @@ import {
   Badge,
 } from "@mypickuae/ui";
 import { s3UploadClient } from "@/lib/s3-upload-client";
-import { Plus, Trash, Pencil, Buildings, Calendar, Clock } from "@phosphor-icons/react";
+import { Plus, Trash, Pencil, Buildings, Calendar } from "@phosphor-icons/react";
 import {
   useVendorProfile,
   useUpdateProfile,
@@ -52,7 +52,6 @@ const profileSchema = z.object({
   store_name: z.string().min(1, "Store name is required"),
   description: z.string().optional(),
   return_policy: z.string().optional(),
-  shipping_policy: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -69,7 +68,6 @@ function ProfileTab() {
       store_name: "",
       description: "",
       return_policy: "",
-      shipping_policy: "",
     },
   });
 
@@ -79,7 +77,6 @@ function ProfileTab() {
         store_name: profile.store_name ?? "",
         description: profile.description ?? "",
         return_policy: profile.return_policy ?? "",
-        shipping_policy: profile.shipping_policy ?? "",
       });
       setLogoUrl(profile.logo_url ?? null);
       setBannerUrl(profile.banner_url ?? null);
@@ -169,28 +166,10 @@ function ProfileTab() {
           name="return_policy"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Return Policy</FormLabel>
+              <FormLabel>Cancellation &amp; Refund Policy</FormLabel>
               <FormControl>
                 <Textarea
-                  placeholder="Describe your return policy…"
-                  rows={4}
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="shipping_policy"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Shipping Policy</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Describe your shipping policy…"
+                  placeholder="Explain how customers can cancel or reschedule a booking and what gets refunded…"
                   rows={4}
                   {...field}
                 />
@@ -461,7 +440,7 @@ function HolidaysTab() {
     <div className="space-y-4 max-w-2xl">
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
-          Set store holidays to pause order processing.
+          Set holidays to pause new bookings on those days.
         </p>
         <Button size="sm" onClick={() => setDialogOpen(true)}>
           <Plus size={14} className="mr-1" /> Add Holiday
@@ -573,73 +552,13 @@ function HolidaysTab() {
   );
 }
 
-// ─── Processing Tab ────────────────────────────────────────────────────────────
-
-const processingSchema = z.object({
-  processing_time_days: z.coerce.number().int().min(0, "Must be 0 or more"),
-});
-
-type ProcessingFormValues = z.infer<typeof processingSchema>;
-
-function ProcessingTab() {
-  const { data: profile, isLoading } = useVendorProfile();
-  const { mutate: updateProfile, isPending } = useUpdateProfile();
-
-  const form = useForm<ProcessingFormValues>({
-    resolver: zodResolver(processingSchema),
-    defaultValues: { processing_time_days: 1 },
-  });
-
-  useEffect(() => {
-    if (profile?.processing_time_days != null) {
-      form.reset({ processing_time_days: profile.processing_time_days });
-    }
-  }, [profile, form]);
-
-  function onSubmit(values: ProcessingFormValues) {
-    updateProfile({ processing_time_days: values.processing_time_days });
-  }
-
-  if (isLoading) {
-    return <Skeleton className="h-20 rounded-xl max-w-xs" />;
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 max-w-xs">
-        <FormField
-          control={form.control}
-          name="processing_time_days"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel className="flex items-center gap-2">
-                <Clock size={14} /> Processing Time (days)
-              </FormLabel>
-              <FormControl>
-                <Input type="number" min={0} max={30} {...field} />
-              </FormControl>
-              <FormMessage />
-              <p className="text-xs text-muted-foreground">
-                Number of days you need to prepare an order before shipping.
-              </p>
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={isPending}>
-          {isPending ? "Saving…" : "Save"}
-        </Button>
-      </form>
-    </Form>
-  );
-}
-
-// ─── Main Gear Page ────────────────────────────────────────────────────────
+// ─── Main Settings Page ────────────────────────────────────────────────────
 
 export default function SettingsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Gear</h1>
+        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
         <p className="text-sm text-gray-500">Manage your store profile and preferences</p>
       </div>
 
@@ -648,7 +567,6 @@ export default function SettingsPage() {
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="bank">Bank Details</TabsTrigger>
           <TabsTrigger value="holidays">Holidays</TabsTrigger>
-          <TabsTrigger value="processing">Processing</TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -661,10 +579,6 @@ export default function SettingsPage() {
 
         <TabsContent value="holidays">
           <HolidaysTab />
-        </TabsContent>
-
-        <TabsContent value="processing">
-          <ProcessingTab />
         </TabsContent>
       </Tabs>
     </div>

@@ -58,7 +58,7 @@ export function PayoutRequestCard() {
   const pct = Math.min(100, Math.round((earned / THRESHOLD_FILS) * 100));
 
   return (
-    <div className="p-4" style={BOX}>
+    <div className="p-5" style={BOX}>
       <Eyebrow>Cash payout</Eyebrow>
       <div
         className="mt-1.5"
@@ -72,10 +72,10 @@ export function PayoutRequestCard() {
       </div>
       <div
         className="w-full mt-2.5 overflow-hidden"
-        style={{ height: 3, background: "rgba(44,24,16,0.10)" }}
+        style={{ height: 6, borderRadius: 999, background: "hsl(var(--nl-pearl))" }}
       >
         <div
-          className="h-full transition-all"
+          className="h-full rounded-full transition-all"
           style={{ width: `${pct}%`, background: "hsl(var(--nl-amber))" }}
         />
       </div>
@@ -84,6 +84,7 @@ export function PayoutRequestCard() {
         style={{
           fontFamily: MAISON_SERIF,
           fontSize: 16,
+          fontWeight: 600,
           color: "hsl(var(--nl-cacao))",
         }}
       >

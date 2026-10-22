@@ -17,7 +17,7 @@ import type { FundingRail, HoldInput, HoldResult } from "./funding-rail.ts";
  * commissions (createDraft), so a claimed hold leaves the subtrahend exactly
  * as its commissions leave the sum.
  * A `held` row IS the reservation; capture flips it to `captured` (still subtracted
- * from availability until a vendor payout settles it — see order-service payout.service).
+ * from availability until a vendor payout settles it — see the vendor payout run, rebuilt on MyFatoorah in M5).
  */
 export class PayoutBalanceRail implements FundingRail {
   readonly source = ReelLicenseFundingSource.payout_balance;

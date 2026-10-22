@@ -9,7 +9,12 @@
 // engagement.service.test.ts's own fake shape. Live-DB overlap/403 coverage
 // lives in manual-booking.routes.integration.test.ts.
 import { describe, expect, it, mock } from "bun:test";
-import { Booking, BookingStatusHistory, EngagementKind, StaffEngagement } from "@mypickuae/database";
+import {
+  Booking,
+  BookingStatusHistory,
+  EngagementKind,
+  StaffEngagement,
+} from "@mypickuae/database";
 import { BadRequestError, ConflictError, NotFoundError } from "@mypickuae/plugins";
 import { ManualBookingService } from "./manual-booking.service.ts";
 

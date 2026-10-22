@@ -41,21 +41,21 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 const growthTiles = [
   {
-    title: "Curated catalog",
+    title: "Service listings",
     description:
-      "Launch product edits, media, variants, and bulk imports from one workspace.",
+      "List your services with prices, durations, photos and the areas you cover.",
     icon: Package,
   },
   {
-    title: "Order control",
+    title: "Bookings in one place",
     description:
-      "Track fulfillment, returns, promotions, and payouts without switching tools.",
+      "Manage your calendar, staff, availability and bookings without switching tools.",
     icon: ChartLineUp,
   },
   {
-    title: "Commerce content",
+    title: "Grow your reach",
     description:
-      "Connect storefront updates, reels, coupons, and integrations as your brand grows.",
+      "Connect storefront updates, reels and integrations as your business grows.",
     icon: Sparkle,
   },
 ];
@@ -122,15 +122,15 @@ function LoginForm() {
   return (
     <main className="relative min-h-screen overflow-hidden bg-cacao text-linen">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-caramel/80 to-transparent" />
-      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(184,115,51,0.18)_0%,rgba(44,24,16,0)_38%,rgba(26,18,8,0.34)_100%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(242,234,224,0.06),transparent_42%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(37,99,235,0.32)_0%,rgba(15,23,42,0)_38%,rgba(3,7,18,0.4)_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(96,165,250,0.14),transparent_42%)]" />
       <div className="relative mx-auto grid min-h-screen w-full max-w-7xl items-center gap-8 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_430px] lg:px-8">
         <section className="flex min-h-[calc(100vh-3rem)] flex-col justify-between gap-8 py-4 lg:py-8">
           <div className="space-y-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center border border-amber/50 bg-espresso/70 text-sm font-semibold tracking-[0.22em] text-amber">
-                  NL
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-amber/50 bg-espresso/70 text-sm font-semibold tracking-[0.22em] text-amber">
+                  MP
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-caramel">
@@ -141,7 +141,7 @@ function LoginForm() {
               </div>
               <div className="flex items-center gap-2 border border-pearl/15 bg-linen/5 px-3 py-2 text-xs text-pearl/80">
                 <Storefront className="h-4 w-4 text-amber" weight="thin" />
-                Curated marketplace
+                Services marketplace
               </div>
             </div>
 
@@ -150,10 +150,10 @@ function LoginForm() {
                 Register interest
               </p>
               <h1 className="max-w-3xl text-4xl font-semibold leading-[0.98] text-linen sm:text-5xl lg:text-7xl">
-                Grow your beauty brand with a dashboard built for selling.
+                Grow your service business with a dashboard built for bookings.
               </h1>
               <p className="max-w-2xl text-base leading-7 text-pearl/82 sm:text-lg">
-                Tell us about your brand and the MyPickUAE team will review
+                Tell us about your business and the MyPickUAE team will review
                 category fit, operational needs, and the best path into the
                 vendor program.
               </p>
@@ -232,7 +232,7 @@ function LoginForm() {
                           <FormLabel>Brand name</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Luna Glow"
+                              placeholder="Sparkle Home Services"
                               autoComplete="organization"
                               className="border-pearl/25 bg-linen/95"
                               {...field}
@@ -287,10 +287,10 @@ function LoginForm() {
                       name="category"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Product category</FormLabel>
+                          <FormLabel>Service category</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="Skincare, makeup, fragrance"
+                              placeholder="Cleaning, AC repair, salon"
                               autoComplete="off"
                               className="border-pearl/25 bg-linen/95"
                               {...field}
@@ -329,7 +329,7 @@ function LoginForm() {
                         <FormLabel>What should we know?</FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Share your product range, launch stage, or selling goals."
+                            placeholder="Share the services you offer, the areas you cover, or your goals."
                             className="min-h-24 resize-none border-pearl/25 bg-linen/95 text-cacao"
                             {...field}
                           />
@@ -350,11 +350,11 @@ function LoginForm() {
         </section>
 
         <aside className="relative z-10 flex items-center py-6 lg:min-h-screen lg:justify-center">
-          <div className="mx-auto w-full max-w-md border border-pearl/70 bg-linen/95 p-5 text-cacao shadow-[0_28px_90px_rgba(26,18,8,0.34)] backdrop-blur-sm sm:p-7">
+          <div className="mx-auto w-full max-w-md rounded-2xl border border-pearl/70 bg-linen/95 p-5 text-cacao shadow-[0_28px_90px_rgba(3,7,18,0.4)] backdrop-blur-sm sm:p-7">
           <div className="mb-7">
             <div className="mb-5 flex items-center justify-between gap-4 border-b border-pearl/70 pb-5">
-              <div className="flex h-14 w-14 items-center justify-center bg-amber text-sm font-semibold tracking-[0.22em] text-espresso shadow-[0_14px_40px_rgba(184,115,51,0.24)]">
-                NL
+              <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-amber text-sm font-semibold tracking-[0.22em] text-linen shadow-[0_14px_40px_rgba(37,99,235,0.35)]">
+                MP
               </div>
               <div className="text-right">
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber">

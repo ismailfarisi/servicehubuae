@@ -204,20 +204,19 @@ export function HeroBanner({
 								)}
 								<div
 									aria-hidden="true"
-									className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(26,18,8,0.85)_0%,rgba(26,18,8,0.55)_30%,rgba(26,18,8,0.05)_60%,transparent_100%)]"
+									className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,hsl(var(--nl-espresso)/0.85)_0%,hsl(var(--nl-espresso)/0.55)_30%,hsl(var(--nl-espresso)/0.05)_60%,transparent_100%)] rtl:bg-[linear-gradient(270deg,hsl(var(--nl-espresso)/0.85)_0%,hsl(var(--nl-espresso)/0.55)_30%,hsl(var(--nl-espresso)/0.05)_60%,transparent_100%)]"
 								/>
 								<div
 									aria-hidden="true"
 									className="pointer-events-none absolute inset-x-0 bottom-0 h-[140px] bg-gradient-to-t from-nl-espresso/55 to-transparent"
 								/>
-								<div className="absolute inset-0 max-w-[1400px] mx-auto px-6 md:px-16 flex flex-col justify-center text-nl-linen">
+								<div className="absolute inset-0 max-w-[1400px] mx-auto px-6 md:px-16 flex flex-col justify-center text-white">
 									<div className="max-w-[720px] pb-16 md:pb-20">
-										<span className="block w-7 h-px bg-nl-amber mb-4 md:mb-5" />
-										<h2 className="font-serif text-[clamp(36px,6.5vw,92px)] leading-[0.98] tracking-[-0.02em] text-nl-linen m-0">
+										<h2 className="font-display font-bold text-[clamp(32px,5.5vw,72px)] leading-tight tracking-tight text-white m-0">
 											{banner.title}
 										</h2>
 										{banner.subtitle && (
-											<p className="mt-4 md:mt-5 text-sm md:text-base leading-[1.6] text-nl-linen/90 max-w-[480px]">
+											<p className="mt-4 text-base md:text-lg leading-relaxed text-white/90 max-w-[480px]">
 												{banner.subtitle}
 											</p>
 										)}
@@ -250,7 +249,7 @@ export function HeroBanner({
 
 			{showControls && (
 				<div className="absolute left-0 right-0 bottom-0 z-10 pointer-events-none">
-					<div className="max-w-[1400px] mx-auto px-6 md:px-12 pb-5 md:pb-7 flex items-center justify-between text-nl-linen/90">
+					<div className="max-w-[1400px] mx-auto px-6 md:px-12 pb-5 md:pb-7 flex items-center justify-between text-white/90">
 						{/* The visible rule stays 2px; the button around it carries the
 						    24px+ hit area WCAG 2.5.8 asks for. */}
 						<div className="flex items-center pointer-events-auto">
@@ -264,10 +263,10 @@ export function HeroBanner({
 									className="group/dot flex items-center px-1 py-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nl-amber"
 								>
 									<span
-										className={`block h-0.5 transition-[width,background-color] duration-300 ease-[cubic-bezier(0.2,0.7,0.2,1)] motion-reduce:transition-none ${
+										className={`block h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out motion-reduce:transition-none ${
 											selectedIndex === i
-												? "w-8 bg-nl-amber"
-												: "w-[18px] bg-nl-pearl/35 group-hover/dot:bg-nl-pearl/60"
+												? "w-6 bg-white"
+												: "w-1.5 bg-white/45 group-hover/dot:bg-white/70"
 										}`}
 									/>
 								</button>
@@ -275,12 +274,10 @@ export function HeroBanner({
 						</div>
 
 						<div className="flex items-center gap-4 md:gap-5 pointer-events-auto">
-							<div className="text-[10px] tracking-[0.3em] uppercase">
-								<span className="text-nl-amber">
-									{String(selectedIndex + 1).padStart(2, "0")}
-								</span>
-								<span className="mx-2 opacity-50">/</span>
-								<span>{String(total).padStart(2, "0")}</span>
+							<div className="rounded-full bg-nl-espresso/40 px-2.5 py-1 text-xs font-medium tabular-nums backdrop-blur-md">
+								<span className="text-white">{selectedIndex + 1}</span>
+								<span className="mx-1 opacity-60">/</span>
+								<span className="opacity-80">{total}</span>
 							</div>
 							<div className="flex gap-2">
 								{autoplay && (
@@ -293,12 +290,12 @@ export function HeroBanner({
 												: "Resume automatic slide rotation"
 										}
 										aria-pressed={!isPlaying}
-										className="w-10 h-10 border border-nl-pearl/35 bg-nl-espresso/35 backdrop-blur-md text-nl-linen flex items-center justify-center hover:border-nl-amber hover:text-nl-amber transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nl-amber"
+										className="w-10 h-10 rounded-full border border-white/25 bg-nl-espresso/35 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-nl-cacao transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nl-amber"
 									>
 										{isPlaying ? (
-											<Pause className="h-3.5 w-3.5" strokeWidth={1.25} />
+											<Pause className="h-4 w-4" strokeWidth={1.75} />
 										) : (
-											<Play className="h-3.5 w-3.5 rtl:-scale-x-100" strokeWidth={1.25} />
+											<Play className="h-4 w-4 rtl:-scale-x-100" strokeWidth={1.75} />
 										)}
 									</button>
 								)}
@@ -306,22 +303,22 @@ export function HeroBanner({
 									type="button"
 									onClick={() => emblaApi?.scrollPrev()}
 									aria-label="Previous slide"
-									className="w-10 h-10 border border-nl-pearl/35 bg-nl-espresso/35 backdrop-blur-md text-nl-linen flex items-center justify-center hover:border-nl-amber hover:text-nl-amber transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nl-amber"
+									className="w-10 h-10 rounded-full border border-white/25 bg-nl-espresso/35 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-nl-cacao transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nl-amber"
 								>
 									<ArrowLeft
-										className="h-3.5 w-3.5 rtl:rotate-180"
-										strokeWidth={1.25}
+										className="h-4 w-4 rtl:rotate-180"
+										strokeWidth={1.75}
 									/>
 								</button>
 								<button
 									type="button"
 									onClick={() => emblaApi?.scrollNext()}
 									aria-label="Next slide"
-									className="w-10 h-10 border border-nl-pearl/35 bg-nl-espresso/35 backdrop-blur-md text-nl-linen flex items-center justify-center hover:border-nl-amber hover:text-nl-amber transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nl-amber"
+									className="w-10 h-10 rounded-full border border-white/25 bg-nl-espresso/35 backdrop-blur-md text-white flex items-center justify-center hover:bg-white hover:text-nl-cacao transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nl-amber"
 								>
 									<ArrowRight
-										className="h-3.5 w-3.5 rtl:rotate-180"
-										strokeWidth={1.25}
+										className="h-4 w-4 rtl:rotate-180"
+										strokeWidth={1.75}
 									/>
 								</button>
 							</div>

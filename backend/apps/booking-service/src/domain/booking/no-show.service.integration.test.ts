@@ -1,22 +1,20 @@
 // no-show.service.integration.test.ts
 //
-// Live Postgres (+ real order-service HTTP + Stripe TEST mode for the money leg)
-// under BOOKING_LIVE_DB=1. Mirrors cancel.service.integration.test.ts's
-// live-gate / order-service-reachability-skip / cleanup patterns. Covers the
-// brief's five named cases:
-//   (1) mark no-show CAPTURES the penalty (partial-capture a prepay auth) —
-//       needs order-service + Stripe (itOrderService).
+// Live Postgres under BOOKING_LIVE_DB=1. Mirrors
+// cancel.service.integration.test.ts's live-gate / cleanup patterns. Covers
+// the brief's five named cases:
+//   (1) mark no-show decides a partial capture of the penalty from a prepay
+//       auth; on the pre-M2 local gateway the capture answers 503 and is
+//       swallowed as best-effort, so the booking still lands no_show.
 //   (2) per-vendor strike count INCREMENTS with each no_show.
 //   (3) over-threshold customer is forced off pay_at_venue AT that vendor but
 //       NOT at another vendor.
 //   (4) the platform backstop forces deposit EVERYWHERE (even at a vendor with
 //       zero strikes) once the platform count is reached.
 //   (5) no-show AFTER the auto-complete moment -> 422.
-// Cases 2-5 are pure DB (no order-service) so they run on a plain live `it`.
 // Kept lean; awaits are plain (never `expect(promise).resolves`, which hangs
 // live suites — see the bun shared-pg-pool guidance).
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
 import {
   AppDataSource,
   Booking,
@@ -39,11 +37,10 @@ import {
   VendorStatus,
   ensureDatabase,
 } from "@mypickuae/database";
-import Stripe from "stripe";
 import { AvailabilityCache } from "../availability/availability-cache.ts";
 import { EngagementService } from "../engagement/engagement.service.ts";
-import { BookingPaymentClient } from "./booking-payment.client.ts";
 import { BookingStatusService } from "./booking-status.service.ts";
+import { LocalBookingPaymentGateway } from "./local-booking-payment.gateway.ts";
 import { NoShowService } from "./no-show.service.ts";
 import { StrikeService } from "./strike.service.ts";
 
@@ -52,35 +49,7 @@ const describeLive = LIVE_DB ? describe : describe.skip;
 const GRACE_HOURS = 24;
 const HOUR_MS = 3_600_000;
 
-if (LIVE_DB && !config.stripe.secretKey.startsWith("sk_test_")) {
-  throw new Error(
-    "BOOKING_LIVE_DB=1 requires a Stripe TEST secret key (sk_test_...) — refusing to run against a live key.",
-  );
-}
-
-const ORDER_SERVICE_BASE_URL =
-  process.env.ORDER_SERVICE_URL ?? `http://${config.serviceHost.order}:${config.port.order}`;
-let orderServiceReachable = false;
-if (LIVE_DB) {
-  try {
-    await fetch(ORDER_SERVICE_BASE_URL, { signal: AbortSignal.timeout(2_000) });
-    orderServiceReachable = true;
-  } catch (err) {
-    console.warn(
-      `[skip] no-show money test requires order-service on ${ORDER_SERVICE_BASE_URL}; start it with: bun --env-file=.env apps/order-service/src/index.ts — probe error: ${(err as Error).message}`,
-    );
-  }
-}
-const itOrderService = orderServiceReachable ? it : it.skip;
-
-const stripe = LIVE_DB
-  ? new Stripe(config.stripe.secretKey, { apiVersion: "2026-03-25.dahlia" })
-  : null;
 const unique = Date.now();
-const COMPLIANT_CUSTOMER_FIELDS = {
-  name: "Booking No-Show Test Customer",
-  address: { line1: "Marina Walk", city: "Dubai", country: "AE" },
-};
 
 function fakeNotificationQueue() {
   const events: Array<{ name: string; data: any }> = [];
@@ -93,7 +62,7 @@ function fakeNotificationQueue() {
   };
 }
 
-describeLive("NoShowService (live DB; money leg needs order-service + Stripe test mode)", () => {
+describeLive("NoShowService (live DB + local payment gateway)", () => {
   let customerId: string;
   let adminId: string;
   let vendorAId: string;
@@ -307,7 +276,9 @@ describeLive("NoShowService (live DB; money leg needs order-service + Stripe tes
 
     const availabilityCache = new AvailabilityCache();
     engagementService = new EngagementService(engagementRepo(), availabilityCache);
-    const bookingPaymentClient = new BookingPaymentClient();
+    const bookingPaymentClient = new LocalBookingPaymentGateway(
+      AppDataSource.query.bind(AppDataSource),
+    );
     const bookingStatusService = new BookingStatusService(bookingRepo(), availabilityCache);
     notificationQueue = fakeNotificationQueue();
     noShowService = new NoShowService(
@@ -390,89 +361,67 @@ describeLive("NoShowService (live DB; money leg needs order-service + Stripe tes
   }, 60_000);
 
   // ── (1) penalty capture (money) ──────────────────────────────────────────
-  itOrderService(
-    "(1) marking no-show partial-captures the policy penalty from a prepay authorization",
-    async () => {
-      // Booking started 1h ago, ended 30m ago -> inside [starts, ends+24h).
-      const startsAt = new Date(Date.now() - 1 * HOUR_MS);
-      const booking = await seedBooking({
-        customerUserId: customerId,
-        vendorId: vendorAId,
-        staffId: staffAId,
-        offeringId: offeringAId,
-        status: BookingStatus.confirmed,
-        paymentMode: ServicePaymentMode.prepay,
-        startsAt,
-        priceFils: 10_000,
-        refundPolicy: CancellationRefundPolicy.percent,
-        penaltyPercent: 40,
-      });
+  it("(1) marking no-show decides a partial capture of the policy penalty from a prepay authorization (capture unavailable pre-M2, best-effort)", async () => {
+    // Booking started 1h ago, ended 30m ago -> inside [starts, ends+24h).
+    const startsAt = new Date(Date.now() - 1 * HOUR_MS);
+    const booking = await seedBooking({
+      customerUserId: customerId,
+      vendorId: vendorAId,
+      staffId: staffAId,
+      offeringId: offeringAId,
+      status: BookingStatus.confirmed,
+      paymentMode: ServicePaymentMode.prepay,
+      startsAt,
+      priceFils: 10_000,
+      refundPolicy: CancellationRefundPolicy.percent,
+      penaltyPercent: 40,
+    });
 
-      // Mint a REAL manual-capture authorization (requires_capture PI) and hang
-      // it on escrow_hold_id, exactly the shape the booking-auth job leaves.
-      const cust = await stripe!.customers.create({
-        email: `booking-noshow-1-${unique}@test.local`,
-        ...COMPLIANT_CUSTOMER_FIELDS,
-      });
-      const pm = await stripe!.paymentMethods.attach("pm_card_visa", { customer: cust.id });
-      const authPi = await stripe!.paymentIntents.create({
+    // An authorization hung on escrow_hold_id, exactly the shape the
+    // booking-auth job leaves.
+    const authPayment = await paymentRepo().save(
+      paymentRepo().create({
+        booking_id: booking.id,
+        user_id: customerId,
+        status: "authorized" as any,
+        payment_method: "credit_card" as any,
         amount: 10_000,
-        currency: "aed",
-        customer: cust.id,
-        payment_method: pm.id,
-        payment_method_types: ["card"],
-        capture_method: "manual",
-        confirm: true,
-        off_session: true,
-        description: `MyPickUAE booking no-show test auth ${unique}`,
-      });
-      expect(authPi.status).toBe("requires_capture");
-      const authPayment = await paymentRepo().save(
-        paymentRepo().create({
-          booking_id: booking.id,
-          user_id: customerId,
-          status: "authorized" as any,
-          payment_method: "stripe" as any,
-          amount: 10_000,
-          currency: "AED",
-          gateway: "stripe",
-          gateway_payment_id: authPi.id,
-          gateway_response: { kind: "payment_intent" },
-        }),
-      );
-      await bookingRepo().update({ id: booking.id }, { escrow_hold_id: authPayment.id });
+        currency: "AED",
+        gateway: "myfatoorah",
+        gateway_payment_id: `auth_noshow_${unique}`,
+      }),
+    );
+    await bookingRepo().update({ id: booking.id }, { escrow_hold_id: authPayment.id });
 
-      // ── The actual thing under test ──
-      const result = await noShowService.markNoShow(booking.id, { id: adminId, role: "admin" });
+    // ── The actual thing under test ──
+    const result = await noShowService.markNoShow(booking.id, { id: adminId, role: "admin" });
 
-      expect(result.action).toBe("partial_capture");
-      expect(result.forfeitFils).toBe(4_000); // 40% of 10_000
-      expect(result.refundFils).toBe(6_000);
-      expect(result.booking.status).toBe(BookingStatus.no_show);
+    expect(result.action).toBe("partial_capture");
+    expect(result.forfeitFils).toBe(4_000); // 40% of 10_000
+    expect(result.refundFils).toBe(6_000);
+    expect(result.booking.status).toBe(BookingStatus.no_show);
 
-      // Stripe captured ONLY the penalty; the remainder auto-released.
-      const afterPi = await stripe!.paymentIntents.retrieve(authPi.id);
-      expect(afterPi.status).toBe("succeeded");
-      expect(afterPi.amount_received).toBe(4_000);
+    // The capture itself is unavailable pre-M2 (503, swallowed): the
+    // authorization row is untouched.
+    const authAfter = await paymentRepo().findOne({ where: { id: authPayment.id } });
+    expect(authAfter?.status).toBe("authorized" as any);
 
-      // Engagement is NOT released on no_show (slot time already passed).
-      const dbEng = await engagementRepo().findOne({ where: { id: booking.engagement_id } });
-      expect(dbEng!.status).toBe(EngagementStatus.confirmed);
+    // Engagement is NOT released on no_show (slot time already passed).
+    const dbEng = await engagementRepo().findOne({ where: { id: booking.engagement_id } });
+    expect(dbEng!.status).toBe(EngagementStatus.confirmed);
 
-      // Customer notification carries the penalty breakdown + dispute link.
-      const evt = notificationQueue.events.find((e) => e.data?.data?.bookingId === booking.id);
-      expect(evt?.data.userId).toBe(customerId);
-      expect(evt?.data.data.penalty.forfeitFils).toBe(4_000);
-      expect(evt?.data.data.disputeUrl).toContain(`/support/bookings/${booking.id}`);
+    // Customer notification carries the penalty breakdown + dispute link.
+    const evt = notificationQueue.events.find((e) => e.data?.data?.bookingId === booking.id);
+    expect(evt?.data.userId).toBe(customerId);
+    expect(evt?.data.data.penalty.forfeitFils).toBe(4_000);
+    expect(evt?.data.data.disputeUrl).toContain(`/support/bookings/${booking.id}`);
 
-      // Forfeit recorded in the single status-history row.
-      const history = await historyRepo().find({ where: { booking_id: booking.id } });
-      expect(history).toHaveLength(1);
-      expect(history[0]!.to_status).toBe(BookingStatus.no_show);
-      expect(history[0]!.reason).toContain("forfeit=4000 fils");
-    },
-    45_000,
-  );
+    // Forfeit recorded in the single status-history row.
+    const history = await historyRepo().find({ where: { booking_id: booking.id } });
+    expect(history).toHaveLength(1);
+    expect(history[0]!.to_status).toBe(BookingStatus.no_show);
+    expect(history[0]!.reason).toContain("forfeit=4000 fils");
+  }, 45_000);
 
   // ── (2) per-vendor strike increment ──────────────────────────────────────
   it("(2) per-vendor no-show count increments with each no_show", async () => {

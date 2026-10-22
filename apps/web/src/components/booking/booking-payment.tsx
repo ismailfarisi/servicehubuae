@@ -2,17 +2,25 @@
 
 import { CardElement, Elements, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import type { StripeElementsOptions } from "@stripe/stripe-js";
+import type { Stripe, StripeElementsOptions } from "@stripe/stripe-js";
 import { useTranslations } from "next-intl";
 import { useMemo, useRef, useState } from "react";
-import { Eyebrow, MAISON_SANS } from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 import type { CreateBookingResponse, PaymentMode } from "@/lib/booking/types";
 import { formatPrice } from "@/lib/utils";
 
-// Reuses the exact loadStripe/CardElement/confirmCardPayment pattern already
-// live in apps/web/src/components/checkout/checkout-page.tsx — not a new
-// Stripe integration path.
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
+// Interim Stripe card flow (loadStripe/CardElement/confirmCardPayment) for
+// deposit/prepay offerings; online payments stay disabled until M2.
+//
+// Created lazily on first render rather than at import time, so merely
+// importing this module never injects Stripe.js. Only deposit/prepay
+// bookings mount it (booking-checkout.tsx loads it via next/dynamic), and M2
+// replaces it with the MyFatoorah hosted checkout.
+let stripePromise: Promise<Stripe | null> | null = null;
+function getStripe(): Promise<Stripe | null> {
+  stripePromise ??= loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || "");
+  return stripePromise;
+}
 const STRIPE_DEFAULT_POSTAL_CODE = "00000";
 
 export interface BookingPaymentProps {
@@ -54,7 +62,7 @@ export function BookingPayment(props: BookingPaymentProps) {
   return (
     <Elements
       key={`booking-stripe-${props.paymentMode}-${props.depositFils}`}
-      stripe={stripePromise}
+      stripe={getStripe()}
       options={elementsOptions}
     >
       <BookingPaymentInner {...props} />
@@ -164,49 +172,28 @@ function BookingPaymentInner({
 
   return (
     <div className="mt-6">
-      <Eyebrow className="mb-2">
+      <Eyebrow className="mb-2 text-sm">
         {paymentMode === "deposit"
           ? t("depositCardTitle", { amount: formatPrice(displayDepositFils, "AED", locale) })
           : t("prepayCardTitle")}
       </Eyebrow>
-      <p
-        className="mb-2.5"
-        style={{ fontFamily: MAISON_SANS, fontSize: 12, color: "hsl(var(--nl-russet))" }}
-      >
+      <p className="mb-3 text-sm text-nl-russet">
         {paymentMode === "deposit"
           ? t("depositConfirmNote", { amount: formatPrice(displayDepositFils, "AED", locale) })
           : t("prepayConfirmNote")}
       </p>
 
-      <div
-        style={{
-          border: "1px solid rgba(44,24,16,0.16)",
-          background: "rgba(255,255,255,0.55)",
-          padding: "14px 16px",
-        }}
-      >
+      <div className="rounded-lg border border-nl-cacao/15 bg-nl-linen px-4 py-3.5 shadow-sm transition focus-within:border-nl-amber focus-within:ring-2 focus-within:ring-nl-amber/20">
         <CardElement options={{ style: { base: { fontSize: "15px" } } }} />
       </div>
 
-      {cardError && (
-        <p className="mt-2" style={{ color: "hsl(var(--destructive))", fontSize: 12 }}>
-          {cardError}
-        </p>
-      )}
+      {cardError && <p className="mt-2 text-xs text-destructive">{cardError}</p>}
 
       <button
         type="button"
         onClick={handleSubmit}
         disabled={disabled || submitting || !stripe}
-        className="w-full uppercase mt-4 transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-        style={{
-          background: "hsl(var(--nl-cacao))",
-          color: "hsl(var(--nl-linen))",
-          padding: "16px 0",
-          fontSize: 11,
-          letterSpacing: "0.24em",
-          border: "none",
-        }}
+        className="mt-4 inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {submitting
           ? t("processing")

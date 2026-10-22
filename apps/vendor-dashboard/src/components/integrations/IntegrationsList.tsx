@@ -75,7 +75,7 @@ function IntegrationCard({ integration }: { integration: Integration }) {
     <Link
       href={`/integrations/${integration.id}`}
       className={[
-        "group block rounded-lg border border-pearl/14 bg-linen p-6",
+        "group block rounded-lg border border-pearl bg-linen p-6",
         "transition-all duration-200 ease-out",
         "hover:border-pearl/40 active:scale-[0.98]",
       ].join(" ")}
@@ -99,13 +99,13 @@ function IntegrationCard({ integration }: { integration: Integration }) {
 
       {/* Secrets row */}
       <div className="grid grid-cols-2 gap-3 mb-5">
-        <div className="rounded-md border border-pearl/14 bg-pearl/30 px-3 py-2">
+        <div className="rounded-md border border-pearl bg-pearl/30 px-3 py-2">
           <p className="text-xs uppercase tracking-wide text-taupe mb-1">Inbound</p>
           <p className="font-mono text-sm text-cacao">
             {maskSecret(integration.inbound_secret_last4)}
           </p>
         </div>
-        <div className="rounded-md border border-pearl/14 bg-pearl/30 px-3 py-2">
+        <div className="rounded-md border border-pearl bg-pearl/30 px-3 py-2">
           <p className="text-xs uppercase tracking-wide text-taupe mb-1">Outbound</p>
           <p className="font-mono text-sm text-cacao">
             {maskSecret(integration.outbound_secret_last4)}

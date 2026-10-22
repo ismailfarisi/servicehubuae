@@ -42,7 +42,7 @@ interface SourceTreeProps {
 export function SourceTree({ schema, isLoading }: SourceTreeProps) {
   if (isLoading) {
     return (
-      <div className="rounded-lg border border-pearl/14 bg-linen p-4">
+      <div className="rounded-lg border border-pearl bg-linen p-4">
         <p className="text-xs uppercase tracking-wide text-taupe mb-3">SOURCE FIELDS</p>
         <p className="text-xs text-taupe">Loading schema…</p>
       </div>
@@ -50,7 +50,7 @@ export function SourceTree({ schema, isLoading }: SourceTreeProps) {
   }
   const leaves = flattenSchema(schema);
   return (
-    <div className="rounded-lg border border-pearl/14 bg-linen p-4 h-full overflow-auto">
+    <div className="rounded-lg border border-pearl bg-linen p-4 h-full overflow-auto">
       <p className="text-xs uppercase tracking-wide text-taupe mb-3">SOURCE FIELDS</p>
       {leaves.length === 0 ? (
         <p className="text-xs text-taupe">No fields available for this event.</p>

@@ -3,12 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
 export type Period = "7d" | "30d" | "90d" | "all";
-export type LeaderboardType =
-  | "creators_commission"
-  | "creators_gmv"
-  | "reels_orders"
-  | "products_gmv"
-  | "vendors_gmv";
+/** GET /admin/reels/analytics/leaderboard types (reels-service). */
+export type LeaderboardType = "top_reels" | "top_creators";
 
 export interface DeltaCount {
   value: number;
@@ -18,25 +14,21 @@ export interface DeltaRate {
   value: number;
   deltaPp: number | null;
 }
+/** GET /admin/reels/analytics/overview. Engagement only: impressions, likes, saves. */
 export interface Overview {
   kpis: {
     impressions: DeltaCount;
+    likes: DeltaCount;
+    saves: DeltaCount;
     engagementRate: DeltaRate;
-    productTapRate: DeltaRate;
-    attributedOrders: DeltaCount;
-    attributedGmvFils: DeltaCount;
-    earnedCommissionFils: DeltaCount;
   };
   timeseries: Array<{
     date: string;
     impressions: number;
-    attributedGmvFils: number;
-    attributedOrders: number;
-    earnedCommissionFils: number;
+    likes: number;
+    saves: number;
     engagementRate: number;
-    productTapRate: number;
   }>;
-  funnel: { impressions: number; taps: number; orders: number; earnedCommissions: number };
   asOf: string;
 }
 
@@ -55,15 +47,15 @@ export function useAdminReelOverview(period: Period, vendorId?: string) {
 
 export interface LeaderboardRow {
   id: string;
-  label: string;
-  sub_label?: string;
-  avatar_url?: string;
-  thumbnail_url?: string;
-  value: number;
-  orders?: number;
+  label: string | null;
+  sub_label?: string | null;
+  avatar_url?: string | null;
+  thumbnail_url?: string | null;
+  impressions: number;
+  likes: number;
+  saves: number;
+  /** top_creators only. */
   reels?: number;
-  gmv_fils?: number;
-  impressions?: number;
 }
 
 export function useAdminReelLeaderboard(
@@ -95,11 +87,6 @@ export function adminLeaderboardCsvUrl(
   const params = new URLSearchParams({ type, period, limit: "500" });
   if (vendorId) params.set("vendor_id", vendorId);
   return `/admin/reels/analytics/leaderboard.csv?${params.toString()}`;
-}
-
-export function formatAED(fils: number | null | undefined): string {
-  if (fils == null) return "—";
-  return `AED ${(fils / 100).toLocaleString("en-AE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export function formatCount(n: number | null | undefined): string {

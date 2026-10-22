@@ -48,6 +48,18 @@ describe("internalServiceAuth", () => {
     expect(res.status).toBe(200);
   });
 
+  it("rejects issuers of the removed order/product services", async () => {
+    for (const iss of ["order-service", "product-service"]) {
+      const token = jwt.sign({ iss }, SECRET, { expiresIn: "1m" });
+      const res = await app.handle(
+        new Request("http://localhost/internal/hello", {
+          headers: { authorization: `Bearer ${token}` },
+        }),
+      );
+      expect(res.status).toBe(401);
+    }
+  });
+
   it("rejects expired token", async () => {
     const token = jwt.sign({ iss: "integration-service" }, SECRET, {
       expiresIn: "-1s",

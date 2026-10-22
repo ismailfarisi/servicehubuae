@@ -1,8 +1,11 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +14,28 @@ import { ReelLicenseFundingSource, ReelLicenseHoldStatus } from "../enums.ts";
 import type { ReelLicenseOffer } from "./reel-license-offer.entity.ts";
 
 @Entity("reel_license_escrow_holds")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("ReelBriefBid", ["bid_id"], ["id"], {
+  name: "fk_reel_license_escrow_holds_bid",
+  onDelete: "CASCADE",
+})
+@ForeignKey("CollabApplication", ["collab_application_id"], ["id"], {
+  name: "fk_reel_license_escrow_holds_collab_app",
+  onDelete: "CASCADE",
+})
+@Check(
+  "chk_reel_license_escrow_holds_link",
+  "num_nonnulls(offer_id, bid_id, collab_application_id) = 1",
+)
+@Index("idx_reel_license_escrow_holds_bid", ["bid_id"], { where: "bid_id IS NOT NULL" })
+@Index("idx_reel_license_escrow_holds_collab_app", ["collab_application_id"], {
+  where: "collab_application_id IS NOT NULL",
+})
+@Index("idx_rleh_vendor_payout_active", ["vendor_id"], {
+  where:
+    "funding_source = 'payout_balance' AND status IN ('held', 'captured') AND deleted_at IS NULL",
+})
+@Index("uq_rleh_idem", ["idempotency_key"], { unique: true })
 export class ReelLicenseEscrowHold {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

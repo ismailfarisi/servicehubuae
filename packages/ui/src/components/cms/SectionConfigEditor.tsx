@@ -1,13 +1,9 @@
 "use client";
 
 import type { AxiosInstance } from "axios";
-import { ChevronDown, Loader2, Plus, Trash2 } from "lucide-react";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import type {
-	LayoutBlockVideo,
-	MediaAssetType,
-	S3UploadClient,
-} from "../../hooks/use-s3-upload";
+import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
+import { createContext, useContext, useEffect } from "react";
+import type { MediaAssetType, S3UploadClient } from "../../hooks/use-s3-upload";
 import { S3ImageUploadField } from "../forms/s3-image-upload-field";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
@@ -16,7 +12,6 @@ import { SimpleSelect } from "../ui/select";
 import { Separator } from "../ui/separator";
 import { Switch } from "../ui/switch";
 import { Textarea } from "../ui/textarea";
-import { VideoField } from "./VideoField";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -35,14 +30,6 @@ export interface SectionConfigEditorProps {
 	onDataSourceChange: (dataSource: Record<string, unknown>) => void;
 	onBidConfigChange: (bidConfig: Record<string, unknown>) => void;
 }
-
-type CollectionLookupItem = {
-	id: string;
-	slug: string;
-	name: string;
-	kind?: string;
-	is_active?: boolean;
-};
 
 // Context lets the deeply nested image fields read the upload client without
 // each editor accepting it as an explicit prop. Keeps the per-section editor
@@ -142,160 +129,6 @@ function SwitchField({
 	);
 }
 
-function collectionSublabel(item: CollectionLookupItem) {
-	const parts = [`/${item.slug}`];
-	if (item.is_active === false) parts.push("Inactive");
-	return parts.join(" - ");
-}
-
-function ProductCollectionPicker({
-	apiClient,
-	value,
-	onChange,
-}: {
-	apiClient: AxiosInstance;
-	value: string;
-	onChange: (slug: string) => void;
-}) {
-	const [open, setOpen] = useState(false);
-	const [query, setQuery] = useState("");
-	const [items, setItems] = useState<CollectionLookupItem[]>([]);
-	const [selectedItem, setSelectedItem] = useState<CollectionLookupItem | null>(
-		null,
-	);
-	const [loading, setLoading] = useState(false);
-	const containerRef = useRef<HTMLDivElement>(null);
-	const inputRef = useRef<HTMLInputElement>(null);
-	const debounceRef = useRef<ReturnType<typeof setTimeout>>();
-
-	useEffect(() => {
-		function onDoc(e: globalThis.MouseEvent) {
-			if (
-				containerRef.current &&
-				!containerRef.current.contains(e.target as Node)
-			) {
-				setOpen(false);
-			}
-		}
-		document.addEventListener("mousedown", onDoc);
-		return () => document.removeEventListener("mousedown", onDoc);
-	}, []);
-
-	useEffect(() => {
-		if (!value) {
-			setSelectedItem(null);
-			return;
-		}
-		if (selectedItem?.slug === value) return;
-		let cancelled = false;
-		apiClient
-			.get("/admin/collections", { params: { search: value, limit: 20 } })
-			.then(({ data }) => {
-				if (cancelled) return;
-				const collections = ((data.data?.data ?? []) as CollectionLookupItem[])
-					.filter((item) => item.kind !== "variant")
-					.filter((item) => item.slug === value);
-				setSelectedItem(collections[0] ?? null);
-			})
-			.catch(() => {
-				if (!cancelled) setSelectedItem(null);
-			});
-		return () => {
-			cancelled = true;
-		};
-	}, [apiClient, selectedItem?.slug, value]);
-
-	useEffect(() => {
-		if (!open) return;
-		if (debounceRef.current) clearTimeout(debounceRef.current);
-		setLoading(true);
-		debounceRef.current = setTimeout(async () => {
-			try {
-				const { data } = await apiClient.get("/admin/collections", {
-					params: { search: query || undefined, limit: 20 },
-				});
-				const collections = ((data.data?.data ?? []) as CollectionLookupItem[])
-					.filter((item) => item.kind !== "variant")
-					.sort((a, b) => a.name.localeCompare(b.name));
-				setItems(collections);
-			} finally {
-				setLoading(false);
-			}
-		}, 200);
-		return () => {
-			if (debounceRef.current) clearTimeout(debounceRef.current);
-		};
-	}, [apiClient, open, query]);
-
-	function handleSelect(item: CollectionLookupItem) {
-		onChange(item.slug);
-		setSelectedItem(item);
-		setOpen(false);
-		setQuery("");
-	}
-
-	return (
-		<div ref={containerRef} className="relative">
-			<button
-				type="button"
-				onClick={() => {
-					setOpen(true);
-					setTimeout(() => inputRef.current?.focus(), 0);
-				}}
-				className="flex w-full items-center justify-between rounded-xs border border-pearl/28 bg-linen px-3 py-2 text-left text-sm text-cacao ring-offset-amber focus:outline-none focus:ring-2 focus:ring-amber focus:ring-offset-amber"
-			>
-				<span className={selectedItem ? "truncate" : "truncate text-taupe"}>
-					{selectedItem?.name ??
-						(value ? `/${value}` : "Search collections...")}
-				</span>
-				<ChevronDown size={14} className="ms-2 shrink-0 text-taupe" />
-			</button>
-			{open && (
-				<div className="absolute z-50 mt-1 w-full rounded-xs border border-pearl/28 bg-linen shadow-lg">
-					<div className="border-b border-pearl/28 p-2">
-						<input
-							ref={inputRef}
-							value={query}
-							onChange={(e) => setQuery(e.target.value)}
-							placeholder="Type to search..."
-							className="w-full rounded-xs border border-pearl/28 bg-linen px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-amber/30"
-						/>
-					</div>
-					<div className="max-h-64 overflow-y-auto p-1">
-						{loading ? (
-							<div className="flex items-center justify-center py-6 text-taupe">
-								<Loader2 size={16} className="animate-spin" />
-							</div>
-						) : items.length === 0 ? (
-							<div className="px-3 py-6 text-center text-sm text-taupe">
-								No collections found.
-							</div>
-						) : (
-							items.map((item) => (
-								<button
-									key={item.id}
-									type="button"
-									onClick={() => handleSelect(item)}
-									className="flex w-full items-start gap-2 rounded-xs px-2 py-2 text-left text-sm hover:bg-pearl/60"
-								>
-									<span className="min-w-0 flex-1">
-										<span className="block truncate text-cacao">
-											{item.name}
-										</span>
-										<span className="block truncate text-xs text-taupe">
-											{collectionSublabel(item)}
-										</span>
-									</span>
-								</button>
-							))
-						)}
-					</div>
-				</div>
-			)}
-		</div>
-	);
-}
-
 function ImagePreview({ url }: { url: string }) {
 	if (!url) return null;
 	return (
@@ -333,38 +166,71 @@ function BlockCard({
 	index,
 	onRemove,
 	showRemove = true,
+	onMoveUp,
+	onMoveDown,
 	children,
 }: {
 	index: number;
 	onRemove: () => void;
 	showRemove?: boolean;
+	/** Optional reorder controls. Pass both to render up/down buttons; an
+	 * undefined handler renders that button disabled (first / last row). */
+	onMoveUp?: () => void;
+	onMoveDown?: () => void;
 	children: React.ReactNode;
 }) {
+	const showMove = onMoveUp !== undefined || onMoveDown !== undefined;
 	return (
 		<div className="rounded-lg border border-gray-200 bg-linen overflow-hidden">
 			<div className="flex items-center justify-between px-3 py-2 bg-pearl/50 border-b border-gray-100">
 				<span className="text-xs font-semibold text-taupe uppercase tracking-wide">
 					Item {index + 1}
 				</span>
-				{showRemove && (
-					<button
-						type="button"
-						onClick={onRemove}
-						className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-taupe hover:text-red-600 hover:bg-red-50 transition-colors"
-						aria-label="Remove"
-						title="Remove item"
-					>
-						<Trash2 size={14} />
-						<span>Remove</span>
-					</button>
-				)}
+				<div className="flex items-center gap-1">
+					{showMove && (
+						<>
+							<button
+								type="button"
+								onClick={onMoveUp}
+								disabled={!onMoveUp}
+								className="inline-flex items-center px-1.5 py-1 rounded text-taupe hover:text-cacao hover:bg-pearl disabled:opacity-40 disabled:pointer-events-none transition-colors"
+								aria-label="Move up"
+								title="Move up"
+							>
+								<ArrowUp size={14} />
+							</button>
+							<button
+								type="button"
+								onClick={onMoveDown}
+								disabled={!onMoveDown}
+								className="inline-flex items-center px-1.5 py-1 rounded text-taupe hover:text-cacao hover:bg-pearl disabled:opacity-40 disabled:pointer-events-none transition-colors"
+								aria-label="Move down"
+								title="Move down"
+							>
+								<ArrowDown size={14} />
+							</button>
+						</>
+					)}
+					{showRemove && (
+						<button
+							type="button"
+							onClick={onRemove}
+							className="inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium text-taupe hover:text-red-600 hover:bg-red-50 transition-colors"
+							aria-label="Remove"
+							title="Remove item"
+						>
+							<Trash2 size={14} />
+							<span>Remove</span>
+						</button>
+					)}
+				</div>
 			</div>
 			<div className="p-3 space-y-3">{children}</div>
 		</div>
 	);
 }
 
-// ─── Bid Config (shared between product_carousel and vendor_showcase) ────────
+// ─── Bid Config (shared between service_carousel and vendor_showcase) ────────
 
 function BidConfigEditor({
 	bidConfig,
@@ -434,11 +300,11 @@ function BidConfigEditor({
 			<FieldRow>
 				<FieldItem label="Type">
 					<SimpleSelect
-						value={(fallbackQuery.type as string) ?? "products"}
+						value={(fallbackQuery.type as string) ?? "services"}
 						onValueChange={(v) => setFallbackType(v)}
 						options={[
-							{ label: "Products", value: "products" },
-							{ label: "Flash Deals", value: "flash_deals" },
+							{ label: "Services", value: "services" },
+							{ label: "Vendors", value: "vendors" },
 						]}
 					/>
 				</FieldItem>
@@ -464,16 +330,16 @@ function BannerBlockEditor({
 	onChange,
 	onRemove,
 	showRemove,
-	allowVideo = false,
+	showSubtitle = false,
 }: {
 	block: Record<string, unknown>;
 	index: number;
 	onChange: (v: Record<string, unknown>) => void;
 	onRemove: () => void;
 	showRemove: boolean;
-	allowVideo?: boolean;
+	/** promotional_banner only: optional data.subtitle {en,ar}. */
+	showSubtitle?: boolean;
 }) {
-	const { client } = useContext(UploadContext);
 	// All content lives under block.data
 	const data = (block.data as Record<string, unknown>) ?? {};
 	const image = (data.image as Record<string, unknown>) ?? {};
@@ -493,13 +359,6 @@ function BannerBlockEditor({
 			...block,
 			data: { ...data, image: { ...image, [key]: value } },
 		});
-	}
-
-	function setVideo(v: LayoutBlockVideo | null) {
-		const next = { ...data } as Record<string, unknown>;
-		if (v) next.video = v;
-		else delete next.video;
-		onChange({ ...block, data: next });
 	}
 
 	function setDesktopUrl(url: string) {
@@ -555,23 +414,6 @@ function BannerBlockEditor({
 				value={(mobile.url as string) ?? ""}
 				onChange={setMobileUrl}
 			/>
-
-			{allowVideo && client && (
-				<>
-					<Separator />
-					<SectionLabel>Background video (optional)</SectionLabel>
-					<p className="text-xs text-taupe">
-						Muted, looping, desktop only. MP4 or WebM, up to 15 seconds and 25MB. The desktop
-						image is still required — it is shown on mobile, while the video loads, and for
-						visitors who prefer reduced motion.
-					</p>
-					<VideoField
-						value={(data.video as LayoutBlockVideo | undefined) ?? null}
-						onChange={setVideo}
-						client={client}
-					/>
-				</>
-			)}
 
 			<Separator />
 			<SectionLabel>Focal Point</SectionLabel>
@@ -644,6 +486,18 @@ function BannerBlockEditor({
 				</FieldItem>
 			</FieldRow>
 
+			{showSubtitle && (
+				<>
+					<Separator />
+					<SectionLabel>Subtitle (optional)</SectionLabel>
+					<LocalizedField
+						label="Subtitle"
+						value={data.subtitle}
+						onChange={(v) => setData("subtitle", v)}
+					/>
+				</>
+			)}
+
 			<Separator />
 			<SectionLabel>CTA</SectionLabel>
 			<FieldRow>
@@ -667,7 +521,7 @@ function BannerBlockEditor({
 				<Input
 					value={(data.cta_link as string) ?? ""}
 					onChange={(e) => setData("cta_link", e.target.value)}
-					placeholder="/products/..."
+					placeholder="/services/..."
 					className="h-9 text-sm"
 				/>
 			</FieldItem>
@@ -762,7 +616,6 @@ function HeroCarouselEditor({
 							onChange={(v) => updateSlide(i, v)}
 							onRemove={() => removeSlide(i)}
 							showRemove
-							allowVideo
 						/>
 					))}
 				</div>
@@ -951,10 +804,9 @@ function CategoryGridEditor({
 	);
 }
 
-// ─── 3. product_carousel ─────────────────────────────────────────────────────
+// ─── 3. service_carousel (product_carousel is the pre-fork alias) ────────────
 
-function ProductCarouselEditor({
-	apiClient,
+function ServiceCarouselEditor({
 	settings,
 	dataSource,
 	bidConfig,
@@ -964,7 +816,6 @@ function ProductCarouselEditor({
 	onBidConfigChange,
 }: Pick<
 	SectionConfigEditorProps,
-	| "apiClient"
 	| "settings"
 	| "dataSource"
 	| "bidConfig"
@@ -1029,40 +880,24 @@ function ProductCarouselEditor({
 					<SectionLabel>Data Source</SectionLabel>
 					{(() => {
 						const dsQuery = (dataSource.query as Record<string, unknown>) ?? {};
-						const dataSourceType = (dataSource.type as string) ?? "products";
 						function setDsQuery(key: string, value: unknown) {
 							onDataSourceChange({
 								...dataSource,
+								type: "services",
 								query: { ...dsQuery, [key]: value },
-							});
-						}
-						function setDataSourceType(value: string) {
-							const nextQuery =
-								value === "collection"
-									? { limit: dsQuery.limit, sort: dsQuery.sort }
-									: {
-											limit: dsQuery.limit,
-											sort: dsQuery.sort,
-											featured: dsQuery.featured,
-										};
-							onDataSourceChange({
-								...dataSource,
-								type: value,
-								query: nextQuery,
 							});
 						}
 						return (
 							<>
 								<FieldRow>
-									<FieldItem label="Type">
-										<SimpleSelect
-											value={dataSourceType}
-											onValueChange={setDataSourceType}
-											options={[
-												{ label: "Products", value: "products" },
-												{ label: "Flash Deals", value: "flash_deals" },
-												{ label: "Collection", value: "collection" },
-											]}
+									<FieldItem label="Category slug (optional)">
+										<Input
+											value={(dsQuery.category as string) ?? ""}
+											onChange={(e) =>
+												setDsQuery("category", e.target.value || undefined)
+											}
+											placeholder="e.g. cleaning"
+											className="h-9 text-sm"
 										/>
 									</FieldItem>
 									<FieldItem label="Sort">
@@ -1071,26 +906,18 @@ function ProductCarouselEditor({
 											onValueChange={(v) => setDsQuery("sort", v)}
 											options={[
 												{ label: "Newest", value: "newest" },
-												{ label: "Popular", value: "popular" },
+												{ label: "Top rated", value: "rating" },
 												{ label: "Price: Low to High", value: "price_asc" },
 												{ label: "Price: High to Low", value: "price_desc" },
 											]}
 										/>
 									</FieldItem>
 								</FieldRow>
-								{dataSourceType === "collection" && (
-									<FieldItem label="Collection">
-										<ProductCollectionPicker
-											apiClient={apiClient}
-											value={(dsQuery.collection_slug as string) ?? ""}
-											onChange={(slug) => setDsQuery("collection_slug", slug)}
-										/>
-									</FieldItem>
-								)}
 								<FieldItem label="Limit">
 									<Input
 										type="number"
 										min={1}
+										max={50}
 										value={(dsQuery.limit as number) ?? ""}
 										onChange={(e) =>
 											setDsQuery("limit", Number(e.target.value))
@@ -1098,13 +925,6 @@ function ProductCarouselEditor({
 										className="h-9 text-sm"
 									/>
 								</FieldItem>
-								{dataSourceType !== "collection" && (
-									<SwitchField
-										label="Featured Only"
-										checked={Boolean(dsQuery.featured)}
-										onCheckedChange={(v) => setDsQuery("featured", v)}
-									/>
-								)}
 							</>
 						);
 					})()}
@@ -1121,89 +941,7 @@ function ProductCarouselEditor({
 	);
 }
 
-// ─── 4. flash_deals ──────────────────────────────────────────────────────────
-
-function FlashDealsEditor({
-	settings,
-	dataSource,
-	onSettingsChange,
-	onDataSourceChange,
-}: Pick<
-	SectionConfigEditorProps,
-	"settings" | "dataSource" | "onSettingsChange" | "onDataSourceChange"
->) {
-	const title = (settings.title as Record<string, unknown>) ?? {};
-
-	return (
-		<div className="space-y-5">
-			<FieldGroup>
-				<SectionLabel>Settings</SectionLabel>
-				<FieldRow>
-					<FieldItem label="Title EN">
-						<Input
-							value={(title.en as string) ?? ""}
-							onChange={(e) =>
-								onSettingsChange({
-									...settings,
-									title: { ...title, en: e.target.value },
-								})
-							}
-							className="h-9 text-sm"
-						/>
-					</FieldItem>
-					<FieldItem label="Title AR">
-						<Input
-							value={(title.ar as string) ?? ""}
-							onChange={(e) =>
-								onSettingsChange({
-									...settings,
-									title: { ...title, ar: e.target.value },
-								})
-							}
-							dir="rtl"
-							className="h-9 text-sm"
-						/>
-					</FieldItem>
-				</FieldRow>
-				<SwitchField
-					label="Show Countdown"
-					checked={Boolean(settings.show_countdown)}
-					onCheckedChange={(v) =>
-						onSettingsChange({ ...settings, show_countdown: v })
-					}
-				/>
-			</FieldGroup>
-
-			<Separator />
-
-			<FieldGroup>
-				<SectionLabel>Data Source</SectionLabel>
-				<FieldItem label="Limit">
-					<Input
-						type="number"
-						min={1}
-						value={
-							((dataSource.query as Record<string, unknown>)
-								?.limit as number) ?? ""
-						}
-						onChange={(e) =>
-							onDataSourceChange({
-								...dataSource,
-								query: {
-									...((dataSource.query as Record<string, unknown>) ?? {}),
-									limit: Number(e.target.value),
-								},
-							})
-						}
-						className="h-9 text-sm"
-					/>
-				</FieldItem>
-			</FieldGroup>
-		</div>
-	);
-}
-
-// ─── 5. vendor_showcase ──────────────────────────────────────────────────────
+// ─── 4. vendor_showcase ──────────────────────────────────────────────────────
 
 function VendorShowcaseEditor({
 	settings,
@@ -1315,198 +1053,15 @@ function VendorShowcaseEditor({
 	);
 }
 
-// ─── 6. brand_spotlight ──────────────────────────────────────────────────────
-
-function BrandSpotlightEditor({
-	settings,
-	blocks,
-	dataSource,
-	sourceMode,
-	onSettingsChange,
-	onBlocksChange,
-	onDataSourceChange,
-}: Pick<
-	SectionConfigEditorProps,
-	| "settings"
-	| "blocks"
-	| "dataSource"
-	| "sourceMode"
-	| "onSettingsChange"
-	| "onBlocksChange"
-	| "onDataSourceChange"
->) {
-	const title = (settings.title as Record<string, unknown>) ?? {};
-
-	// Auto-init data_source.type when the section is in query mode. Without this,
-	// switching to query mode leaves data_source.type unset, so the resolver has
-	// nothing to dispatch on and returns []. Idempotent: only writes when the
-	// type isn't already correct.
-	useEffect(() => {
-		if (sourceMode !== "query") return;
-		if (dataSource.type === "brand_spotlight") return;
-		const dsQuery = (dataSource.query as Record<string, unknown>) ?? {};
-		onDataSourceChange({
-			...dataSource,
-			type: "brand_spotlight",
-			query: { ...dsQuery, limit: (dsQuery.limit as number) ?? 8 },
-		});
-	}, [sourceMode, dataSource, onDataSourceChange]);
-
-	return (
-		<div className="space-y-5">
-			<FieldGroup>
-				<SectionLabel>Settings</SectionLabel>
-				<FieldRow>
-					<FieldItem label="Title EN">
-						<Input
-							value={(title.en as string) ?? ""}
-							onChange={(e) =>
-								onSettingsChange({
-									...settings,
-									title: { ...title, en: e.target.value },
-								})
-							}
-							className="h-9 text-sm"
-						/>
-					</FieldItem>
-					<FieldItem label="Title AR">
-						<Input
-							value={(title.ar as string) ?? ""}
-							onChange={(e) =>
-								onSettingsChange({
-									...settings,
-									title: { ...title, ar: e.target.value },
-								})
-							}
-							dir="rtl"
-							className="h-9 text-sm"
-						/>
-					</FieldItem>
-				</FieldRow>
-			</FieldGroup>
-
-			<Separator />
-
-			{sourceMode === "query" && (
-				<FieldGroup>
-					<SectionLabel>Data Source</SectionLabel>
-					{(() => {
-						const dsQuery = (dataSource.query as Record<string, unknown>) ?? {};
-						function setDsQuery(key: string, value: unknown) {
-							onDataSourceChange({
-								...dataSource,
-								query: { ...dsQuery, [key]: value },
-							});
-						}
-						return (
-							<>
-								<FieldItem label="Limit">
-									<Input
-										type="number"
-										min={4}
-										max={12}
-										value={(dsQuery.limit as number) ?? 8}
-										onChange={(e) =>
-											setDsQuery("limit", Number(e.target.value))
-										}
-										className="h-9 text-sm"
-									/>
-								</FieldItem>
-								<div className="text-xs text-muted-foreground bg-muted/40 border border-border rounded-md p-3 leading-relaxed">
-									Brands are pulled automatically from{" "}
-									<a
-										href="/catalog/brands"
-										className="font-medium text-primary underline-offset-2 hover:underline"
-									>
-										Catalog → Brands
-									</a>
-									. Toggle <code className="text-[11px]">is_featured</code> and
-									adjust <code className="text-[11px]">sort_order</code> there.
-									Featured brands appear first; the rest fill in by product
-									count.
-								</div>
-							</>
-						);
-					})()}
-				</FieldGroup>
-			)}
-
-			{sourceMode === "manual" && (
-				<FieldGroup>
-					<SectionLabel>
-						Brands ({(blocks as Record<string, unknown>[]).length})
-					</SectionLabel>
-					<div className="space-y-3">
-						{(blocks as Record<string, unknown>[]).map((brand, i) => {
-							const brandData = (brand.data as Record<string, unknown>) ?? {};
-							function setBrandData(key: string, value: unknown) {
-								const next = [...(blocks as Record<string, unknown>[])];
-								next[i] = { ...brand, data: { ...brandData, [key]: value } };
-								onBlocksChange(next);
-							}
-							return (
-								<BlockCard
-									key={((brand as Record<string, unknown>).id as string) ?? i}
-									index={i}
-									onRemove={() =>
-										onBlocksChange(
-											(blocks as Record<string, unknown>[]).filter(
-												(_, j) => j !== i,
-											),
-										)
-									}
-								>
-									<FieldItem label="Name">
-										<Input
-											value={(brandData.name as string) ?? ""}
-											onChange={(e) => setBrandData("name", e.target.value)}
-											className="h-9 text-sm"
-										/>
-									</FieldItem>
-									<ImageField
-										label="Logo"
-										value={(brandData.logo_url as string) ?? ""}
-										onChange={(url) => setBrandData("logo_url", url)}
-										assetType="brand_logo"
-									/>
-									<FieldItem label="Link">
-										<Input
-											value={(brandData.link as string) ?? ""}
-											onChange={(e) => setBrandData("link", e.target.value)}
-											placeholder="/brand/..."
-											className="h-9 text-sm"
-										/>
-									</FieldItem>
-								</BlockCard>
-							);
-						})}
-					</div>
-					<AddButton
-						label="Add Brand"
-						onClick={() =>
-							onBlocksChange([
-								...(blocks as Record<string, unknown>[]),
-								{
-									id: `brand-${Date.now()}`,
-									type: "brand",
-									data: { name: "", logo_url: "", link: "" },
-								},
-							])
-						}
-					/>
-				</FieldGroup>
-			)}
-		</div>
-	);
-}
-
-// ─── 7. promotional_banner ───────────────────────────────────────────────────
+// ─── 5. promotional_banner ───────────────────────────────────────────────────
 
 function PromotionalBannerEditor({
 	blocks,
 	onBlocksChange,
-	allowVideo = false,
-}: Pick<SectionConfigEditorProps, "blocks" | "onBlocksChange"> & { allowVideo?: boolean }) {
+	showSubtitle = false,
+}: Pick<SectionConfigEditorProps, "blocks" | "onBlocksChange"> & {
+	showSubtitle?: boolean;
+}) {
 	const banners = blocks as Record<string, unknown>[];
 
 	// Ensure at least one banner block exists
@@ -1538,13 +1093,13 @@ function PromotionalBannerEditor({
 				onChange={updateBanner}
 				onRemove={() => {}}
 				showRemove={false}
-				allowVideo={allowVideo}
+				showSubtitle={showSubtitle}
 			/>
 		</div>
 	);
 }
 
-// ─── 8. editorial_post ───────────────────────────────────────────────────────
+// ─── 6. editorial_post ───────────────────────────────────────────────────────
 
 function EditorialPostEditor({
 	blocks,
@@ -1556,7 +1111,7 @@ function EditorialPostEditor({
 	);
 }
 
-// ─── 9. newsletter_signup ────────────────────────────────────────────────────
+// ─── 7. newsletter_signup ────────────────────────────────────────────────────
 
 function NewsletterSignupEditor({
 	settings,
@@ -1628,6 +1183,379 @@ function NewsletterSignupEditor({
 						/>
 					</FieldItem>
 				</FieldRow>
+			</FieldGroup>
+		</div>
+	);
+}
+
+// ─── Helpers for the marketplace homepage sections ───────────────────────────
+
+type Localized = { en: string; ar: string };
+
+function asLocalized(value: unknown): Localized {
+	const v = (value as Partial<Localized> | null | undefined) ?? {};
+	return { en: v.en ?? "", ar: v.ar ?? "" };
+}
+
+/** EN + AR input pair for a `{ en, ar }` string, labelled "<label> EN/AR". */
+function LocalizedField({
+	label,
+	value,
+	onChange,
+	multiline = false,
+	placeholder,
+}: {
+	label: string;
+	value: unknown;
+	onChange: (v: Localized) => void;
+	multiline?: boolean;
+	placeholder?: string;
+}) {
+	const loc = asLocalized(value);
+	return (
+		<FieldRow>
+			{(["en", "ar"] as const).map((lang) => (
+				<FieldItem key={lang} label={`${label} ${lang.toUpperCase()}`}>
+					{multiline ? (
+						<Textarea
+							aria-label={`${label} ${lang.toUpperCase()}`}
+							value={loc[lang]}
+							onChange={(e) => onChange({ ...loc, [lang]: e.target.value })}
+							dir={lang === "ar" ? "rtl" : undefined}
+							rows={2}
+							className="text-sm resize-none"
+						/>
+					) : (
+						<Input
+							aria-label={`${label} ${lang.toUpperCase()}`}
+							value={loc[lang]}
+							onChange={(e) => onChange({ ...loc, [lang]: e.target.value })}
+							dir={lang === "ar" ? "rtl" : undefined}
+							placeholder={lang === "en" ? placeholder : undefined}
+							className="h-9 text-sm"
+						/>
+					)}
+				</FieldItem>
+			))}
+		</FieldRow>
+	);
+}
+
+/** Eyebrow / title / subtitle settings shared by the new homepage sections. */
+function SectionHeadingFields({
+	settings,
+	onSettingsChange,
+}: Pick<SectionConfigEditorProps, "settings" | "onSettingsChange">) {
+	function set(key: string, value: unknown) {
+		onSettingsChange({ ...settings, [key]: value });
+	}
+	return (
+		<>
+			<LocalizedField
+				label="Eyebrow"
+				value={settings.eyebrow}
+				onChange={(v) => set("eyebrow", v)}
+			/>
+			<LocalizedField
+				label="Title"
+				value={settings.title}
+				onChange={(v) => set("title", v)}
+			/>
+			<LocalizedField
+				label="Subtitle"
+				value={settings.subtitle}
+				onChange={(v) => set("subtitle", v)}
+				multiline
+			/>
+		</>
+	);
+}
+
+function moveItem<T>(items: T[], from: number, to: number): T[] {
+	if (to < 0 || to >= items.length) return items;
+	const next = [...items];
+	const [moved] = next.splice(from, 1);
+	next.splice(to, 0, moved as T);
+	return next;
+}
+
+/**
+ * Sections fed by the area list (service_search_hero, area_links) always use
+ * data_source `{ type: "areas", query: {} }`. A freshly added section starts
+ * with an empty data source, so set it once here instead of exposing config.
+ */
+function useAreasDataSource(
+	dataSource: Record<string, unknown>,
+	onDataSourceChange: (dataSource: Record<string, unknown>) => void,
+) {
+	const type = dataSource.type;
+	useEffect(() => {
+		if (type !== "areas") onDataSourceChange({ type: "areas", query: {} });
+	}, [type, onDataSourceChange]);
+}
+
+function AreasSourceHint() {
+	return (
+		<p className="text-xs text-taupe">
+			Uses Query mode — area list comes from Settings → Areas.
+		</p>
+	);
+}
+
+// ─── 8. service_search_hero ──────────────────────────────────────────────────
+
+function ServiceSearchHeroEditor({
+	settings,
+	dataSource,
+	onSettingsChange,
+	onDataSourceChange,
+}: Pick<
+	SectionConfigEditorProps,
+	"settings" | "dataSource" | "onSettingsChange" | "onDataSourceChange"
+>) {
+	useAreasDataSource(dataSource, onDataSourceChange);
+
+	const popular = Array.isArray(settings.popular_searches)
+		? (settings.popular_searches as Record<string, unknown>[])
+		: [];
+
+	function setPopular(next: Record<string, unknown>[]) {
+		onSettingsChange({ ...settings, popular_searches: next });
+	}
+
+	function updatePopular(index: number, item: Record<string, unknown>) {
+		const next = [...popular];
+		next[index] = item;
+		setPopular(next);
+	}
+
+	return (
+		<div className="space-y-5">
+			<FieldGroup>
+				<SectionLabel>Settings</SectionLabel>
+				<AreasSourceHint />
+				<SectionHeadingFields
+					settings={settings}
+					onSettingsChange={onSettingsChange}
+				/>
+				<LocalizedField
+					label="Search placeholder"
+					value={settings.search_placeholder}
+					onChange={(v) =>
+						onSettingsChange({ ...settings, search_placeholder: v })
+					}
+				/>
+			</FieldGroup>
+
+			<Separator />
+
+			<FieldGroup>
+				<SectionLabel>Popular searches ({popular.length})</SectionLabel>
+				<div className="space-y-3">
+					{popular.map((item, i) => (
+						<BlockCard
+							// biome-ignore lint/suspicious/noArrayIndexKey: popular_searches rows have no stable id
+							key={i}
+							index={i}
+							onRemove={() => setPopular(popular.filter((_, j) => j !== i))}
+							onMoveUp={
+								i > 0
+									? () => setPopular(moveItem(popular, i, i - 1))
+									: undefined
+							}
+							onMoveDown={
+								i < popular.length - 1
+									? () => setPopular(moveItem(popular, i, i + 1))
+									: undefined
+							}
+						>
+							<LocalizedField
+								label="Label"
+								value={item.label}
+								onChange={(v) => updatePopular(i, { ...item, label: v })}
+							/>
+							<FieldItem label="Search query">
+								<Input
+									value={(item.query as string) ?? ""}
+									onChange={(e) =>
+										updatePopular(i, { ...item, query: e.target.value })
+									}
+									placeholder="e.g. ac service"
+									className="h-9 text-sm"
+								/>
+							</FieldItem>
+						</BlockCard>
+					))}
+				</div>
+				<AddButton
+					label="Add Popular Search"
+					onClick={() =>
+						setPopular([...popular, { label: { en: "", ar: "" }, query: "" }])
+					}
+				/>
+			</FieldGroup>
+		</div>
+	);
+}
+
+// ─── 9. feature_grid ─────────────────────────────────────────────────────────
+
+const FEATURE_ICONS = [
+	"search",
+	"compare",
+	"calendar",
+	"check",
+	"shield",
+	"star",
+	"tag",
+	"map",
+	"clock",
+	"chat",
+	"wallet",
+	"sparkles",
+] as const;
+
+function FeatureGridEditor({
+	settings,
+	blocks,
+	onSettingsChange,
+	onBlocksChange,
+}: Pick<
+	SectionConfigEditorProps,
+	"settings" | "blocks" | "onSettingsChange" | "onBlocksChange"
+>) {
+	const features = blocks as Record<string, unknown>[];
+
+	function addFeature() {
+		onBlocksChange([
+			...features,
+			{
+				id: `feature-${Date.now()}`,
+				type: "feature",
+				data: {
+					icon: FEATURE_ICONS[0],
+					title: { en: "", ar: "" },
+					text: { en: "", ar: "" },
+				},
+			},
+		]);
+	}
+
+	function updateFeature(index: number, feature: Record<string, unknown>) {
+		const next = [...features];
+		next[index] = feature;
+		onBlocksChange(next);
+	}
+
+	return (
+		<div className="space-y-5">
+			<FieldGroup>
+				<SectionLabel>Settings</SectionLabel>
+				<SectionHeadingFields
+					settings={settings}
+					onSettingsChange={onSettingsChange}
+				/>
+				<FieldItem label="Variant">
+					<SimpleSelect
+						value={(settings.variant as string) ?? "cards"}
+						onValueChange={(v) => onSettingsChange({ ...settings, variant: v })}
+						options={[
+							{ label: "Numbered steps", value: "steps" },
+							{ label: "Icon cards", value: "cards" },
+						]}
+					/>
+				</FieldItem>
+			</FieldGroup>
+
+			<Separator />
+
+			<FieldGroup>
+				<SectionLabel>Features ({features.length})</SectionLabel>
+				<div className="space-y-3">
+					{features.map((feature, i) => {
+						const data = (feature.data as Record<string, unknown>) ?? {};
+						function setData(key: string, value: unknown) {
+							updateFeature(i, { ...feature, data: { ...data, [key]: value } });
+						}
+						const iconId = `feature-icon-${(feature.id as string) ?? i}`;
+						return (
+							<BlockCard
+								key={(feature.id as string) ?? i}
+								index={i}
+								onRemove={() =>
+									onBlocksChange(features.filter((_, j) => j !== i))
+								}
+								onMoveUp={
+									i > 0
+										? () => onBlocksChange(moveItem(features, i, i - 1))
+										: undefined
+								}
+								onMoveDown={
+									i < features.length - 1
+										? () => onBlocksChange(moveItem(features, i, i + 1))
+										: undefined
+								}
+							>
+								<div className="space-y-1">
+									<Label htmlFor={iconId} className="text-xs text-taupe">
+										Icon
+									</Label>
+									<select
+										id={iconId}
+										value={(data.icon as string) ?? FEATURE_ICONS[0]}
+										onChange={(e) => setData("icon", e.target.value)}
+										className="h-9 w-full rounded-md border border-input bg-card px-2 text-sm"
+									>
+										{FEATURE_ICONS.map((icon) => (
+											<option key={icon} value={icon}>
+												{icon}
+											</option>
+										))}
+									</select>
+								</div>
+								<LocalizedField
+									label="Title"
+									value={data.title}
+									onChange={(v) => setData("title", v)}
+								/>
+								<LocalizedField
+									label="Text"
+									value={data.text}
+									onChange={(v) => setData("text", v)}
+									multiline
+								/>
+							</BlockCard>
+						);
+					})}
+				</div>
+				<AddButton label="Add Feature" onClick={addFeature} />
+			</FieldGroup>
+		</div>
+	);
+}
+
+// ─── 10. area_links ──────────────────────────────────────────────────────────
+
+function AreaLinksEditor({
+	settings,
+	dataSource,
+	onSettingsChange,
+	onDataSourceChange,
+}: Pick<
+	SectionConfigEditorProps,
+	"settings" | "dataSource" | "onSettingsChange" | "onDataSourceChange"
+>) {
+	useAreasDataSource(dataSource, onDataSourceChange);
+
+	return (
+		<div className="space-y-5">
+			<FieldGroup>
+				<SectionLabel>Settings</SectionLabel>
+				<AreasSourceHint />
+				<SectionHeadingFields
+					settings={settings}
+					onSettingsChange={onSettingsChange}
+				/>
 			</FieldGroup>
 		</div>
 	);
@@ -1784,7 +1712,6 @@ function SectionConfigEditorBody(
 	props: Omit<SectionConfigEditorProps, "s3Client" | "vendorId">,
 ) {
 	const {
-		apiClient,
 		sectionTypeName,
 		sourceMode,
 		settings,
@@ -1818,10 +1745,10 @@ function SectionConfigEditorBody(
 				/>
 			);
 
+		case "service_carousel":
 		case "product_carousel":
 			return (
-				<ProductCarouselEditor
-					apiClient={apiClient}
+				<ServiceCarouselEditor
 					settings={settings}
 					dataSource={dataSource}
 					bidConfig={bidConfig}
@@ -1829,16 +1756,6 @@ function SectionConfigEditorBody(
 					onSettingsChange={onSettingsChange}
 					onDataSourceChange={onDataSourceChange}
 					onBidConfigChange={onBidConfigChange}
-				/>
-			);
-
-		case "flash_deals":
-			return (
-				<FlashDealsEditor
-					settings={settings}
-					dataSource={dataSource}
-					onSettingsChange={onSettingsChange}
-					onDataSourceChange={onDataSourceChange}
 				/>
 			);
 
@@ -1855,25 +1772,12 @@ function SectionConfigEditorBody(
 				/>
 			);
 
-		case "brand_spotlight":
-			return (
-				<BrandSpotlightEditor
-					settings={settings}
-					blocks={blocks}
-					dataSource={dataSource}
-					sourceMode={sourceMode}
-					onSettingsChange={onSettingsChange}
-					onBlocksChange={onBlocksChange}
-					onDataSourceChange={onDataSourceChange}
-				/>
-			);
-
 		case "promotional_banner":
 			return (
 				<PromotionalBannerEditor
 					blocks={blocks}
 					onBlocksChange={onBlocksChange}
-					allowVideo
+					showSubtitle
 				/>
 			);
 
@@ -1887,6 +1791,36 @@ function SectionConfigEditorBody(
 				<NewsletterSignupEditor
 					settings={settings}
 					onSettingsChange={onSettingsChange}
+				/>
+			);
+
+		case "service_search_hero":
+			return (
+				<ServiceSearchHeroEditor
+					settings={settings}
+					dataSource={dataSource}
+					onSettingsChange={onSettingsChange}
+					onDataSourceChange={onDataSourceChange}
+				/>
+			);
+
+		case "feature_grid":
+			return (
+				<FeatureGridEditor
+					settings={settings}
+					blocks={blocks}
+					onSettingsChange={onSettingsChange}
+					onBlocksChange={onBlocksChange}
+				/>
+			);
+
+		case "area_links":
+			return (
+				<AreaLinksEditor
+					settings={settings}
+					dataSource={dataSource}
+					onSettingsChange={onSettingsChange}
+					onDataSourceChange={onDataSourceChange}
 				/>
 			);
 

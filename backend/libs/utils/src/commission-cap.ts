@@ -1,10 +1,8 @@
 /**
- * The single commission ceiling, shared by EVERY path that produces a
- * commission amount — order-item creation and recompute in order-service, and
- * booking commission snapshotting in booking-service. It lives in
- * `@mypickuae/utils` precisely because it has three callers in two services:
- * the previous copy in order-service could only be shared by two of them, and
- * the third (bookings) silently kept the uncapped formula.
+ * The single commission ceiling, shared by every path that produces a
+ * commission amount (booking commission snapshotting in booking-service today;
+ * quotation payments in M4). It lives in `@mypickuae/utils` so a second caller
+ * can never drift back to an uncapped formula.
  *
  * The invariant it enforces is that a vendor's earning on a line can never go
  * NEGATIVE:

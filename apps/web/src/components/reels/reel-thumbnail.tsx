@@ -62,8 +62,7 @@ export function ReelThumbnail({
       onMouseLeave={handleMouseLeave}
     >
       <div
-        className="relative aspect-[9/16] overflow-hidden"
-        style={{ background: "rgba(44,24,16,0.06)" }}
+        className="relative aspect-[9/16] overflow-hidden rounded-xl bg-nl-pearl"
       >
         {/* Layer 1: Static or animated thumbnail (always visible as base) */}
         <img
@@ -94,15 +93,15 @@ export function ReelThumbnail({
             hovering && videoLoaded ? "opacity-0" : "opacity-100"
           }`}
         >
-          <div className="w-8 h-8 rounded-full bg-[#1A1208]/55 flex items-center justify-center backdrop-blur-sm">
-            <svg className="w-3.5 h-3.5 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+          <div className="w-8 h-8 rounded-full bg-nl-espresso/55 flex items-center justify-center backdrop-blur-sm">
+            <svg className="w-3.5 h-3.5 text-white ml-0.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
         </div>
 
         {/* View count badge */}
-        <span className="absolute bottom-1 right-1 bg-[#1A1208]/65 text-white text-xs px-1.5 py-0.5">
+        <span className="absolute bottom-1.5 right-1.5 rounded-full bg-nl-espresso/65 text-white text-xs font-medium px-2 py-0.5">
           ▶ {viewCount}
         </span>
       </div>

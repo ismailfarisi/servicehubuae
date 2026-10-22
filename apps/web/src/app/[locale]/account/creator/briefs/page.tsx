@@ -1,12 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Eyebrow,
-  MAISON_SANS,
-  MAISON_SERIF,
-  SerifTitle,
-} from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 import {
   BOX,
   BUTTON_CLASS,
@@ -80,10 +75,10 @@ export default function MyBidsPage() {
   return (
     <div>
       <div className="mb-5">
-        <Eyebrow>LICENSING</Eyebrow>
-        <SerifTitle size={26} className="mt-1.5">
+        <Eyebrow>Licensing</Eyebrow>
+        <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
           My bids
-        </SerifTitle>
+        </h1>
       </div>
 
       {error && <ErrorNote>{error}</ErrorNote>}
@@ -105,34 +100,14 @@ export default function MyBidsPage() {
             <div key={b.bid_id} className="p-4" style={BOX}>
               <div className="flex items-start justify-between gap-4 flex-wrap">
                 <div className="min-w-0">
-                  <div
-                    style={{
-                      fontFamily: MAISON_SERIF,
-                      fontSize: 17,
-                      color: "hsl(var(--nl-cacao))",
-                    }}
-                  >
+                  <div className="font-display text-base font-semibold text-nl-cacao">
                     {b.brief_title}
                   </div>
-                  <div
-                    className="mt-1"
-                    style={{
-                      fontFamily: MAISON_SERIF,
-                      fontSize: 15,
-                      color: "hsl(var(--nl-cacao))",
-                    }}
-                  >
+                  <div className="mt-1 font-display text-base font-bold text-nl-cacao">
                     {aed(b.amount_fils)}
                   </div>
                   {b.delivery_deadline_at && canDeliver && (
-                    <div
-                      className="mt-0.5"
-                      style={{
-                        fontFamily: MAISON_SANS,
-                        fontSize: 11.5,
-                        color: "hsl(var(--nl-russet))",
-                      }}
-                    >
+                    <div className="mt-0.5 text-xs text-nl-russet">
                       Deliver by {new Date(b.delivery_deadline_at).toLocaleString()}
                     </div>
                   )}
@@ -162,13 +137,7 @@ export default function MyBidsPage() {
                   </button>
                 )}
                 {b.status === "delivered" && (
-                  <span
-                    style={{
-                      fontFamily: MAISON_SANS,
-                      fontSize: 11.5,
-                      color: "hsl(var(--nl-russet))",
-                    }}
-                  >
+                  <span className="text-xs text-nl-russet">
                     Awaiting brand review
                   </span>
                 )}

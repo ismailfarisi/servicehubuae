@@ -2,7 +2,6 @@
 import {
   type LeaderboardType,
   type Period,
-  formatAED,
   formatCount,
   useVendorReelLeaderboard,
   vendorLeaderboardCsvUrl,
@@ -11,13 +10,12 @@ import { Card, CardContent, CardHeader, Skeleton } from "@mypickuae/ui";
 import { useState } from "react";
 
 const TABS: { key: LeaderboardType; label: string }[] = [
-  { key: "my_products", label: "My Top Products · Reel GMV" },
-  { key: "reels_tagging_me", label: "Reels Tagging Me" },
-  { key: "creators_promoting_me", label: "Creators Promoting Me" },
+  { key: "top_reels", label: "Top Reels" },
+  { key: "top_creators", label: "Top Creators" },
 ];
 
 export function ReelLeaderboard({ period }: { period: Period }) {
-  const [tab, setTab] = useState<LeaderboardType>("my_products");
+  const [tab, setTab] = useState<LeaderboardType>("top_reels");
   const { data, isLoading } = useVendorReelLeaderboard(tab, period);
 
   return (
@@ -57,13 +55,10 @@ export function ReelLeaderboard({ period }: { period: Period }) {
                 <tr>
                   <th className="text-left py-2 w-8">#</th>
                   <th className="text-left py-2">Name</th>
-                  {tab === "reels_tagging_me" ? (
-                    <th className="text-right py-2">Impressions</th>
-                  ) : (
-                    <th className="text-right py-2">Reels</th>
-                  )}
-                  <th className="text-right py-2">Orders</th>
-                  <th className="text-right py-2">GMV</th>
+                  {tab === "top_creators" && <th className="text-right py-2">Reels</th>}
+                  <th className="text-right py-2">Impressions</th>
+                  <th className="text-right py-2">Likes</th>
+                  <th className="text-right py-2">Saves</th>
                 </tr>
               </thead>
               <tbody>
@@ -71,21 +66,22 @@ export function ReelLeaderboard({ period }: { period: Period }) {
                   <tr key={row.id} className="border-t">
                     <td className="py-2 text-gray-500">{i + 1}</td>
                     <td className="py-2">
-                      <div className="font-medium">{row.label}</div>
+                      <div className="font-medium">
+                        {row.label || (tab === "top_reels" ? "Untitled reel" : "Creator")}
+                      </div>
                       {row.sub_label && <div className="text-xs text-gray-500">{row.sub_label}</div>}
                     </td>
-                    {tab === "reels_tagging_me" ? (
-                      <td className="text-right">{formatCount(row.impressions)}</td>
-                    ) : (
+                    {tab === "top_creators" && (
                       <td className="text-right">{formatCount(row.reels)}</td>
                     )}
-                    <td className="text-right">{formatCount(row.orders)}</td>
-                    <td className="text-right font-medium">{formatAED(row.value)}</td>
+                    <td className="text-right font-medium">{formatCount(row.impressions)}</td>
+                    <td className="text-right">{formatCount(row.likes)}</td>
+                    <td className="text-right">{formatCount(row.saves)}</td>
                   </tr>
                 ))}
                 {data?.rows?.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="py-6 text-center text-sm text-gray-500">
+                    <td colSpan={tab === "top_creators" ? 6 : 5} className="py-6 text-center text-sm text-gray-500">
                       No data in this period.
                     </td>
                   </tr>

@@ -9,7 +9,7 @@ import { isValidTimeZone } from "@/lib/utils";
 import { rescheduleWindowOpen } from "../../booking-display";
 import { AvailabilityPicker } from "@/components/booking/availability-picker";
 import { BookingRescheduleConfirm } from "@/components/booking/booking-reschedule-confirm";
-import { Eyebrow, MAISON_SANS, MAISON_SERIF, SerifTitle } from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 
 /**
  * Reschedule flow (task-3-brief.md's reschedule addendum): resolves the
@@ -59,7 +59,7 @@ export default function BookingReschedulePage() {
 
   if (bookingLoading) {
     return (
-      <p style={{ fontFamily: MAISON_SERIF, fontStyle: "italic", fontSize: 16, color: "hsl(var(--nl-russet))" }}>
+      <p className="text-sm text-nl-russet">
         {tCommon("loading")}
       </p>
     );
@@ -79,7 +79,7 @@ export default function BookingReschedulePage() {
 
   if (offeringLoading) {
     return (
-      <p style={{ fontFamily: MAISON_SERIF, fontStyle: "italic", fontSize: 16, color: "hsl(var(--nl-russet))" }}>
+      <p className="text-sm text-nl-russet">
         {tCommon("loading")}
       </p>
     );
@@ -105,21 +105,12 @@ export default function BookingReschedulePage() {
   return (
     <div>
       <Eyebrow>{t("eyebrow")}</Eyebrow>
-      <SerifTitle size={26} className="mt-1.5">
+      <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
         {t("title")}
-      </SerifTitle>
+      </h1>
 
       {windowLikelyClosed && (
-        <p
-          className="mt-3 p-3"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 12,
-            color: "hsl(var(--nl-russet))",
-            border: "1px solid rgba(184,115,51,0.35)",
-            background: "rgba(184,115,51,0.06)",
-          }}
-        >
+        <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
           {t("windowClosedBody", { hours: booking.reschedule_window_hours })}
         </p>
       )}
@@ -158,15 +149,12 @@ function Blocked({ title, body, bookingId }: { title: string; body: string; book
   const t = useTranslations("booking.myBookings.reschedule");
   const locale = useLocale();
   return (
-    <div>
-      <SerifTitle size={22}>{title}</SerifTitle>
-      <p className="mt-2 mb-4" style={{ fontFamily: MAISON_SANS, fontSize: 12.5, color: "hsl(var(--nl-russet))" }}>
-        {body}
-      </p>
+    <div className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-6 shadow-sm">
+      <h1 className="font-display text-xl font-semibold leading-tight text-nl-cacao">{title}</h1>
+      <p className="mt-2 mb-4 text-sm text-nl-russet">{body}</p>
       <Link
         href={`/${locale}/account/bookings/${bookingId}`}
-        className="inline-block uppercase"
-        style={{ fontFamily: MAISON_SANS, fontSize: 10.5, letterSpacing: "0.18em", color: "hsl(var(--nl-amber))" }}
+        className="inline-flex items-center justify-center gap-2 rounded-lg border border-nl-cacao/15 bg-nl-linen px-5 py-2.5 text-sm font-semibold text-nl-cacao hover:bg-nl-pearl transition-colors"
       >
         {t("backToDetail")}
       </Link>

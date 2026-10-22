@@ -22,24 +22,23 @@ vi.mock("next-intl", () => ({
 // Records every query the component actually asks the suggest endpoint for.
 const suggest = vi.hoisted(() => ({ calls: [] as string[] }));
 
-vi.mock("@/lib/queries/search", () => ({
+vi.mock("@/lib/queries/search", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@/lib/queries/search")>()),
 	useSearchSuggest: (q: string) => {
 		suggest.calls.push(q);
 		return {
 			data: {
-				products: [
+				services: [
 					{
-						id: "p1",
-						slug: "dior-sauvage",
-						name: "Dior Sauvage EDP",
-						image_url: null,
-						price_min: 48000,
-						price_max: 48000,
+						id: "s1",
+						slug: "deep-home-cleaning",
+						name: "Deep Home Cleaning",
+						media_url: null,
+						price_fils: 25000,
+						vendor_name: "Sparkle Cleaners",
 					},
 				],
-				categories: [{ id: "c1", name: "Fragrance", slug: "fragrance" }],
-				brands: [{ id: "b1", name: "Dior", slug: "dior" }],
-				did_you_mean: null,
+				categories: [{ id: "c1", name: "Cleaning", slug: "cleaning" }],
 			},
 		};
 	},
@@ -66,13 +65,12 @@ describe("SearchAutocomplete", () => {
 		nav.params = new URLSearchParams();
 	});
 
-	test("renders the three buckets when input is focused", async () => {
+	test("renders categories and services when input is focused", async () => {
 		render(wrap(<SearchAutocomplete />));
 		const input = screen.getByRole("textbox");
 		input.focus();
-		expect(await screen.findByText("Fragrance")).toBeTruthy();
-		expect(await screen.findByText("Dior")).toBeTruthy();
-		expect(await screen.findByText("Dior Sauvage EDP")).toBeTruthy();
+		expect(await screen.findByText("Cleaning")).toBeTruthy();
+		expect(await screen.findByText("Deep Home Cleaning")).toBeTruthy();
 	});
 });
 
@@ -88,17 +86,17 @@ describe("SearchAutocomplete URL sync", () => {
 	});
 
 	test("prefills from ?q= on the search results page", () => {
-		nav.pathname = "/en/search";
-		nav.params = new URLSearchParams("q=dior");
+		nav.pathname = "/en/services";
+		nav.params = new URLSearchParams("q=cleaning");
 
 		render(wrap(<SearchAutocomplete />));
 
-		expect(input().value).toBe("dior");
+		expect(input().value).toBe("cleaning");
 	});
 
 	test("clears the input when navigating back off the search page", () => {
-		nav.pathname = "/en/search";
-		nav.params = new URLSearchParams("q=dior");
+		nav.pathname = "/en/services";
+		nav.params = new URLSearchParams("q=cleaning");
 
 		const qc = new QueryClient({
 			defaultOptions: { queries: { retry: false } },
@@ -109,7 +107,7 @@ describe("SearchAutocomplete URL sync", () => {
 			</QueryClientProvider>
 		);
 		const { rerender } = render(ui());
-		expect(input().value).toBe("dior");
+		expect(input().value).toBe("cleaning");
 
 		// Browser Back to the page the search was launched from. The layout —
 		// and therefore this component instance — survives the navigation.
@@ -145,20 +143,20 @@ describe("SearchAutocomplete URL sync", () => {
 	});
 
 	test("does not fetch suggestions for a prefilled query nobody opened", () => {
-		nav.pathname = "/en/search";
-		nav.params = new URLSearchParams("q=dior");
+		nav.pathname = "/en/services";
+		nav.params = new URLSearchParams("q=cleaning");
 		suggest.calls.length = 0;
 
 		render(wrap(<SearchAutocomplete />));
 
-		expect(input().value).toBe("dior");
+		expect(input().value).toBe("cleaning");
 		// The dropdown was never opened, so no suggest request should go out.
 		expect(suggest.calls.filter((q) => q !== "")).toEqual([]);
 	});
 
 	test("keeps in-progress typing when only filter params change", () => {
-		nav.pathname = "/en/search";
-		nav.params = new URLSearchParams("q=dior");
+		nav.pathname = "/en/services";
+		nav.params = new URLSearchParams("q=cleaning");
 
 		const qc = new QueryClient({
 			defaultOptions: { queries: { retry: false } },
@@ -170,13 +168,13 @@ describe("SearchAutocomplete URL sync", () => {
 		);
 		const { rerender } = render(ui());
 
-		fireEvent.change(input(), { target: { value: "chanel" } });
+		fireEvent.change(input(), { target: { value: "plumbing" } });
 
 		// Applying a facet on the results page rewrites the URL but leaves ?q=
 		// untouched; that must not clobber what the user is halfway through typing.
-		nav.params = new URLSearchParams("q=dior&brand=dior");
+		nav.params = new URLSearchParams("q=cleaning&area=dubai-marina");
 		rerender(ui());
 
-		expect(input().value).toBe("chanel");
+		expect(input().value).toBe("plumbing");
 	});
 });

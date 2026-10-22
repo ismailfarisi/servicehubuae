@@ -24,7 +24,13 @@ import {
   Vendor,
   VendorLocation,
 } from "@mypickuae/database";
-import { BadRequestError, ConflictError, ForbiddenError, NotFoundError } from "@mypickuae/plugins";
+import {
+  BadRequestError,
+  ConflictError,
+  ForbiddenError,
+  NotFoundError,
+  UnprocessableEntityError,
+} from "@mypickuae/plugins";
 import { Between, type EntityManager, In, IsNull, LessThanOrEqual } from "typeorm";
 import type { DealLink, EscrowEngine } from "../licensing/escrow-engine.ts";
 import {
@@ -43,11 +49,9 @@ export interface BoardRow {
 export interface HydratedOpportunity extends CollabOpportunity {
   vendor_name: string | null;
   vendor_logo_url: string | null;
-  seeded_product_name: string | null;
-  seeded_product_image_url: string | null;
 }
 
-/** Batch-resolves vendor and seeded-product identity, same pattern as hydrateFeedReelTags. */
+/** Batch-resolves vendor identity for opportunity rows. */
 async function hydrateOpportunityNames(rows: CollabOpportunity[]): Promise<HydratedOpportunity[]> {
   const vendorIds = Array.from(new Set(rows.map((r) => r.vendor_id)));
   const vendors =
@@ -60,10 +64,6 @@ async function hydrateOpportunityNames(rows: CollabOpportunity[]): Promise<Hydra
     ...r,
     vendor_name: vendorNameById.get(r.vendor_id) ?? null,
     vendor_logo_url: vendorLogoById.get(r.vendor_id) ?? null,
-    // Product catalogue is not part of this platform; seeded products are
-    // referenced by id only.
-    seeded_product_name: null,
-    seeded_product_image_url: null,
   }));
 }
 
@@ -112,11 +112,6 @@ export interface CreateOpportunityInput {
   // paid_campaign
   feeFils?: number | null;
   fundingSource?: ReelLicenseFundingSource | null;
-  // product_seeding
-  seededProductId?: string | null;
-  seededVariantId?: string | null;
-  seededQty?: number | null;
-  seedingValueFils?: number | null;
   // event_appearance
   locationId?: string | null;
   startsAt?: Date | null;
@@ -171,7 +166,7 @@ const COMMITTED_STATUSES: readonly CollabApplicationStatus[] = [
  * Producer side of the shared cross-service "notification-events" BullMQ queue.
  *
  * The queue NAME is the contract between services, not a shared TS import —
- * order-service, product-service and booking-service each hold their own
+ * booking-service and reels-service each hold their own
  * lightweight handle to it the same way. notification-service's consumer turns
  * `{ userId, notificationType, variables }` into a preference-aware fan-out
  * across in-app, email, push and WhatsApp.
@@ -321,17 +316,16 @@ export class CollabService {
     o: {
       feeFils?: number | null;
       fundingSource?: ReelLicenseFundingSource | null;
-      seededProductId?: string | null;
-      seededQty?: number | null;
       locationId?: string | null;
       startsAt?: Date | null;
       endsAt?: Date | null;
     },
   ): void {
     if (type === CollabOpportunityType.product_seeding) {
-      if (!o.seededProductId) throw new BadRequestError("seeded_product_required");
-      if (!o.seededQty || o.seededQty <= 0) throw new BadRequestError("seeded_qty_required");
-      return;
+      // Seeding shipped a catalogue product; products are gone. The enum value
+      // stays (dropping a Postgres enum value needs a migration) but no new
+      // seeding collab can be created or edited.
+      throw new UnprocessableEntityError("product_seeding_unavailable");
     }
     if (type === CollabOpportunityType.paid_campaign) {
       if (!o.feeFils || o.feeFils <= 0) throw new BadRequestError("fee_required");
@@ -393,11 +387,6 @@ export class CollabService {
           rights_scope: input.rightsScope ?? null,
           fee_fils: input.feeFils != null ? String(input.feeFils) : null,
           funding_source: input.fundingSource ?? null,
-          seeded_product_id: input.seededProductId ?? null,
-          seeded_variant_id: input.seededVariantId ?? null,
-          seeded_qty: input.seededQty ?? null,
-          seeding_value_fils:
-            input.seedingValueFils != null ? String(input.seedingValueFils) : null,
           location_id: input.locationId ?? null,
           starts_at: input.startsAt ?? null,
           ends_at: input.endsAt ?? null,
@@ -433,8 +422,6 @@ export class CollabService {
       const merged = {
         feeFils: patch.feeFils ?? (opp.fee_fils != null ? Number(opp.fee_fils) : null),
         fundingSource: patch.fundingSource ?? opp.funding_source,
-        seededProductId: patch.seededProductId ?? opp.seeded_product_id,
-        seededQty: patch.seededQty ?? opp.seeded_qty,
         locationId: patch.locationId ?? opp.location_id,
         startsAt: patch.startsAt ?? opp.starts_at,
         endsAt: patch.endsAt ?? opp.ends_at,
@@ -470,17 +457,6 @@ export class CollabService {
         opp.fee_fils = patch.feeFils != null ? String(patch.feeFils) : null;
       }
       if (patch.fundingSource !== undefined) opp.funding_source = patch.fundingSource ?? null;
-      if (patch.seededProductId !== undefined) {
-        opp.seeded_product_id = patch.seededProductId ?? null;
-      }
-      if (patch.seededVariantId !== undefined) {
-        opp.seeded_variant_id = patch.seededVariantId ?? null;
-      }
-      if (patch.seededQty !== undefined) opp.seeded_qty = patch.seededQty ?? null;
-      if (patch.seedingValueFils !== undefined) {
-        opp.seeding_value_fils =
-          patch.seedingValueFils != null ? String(patch.seedingValueFils) : null;
-      }
       if (patch.locationId !== undefined) opp.location_id = patch.locationId ?? null;
       if (patch.startsAt !== undefined) opp.starts_at = patch.startsAt ?? null;
       if (patch.endsAt !== undefined) opp.ends_at = patch.endsAt ?? null;

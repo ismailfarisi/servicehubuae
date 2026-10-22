@@ -124,7 +124,7 @@ export function TestFireDialog({ integrationId, open, onOpenChange }: TestFireDi
                 setJsonError(null);
               }}
               placeholder={'{ "vendor_order": { "status": "shipped" } }'}
-              className="font-mono text-xs resize-none h-32 bg-linen border-pearl/28 text-cacao placeholder:text-taupe/50"
+              className="font-mono text-xs resize-none h-32 bg-linen border-input text-cacao placeholder:text-taupe/50"
             />
             {jsonError && <p className="text-russet text-xs mt-1">{jsonError}</p>}
           </div>
@@ -137,7 +137,7 @@ export function TestFireDialog({ integrationId, open, onOpenChange }: TestFireDi
           <Button
             onClick={handleSubmit}
             disabled={isPending}
-            className="bg-amber text-cacao hover:bg-amber/90"
+            className="bg-amber text-linen hover:bg-amber/90"
           >
             {isPending ? "Firing…" : "Fire"}
           </Button>

@@ -5,8 +5,8 @@
 	"start_url": "/en",
 	"scope": "/",
 	"display": "standalone",
-	"background_color": "#f8f1e7",
-	"theme_color": "#8b5a2b",
+	"background_color": "#ffffff",
+	"theme_color": "#2563eb",
 	"icons": [
 		{
 			"src": "/mypickuae-logo.png",

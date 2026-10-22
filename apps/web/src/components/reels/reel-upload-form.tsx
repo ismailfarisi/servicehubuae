@@ -74,8 +74,8 @@ export function ReelUploadForm() {
 
   return (
     <div className="max-w-xl mx-auto p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Post a Reel</h1>
-      <p className="text-sm text-gray-600">
+      <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-nl-cacao">Post a Reel</h1>
+      <p className="text-sm text-nl-russet">
         Vertical video (9:16), 3–90 seconds, up to {MAX_SIZE_MB} MB. MP4 or MOV.
       </p>
       <input
@@ -83,10 +83,10 @@ export function ReelUploadForm() {
         accept="video/mp4,video/quicktime"
         onChange={handleFileChange}
         disabled={busy}
-        className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-black file:text-white file:cursor-pointer"
+        className="block w-full rounded-xl border border-dashed border-nl-cacao/20 bg-nl-pearl p-3 text-sm text-nl-russet file:me-4 file:rounded-lg file:border-0 file:bg-nl-amber file:px-4 file:py-2 file:text-sm file:font-semibold file:text-white file:cursor-pointer hover:file:bg-nl-amber/90"
       />
       {error && (
-        <div className="text-red-600 text-sm" role="alert">
+        <div className="text-destructive text-sm" role="alert">
           {error}
         </div>
       )}
@@ -94,7 +94,7 @@ export function ReelUploadForm() {
         <button
           type="button"
           onClick={startUpload}
-          className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800 transition-colors"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
         >
           Upload
         </button>
@@ -103,17 +103,17 @@ export function ReelUploadForm() {
         <div className="space-y-2">
           {stage === "uploading" && (
             <>
-              <div className="w-full bg-gray-200 rounded h-2 overflow-hidden">
+              <div className="w-full bg-nl-pearl rounded-full h-2 overflow-hidden">
                 <div
-                  className="bg-black h-2 rounded transition-all"
+                  className="bg-nl-amber h-2 rounded-full transition-all"
                   style={{ width: `${progress}%` }}
                 />
               </div>
-              <div className="text-sm text-gray-600">Uploading… {progress}%</div>
+              <div className="text-sm text-nl-russet">Uploading… {progress}%</div>
             </>
           )}
           {stage === "complete" && (
-            <div className="text-sm text-gray-600">
+            <div className="text-sm text-nl-russet">
               Upload complete. Opening editor…
             </div>
           )}

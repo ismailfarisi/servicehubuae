@@ -146,16 +146,14 @@ const licensingVendorWriteRoutes = new Elysia({ prefix: PREFIX })
     // biome-ignore lint/suspicious/noExplicitAny: handler context typing follows the slice-1 route pattern
     async ({ params, body, member, rightsService }: any) => {
       const feature = await rightsService.pinFeature(member.vid, params.id, {
-        placement: body.placement,
-        productId: body.product_id ?? null,
         position: body.position,
       });
       return { statusCode: 201, data: feature, timestamp: new Date().toISOString() };
     },
     {
       body: t.Object({
-        placement: t.Enum(ReelFeaturePlacement),
-        product_id: t.Optional(t.String()),
+        // Storefront is the only placement; accepted for older clients.
+        placement: t.Optional(t.Literal(ReelFeaturePlacement.storefront)),
         position: t.Optional(t.Integer()),
       }),
     },
@@ -181,7 +179,6 @@ const licensingVendorWriteRoutes = new Elysia({ prefix: PREFIX })
         rightsScope: body.rights_scope,
         bidsCloseAt: new Date(body.bids_close_at),
         budgetGuideFils: body.budget_guide_fils ?? null,
-        targetProductId: body.target_product_id ?? null,
         targetCategory: body.target_category ?? null,
       });
       return { statusCode: 201, data: brief, timestamp: new Date().toISOString() };
@@ -193,7 +190,6 @@ const licensingVendorWriteRoutes = new Elysia({ prefix: PREFIX })
         rights_scope: t.Enum(ReelLicenseRightsScope),
         bids_close_at: t.String(),
         budget_guide_fils: t.Optional(t.Integer()),
-        target_product_id: t.Optional(t.String()),
         target_category: t.Optional(t.String()),
       }),
     },
@@ -207,7 +203,6 @@ const licensingVendorWriteRoutes = new Elysia({ prefix: PREFIX })
         brief: body.brief,
         bidsCloseAt: body.bids_close_at ? new Date(body.bids_close_at) : undefined,
         budgetGuideFils: body.budget_guide_fils,
-        targetProductId: body.target_product_id,
         targetCategory: body.target_category,
       });
       return { statusCode: 200, data: brief, timestamp: new Date().toISOString() };
@@ -218,7 +213,6 @@ const licensingVendorWriteRoutes = new Elysia({ prefix: PREFIX })
         brief: t.Optional(t.String()),
         bids_close_at: t.Optional(t.String()),
         budget_guide_fils: t.Optional(t.Integer()),
-        target_product_id: t.Optional(t.String()),
         target_category: t.Optional(t.String()),
       }),
     },

@@ -58,7 +58,7 @@ export function BriefBoard({ briefs }: { briefs: PublicBrief[] }) {
 
   if (briefs.length === 0) {
     return (
-      <div className="rounded-lg border p-6 text-center text-muted-foreground">
+      <div className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-8 text-center text-sm text-nl-russet shadow-sm">
         No open briefs right now. Check back soon.
       </div>
     );
@@ -71,23 +71,23 @@ export function BriefBoard({ briefs }: { briefs: PublicBrief[] }) {
         value={q}
         onChange={(e) => setQ(e.target.value)}
         placeholder="Search by title, brand, or category…"
-        className="mb-4 w-full rounded-lg border border-input bg-background px-3 py-2 text-sm"
+        className="mb-5 w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-4 py-2.5 text-sm text-nl-cacao outline-none transition-colors placeholder:text-nl-russet/60 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
       />
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         {filtered.map((b) => {
           const closed = isClosed(b.bids_close_at);
           return (
-          <div key={b.id} className="flex flex-col rounded-lg border p-4">
+          <div key={b.id} className="flex flex-col rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 shadow-sm transition-shadow hover:shadow-md">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="text-xs text-muted-foreground">{b.vendor_name ?? "Brand"}</div>
-                <div className="mt-0.5 truncate font-semibold">{b.title}</div>
+                <div className="text-xs font-medium text-nl-russet">{b.vendor_name ?? "Brand"}</div>
+                <div className="mt-0.5 truncate font-display font-semibold text-nl-cacao">{b.title}</div>
               </div>
-              <span className="whitespace-nowrap rounded bg-neutral-100 px-2 py-0.5 text-xs text-neutral-600">
+              <span className="whitespace-nowrap rounded-full bg-nl-pearl px-2.5 py-0.5 text-xs font-medium text-nl-amber-text">
                 {closesIn(b.bids_close_at)}
               </span>
             </div>
-            <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-muted-foreground">
+            <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-nl-russet">
               <div>
                 <span className="font-medium text-foreground">Budget: </span>
                 {aed(b.budget_guide_fils)}
@@ -107,7 +107,7 @@ export function BriefBoard({ briefs }: { briefs: PublicBrief[] }) {
               type="button"
               disabled={closed}
               onClick={() => setActive(b)}
-              className="mt-3 self-start rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+              className="mt-4 self-start inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
             >
               {closed ? "Closed" : "Place a bid"}
             </button>

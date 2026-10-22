@@ -2,6 +2,7 @@ import "reflect-metadata";
 import { config } from "@mypickuae/config";
 import { DataSource } from "typeorm";
 import {
+  Area,
   AuditLog,
   Banner,
   Booking,
@@ -178,6 +179,7 @@ const entities = [
   ServiceOfferingTranslation,
   VendorLocation,
   ServiceArea,
+  Area,
   StaffMember,
   StaffLocation,
   StaffService,

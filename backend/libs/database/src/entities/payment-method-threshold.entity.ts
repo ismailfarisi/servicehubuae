@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import { Check, Column, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
 
 export interface BnplPlan {
   installments: number;
@@ -6,6 +6,12 @@ export interface BnplPlan {
 }
 
 @Entity("payment_method_thresholds")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Check("payment_method_thresholds_provider_check", "provider IN ('tabby', 'tamara', 'cod')")
+@Check(
+  "payment_method_thresholds_surcharge_nonneg",
+  "surcharge_fils IS NULL OR surcharge_fils >= 0",
+)
 export class PaymentMethodThreshold {
   @PrimaryColumn({ type: "varchar", length: 32 })
   provider!: "tabby" | "tamara" | "cod";

@@ -114,7 +114,7 @@ describe("vendorMembership with alternative permissions", () => {
     ]);
   });
 
-  function appFor(guard: Elysia, role: "owner" | "staff") {
+  function appFor(guard: { as: unknown }, role: "owner" | "staff") {
     return new Elysia()
       .derive(({ headers }: any) => ({
         user: { id: "u1", email: "u1@x.com", role: "customer" as const },

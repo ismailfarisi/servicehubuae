@@ -59,7 +59,14 @@ describe("database entities", () => {
 describe("database enums", () => {
   test("exports all required enum types", () => {
     const exported = Object.keys(enums);
-    for (const name of ["UserRole", "UserStatus", "VendorStatus", "PaymentStatus", "PaymentMethod", "BookingStatus"]) {
+    for (const name of [
+      "UserRole",
+      "UserStatus",
+      "VendorStatus",
+      "PaymentStatus",
+      "PaymentMethod",
+      "BookingStatus",
+    ]) {
       expect(exported).toContain(name);
     }
   });

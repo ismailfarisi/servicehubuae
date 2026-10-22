@@ -21,24 +21,6 @@ export interface PresignResponse {
 	key: string;
 }
 
-export type LayoutVideoStatus = "processing" | "ready" | "failed";
-
-export interface LayoutVideo {
-	id: string;
-	status: LayoutVideoStatus;
-	url: string;
-	poster_url: string;
-	duration_seconds: number;
-}
-
-/** What actually gets persisted into a layout block's `data.video`. */
-export interface LayoutBlockVideo {
-	id: string;
-	url: string;
-	poster_url: string;
-	duration_seconds: number;
-}
-
 export interface S3UploadClient {
 	presign(input: {
 		assetType: MediaAssetType;
@@ -54,14 +36,6 @@ export interface S3UploadClient {
 	processAsset(input: { assetType: MediaAssetType; key: string }): Promise<{
 		url: string;
 	}>;
-	presignLayoutVideo?(input: {
-		filename: string;
-		contentType: string;
-		sizeBytes: number;
-	}): Promise<PresignResponse>;
-	processLayoutVideo?(input: { key: string }): Promise<{ id: string; status: LayoutVideoStatus }>;
-	getLayoutVideo?(id: string): Promise<LayoutVideo>;
-	deleteLayoutVideo?(id: string): Promise<void>;
 }
 
 export function useS3Upload(opts: {

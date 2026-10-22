@@ -2,15 +2,20 @@
 
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useRecordSearch } from "@/hooks/use-record-search";
-import { useSearchSuggest } from "@/lib/queries/search";
+import {
+	categoryHref,
+	searchResultsHref,
+	serviceHref,
+	useSearchSuggest,
+} from "@/lib/queries/search";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { EmptySearchState } from "./empty-search-state";
 import { SearchAutocompleteResults } from "./search-autocomplete-results";
 
-/** `/en/search`, `/ar/search` — locale prefix is always present, but tolerate its absence. */
-const SEARCH_PATH = /^\/(?:[a-z]{2}\/)?search\/?$/;
+/** `/en/services`, `/ar/services` (the results page) — locale prefix is always present, but tolerate its absence. */
+const SEARCH_PATH = /^\/(?:[a-z]{2}\/)?services\/?$/;
 
 const INPUT_CLASS =
 	"w-full bg-transparent border-0 outline-none text-sm text-nl-cacao placeholder:text-nl-russet/60 font-sans";
@@ -55,30 +60,25 @@ export function SearchAutocomplete() {
 	const { data } = useSearchSuggest(isOpen ? debouncedQuery : "");
 	const recordSearch = useRecordSearch();
 
-	// Flatten the three buckets into a keyboard-navigable list, preserving
-	// visual order (categories → brands → products).
+	// Flatten the two buckets into a keyboard-navigable list, preserving
+	// visual order (categories → services).
 	const flatRows = useMemo(() => {
 		if (!data)
 			return [] as Array<{
-				kind: "category" | "brand" | "product";
+				kind: "category" | "service";
 				href: string;
 				payload: unknown;
 			}>;
 		return [
 			...data.categories.map((c) => ({
 				kind: "category" as const,
-				href: `/${locale}/c/${c.slug}`,
+				href: categoryHref(locale, c.slug),
 				payload: c,
 			})),
-			...data.brands.map((b) => ({
-				kind: "brand" as const,
-				href: `/${locale}/brand/${b.slug}`,
-				payload: b,
-			})),
-			...data.products.map((p) => ({
-				kind: "product" as const,
-				href: `/${locale}/product/${p.slug}`,
-				payload: p,
+			...data.services.map((svc) => ({
+				kind: "service" as const,
+				href: serviceHref(locale, svc.slug),
+				payload: svc,
 			})),
 		];
 	}, [data, locale]);
@@ -112,7 +112,7 @@ export function SearchAutocomplete() {
 		const q = query.trim();
 		if (!q) return;
 		recordSearch(q);
-		router.push(`/${locale}/search?q=${encodeURIComponent(q)}`);
+		router.push(searchResultsHref(locale, q));
 		setIsOpen(false);
 	}
 
@@ -134,7 +134,7 @@ export function SearchAutocomplete() {
 
 	const hasAnyResults =
 		!!data &&
-		data.products.length + data.categories.length + data.brands.length > 0;
+		data.services.length + data.categories.length > 0;
 
 	return (
 		<div className="w-full">
@@ -163,24 +163,6 @@ export function SearchAutocomplete() {
 								setIsOpen(false);
 							}}
 						/>
-					) : debouncedQuery.trim().length >= 2 && data?.did_you_mean ? (
-						<div className="bg-background border border-border/60 rounded-2xl shadow-xl shadow-black/5 p-4 text-center text-sm">
-							No results for &ldquo;{query}&rdquo;.<br />
-							Did you mean{" "}
-							<button
-								type="button"
-								className="text-primary hover:underline"
-								onMouseDown={() => {
-									const suggestion = data?.did_you_mean ?? "";
-									router.push(
-										`/${locale}/search?q=${encodeURIComponent(suggestion)}`,
-									);
-									setIsOpen(false);
-								}}
-							>
-								&ldquo;{data.did_you_mean}&rdquo;
-							</button>?
-						</div>
 					) : debouncedQuery.trim().length < 2 ? (
 						<EmptySearchState onSelect={() => setIsOpen(false)} />
 					) : null}

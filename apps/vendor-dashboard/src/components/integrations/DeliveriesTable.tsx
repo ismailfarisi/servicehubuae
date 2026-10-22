@@ -63,10 +63,10 @@ export function DeliveriesTable({
 	}
 
 	return (
-		<div className="border border-pearl/14 rounded-lg overflow-hidden">
+		<div className="border border-pearl rounded-lg overflow-hidden">
 			<table className="w-full text-sm" data-stack="md">
 				<thead>
-					<tr className="border-b border-pearl/14 bg-linen">
+					<tr className="border-b border-pearl bg-linen">
 						<th className="text-left px-4 py-3 text-xs uppercase tracking-wide text-taupe font-medium">
 							When
 						</th>
@@ -141,7 +141,7 @@ export function DeliveriesTable({
 				</tbody>
 			</table>
 			{deliveries.length > 0 && (
-				<div className="p-3 border-t border-pearl/14 text-xs text-taupe">
+				<div className="p-3 border-t border-pearl text-xs text-taupe">
 					Total: {deliveries.length}{" "}
 					{deliveries.length === 1 ? "delivery" : "deliveries"}
 				</div>

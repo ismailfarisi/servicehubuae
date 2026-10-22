@@ -14,11 +14,11 @@ function RegisterContent() {
 
   return (
     <div className="container max-w-md py-20">
-      <h1 className="text-2xl font-bold mb-6 text-center">
+      <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-nl-cacao mb-6 text-center">
         {t("registerTitle")}
       </h1>
       <RegisterForm
-        onAuthenticated={() => router.push(returnTo || `/${locale}/beauty-quiz`)}
+        onAuthenticated={() => router.push(returnTo || `/${locale}/account`)}
       />
     </div>
   );

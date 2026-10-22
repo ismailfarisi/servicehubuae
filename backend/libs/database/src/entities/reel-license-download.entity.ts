@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -10,6 +11,8 @@ import type { ReelLicenseGrant } from "./reel-license-grant.entity.ts";
 
 /** Append-only audit of off-platform download URL mints. No soft delete (immutable log). */
 @Entity("reel_license_downloads")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_rld_grant_created", ["grant_id", "created_at"])
 export class ReelLicenseDownload {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

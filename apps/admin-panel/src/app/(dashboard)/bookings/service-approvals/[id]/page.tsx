@@ -7,6 +7,7 @@ import {
   useApproveOffering,
   useRejectOffering,
 } from "@/lib/queries/service-offerings";
+import { useVendor } from "@/lib/queries/vendors";
 import {
   Button,
   Dialog,
@@ -21,6 +22,7 @@ import {
   toast,
 } from "@mypickuae/ui";
 import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -39,6 +41,9 @@ export default function ServiceApprovalDetailPage() {
   const id = String(params.id);
 
   const { data: offering, isLoading, isError, error, refetch } = useAdminOffering(id);
+  // Vendor name for the header; falls back to the raw id while loading or if
+  // the vendor lookup fails.
+  const { data: vendor } = useVendor(offering?.vendor_id ?? "");
   const { mutate: approve, isPending: approving } = useApproveOffering();
   const { mutate: reject, isPending: rejecting } = useRejectOffering();
 
@@ -124,7 +129,12 @@ export default function ServiceApprovalDetailPage() {
             <h1 className="text-xl font-bold text-cacao">{offering.name}</h1>
             <StatusBadge status={offering.status} />
           </div>
-          <p className="text-taupe text-sm">Vendor ID: {offering.vendor_id}</p>
+          <p className="text-taupe text-sm">
+            Vendor:{" "}
+            <Link href={`/vendors/${offering.vendor_id}`} className="text-amber hover:underline">
+              {vendor?.business_name ?? vendor?.name ?? offering.vendor_id}
+            </Link>
+          </p>
         </div>
         {pending && (
           <div className="flex gap-2">

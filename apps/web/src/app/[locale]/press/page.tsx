@@ -37,13 +37,13 @@ export default function PressPage() {
 			</StaticSection>
 
 			<StaticSection heading="Fact sheet">
-				<div className="not-prose border border-nl-cacao/10 divide-y divide-nl-cacao/10 bg-white/40">
+				<div className="not-prose overflow-hidden rounded-2xl border border-nl-cacao/10 divide-y divide-nl-cacao/10 bg-nl-linen shadow-sm">
 					{FACTS.map((f) => (
 						<div
 							key={f.k}
-							className="grid grid-cols-[140px_1fr] md:grid-cols-[200px_1fr] gap-4 px-5 py-4 text-[14px]"
+							className="grid grid-cols-[140px_1fr] md:grid-cols-[200px_1fr] gap-4 px-5 py-4 text-sm"
 						>
-							<dt className="text-[10px] tracking-[0.2em] uppercase text-nl-russet/80 self-center">
+							<dt className="text-xs font-medium text-nl-russet self-center">
 								{f.k}
 							</dt>
 							<dd className="text-nl-cacao">{f.v}</dd>
@@ -58,7 +58,7 @@ export default function PressPage() {
 					partnerships, creator collaborations and retail tie-ins:{" "}
 					<a
 						href="mailto:info@mypickuae.com"
-						className="text-nl-amber hover:underline"
+						className="font-medium text-nl-amber-text hover:underline"
 					>
 						info@mypickuae.com
 					</a>
@@ -71,7 +71,7 @@ export default function PressPage() {
 					available on request. Please email{" "}
 					<a
 						href="mailto:info@mypickuae.com"
-						className="text-nl-amber hover:underline"
+						className="font-medium text-nl-amber-text hover:underline"
 					>
 						info@mypickuae.com
 					</a>{" "}

@@ -1,8 +1,10 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -21,6 +23,15 @@ import type { VendorTranslation } from "./vendor-translation.entity.ts";
 // admin-password.controller.ts.
 
 @Entity("vendors")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("User", ["verified_by"], ["id"], {
+  name: "fk_vendors_verified_by",
+  onDelete: "SET NULL",
+})
+@Check(
+  "vendors_settlement_window_nonneg",
+  "settlement_window_days IS NULL OR settlement_window_days >= 0",
+)
 export class Vendor {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

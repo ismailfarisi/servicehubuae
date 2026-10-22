@@ -28,9 +28,13 @@ export interface Category {
 	translations?: CategoryTranslation[];
 }
 
+/**
+ * Body for POST/PATCH /admin/categories (catalog-service). The slug is not
+ * writable: the API derives it from the name on create. Sort order is set
+ * through useReorderCategories, not here.
+ */
 export interface CategoryWritePayload {
 	name?: string;
-	slug?: string;
 	parent_id?: string | null;
 	description?: string | null;
 	image_url?: string | null;
@@ -135,35 +139,5 @@ export function useReorderCategories() {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
 		},
-	});
-}
-
-export function useAssignAttributes() {
-	const queryClient = useQueryClient();
-	return useMutation({
-		mutationFn: async ({
-			id,
-			attribute_ids,
-		}: { id: string; attribute_ids: string[] }) => {
-			const { data } = await api.post(`/admin/categories/${id}/attributes`, {
-				attribute_ids,
-			});
-			return data.data;
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["admin", "categories"] });
-		},
-	});
-}
-
-export function useCategoryAttributes(id?: string) {
-	return useQuery({
-		queryKey: ["admin", "categories", id, "attributes"],
-		queryFn: async () => {
-			if (!id) return [];
-			const { data } = await api.get(`/categories/by-id/${id}/attributes`);
-			return data.data as { id: string }[];
-		},
-		enabled: !!id,
 	});
 }

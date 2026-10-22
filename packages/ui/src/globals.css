@@ -4,79 +4,79 @@
 
 @layer base {
 	:root {
-		/* MyPickUAE Brand Palette */
-		--nl-espresso: 24 20% 8%; /* #1A1208 */
-		--nl-cacao: 26 30% 12%; /* #2C1810 */
-		--nl-russet: 14 45% 37%; /* #7C4C35 */
-		--nl-amber: 28 58% 46%; /* #B87333 - signature */
-		--nl-taupe: 20 38% 47%; /* #987156 */
-		--nl-caramel: 24 61% 57%; /* #C2865C */
-		--nl-pearl: 32 40% 88%; /* #ECE1D4 */
-		--nl-linen: 30 35% 95%; /* #F2EAE0 */
+		/* Palette: modern blue & white. Token names are legacy (kept so the
+		   existing utility classes keep working); each comment gives the role. */
+		--nl-espresso: 224 71% 4%; /* #030712 overlays, deepest ink */
+		--nl-cacao: 222 47% 11%; /* #0F172A primary text, dark surfaces */
+		--nl-russet: 0 72% 51%; /* #DC2626 danger / errors */
+		--nl-amber: 221 83% 53%; /* #2563EB brand blue */
+		--nl-taupe: 215 16% 47%; /* #64748B muted text */
+		--nl-caramel: 224 76% 48%; /* #1D4ED8 deep blue, hover */
+		--nl-pearl: 214 32% 91%; /* #E2E8F0 borders, subtle fills */
+		--nl-linen: 0 0% 100%; /* #FFFFFF surfaces */
 
 		/* Semantic Colors - Light Mode */
-		--background: var(--nl-linen);
+		--background: 210 40% 97%; /* #F4F7FB page */
 		--foreground: var(--nl-cacao);
-		--card: 30 50% 99%; /* warm near-white, sits above linen */
+		--card: 0 0% 100%;
 		--card-foreground: var(--nl-cacao);
-		--popover: 30 50% 99%; /* warm near-white, sits above linen */
+		--popover: 0 0% 100%;
 		--popover-foreground: var(--nl-cacao);
 		--primary: var(--nl-amber);
-		--primary-foreground: var(--nl-espresso);
-		--secondary: var(--nl-pearl);
+		--primary-foreground: 0 0% 100%;
+		--secondary: 210 40% 96%;
 		--secondary-foreground: var(--nl-cacao);
-		--muted: var(--nl-pearl);
+		--muted: 210 40% 96%;
 		--muted-foreground: var(--nl-taupe);
-		--accent: var(--nl-caramel);
-		--accent-foreground: var(--nl-espresso);
+		--accent: 214 100% 97%; /* #EFF6FF */
+		--accent-foreground: var(--nl-caramel);
 		--destructive: var(--nl-russet);
-		--destructive-foreground: var(--nl-linen);
-		--border: 30 18% 78%; /* solid warm border */
-		--input: 30 22% 85%; /* solid warm input */
+		--destructive-foreground: 0 0% 100%;
+		--border: var(--nl-pearl);
+		--input: 214 32% 86%;
 		--ring: var(--nl-amber);
-		--radius: 2px;
+		--radius: 0.5rem;
 
 		/* Sidebar specific */
-		--sidebar: var(--nl-cacao);
-		--sidebar-foreground: var(--nl-pearl);
+		--sidebar: 0 0% 100%;
+		--sidebar-foreground: var(--nl-taupe);
 		--sidebar-accent: var(--nl-amber);
 		--sidebar-muted: var(--nl-taupe);
 
-		/* Success/Warning - warm tones only */
-		--success: var(--nl-amber);
-		--success-foreground: var(--nl-espresso);
-		--warning: var(--nl-caramel);
-		--warning-foreground: var(--nl-espresso);
+		--success: 142 72% 29%; /* #15803D */
+		--success-foreground: 0 0% 100%;
+		--warning: 26 90% 37%; /* #B45309 */
+		--warning-foreground: 0 0% 100%;
 	}
 
 	.dark {
 		/* Semantic Colors - Dark Mode */
 		--background: var(--nl-cacao);
-		--foreground: var(--nl-linen);
-		--card: 26 25% 18%; /* lighter than cacao for elevated surface */
-		--card-foreground: var(--nl-linen);
-		--popover: 26 25% 18%; /* lighter than cacao for elevated surface */
-		--popover-foreground: var(--nl-linen);
-		--primary: var(--nl-amber);
-		--primary-foreground: var(--nl-espresso);
-		--secondary: var(--nl-taupe); /* #987156 */
-		--secondary-foreground: var(--nl-linen);
-		--muted: var(--nl-taupe); /* #987156 */
-		--muted-foreground: var(--nl-pearl);
-		--accent: var(--nl-caramel);
-		--accent-foreground: var(--nl-espresso);
-		--destructive: var(--nl-russet);
-		--destructive-foreground: var(--nl-linen);
-		--border: 26 15% 28%; /* visible warm border */
-		--input: 26 15% 32%;
-		--ring: var(--nl-amber);
-		--sidebar: var(--nl-espresso); /* #1A1208 */
-		--sidebar-foreground: var(--nl-pearl);
-		--sidebar-accent: var(--nl-amber);
-		--sidebar-muted: var(--nl-taupe);
-		--success: var(--nl-amber);
-		--success-foreground: var(--nl-espresso);
-		--warning: var(--nl-caramel);
+		--foreground: 210 40% 98%;
+		--card: 217 33% 17%;
+		--card-foreground: 210 40% 98%;
+		--popover: 217 33% 17%;
+		--popover-foreground: 210 40% 98%;
+		--primary: 217 91% 60%;
+		--primary-foreground: 0 0% 100%;
+		--secondary: 217 33% 22%;
+		--secondary-foreground: 210 40% 98%;
+		--muted: 217 33% 22%;
+		--muted-foreground: 215 20% 65%;
+		--accent: 217 33% 22%;
+		--accent-foreground: 210 40% 98%;
+		--destructive: 0 84% 60%;
+		--destructive-foreground: 0 0% 100%;
+		--border: 217 33% 24%;
+		--input: 217 33% 28%;
+		--ring: 217 91% 60%;
+		--sidebar: var(--nl-espresso);
+		--sidebar-foreground: 215 20% 65%;
+		--sidebar-accent: 217 91% 60%;
+		--sidebar-muted: 215 20% 65%;
+		--success: 142 69% 45%;
+		--success-foreground: 0 0% 100%;
+		--warning: 38 92% 50%;
 		--warning-foreground: var(--nl-espresso);
 	}
 }

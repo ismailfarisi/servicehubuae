@@ -12,9 +12,9 @@ export class StubEmailDispatcher implements EmailDispatcher {
 
 /**
  * Real email transport for the notification dispatcher, backed by the shared
- * SES `EmailService`. Replaces the stub so in-app notification types that also
- * have email enabled (order_shipped, order_delivered, payout_sent, …) actually
- * deliver. Rich order-placed emails are sent separately via OrderEmailService.
+ * SES `EmailService`. Replaces the stub so notification types that also have
+ * email enabled (booking_confirmed, booking_reminder, payout_sent, …) actually
+ * deliver.
  */
 export class SesEmailDispatcher implements EmailDispatcher {
   constructor(private readonly emailService: EmailService) {}

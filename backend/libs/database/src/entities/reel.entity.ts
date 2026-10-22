@@ -1,11 +1,13 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
+  Index,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -13,6 +15,22 @@ import { ReelAuthorKind, ReelStatus } from "../enums.ts";
 import type { User } from "./user.entity.ts";
 
 @Entity("reels")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("User", ["moderator_id"], ["id"], { name: "reels_moderator_id_fkey" })
+@Check("ck_reels_caption_length", "caption IS NULL OR length(caption) <= 500")
+@Check("ck_reels_duration", "video_duration_seconds >= 3 AND video_duration_seconds <= 90")
+@Check("ck_reels_language", "language_code IN ('ar', 'en', 'hi', 'ur', 'ml')")
+@Check("ck_reels_portrait", "video_height >= video_width")
+@Index("idx_reels_author_kind_status_published", ["author_kind", "status", "published_at"], {
+  where: "deleted_at IS NULL",
+})
+@Index("idx_reels_pending_queue", ["created_at"], {
+  where: "status = 'pending_review' AND deleted_at IS NULL",
+})
+@Index("idx_reels_status_published", ["status", "published_at"], { where: "deleted_at IS NULL" })
+@Index("idx_reels_user_published", ["user_id", "published_at"], {
+  where: "status = 'approved' AND deleted_at IS NULL",
+})
 export class Reel {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

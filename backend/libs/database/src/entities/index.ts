@@ -111,6 +111,7 @@ export { ServiceOffering } from "./service-offering.entity.ts";
 export { ServiceOfferingTranslation } from "./service-offering-translation.entity.ts";
 export { VendorLocation } from "./vendor-location.entity.ts";
 export { ServiceArea } from "./service-area.entity.ts";
+export { Area } from "./area.entity.ts";
 export { StaffMember } from "./staff-member.entity.ts";
 export { StaffLocation } from "./staff-location.entity.ts";
 export { StaffService } from "./staff-service.entity.ts";

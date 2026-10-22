@@ -6,27 +6,10 @@ import {
   ReelStatus,
 } from "@mypickuae/database";
 import type { Repository } from "typeorm";
-import type { CategoryCohortInvalidator } from "../feed/category-cohort-invalidator.ts";
-
-export async function collectCategorySeedIdsForReel(
-  reelId: string,
-  runner: { query<T>(sql: string, params: unknown[]): Promise<T> },
-): Promise<string[]> {
-  const rows = await runner.query<{ category_id: string }[]>(
-    `SELECT DISTINCT p.category_id
-     FROM reel_product_tags t
-     JOIN products p ON p.id = t.product_id
-     WHERE t.reel_id = $1`,
-    [reelId],
-  );
-  return Array.from(new Set(rows.map((r) => r.category_id))).filter(Boolean);
-}
 
 export class ModerationService {
   private reelRepo!: Repository<Reel>;
   private logRepo!: Repository<ReelModerationLog>;
-
-  constructor(private readonly invalidator?: CategoryCohortInvalidator) {}
 
   private getRepos() {
     if (!this.reelRepo) this.reelRepo = AppDataSource.getRepository(Reel);
@@ -83,10 +66,6 @@ export class ModerationService {
         notes: notes ?? null,
       } as any),
     );
-    if (this.invalidator) {
-      const seeds = await collectCategorySeedIdsForReel(reelId, AppDataSource);
-      void this.invalidator.enqueue({ seedCategoryIds: seeds });
-    }
     return saved;
   }
 
@@ -109,10 +88,6 @@ export class ModerationService {
         notes: notes ?? null,
       } as any),
     );
-    if (this.invalidator) {
-      const seeds = await collectCategorySeedIdsForReel(reelId, AppDataSource);
-      void this.invalidator.enqueue({ seedCategoryIds: seeds });
-    }
     return saved;
   }
 

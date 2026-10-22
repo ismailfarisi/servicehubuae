@@ -1,3 +1,4 @@
+import { config } from "@mypickuae/config";
 import {
   Booking,
   BookingStatus,
@@ -27,7 +28,7 @@ import type { AvailabilityCache } from "../availability/availability-cache.ts";
 import type { AvailabilityService } from "../availability/availability.service.ts";
 import { EngagementService } from "../engagement/engagement.service.ts";
 import { type BookingHoldService, HOLD_TTL_SECONDS } from "./booking-hold.service.ts";
-import type { BookingPaymentClient } from "./booking-payment.client.ts";
+import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";
 import { BookingStatusService } from "./booking-status.service.ts";
 import { CommissionSnapshotService } from "./commission-snapshot.service.ts";
 import type { StrikeService } from "./strike.service.ts";
@@ -45,6 +46,20 @@ export class PayAtVenueUnavailableError extends HttpError {
   constructor(message = "pay_at_venue is not available for this vendor — a deposit is required") {
     super(422, message, "pay_at_venue_unavailable");
   }
+}
+
+// Card payments (deposit / prepay) need the online payment adapter (M2). While
+// `config.payments.onlineEnabled` is false only pay_at_venue offerings can be
+// held or booked; anything else is rejected BEFORE any hold or row is written.
+export class OnlinePaymentUnavailableError extends HttpError {
+  constructor() {
+    super(422, "online_payment_unavailable", "online_payment_unavailable");
+  }
+}
+
+export interface BookingServiceOptions {
+  // Defaults to config.payments.onlineEnabled.
+  onlineEnabled?: boolean;
 }
 
 export interface CreateBookingInput {
@@ -144,6 +159,7 @@ export class BookingService {
   // confirm fires the exact same post-confirm hooks a deposit/prepay confirm
   // does; falls back to a bare instance only for isolated unit tests.
   private readonly statusService: BookingStatusService;
+  private readonly onlineEnabled: boolean;
 
   constructor(
     private readonly offeringRepo: Repository<ServiceOffering>,
@@ -155,7 +171,7 @@ export class BookingService {
     private readonly siteSettingRepo: Repository<SiteSetting>,
     private readonly availabilityService: AvailabilityService,
     private readonly holdService: BookingHoldService,
-    private readonly paymentClient: BookingPaymentClient,
+    private readonly paymentClient: BookingPaymentGateway,
     private readonly cache?: AvailabilityCache,
     // Phase 5 Task 5: the real per-vendor/platform no-show strike gate. Optional
     // so this class stays constructible in isolation (unit tests / any
@@ -170,7 +186,9 @@ export class BookingService {
     // the old inline `transition()` path had, but now via the shared
     // confirmPayAtVenue/postConfirm surface so the wired path can't drift.
     statusService?: BookingStatusService,
+    options: BookingServiceOptions = {},
   ) {
+    this.onlineEnabled = options.onlineEnabled ?? config.payments.onlineEnabled;
     this.commissionSnapshot = new CommissionSnapshotService(
       this.vendorRepo,
       this.categoryRepo,
@@ -183,6 +201,7 @@ export class BookingService {
     const now = input.now ?? new Date();
 
     const offering = await this.loadPublishedOffering(input.offeringId);
+    this.assertPaymentModeBookable(offering);
 
     const startsAt = new Date(input.startsAt);
     const endsAt = new Date(input.endsAt);
@@ -275,10 +294,9 @@ export class BookingService {
       netAmountFils: netExVatFils,
     });
 
-    // Prepay/deposit need the customer's email (prepay's SetupIntent schema
-    // requires it) and benefit from name/address for Stripe's cross-border
-    // compliance requirement (see booking-payment.client.ts). Fetched before
-    // the transaction so a missing user fails fast without a stray booking row.
+    // Prepay/deposit need the customer's email (card setup requires it) and
+    // pass name/address on to the payment gateway. Fetched before the
+    // transaction so a missing user fails fast without a stray booking row.
     let user: User | null = null;
     if (offering.payment_mode !== ServicePaymentMode.pay_at_venue) {
       user = await this.userRepo.findOne({ where: { id: customerId } });
@@ -415,6 +433,9 @@ export class BookingService {
     const now = input.now ?? new Date();
 
     const offering = await this.loadPublishedOffering(input.offeringId);
+    // Rejected before the Redis SETNX so no hold is taken for an offering
+    // that cannot be booked right now.
+    this.assertPaymentModeBookable(offering);
 
     const startsAt = new Date(input.startsAt);
     const endsAt = new Date(input.endsAt);
@@ -505,6 +526,15 @@ export class BookingService {
       throw new UnprocessableEntityError("Service offering is not available for booking");
     }
     return offering;
+  }
+
+  // 422 `online_payment_unavailable` for a deposit/prepay offering while
+  // online payments are disabled (pre-M2). Called by create() and hold()
+  // right after the offering loads, before any hold, row or payment call.
+  private assertPaymentModeBookable(offering: ServiceOffering): void {
+    if (!this.onlineEnabled && offering.payment_mode !== ServicePaymentMode.pay_at_venue) {
+      throw new OnlinePaymentUnavailableError();
+    }
   }
 
   private validateSlotWindow(offering: ServiceOffering, startsAt: Date, endsAt: Date): void {

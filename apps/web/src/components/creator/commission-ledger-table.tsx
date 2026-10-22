@@ -15,19 +15,20 @@ import {
 
 const HEAD_STYLE = {
   fontFamily: MAISON_SANS,
-  fontSize: 10,
-  letterSpacing: "0.2em",
+  fontSize: 12,
+  fontWeight: 600,
+  letterSpacing: "0.025em",
   textTransform: "uppercase",
   color: "hsl(var(--nl-russet))",
 } as const;
 
 const CELL_STYLE = {
   fontFamily: MAISON_SANS,
-  fontSize: 12.5,
+  fontSize: 13,
   color: "hsl(var(--nl-cacao))",
 } as const;
 
-const ROW_BORDER = "1px solid rgba(44,24,16,0.10)";
+const ROW_BORDER = "1px solid hsl(var(--nl-cacao) / 0.10)";
 
 /** Settled money is worth reading as final; anything still in flight is not. */
 function toneFor(status: string) {
@@ -109,11 +110,11 @@ export function CommissionLedgerTable({ status }: { status?: string }) {
                 <td className="py-3" style={CELL_STYLE}>
                   <a
                     href={`/reels/${c.reel_id}`}
-                    className="uppercase transition-colors hover:opacity-70"
+                    className="hover:underline"
                     style={{
                       fontFamily: MAISON_SANS,
-                      fontSize: 10,
-                      letterSpacing: "0.18em",
+                      fontSize: 13,
+                      fontWeight: 600,
                       color: "hsl(var(--nl-amber-text))",
                     }}
                   >
@@ -122,7 +123,7 @@ export function CommissionLedgerTable({ status }: { status?: string }) {
                 </td>
                 <td
                   className="py-3 font-mono"
-                  style={{ ...CELL_STYLE, fontSize: 11, color: "hsl(var(--nl-russet))" }}
+                  style={{ ...CELL_STYLE, fontSize: 12, color: "hsl(var(--nl-russet))" }}
                 >
                   {c.order_id.slice(0, 8)}…
                 </td>
@@ -134,6 +135,7 @@ export function CommissionLedgerTable({ status }: { status?: string }) {
                   style={{
                     fontFamily: MAISON_SERIF,
                     fontSize: 15,
+                    fontWeight: 600,
                     color: "hsl(var(--nl-cacao))",
                   }}
                 >

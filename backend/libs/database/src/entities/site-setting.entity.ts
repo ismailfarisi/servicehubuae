@@ -35,7 +35,7 @@ export class SiteSetting {
   @Column({ type: "uuid", nullable: true })
   updated_by!: string | null;
 
-  @ManyToOne("User", { nullable: true })
+  @ManyToOne("User", { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "updated_by" })
   updatedByUser!: User | null;
 

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { MAISON_SANS } from "@/components/ui/maison-primitives";
 import { PhoneVerifyField, saveAddressErrorMessage } from "@/components/account/phone-verify-field";
 import { UAE_EMIRATES } from "@/lib/emirates";
 
@@ -37,12 +36,8 @@ const FIELDS: {
   { key: "emirate", labelKey: "emirateLabel", required: true, type: "emirate" },
 ];
 
-const inputStyle: React.CSSProperties = {
-  border: "1px solid rgba(44,24,16,0.2)",
-  background: "rgba(255,255,255,0.6)",
-  fontFamily: MAISON_SANS,
-  borderRadius: 0,
-};
+const FIELD_CLASS =
+  "w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3.5 py-2.5 text-sm text-nl-cacao outline-none transition-colors focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20";
 
 export function AddressForm({
   initial,
@@ -73,14 +68,6 @@ export function AddressForm({
   const [phoneVerified, setPhoneVerified] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
-  const focusAmber = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    e.currentTarget.style.borderColor = "hsl(var(--nl-amber))";
-    e.currentTarget.style.boxShadow = "0 0 0 1px hsl(var(--nl-amber))";
-  };
-  const blurAmber = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
-    e.currentTarget.style.borderColor = "rgba(44,24,16,0.2)";
-    e.currentTarget.style.boxShadow = "none";
-  };
 
   return (
     <form
@@ -107,13 +94,10 @@ export function AddressForm({
                 onVerifiedChange={setPhoneVerified}
                 originalPhone={initial?.phone}
                 required={required}
-                onFocus={focusAmber}
-                onBlur={blurAmber}
-                className="flex items-center px-3.5 py-2.5 text-sm w-full transition-all text-nl-cacao"
-                style={inputStyle}
+                className="flex w-full items-center rounded-lg border border-nl-cacao/15 bg-nl-linen px-3.5 py-2.5 text-sm text-nl-cacao transition-colors focus-within:border-nl-amber focus-within:ring-2 focus-within:ring-nl-amber/20"
                 prefixClassName="me-2 text-nl-russet"
                 inputClassName="w-full bg-transparent outline-none"
-                inputStyle={{ border: "none", fontFamily: MAISON_SANS }}
+                inputStyle={{ border: "none" }}
               />
             );
           }
@@ -123,11 +107,8 @@ export function AddressForm({
                 key={key}
                 value={form[key]}
                 onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-                onFocus={focusAmber}
-                onBlur={blurAmber}
                 required={required}
-                className="px-3.5 py-2.5 text-sm w-full outline-none transition-all text-nl-cacao"
-                style={inputStyle}
+                className={FIELD_CLASS}
               >
                 <option value="" disabled>
                   {label}
@@ -147,24 +128,18 @@ export function AddressForm({
               placeholder={label}
               value={form[key]}
               onChange={(e) => setForm({ ...form, [key]: e.target.value })}
-              onFocus={focusAmber}
-              onBlur={blurAmber}
               required={required}
-              className="px-3.5 py-2.5 text-sm w-full outline-none transition-all text-nl-cacao"
-              style={inputStyle}
+              className={FIELD_CLASS}
             />
           );
         })}
       </div>
-      <label
-        className="flex items-center gap-2 text-sm text-nl-cacao"
-        style={{ fontFamily: MAISON_SANS }}
-      >
+      <label className="flex items-center gap-2 text-sm text-nl-cacao">
         <input
           type="checkbox"
           checked={form.is_default}
           onChange={(e) => setForm({ ...form, is_default: e.target.checked })}
-          style={{ accentColor: "hsl(var(--nl-amber))" }}
+          className="h-4 w-4 rounded accent-nl-amber"
         />
         {t("setAsDefault")}
       </label>
@@ -177,34 +152,14 @@ export function AddressForm({
         <button
           type="submit"
           disabled={isLoading || !phoneVerified}
-          className="uppercase disabled:opacity-50"
-          style={{
-            background: "hsl(var(--nl-amber))",
-            color: "hsl(var(--nl-espresso))",
-            fontFamily: MAISON_SANS,
-            fontSize: 11,
-            letterSpacing: "0.22em",
-            padding: "13px 30px",
-            border: "none",
-            borderRadius: 0,
-          }}
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors disabled:opacity-50"
         >
           {isLoading ? tCommon("loading") : tCommon("save")}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="uppercase transition-colors"
-          style={{
-            background: "transparent",
-            border: "1px solid rgba(44,24,16,0.4)",
-            color: "hsl(var(--nl-cacao))",
-            fontFamily: MAISON_SANS,
-            fontSize: 11,
-            letterSpacing: "0.22em",
-            padding: "13px 30px",
-            borderRadius: 0,
-          }}
+          className="rounded-lg border border-nl-cacao/15 bg-nl-linen px-5 py-2.5 text-sm font-semibold text-nl-cacao hover:bg-nl-pearl transition-colors"
         >
           {tCommon("cancel")}
         </button>

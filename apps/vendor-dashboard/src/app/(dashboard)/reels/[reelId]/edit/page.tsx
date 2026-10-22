@@ -49,7 +49,7 @@ export default function ReelEditPage() {
 			<div>
 				<h1 className="text-2xl font-bold text-gray-900">Edit Reel</h1>
 				<p className="text-sm text-gray-500">
-					Tag products, set details, and publish
+					Set details and publish
 				</p>
 			</div>
 			<ReelMetadataForm reel={reel} />

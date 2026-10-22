@@ -106,7 +106,7 @@ export default function LocationsPage() {
 				<div>
 					<h1 className="text-2xl font-bold text-cacao">Locations</h1>
 					<p className="text-sm text-taupe">
-						Manage your branches and the zones you cover for home-visit
+						Manage your branches and the areas you cover for home-visit
 						bookings.
 					</p>
 				</div>

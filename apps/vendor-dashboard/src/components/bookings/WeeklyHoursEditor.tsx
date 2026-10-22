@@ -142,7 +142,7 @@ export function WeeklyHoursEditor({
 			</p>
 			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-7 gap-3">
 				{DAYS.map((day) => (
-					<div key={day.value} className="rounded-lg border border-pearl/28 p-3 space-y-2">
+					<div key={day.value} className="rounded-lg border border-input p-3 space-y-2">
 						<p className="text-xs font-semibold uppercase tracking-wide text-taupe">
 							{day.short}
 						</p>

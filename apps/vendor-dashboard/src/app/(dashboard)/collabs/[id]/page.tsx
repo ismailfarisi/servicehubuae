@@ -137,7 +137,7 @@ export default function CollabDetailPage() {
 					<div>
 						{isEscrowed
 							? formatAED(opp.fee_fils ? Number(opp.fee_fils) : null)
-							: `${opp.seeded_qty ?? 0} units`}
+							: "Product seeding (legacy)"}
 					</div>
 				</div>
 				<div>

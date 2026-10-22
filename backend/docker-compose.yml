@@ -140,12 +140,12 @@ services:
       redis:
         condition: service_healthy
 
-  product-service:
+  catalog-service:
     build:
       context: .
-      dockerfile: apps/product-service/Dockerfile
+      dockerfile: apps/catalog-service/Dockerfile
       target: deps
-    command: bun run --watch apps/product-service/src/index.ts
+    command: bun run --watch apps/catalog-service/src/index.ts
     ports:
       - "3002:3002"
     volumes:
@@ -156,6 +156,7 @@ services:
       - REDIS_HOST=redis
       - DB_HOST=postgres
       - TYPESENSE_HOST=typesense
+      - CATALOG_PORT=3002
     depends_on:
       postgres:
         condition: service_healthy
@@ -164,14 +165,14 @@ services:
       typesense:
         condition: service_healthy
 
-  order-service:
+  booking-service:
     build:
       context: .
-      dockerfile: apps/order-service/Dockerfile
+      dockerfile: apps/booking-service/Dockerfile
       target: deps
-    command: bun run --watch apps/order-service/src/index.ts
+    command: bun run --watch apps/booking-service/src/index.ts
     ports:
-      - "3003:3003"
+      - "3009:3009"
     volumes:
       - .:/app
       - /app/node_modules
@@ -179,6 +180,8 @@ services:
       - NODE_ENV=development
       - REDIS_HOST=redis
       - DB_HOST=postgres
+      - BOOKING_PORT=3009
+      - INTERNAL_SERVICE_SECRET=${INTERNAL_SERVICE_SECRET:-dev-internal-secret}
     depends_on:
       postgres:
         condition: service_healthy
@@ -264,7 +267,6 @@ services:
       - REDIS_HOST=redis
       - DB_HOST=postgres
       - INTERNAL_SERVICE_SECRET=${INTERNAL_SERVICE_SECRET:-dev-internal-secret}
-      - ORDER_HOST=order-service
       - CLOUDFLARE_STREAM_ACCOUNT_ID=${CLOUDFLARE_STREAM_ACCOUNT_ID:-}
       - CLOUDFLARE_STREAM_API_TOKEN=${CLOUDFLARE_STREAM_API_TOKEN:-}
       - CLOUDFLARE_STREAM_WEBHOOK_SECRET=${CLOUDFLARE_STREAM_WEBHOOK_SECRET:-}

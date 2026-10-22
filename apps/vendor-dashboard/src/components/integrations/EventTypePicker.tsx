@@ -54,7 +54,7 @@ function EventCard({ eventType, direction, mapping, onSelect }: EventCardProps) 
     <button
       type="button"
       onClick={() => onSelect(direction, eventType)}
-      className="rounded-lg border border-pearl/14 bg-linen p-5 cursor-pointer transition-all duration-200 ease-out hover:border-pearl/40 hover:bg-pearl/10 active:scale-[0.99] text-left w-full"
+      className="rounded-lg border border-pearl bg-linen p-5 cursor-pointer transition-all duration-200 ease-out hover:border-pearl/40 hover:bg-pearl/10 active:scale-[0.99] text-left w-full"
     >
       <div className="flex flex-col gap-1">
         <EventLabel eventType={eventType} />
@@ -122,7 +122,7 @@ export function EventTypePicker({ mappings, isLoading, onSelect }: EventTypePick
       </div>
 
       {/* ── Divider ──────────────────────────────────────── */}
-      <div className="h-px w-full bg-pearl/14 my-12" />
+      <div className="h-px w-full bg-pearl my-12" />
 
       {/* ── INBOUND ──────────────────────────────────────── */}
       <div>

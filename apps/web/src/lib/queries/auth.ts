@@ -13,28 +13,27 @@ async function runPostAuthEffects(
   if (user) {
     setUser(user);
   }
-  // Refetch the canonical /auth/me (the login response omits enriched fields
-  // like beauty_profile_completed) so the store/cache carry the full user and
-  // the account nudge reflects reality immediately after login.
+  // Refetch the canonical /auth/me so the store/cache carry the full user
+  // immediately after login.
   queryClient.invalidateQueries({ queryKey: ["auth", "me"] });
 
-  // Merge the pre-login guest state (cart + reel attributions) into the
-  // user's account. The guest session token is attached automatically by
-  // the axios interceptor via the `x-guest-session` header.
+  // The guest session (reel views, guest support tickets) ends at login: link
+  // it to the account via auth-service, then drop the token so authenticated
+  // traffic never carries the guest identity. A transient failure keeps the
+  // token so the next login can retry; a 4xx (already merged / expired)
+  // clears it.
   const guestToken = getGuestSessionToken();
   if (guestToken) {
-    const results = await Promise.allSettled([
-      api.post("/cart/merge", {}),
-      api.post("/reels/attributions/merge", {}),
-    ]);
-    // Only clear the token when BOTH merges succeed. If either fails,
-    // preserve the token so a subsequent login/request can retry the
-    // missing merge without losing data on the other surface.
-    if (results.every((r) => r.status === "fulfilled")) {
+    try {
+      await api.post("/auth/guest/merge", { session_token: guestToken });
       clearGuestSessionToken();
+    } catch (error) {
+      const status = (error as { response?: { status?: number } }).response?.status;
+      if (status !== undefined && status >= 400 && status < 500) {
+        clearGuestSessionToken();
+      }
     }
   }
-  queryClient.invalidateQueries({ queryKey: ["cart"] });
   queryClient.invalidateQueries({ queryKey: ["reels"] });
 }
 

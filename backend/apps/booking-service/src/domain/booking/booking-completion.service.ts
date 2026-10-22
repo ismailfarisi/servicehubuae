@@ -6,7 +6,7 @@ import {
   ServicePaymentMode,
 } from "@mypickuae/database";
 import type { Repository } from "typeorm";
-import type { BookingPaymentClient } from "./booking-payment.client.ts";
+import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";
 import type { BookingCompletionHook } from "./booking-status.service.ts";
 
 // Phase 5 Task 8 seam (mirrors cancel.service.ts's/booking-status.service.ts's
@@ -22,12 +22,10 @@ export interface NotificationEventQueueLike {
  * no capturable authorization.
  *
  * THE BUG THIS CLOSES: the old code logged a warning and STILL called
- * `paymentClient.complete({ paymentIntentId: null, ... })`. VERIFIED against
- * order-service's `/internal/booking-payments/complete`
- * (apps/order-service/src/routes/internal-booking-payment.routes.ts): a null
- * `payment_intent_id` skips the Stripe capture entirely but STILL runs
- * `commissionService.createForBookingInTx` — i.e. it posts the commission /
- * payout accrual regardless. So a prepay booking whose auth job died (very
+ * `paymentClient.complete({ paymentIntentId: null, ... })`. A null
+ * `paymentIntentId` skips the capture entirely but STILL accrues the
+ * commission (see BookingPaymentGateway.complete) — i.e. it posts the
+ * commission / payout accrual regardless. So a prepay booking whose auth job died (very
  * reachable before fix #3 gave that queue any retries at all) auto-completed
  * at ends_at+24h with ZERO collected and the vendor credited anyway.
  *
@@ -58,16 +56,14 @@ export class BookingCompletionUnpaidError extends Error {
 /**
  * The concrete `BookingCompletionHook` fired by
  * `BookingStatusService.completeBooking()` (Phase 4 Task 9; spec §5.2 step 3
- * / §5.3 "On completed — capture ... commission ... accrued"). Money stays in
- * order-service (spec §3) — this never talks to Stripe directly, it only
- * resolves WHICH PaymentIntent to capture and delegates to
- * `BookingPaymentClient.complete`.
+ * / §5.3 "On completed — capture ... commission ... accrued"). This never
+ * talks to a payment provider directly, it only resolves WHICH authorization
+ * to capture and delegates to `BookingPaymentGateway.complete`.
  *
  * PI resolution mirrors BookingReaperService.settleDepositBeforeExpiry /
  * BookingAuthService's own lookups: booking-service reads the shared
- * `payments` table directly (same Postgres via `@mypickuae/database`, read-only)
- * rather than exposing a new order-service lookup endpoint for a single
- * column. Task 7b's `BookingAuthService.runAuthorizeJob` stores the
+ * `payments` table directly (same Postgres via `@mypickuae/database`,
+ * read-only). Task 7b's `BookingAuthService.runAuthorizeJob` stores the
  * authorization PaymentIntent's Payment-ROW id on `booking.escrow_hold_id`
  * (NOT `booking.payment_id`, which for prepay points at the SetupIntent
  * instead) — so `escrow_hold_id -> payments.id -> gateway_payment_id` is the
@@ -76,7 +72,7 @@ export class BookingCompletionUnpaidError extends Error {
 export class BookingCompletionService implements BookingCompletionHook {
   constructor(
     private readonly paymentRepo: Repository<Payment>,
-    private readonly paymentClient: BookingPaymentClient,
+    private readonly paymentClient: BookingPaymentGateway,
     // Phase 5 Task 8 — trailing + optional so every existing positional
     // construction (tests, container.ts pre-Task-8) keeps compiling
     // unchanged.
@@ -117,9 +113,7 @@ export class BookingCompletionService implements BookingCompletionHook {
 
     if (booking.payment_mode === ServicePaymentMode.prepay) {
       if (booking.escrow_hold_id) {
-        // Scoped by booking_id too (defense-in-depth, mirrors
-        // BookingPaymentClient.captureBookingPayment/voidBookingPayment's
-        // `{ booking_id, gateway_payment_id }` keying) — escrow_hold_id is
+        // Scoped by booking_id too (defense-in-depth) — escrow_hold_id is
         // trusted internal state (set only by this booking's own auth job),
         // so this hardens rather than fixes a real bug.
         const payment = await this.paymentRepo.findOne({
@@ -146,9 +140,9 @@ export class BookingCompletionService implements BookingCompletionHook {
         //
         // The previous behaviour ("commission still accrues per spec, the
         // service was rendered regardless") is wrong on the money side: spec
-        // §5.2 step 3 accrues commission ON CAPTURE, and order-service's
-        // /complete happily inserts the commission row when
-        // payment_intent_id is null. Fail loudly instead — see the error
+        // §5.2 step 3 accrues commission ON CAPTURE, and the gateway's
+        // complete() happily inserts the commission row when
+        // paymentIntentId is null. Fail loudly instead — see the error
         // class's docstring for why throwing is safe here (the status
         // transition has already committed; this only signals "retry the
         // money side").
@@ -160,7 +154,7 @@ export class BookingCompletionService implements BookingCompletionHook {
     }
     // deposit: already captured at booking time (BookingService.create's
     // capture-now intent) — nothing to capture again here.
-    // pay_at_venue: paid in person, never touches Stripe — nothing to capture.
+    // pay_at_venue: paid in person, never touches the gateway — nothing to capture.
 
     await this.paymentClient.complete({
       bookingId: booking.id,
@@ -170,8 +164,8 @@ export class BookingCompletionService implements BookingCompletionHook {
       commissionFils: booking.commission_fils,
       // Review fix: threads the booking's snapshotted commission TYPE
       // through so a fixed-rate vendor's accrued row is labeled "fixed"
-      // (with its fils CAP) instead of order-service hardcoding
-      // "percentage" for every booking-sourced commission row.
+      // (with its fils CAP) instead of "percentage" for every
+      // booking-sourced commission row.
       commissionType: booking.commission_type,
       priceFils: booking.price_fils,
       vatFils: booking.vat_fils,

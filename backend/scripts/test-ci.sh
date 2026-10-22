@@ -19,8 +19,7 @@ set -uo pipefail
 APPS=(
   api-gateway
   auth-service
-  product-service
-  order-service
+  catalog-service
   vendor-service
   notification-service
   cms-service
@@ -32,7 +31,7 @@ APPS=(
 # Running total of integration files CI did NOT run, reported at the end. A
 # green check here covers unit tests only; booking-service in particular keeps
 # most of its money/state-machine coverage in integration files that are
-# further gated behind `BOOKING_LIVE_DB=1` and a reachable order-service, so
+# further gated behind `BOOKING_LIVE_DB=1` and a live database, so
 # without this line the check reads as far more coverage than it is.
 excluded_total=0
 
@@ -78,10 +77,10 @@ echo
 echo "──────────────────────────────────────────────────────────────────"
 echo "UNIT TESTS ONLY. ${excluded_total} integration test file(s) were NOT run."
 echo "A pass here does NOT cover DB-backed flows (booking money movement,"
-echo "state-machine transitions, carrier/webhook paths). Run those against a"
+echo "state-machine transitions, webhook paths). Run those against a"
 echo "live stack: docker compose up, then \`bun test\` from backend/apps/<svc>"
-echo "(booking-service additionally needs BOOKING_LIVE_DB=1 and a reachable"
-echo "order-service, or its money-path tests self-skip)."
+echo "(booking-service additionally needs BOOKING_LIVE_DB=1, or its DB-backed"
+echo "tests self-skip)."
 echo "──────────────────────────────────────────────────────────────────"
 
 exit $fail

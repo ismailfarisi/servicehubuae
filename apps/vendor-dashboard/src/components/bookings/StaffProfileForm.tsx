@@ -166,7 +166,7 @@ export function StaffProfileForm({ staff, canWrite, onCreated }: StaffProfileFor
 									control={form.control}
 									name="is_active"
 									render={({ field }) => (
-										<FormItem className="flex items-center justify-between rounded-lg border border-pearl/28 p-3">
+										<FormItem className="flex items-center justify-between rounded-lg border border-input p-3">
 											<div>
 												<FormLabel>Active</FormLabel>
 												<p className="text-xs text-muted-foreground">

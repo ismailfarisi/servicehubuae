@@ -3,9 +3,6 @@ import { jwt as jwtPlugin } from "@elysiajs/jwt";
 import { config } from "@mypickuae/config";
 import {
   AppDataSource,
-  Category,
-  Product,
-  ProductStatus,
   Reel,
   ReelFeaturePlacement,
   ReelLicenseDownload,
@@ -42,8 +39,6 @@ let creatorId = "";
 let otherVendorUserId = "";
 let otherVendorId = "";
 let reelId = "";
-let categoryId = "";
-let productId = "";
 
 // Accumulated grant IDs for FK-safe teardown.
 const createdGrantIds: string[] = [];
@@ -111,15 +106,13 @@ async function insertGrant(opts: {
 
 // ---------------------------------------------------------------------------
 // Seed — users (creator + two vendor owners), two vendors + memberships,
-// a reel owned by the creator, a category + product for product placement.
+// and a reel owned by the creator.
 // ---------------------------------------------------------------------------
 async function seed() {
   const userRepo = AppDataSource.getRepository(User);
   const vendorRepo = AppDataSource.getRepository(Vendor);
   const vendorMemberRepo = AppDataSource.getRepository(VendorMember);
   const reelRepo = AppDataSource.getRepository(Reel);
-  const categoryRepo = AppDataSource.getRepository(Category);
-  const productRepo = AppDataSource.getRepository(Product);
 
   const mkUser = (fn: string) =>
     userRepo.save(
@@ -207,28 +200,11 @@ async function seed() {
     }),
   );
   reelId = reel.id;
-
-  const cat = await categoryRepo.save(
-    categoryRepo.create({ name: `Rts Cat ${unique}`, slug: `rts-cat-${unique}`, is_active: true }),
-  );
-  categoryId = cat.id;
-  const product = await productRepo.save(
-    productRepo.create({
-      vendor_id: vendorId,
-      category_id: cat.id,
-      name: `Rts Product ${unique}`,
-      slug: `rts-p-${unique}`,
-      status: ProductStatus.approved,
-      price: 100000,
-      currency: "AED",
-    }),
-  );
-  productId = product.id;
 }
 
 // ---------------------------------------------------------------------------
 // Cleanup — FK-safe: downloads → features → grants → offers → reel →
-// product → category → vendor_members → vendors → users
+// vendor_members → vendors → users
 // ---------------------------------------------------------------------------
 async function cleanup() {
   const q = (sql: string, params: unknown[] = []) =>
@@ -238,8 +214,6 @@ async function cleanup() {
   await q("DELETE FROM reel_license_grants WHERE id = ANY($1::uuid[])", [createdGrantIds]);
   await q("DELETE FROM reel_license_offers WHERE reel_id = $1", [reelId]);
   await q("DELETE FROM reels WHERE id = $1", [reelId]);
-  await q("DELETE FROM products WHERE id = $1", [productId]);
-  await q("DELETE FROM categories WHERE id = $1", [categoryId]);
   await q("DELETE FROM vendor_members WHERE vendor_id = ANY($1::uuid[])", [
     [vendorId, otherVendorId],
   ]);
@@ -283,43 +257,24 @@ describeLive("licensing rights delivery", () => {
   });
 
   // -------------------------------------------------------------------------
-  // Case 1: pin to product + public read
+  // Case 1: pin to storefront + public read
   // -------------------------------------------------------------------------
-  it("Case 1: pinFeature(product) creates a live feature; listFeaturedReels({productId}) returns it", async () => {
+  it("Case 1: pinFeature creates a live storefront feature; listFeaturedReels({vendorId}) returns it", async () => {
     const grantId = await insertGrant({ scope: ReelLicenseRightsScope.both });
-    const feature = await svc.pinFeature(vendorId, grantId, {
-      placement: ReelFeaturePlacement.product,
-      productId,
-    });
+    const feature = await svc.pinFeature(vendorId, grantId, {});
 
     const row = await AppDataSource.getRepository(ReelLicenseFeature).findOne({
       where: { id: feature.id, deleted_at: IsNull() },
     });
     expect(row).not.toBeNull();
-    expect(row?.placement).toBe(ReelFeaturePlacement.product);
-    expect(row?.product_id).toBe(productId);
+    expect(row?.placement).toBe(ReelFeaturePlacement.storefront);
+    expect(row?.product_id).toBeNull();
 
-    const featured = await svc.listFeaturedReels({ productId });
+    const featured = await svc.listFeaturedReels({ vendorId });
     const mine = featured.find((f) => f.feature_id === feature.id);
     expect(mine).toBeDefined();
     expect(mine?.featured).toBe(true);
     expect(mine?.video_playback_url).toBe("https://cf/rts-r1.m3u8");
-  });
-
-  // -------------------------------------------------------------------------
-  // Case 2: pin to storefront
-  // -------------------------------------------------------------------------
-  it("Case 2: pinFeature(storefront) surfaces under {vendorId}, not under {productId}", async () => {
-    const grantId = await insertGrant({ scope: ReelLicenseRightsScope.both });
-    const feature = await svc.pinFeature(vendorId, grantId, {
-      placement: ReelFeaturePlacement.storefront,
-    });
-
-    const byVendor = await svc.listFeaturedReels({ vendorId });
-    expect(byVendor.some((f) => f.feature_id === feature.id)).toBe(true);
-
-    const byProduct = await svc.listFeaturedReels({ productId });
-    expect(byProduct.some((f) => f.feature_id === feature.id)).toBe(false);
   });
 
   // -------------------------------------------------------------------------
@@ -339,9 +294,7 @@ describeLive("licensing rights delivery", () => {
     const offPlatform = await insertGrant({ scope: ReelLicenseRightsScope.off_platform });
     let threwPin = false;
     try {
-      await svc.pinFeature(vendorId, offPlatform, {
-        placement: ReelFeaturePlacement.storefront,
-      });
+      await svc.pinFeature(vendorId, offPlatform, {});
     } catch (e) {
       threwPin = true;
       expect(String(e)).toContain("scope_denies_pin");
@@ -375,27 +328,22 @@ describeLive("licensing rights delivery", () => {
   // -------------------------------------------------------------------------
   it("Case 5: revoking a pinned grant drops it from featured; pin + download throw grant_not_active", async () => {
     const grantId = await insertGrant({ scope: ReelLicenseRightsScope.both });
-    const feature = await svc.pinFeature(vendorId, grantId, {
-      placement: ReelFeaturePlacement.product,
-      productId,
-    });
+    const feature = await svc.pinFeature(vendorId, grantId, {});
 
     // Confirm it is featured before revoke.
-    const before = await svc.listFeaturedReels({ productId });
+    const before = await svc.listFeaturedReels({ vendorId });
     expect(before.some((f) => f.feature_id === feature.id)).toBe(true);
 
     await AppDataSource.query("UPDATE reel_license_grants SET revoked_at = now() WHERE id = $1", [
       grantId,
     ]);
 
-    const after = await svc.listFeaturedReels({ productId });
+    const after = await svc.listFeaturedReels({ vendorId });
     expect(after.some((f) => f.feature_id === feature.id)).toBe(false);
 
     let threwPin = false;
     try {
-      await svc.pinFeature(vendorId, grantId, {
-        placement: ReelFeaturePlacement.storefront,
-      });
+      await svc.pinFeature(vendorId, grantId, {});
     } catch (e) {
       threwPin = true;
       expect(String(e)).toContain("grant_not_active");
@@ -420,23 +368,18 @@ describeLive("licensing rights delivery", () => {
     const grantId = await insertGrant({ scope: ReelLicenseRightsScope.both });
     // Pin while still active (insert with future expiry then expire it), so we
     // can prove the feature drops once the grant expires.
-    const feature = await svc.pinFeature(vendorId, grantId, {
-      placement: ReelFeaturePlacement.product,
-      productId,
-    });
+    const feature = await svc.pinFeature(vendorId, grantId, {});
     await AppDataSource.query("UPDATE reel_license_grants SET expires_at = $2 WHERE id = $1", [
       grantId,
       past,
     ]);
 
-    const after = await svc.listFeaturedReels({ productId });
+    const after = await svc.listFeaturedReels({ vendorId });
     expect(after.some((f) => f.feature_id === feature.id)).toBe(false);
 
     let threwPin = false;
     try {
-      await svc.pinFeature(vendorId, grantId, {
-        placement: ReelFeaturePlacement.storefront,
-      });
+      await svc.pinFeature(vendorId, grantId, {});
     } catch (e) {
       threwPin = true;
       expect(String(e)).toContain("grant_not_active");
@@ -459,16 +402,11 @@ describeLive("licensing rights delivery", () => {
   it("Case 7: a different vendor gets not_your_grant on pin/download and not_your_feature on unpin", async () => {
     const grantId = await insertGrant({ scope: ReelLicenseRightsScope.both });
     // The owning vendor pins it so there's a feature for the unpin check.
-    const feature = await svc.pinFeature(vendorId, grantId, {
-      placement: ReelFeaturePlacement.product,
-      productId,
-    });
+    const feature = await svc.pinFeature(vendorId, grantId, {});
 
     let threwPin = false;
     try {
-      await svc.pinFeature(otherVendorId, grantId, {
-        placement: ReelFeaturePlacement.storefront,
-      });
+      await svc.pinFeature(otherVendorId, grantId, {});
     } catch (e) {
       threwPin = true;
       expect(String(e)).toContain("not_your_grant");
@@ -499,29 +437,23 @@ describeLive("licensing rights delivery", () => {
   // -------------------------------------------------------------------------
   it("Case 8: unpin removes from featured; re-pin succeeds and only ONE live row exists", async () => {
     const grantId = await insertGrant({ scope: ReelLicenseRightsScope.both });
-    const first = await svc.pinFeature(vendorId, grantId, {
-      placement: ReelFeaturePlacement.product,
-      productId,
-    });
+    const first = await svc.pinFeature(vendorId, grantId, {});
 
     await svc.unpinFeature(vendorId, first.id);
-    const afterUnpin = await svc.listFeaturedReels({ productId });
+    const afterUnpin = await svc.listFeaturedReels({ vendorId });
     expect(afterUnpin.some((f) => f.feature_id === first.id)).toBe(false);
 
     // Re-pin the same surface — must not 500 on a unique-index collision.
-    const second = await svc.pinFeature(vendorId, grantId, {
-      placement: ReelFeaturePlacement.product,
-      productId,
-    });
-    const afterRepin = await svc.listFeaturedReels({ productId });
+    const second = await svc.pinFeature(vendorId, grantId, {});
+    const afterRepin = await svc.listFeaturedReels({ vendorId });
     expect(afterRepin.some((f) => f.feature_id === second.id)).toBe(true);
 
     // Exactly one LIVE feature row for this grant+surface.
     const live = await AppDataSource.getRepository(ReelLicenseFeature).find({
       where: {
         grant_id: grantId,
-        placement: ReelFeaturePlacement.product,
-        product_id: productId,
+        placement: ReelFeaturePlacement.storefront,
+        product_id: IsNull(),
         deleted_at: IsNull(),
       },
     });
@@ -529,41 +461,17 @@ describeLive("licensing rights delivery", () => {
   });
 
   // -------------------------------------------------------------------------
-  // Case 9: product placement requires product_id
-  // -------------------------------------------------------------------------
-  it("Case 9: pinFeature(product) without productId throws product_required_for_product_placement", async () => {
-    const grantId = await insertGrant({ scope: ReelLicenseRightsScope.both });
-    let threw = false;
-    try {
-      await svc.pinFeature(vendorId, grantId, { placement: ReelFeaturePlacement.product });
-    } catch (e) {
-      threw = true;
-      expect(String(e)).toContain("product_required_for_product_placement");
-    }
-    expect(threw).toBe(true);
-  });
-
-  // -------------------------------------------------------------------------
   // Case 10: featured query validation
   // -------------------------------------------------------------------------
-  it("Case 10: listFeaturedReels with neither/both ids throws product_id_or_vendor_id_required", async () => {
+  it("Case 10: listFeaturedReels without a vendorId throws vendor_id_required", async () => {
     let threwNeither = false;
     try {
       await svc.listFeaturedReels({});
     } catch (e) {
       threwNeither = true;
-      expect(String(e)).toContain("product_id_or_vendor_id_required");
+      expect(String(e)).toContain("vendor_id_required");
     }
     expect(threwNeither).toBe(true);
-
-    let threwBoth = false;
-    try {
-      await svc.listFeaturedReels({ productId, vendorId });
-    } catch (e) {
-      threwBoth = true;
-      expect(String(e)).toContain("product_id_or_vendor_id_required");
-    }
-    expect(threwBoth).toBe(true);
   });
 
   // -------------------------------------------------------------------------
@@ -575,7 +483,7 @@ describeLive("licensing rights delivery", () => {
     const pinRes = await authed(`/vendor/reels/licensing/grants/${grantId}/feature`, vendorToken, {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ placement: "product", product_id: productId }),
+      body: JSON.stringify({ placement: "storefront" }),
     });
     expect(pinRes.status).toBe(200);
     const pinBody = (await pinRes.json()) as any;
@@ -583,7 +491,7 @@ describeLive("licensing rights delivery", () => {
     const featureId = pinBody.data.id as string;
 
     // Public read — no auth header.
-    const getRes = await call(`/reels/featured?product_id=${productId}`);
+    const getRes = await call(`/reels/featured?vendor_id=${vendorId}`);
     expect(getRes.status).toBe(200);
     const getBody = (await getRes.json()) as any;
     expect(getBody.statusCode).toBe(200);
@@ -595,9 +503,7 @@ describeLive("licensing rights delivery", () => {
   // -------------------------------------------------------------------------
   it("Case 12: a second live storefront row for the same grant is rejected by uq_rlf_storefront", async () => {
     const grantId = await insertGrant({ scope: ReelLicenseRightsScope.both });
-    const pinned = await svc.pinFeature(vendorId, grantId, {
-      placement: ReelFeaturePlacement.storefront,
-    });
+    const pinned = await svc.pinFeature(vendorId, grantId, {});
     // Bypass the in-service guard and force a raw duplicate live storefront insert — the partial
     // unique index uq_rlf_storefront (product_id IS NULL AND deleted_at IS NULL) must reject it.
     let threw = false;

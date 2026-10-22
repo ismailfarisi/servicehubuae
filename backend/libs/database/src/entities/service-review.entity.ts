@@ -1,8 +1,10 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -18,6 +20,12 @@ import { ServiceReviewStatus } from "../enums.ts";
 @Entity("service_reviews")
 @Index("idx_service_reviews_vendor", ["vendor_id"], { where: "deleted_at IS NULL" })
 @Index("idx_service_reviews_staff", ["staff_member_id"], { where: "deleted_at IS NULL" })
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("Booking", ["booking_id"], ["id"], { name: "fk_service_reviews_booking" })
+@ForeignKey("User", ["customer_user_id"], ["id"], { name: "fk_service_reviews_customer" })
+@ForeignKey("StaffMember", ["staff_member_id"], ["id"], { name: "fk_service_reviews_staff" })
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_service_reviews_vendor" })
+@Check("chk_service_reviews_rating", "rating >= 1 AND rating <= 5")
 export class ServiceReview {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

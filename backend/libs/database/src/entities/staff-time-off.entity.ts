@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +12,11 @@ import {
 // One-off availability exceptions (vacation, sick). Vendor-wide blackouts still
 // inherit vendor_holidays.
 @Entity("staff_time_off")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("StaffMember", ["staff_member_id"], ["id"], {
+  name: "fk_sto_staff",
+  onDelete: "CASCADE",
+})
 export class StaffTimeOff {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

@@ -17,24 +17,11 @@ interface ResolvedSection {
   position: number;
   settings: Record<string, unknown>;
   source_mode: string;
-  /**
-   * Slug of the collection backing a `query`/`collection` section, when there
-   * is one. The rest of `data_source` stays server-side (it carries internal
-   * service query shapes); the storefront only needs this to link "View all"
-   * at the collection the section was drawn from.
-   */
-  collection_slug?: string;
   data: { blocks?: unknown[]; items?: unknown[] };
 }
 
-/** Reads the collection slug out of a section's data_source, if it has one. */
-function collectionSlugOf(dataSource: Record<string, unknown> | null): string | undefined {
-  if (!dataSource) return undefined;
-  const { type, query } = dataSource as { type?: string; query?: Record<string, unknown> };
-  if (type !== "collection") return undefined;
-  const slug = query?.collection_slug;
-  return typeof slug === "string" && slug.trim() ? slug.trim() : undefined;
-}
+/** Bidded section types whose sponsored items are service offerings. */
+const SERVICE_CAROUSEL_TYPES = new Set(["service_carousel", "product_carousel"]);
 
 interface VendorContext {
   id: string;
@@ -215,9 +202,6 @@ export class LayoutResolverService {
       data: {},
     };
 
-    const collectionSlug = collectionSlugOf(section.data_source);
-    if (collectionSlug) base.collection_slug = collectionSlug;
-
     switch (section.source_mode) {
       case SourceMode.manual:
         base.data = { blocks: section.blocks || [] };
@@ -245,58 +229,45 @@ export class LayoutResolverService {
     const safeQuery = query || {};
 
     // Vendor-page query allowlist: only types that semantically scope to a single vendor.
-    // The map value is the QUERY-PARAM NAME the upstream service expects — naming differs:
-    //   /products            → vendorId       (camelCase, postgres-search.adapter)
-    //   /products/flash-deals → vendor_id     (snake_case)
+    // The map value is the QUERY-PARAM NAME the upstream service expects:
     //   /reels/feed          → vendorId       (camelCase)
-    //   /categories/tree     → vendor_id      (snake_case, see category.service.ts)
-    // `vendors` (other-vendor lists) and `brands` are intentionally excluded — they have
-    // no meaningful vendor-scope and would produce confusing or empty results.
+    //   /categories/tree     → vendor_id      (snake_case, catalog-service)
+    // `services` is excluded: catalog's GET /services has no vendor filter, so a
+    // vendor page would list every vendor's services. `vendors` (other-vendor
+    // lists) has no meaningful vendor scope either.
     // When adding a new query type to `serviceMap` below, decide whether it belongs here
     // and confirm the param-name convention of the upstream endpoint.
-    const VENDOR_SCOPE_PARAM: Record<string, string | null> = {
-      products: "vendorId",
-      flash_deals: "vendor_id",
+    const VENDOR_SCOPE_PARAM: Record<string, string> = {
       reels: "vendorId",
       categories: "vendor_id",
-      collection: null,
     };
     const vendorScopeParam = contextVendorId ? VENDOR_SCOPE_PARAM[type] : undefined;
-    if (contextVendorId && !(type in VENDOR_SCOPE_PARAM)) {
+    if (contextVendorId && !vendorScopeParam) {
       return [];
     }
 
     const params = new URLSearchParams();
     for (const [k, v] of Object.entries(safeQuery)) {
-      if (type === "collection" && k === "collection_slug") continue;
       params.set(k, String(v));
-    }
-    if (type === "collection" && safeQuery.limit != null) {
-      params.set("perPage", String(safeQuery.limit));
-      params.delete("limit");
     }
     if (contextVendorId && vendorScopeParam) {
       params.set(vendorScopeParam, contextVendorId);
     }
 
-    const productHost = config.serviceHost.product;
+    const catalog = `http://${config.serviceHost.catalog}:${config.port.catalog}`;
     const vendorHost = config.serviceHost.vendor;
     const reelsHost = config.serviceHost.reels;
-    const collectionSlug =
-      typeof safeQuery.collection_slug === "string" ? safeQuery.collection_slug.trim() : "";
+    // Product-era sources (brands, brand_spotlight, flash_deals, collection)
+    // went away with product-service; sections still configured with them
+    // resolve to no items. `products` is kept as an alias of `services` so
+    // layouts saved before the fork keep rendering.
     const serviceMap: Record<string, string> = {
-      products: `http://${productHost}:${config.port.product}/products`,
-      categories: `http://${productHost}:${config.port.product}/categories/tree`,
+      services: `${catalog}/services`,
+      products: `${catalog}/services`,
+      categories: `${catalog}/categories/tree`,
+      areas: `${catalog}/areas`,
       vendors: `http://${vendorHost}:${config.port.vendor}/vendors`,
-      brands: `http://${productHost}:${config.port.product}/brands`,
-      brand_spotlight: `http://${productHost}:${config.port.product}/brands/spotlight`,
-      flash_deals: `http://${productHost}:${config.port.product}/products/flash-deals`,
       reels: `http://${reelsHost}:${config.port.reels}/reels/feed`,
-      ...(collectionSlug
-        ? {
-            collection: `http://${productHost}:${config.port.product}/collections/${encodeURIComponent(collectionSlug)}`,
-          }
-        : {}),
     };
 
     const baseUrl = serviceMap[type];
@@ -306,10 +277,6 @@ export class LayoutResolverService {
       const res = await fetch(`${baseUrl}?${params.toString()}`);
       if (!res.ok) return [];
       const json = (await res.json()) as any;
-      if (type === "collection") {
-        const items = json.data?.items ?? [];
-        return Array.isArray(items) ? items : [];
-      }
       const items = json.data?.data ?? json.data ?? [];
       return Array.isArray(items) ? items : [];
     } catch {
@@ -364,8 +331,11 @@ export class LayoutResolverService {
 
     if (section.section_type?.name === "vendor_showcase" && sponsoredItems.length) {
       sponsoredItems = await this.hydrateVendorShowcaseItems(sponsoredItems);
-    } else if (section.section_type?.name === "product_carousel" && sponsoredItems.length) {
-      sponsoredItems = await this.hydrateProductCarouselItems(sponsoredItems);
+    } else if (
+      SERVICE_CAROUSEL_TYPES.has(section.section_type?.name ?? "") &&
+      sponsoredItems.length
+    ) {
+      sponsoredItems = await this.hydrateServiceCarouselItems(sponsoredItems);
     }
 
     const remaining = maxSlots - sponsoredItems.length;
@@ -380,36 +350,49 @@ export class LayoutResolverService {
     return sponsoredItems;
   }
 
-  private async hydrateProductCarouselItems(items: unknown[]): Promise<unknown[]> {
-    const productIds = Array.from(
+  /**
+   * Sponsored carousel bids carry the promoted offering's id in the bid's
+   * `product_id` column (named before the fork; it now holds a service
+   * offering id). Each id is looked up on catalog-service's
+   * GET /services/by-id/:id, which only returns published offerings, so items
+   * whose offering is gone or unpublished are dropped. Slots are few (bid
+   * config, default 4), so per-id lookups are fine.
+   */
+  private async hydrateServiceCarouselItems(items: unknown[]): Promise<unknown[]> {
+    const serviceIds = Array.from(
       new Set(
         items
           .map((it) => (it as { product_id?: string }).product_id)
           .filter((id): id is string => !!id),
       ),
     );
-    if (!productIds.length) return [];
+    if (!serviceIds.length) return [];
 
-    const productHost = config.serviceHost.product;
-    const url = `http://${productHost}:${config.port.product}/products?ids=${productIds.join(",")}&limit=${productIds.length}`;
-    let products: any[] = [];
-    try {
-      const res = await fetch(url);
-      if (!res.ok) return [];
-      const json = (await res.json()) as any;
-      products = json.data?.data ?? json.data ?? [];
-    } catch {
-      return [];
+    const catalog = `http://${config.serviceHost.catalog}:${config.port.catalog}`;
+    const fetched = await Promise.all(
+      serviceIds.map(async (id) => {
+        try {
+          const res = await fetch(`${catalog}/services/by-id/${encodeURIComponent(id)}`);
+          if (!res.ok) return null;
+          const json = (await res.json()) as { data?: Record<string, unknown> & { id?: string } };
+          return json.data?.id ? json.data : null;
+        } catch {
+          return null;
+        }
+      }),
+    );
+
+    const serviceMap = new Map<string, Record<string, unknown>>();
+    for (const svc of fetched) {
+      if (svc?.id) serviceMap.set(svc.id, svc);
     }
-
-    const productMap = new Map<string, any>(products.map((p: any) => [p.id, p]));
     return items.flatMap((it) => {
       const item = it as { product_id?: string; bid_id?: string; sponsored?: boolean };
-      const product = item.product_id ? productMap.get(item.product_id) : null;
-      if (!product) return [];
+      const service = item.product_id ? serviceMap.get(item.product_id) : null;
+      if (!service) return [];
       return [
         {
-          ...product,
+          ...service,
           sponsored: item.sponsored,
           bid_id: item.bid_id,
           product_id: item.product_id,

@@ -1,11 +1,14 @@
 import "reflect-metadata";
-import { IsNull } from "typeorm";
 import { AppDataSource } from "../data-source.ts";
 import { Category } from "../entities/category.entity.ts";
 import { SiteSetting } from "../entities/site-setting.entity.ts";
 import { TaxRate } from "../entities/tax-rate.entity.ts";
 import { User } from "../entities/user.entity.ts";
 import { UserRole, UserStatus } from "../enums/user.enums.ts";
+import { seedAreas } from "./areas.ts";
+import { seedCms } from "./cms.ts";
+import { seedDemoData } from "./demo.ts";
+import { seedRolePermissions } from "./role-permissions.ts";
 
 async function seed() {
   const ds = await AppDataSource.initialize();
@@ -58,22 +61,74 @@ async function seed() {
   const catCount = await catRepo.count();
   if (catCount === 0) {
     const groups: Array<[name: string, slug: string, description: string]> = [
-      ["Home Maintenance", "home-maintenance", "AC, plumbing, electrical, handyman and appliance repair"],
-      ["Cleaning", "cleaning", "Home, office, deep and move-in cleaning"],
+      [
+        "AC & Home Maintenance",
+        "home-maintenance",
+        "AC, plumbing, electrical, handyman and appliance repair",
+      ],
+      ["Home Cleaning", "cleaning", "Home, office, deep and move-in cleaning"],
       ["Beauty & Wellness", "beauty-wellness", "Salon, spa and massage at home"],
       ["Pest Control & Pets", "pest-control-pets", "Pest control and pet grooming"],
-      ["Fit-out & Construction", "fit-out-construction", "Interior fit-out, renovation and construction works"],
-      ["IT & Business Services", "it-business-services", "IT projects, maintenance contracts and business procurement"],
+      [
+        "Fit-out & Construction",
+        "fit-out-construction",
+        "Interior fit-out, renovation and construction works",
+      ],
+      [
+        "IT & Business Services",
+        "it-business-services",
+        "IT projects, maintenance contracts and business procurement",
+      ],
     ];
     await catRepo.save(
       groups.map(([name, slug, description], i) =>
-        catRepo.create({ name, slug, description, is_active: true, sort_order: i + 1 }),
+        catRepo.create({
+          name,
+          slug,
+          path: slug,
+          depth: 0,
+          description,
+          is_active: true,
+          sort_order: i + 1,
+        }),
       ),
     );
     console.log(`  ✓ Created ${groups.length} top-level service categories`);
   } else {
     console.log("  – Categories already exist, skipping");
   }
+  // Earlier seeds used shorter placeholder names; rename them only if untouched.
+  for (const [slug, oldName, newName] of [
+    ["home-maintenance", "Home Maintenance", "AC & Home Maintenance"],
+    ["cleaning", "Cleaning", "Home Cleaning"],
+  ]) {
+    await catRepo.update({ slug, name: oldName }, { name: newName });
+  }
+  // Root categories need a materialized path (= slug) for breadcrumbs and reparenting.
+  await ds.query(
+    "UPDATE categories SET path = slug WHERE parent_id IS NULL AND path IS NULL AND deleted_at IS NULL",
+  );
+
+  // ── Vendor team permission matrix ───────────────────────────────
+  const permCount = await seedRolePermissions(ds);
+  console.log(
+    permCount > 0
+      ? `  ✓ Created ${permCount} default role permissions`
+      : "  – Role permissions already present, skipping",
+  );
+
+  // ── Areas (UAE localities) ───────────────────────────────────────
+  const areaCount = await seedAreas(ds);
+  console.log(
+    areaCount > 0 ? `  ✓ Created ${areaCount} UAE areas` : "  – Areas already seeded, skipping",
+  );
+
+  // ── CMS section types + storefront home layout ──────────────────
+  const admin = await userRepo.findOneOrFail({ where: { email: "admin@mypickuae.com" } });
+  const cms = await seedCms(ds, admin.id);
+  console.log(
+    `  ${cms.sectionTypes > 0 ? "✓" : "–"} CMS: ${cms.sectionTypes} section types added, home layout ${cms.homeLayout ? "created" : "already present"}`,
+  );
 
   // ── Tax rates (UAE VAT) ─────────────────────────────────────────
   const taxRepo = ds.getRepository(TaxRate);
@@ -204,6 +259,9 @@ async function seed() {
     console.log("  – Site settings already seeded, skipping");
   }
 
+  // ── Demo vendor (development only) ─────────────────────────────
+  const demo = await seedDemoData(ds);
+  console.log(demo ? `  ✓ Demo data ready: ${demo}` : "  – Demo data skipped (production)");
 
   await ds.destroy();
   console.log("Seeding complete.");

@@ -28,7 +28,7 @@ describe("WhatsAppService", () => {
   it("POSTs the template payload to /{phoneNumberId}/messages with a Bearer token", async () => {
     const { service, fetchMock } = buildService();
 
-    const result = await service.sendTemplate("+971501234567", "order_confirmed", [
+    const result = await service.sendTemplate("+971501234567", "booking_confirmed", [
       { type: "body", parameters: [{ type: "text", text: "ORD-1" }] },
     ]);
 
@@ -44,7 +44,7 @@ describe("WhatsAppService", () => {
     // Meta wants E.164 without the leading "+".
     expect(payload.to).toBe("971501234567");
     expect(payload.type).toBe("template");
-    expect(payload.template.name).toBe("order_confirmed");
+    expect(payload.template.name).toBe("booking_confirmed");
     expect(payload.template.language.code).toBe("en");
     expect(payload.template.components).toEqual([
       { type: "body", parameters: [{ type: "text", text: "ORD-1" }] },
@@ -72,7 +72,7 @@ describe("WhatsAppService", () => {
       body: { error: { code: 132000, message: "param count mismatch" } },
     });
 
-    await expect(service.sendTemplate("971501234567", "order_confirmed", [])).rejects.toThrow(
+    await expect(service.sendTemplate("971501234567", "booking_confirmed", [])).rejects.toThrow(
       /WhatsApp send failed: 400.*132000/,
     );
   });

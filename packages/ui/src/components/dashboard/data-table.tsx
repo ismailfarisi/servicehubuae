@@ -170,13 +170,13 @@ export function DataTable<TData, TValue>({
 
 	return (
 		<div className="flex flex-col gap-4">
-			<div className="rounded-lg border border-pearl/14 overflow-hidden">
+			<div className="rounded-xl border border-pearl bg-card shadow-sm overflow-hidden">
 				<Table data-stack="md">
 					<TableHeader>
 						{table.getHeaderGroups().map((headerGroup) => (
 							<TableRow
 								key={headerGroup.id}
-								className="border-b border-pearl/14 bg-pearl/10"
+								className="border-b border-pearl bg-background"
 							>
 								{headerGroup.headers.map((header) => {
 									const canSort = header.column.getCanSort();
@@ -239,7 +239,7 @@ export function DataTable<TData, TValue>({
 									key={row.id}
 									data-state={row.getIsSelected() && "selected"}
 									className={cn(
-										"hover:bg-pearl/20 border-b border-pearl/14 transition-colors",
+										"hover:bg-accent/60 border-b border-pearl transition-colors",
 										row.getIsSelected() && "bg-amber/10",
 									)}
 								>

@@ -128,16 +128,16 @@ If you did not expect this invitation, you can decline here: ${params.declineUrl
       params.unsubscribeToken,
     )}`;
 
-    const subject = "Welcome to the MyPickUAE edit";
+    const subject = "Welcome to MyPickUAE";
     const text = `Thanks for subscribing to MyPickUAE.
 
-Exclusive beauty tips, new product launches, and quiet edits — delivered to your inbox once a month. Never more.
+New services, seasonal offers and home-care tips from trusted UAE vendors — delivered to your inbox once a month. Never more.
 
 Changed your mind? Unsubscribe anytime: ${unsubscribeUrl}
 
 — The MyPickUAE team`;
-    const html = `<h1>Welcome to the MyPickUAE edit</h1>
-<p>Exclusive beauty tips, new product launches, and quiet edits — delivered to your inbox once a month. Never more.</p>
+    const html = `<h1>Welcome to MyPickUAE</h1>
+<p>New services, seasonal offers and home-care tips from trusted UAE vendors — delivered to your inbox once a month. Never more.</p>
 <p style="color:#666;font-size:12px">Changed your mind? <a href="${unsubscribeUrl}">Unsubscribe anytime</a>.</p>
 <p>— The MyPickUAE team</p>`;
 

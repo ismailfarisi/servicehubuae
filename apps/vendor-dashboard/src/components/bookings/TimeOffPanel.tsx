@@ -184,7 +184,7 @@ export function TimeOffPanel({ staffId, canWrite }: { staffId: string; canWrite:
 					}
 				/>
 			) : (
-				<div className="rounded-lg border border-pearl/14 divide-y divide-pearl/14">
+				<div className="rounded-lg border border-pearl divide-y divide-pearl">
 					{entries.map((entry) => (
 						<div key={entry.id} className="flex items-center justify-between px-4 py-3">
 							<div>

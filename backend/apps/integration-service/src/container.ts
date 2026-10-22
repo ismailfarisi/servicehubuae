@@ -42,9 +42,9 @@ const integrationService = new IntegrationService(integrationRepo, encryption, a
 const integrationController = new IntegrationController(integrationService);
 const mappingService = new MappingService(mappingRepo, auditLogRepo);
 const pendingWritesService = new PendingWritesService(pendingWriteRepo);
+// No inbound targets are routed yet (see domain-dispatch.ts, TODO(M2)).
 const domainDispatch = new DomainDispatch({
-  orderHost: process.env.ORDER_HOST ?? "http://order-service:3003",
-  productHost: process.env.PRODUCT_HOST ?? "http://product-service:3002",
+  booking: `http://${config.serviceHost.booking}:${config.port.booking}`,
 });
 const inboundService = new InboundService({
   integrationRepo,

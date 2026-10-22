@@ -39,19 +39,19 @@ export function TrendingReelsSection({ title, subtitle, serverReels }: Props) {
 			<div className="max-w-[1400px] mx-auto px-4 md:px-12">
 				<div className="flex items-end justify-between mb-8 md:mb-10">
 					<div>
-						<p className="text-[11px] uppercase tracking-[0.22em] text-nl-amber">
+						<p className="text-sm font-semibold text-nl-pearl/75">
 							{subtitle}
 						</p>
-						<h2 className="font-serif text-3xl md:text-5xl leading-[1.05] tracking-tight mt-2 md:mt-3">
+						<h2 className="font-display font-bold text-3xl md:text-4xl leading-tight tracking-tight mt-2">
 							{title}
 						</h2>
 					</div>
 					<Link
 						href="/reels"
-						className="hidden md:inline-flex items-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-nl-amber hover:text-nl-pearl transition-colors"
+						className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
 					>
 						View all reels
-						<ArrowRight className="h-3 w-3 rtl:rotate-180" />
+						<ArrowRight className="h-4 w-4 rtl:rotate-180" />
 					</Link>
 				</div>
 			</div>
@@ -78,10 +78,10 @@ export function TrendingReelsSection({ title, subtitle, serverReels }: Props) {
 			<div className="max-w-[1400px] mx-auto px-4 md:px-12">
 				<Link
 					href="/reels"
-					className="md:hidden mt-6 flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.22em] text-nl-amber hover:text-nl-pearl transition-colors"
+					className="md:hidden mt-6 flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg border border-white/20 px-4 py-2 text-sm font-semibold text-white hover:bg-white/10 transition-colors"
 				>
 					View all reels
-					<ArrowRight className="h-3 w-3 rtl:rotate-180" />
+					<ArrowRight className="h-4 w-4 rtl:rotate-180" />
 				</Link>
 			</div>
 		</section>

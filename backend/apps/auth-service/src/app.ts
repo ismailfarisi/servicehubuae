@@ -11,6 +11,11 @@ import { twoFactorRoutes } from "./routes/two-factor.routes.ts";
 export const app = new Elysia()
   .use(requestLogger)
   .use(errorHandler)
+  .get("/health", () => ({
+    status: "ok",
+    service: "auth-service",
+    timestamp: new Date().toISOString(),
+  }))
   .use(authRoutes)
   .use(passwordRoutes)
   .use(twoFactorRoutes)

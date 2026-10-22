@@ -4,8 +4,8 @@
 // internal-booking-payment.integration.test.ts's shape (order-service): boots
 // the real booking-service `app`, seeds the minimal FK chain a `bookings` row
 // needs, and drives the two /internal/bookings/:id/* routes end-to-end with a
-// real internal-service JWT (iss=order-service — the caller per the Task 3
-// brief) so BOTH the internalServiceAuth guard AND the route -> controller ->
+// real internal-service JWT (an issuer on the guard's allowlist) so BOTH the
+// internalServiceAuth guard AND the route -> controller ->
 // BookingStatusService wiring are exercised for real, not mocked.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import {
@@ -40,18 +40,17 @@ const unique = Date.now();
 const INTERNAL_SECRET =
   process.env.INTERNAL_SERVICE_SECRET ?? "test-internal-secret-for-booking-webhook-routing";
 process.env.INTERNAL_SERVICE_SECRET = INTERNAL_SECRET;
-// The caller for these two routes is order-service's WebhookService (via
-// BookingLifecycleClient) — sign with that issuer, exactly what the guard's
-// ALLOWED_ISSUERS allowlist (libs/guards/src/internal-service-auth.ts)
-// expects for this boundary.
-const orderServiceToken = jwt.sign({ iss: "order-service" }, INTERNAL_SECRET, {
+// Sign with an issuer on the guard's ALLOWED_ISSUERS allowlist
+// (libs/guards/src/internal-service-auth.ts). The payments webhook handler
+// (M2) becomes the production caller of these two routes.
+const internalServiceToken = jwt.sign({ iss: "integration-service" }, INTERNAL_SECRET, {
   expiresIn: "5m",
 });
 const wrongIssuerToken = jwt.sign({ iss: "not-a-real-service" }, INTERNAL_SECRET, {
   expiresIn: "5m",
 });
 
-async function post(path: string, body: unknown, token = orderServiceToken) {
+async function post(path: string, body: unknown, token = internalServiceToken) {
   return app.handle(
     new Request(`http://localhost${path}`, {
       method: "POST",

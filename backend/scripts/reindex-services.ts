@@ -1,6 +1,6 @@
 import { ensureDatabase } from "@mypickuae/database";
-import { ServiceSearchReindexService } from "../apps/product-service/src/domain/service-search/service-search-reindex.service.ts";
-import { ServiceSearchAdapter } from "../apps/product-service/src/domain/service-search/service-search.adapter.ts";
+import { ServiceSearchReindexService } from "../apps/catalog-service/src/domain/service-search/service-search-reindex.service.ts";
+import { ServiceSearchAdapter } from "../apps/catalog-service/src/domain/service-search/service-search.adapter.ts";
 
 await ensureDatabase();
 const adapter = new ServiceSearchAdapter();

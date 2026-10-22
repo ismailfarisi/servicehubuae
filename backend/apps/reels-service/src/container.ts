@@ -35,13 +35,10 @@ import { GraduationService } from "./domain/creator-tier/graduation.service.ts";
 import { TrustService } from "./domain/creator-tier/trust.service.ts";
 import { DiscoveryService } from "./domain/discovery/discovery.service.ts";
 import { ShortlistService } from "./domain/discovery/shortlist.service.ts";
-import { CategoryCohortInvalidator } from "./domain/feed/category-cohort-invalidator.ts";
 import { FeedCacheClient, type RedisLike } from "./domain/feed/feed-cache.client.ts";
 import { FeedService } from "./domain/feed/feed.service.ts";
-import { InvalidateCategoryCohortJob } from "./domain/feed/jobs/invalidate-category-cohort.job.ts";
 import { RecomputeCohortFeedsJob } from "./domain/feed/jobs/recompute-cohort-feeds.job.ts";
 import { RecomputeRankingJob } from "./domain/feed/jobs/recompute-ranking.job.ts";
-import { RefreshHotCategoriesJob } from "./domain/feed/jobs/refresh-hot-categories.job.ts";
 import { ModerationController } from "./domain/moderation/moderation.controller.ts";
 import { ModerationService } from "./domain/moderation/moderation.service.ts";
 import { TaggingPermissionsService } from "./domain/moderation/tagging-permissions.service.ts";
@@ -75,17 +72,12 @@ const creatorDirectoryService = new CreatorDirectoryService();
 // Same reasoning: a named singleton, not another `.decorate` on the container.
 const creatorMediaKitService = new CreatorMediaKitService();
 
-// ─── Cache invalidator ────────────────────────────────────────────────
-// Declared early so moderation + reels services can be wired with it.
-// The underlying BullMQ Queue connects on demand; no DB needed at import.
-const categoryCohortInvalidator = new CategoryCohortInvalidator();
-
 // ─── Reels ────────────────────────────────────────────────────────────
-const reelsService = new ReelsService(cloudflareClient, trustService, categoryCohortInvalidator);
+const reelsService = new ReelsService(cloudflareClient, trustService);
 const reelsController = new ReelsController(reelsService);
 
 // ─── Moderation ───────────────────────────────────────────────────────
-const moderationService = new ModerationService(categoryCohortInvalidator);
+const moderationService = new ModerationService();
 const moderationController = new ModerationController(moderationService);
 const taggingPermissionsService = new TaggingPermissionsService();
 
@@ -122,8 +114,6 @@ const feedCacheRedisStub: RedisLike = {
 const feedCache = new FeedCacheClient(feedCacheRedisStub);
 const cohortJob = new RecomputeCohortFeedsJob(feedCache);
 const rankingJob = new RecomputeRankingJob();
-const refreshHotCategoriesJob = new RefreshHotCategoriesJob();
-const invalidateCategoryCohortJob = new InvalidateCategoryCohortJob(feedCache);
 
 // ─── Feed + social services ───────────────────────────────────────────
 // FeedService lazily resolves its ReelView/Reel repositories on first
@@ -172,9 +162,11 @@ const discoveryService = new DiscoveryService();
 const shortlistService = new ShortlistService();
 
 // ─── Licensing escrow ─────────────────────────────────────────────────
+// STRIPE_SECRET_KEY defaults to "": no client, and StripeChargeGateway answers
+// 503 stripe_not_configured on use instead of failing at boot.
 const stripeClient = config.stripe.secretKey
   ? new Stripe(config.stripe.secretKey, { apiVersion: "2026-03-25.dahlia" })
-  : (null as unknown as Stripe);
+  : null;
 const licensingRails = {
   [ReelLicenseFundingSource.payout_balance]: new PayoutBalanceRail(),
   [ReelLicenseFundingSource.stripe]: new StripeChargeRail(new StripeChargeGateway(stripeClient)),
@@ -195,7 +187,7 @@ const expireBriefsJob = new ExpireBriefsJob(config.bullmq.redisUrl, briefService
 // Producer handle on the shared cross-service "notification-events" queue.
 // Each producer service creates its own handle rather than importing
 // notification-service's module — the queue name is the contract, since these
-// are separate deployables (same pattern as order-service and booking-service).
+// are separate deployables (same pattern as booking-service).
 const notificationEventsQueue = new Queue("notification-events", {
   connection: { url: config.bullmq.redisUrl },
 });
@@ -224,9 +216,6 @@ export const container = new Elysia({ name: "reels-service-container" })
   .decorate("feedCache", feedCache)
   .decorate("cohortJob", cohortJob)
   .decorate("rankingJob", rankingJob)
-  .decorate("refreshHotCategoriesJob", refreshHotCategoriesJob)
-  .decorate("categoryCohortInvalidator", categoryCohortInvalidator)
-  .decorate("invalidateCategoryCohortJob", invalidateCategoryCohortJob)
   .decorate("feedService", feedService)
   .decorate("likeService", likeService)
   .decorate("saveService", saveService)
@@ -249,8 +238,6 @@ export {
   feedCache,
   cohortJob,
   rankingJob,
-  refreshHotCategoriesJob,
-  invalidateCategoryCohortJob,
   recomputeDailyRollupsJob,
   cloudflareStreamRecoveryJob,
   expireOffersJob,

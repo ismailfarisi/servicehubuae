@@ -3,6 +3,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -15,6 +17,23 @@ import { CollabApplicationStatus } from "../enums.ts";
  * index that respects soft delete.
  */
 @Entity("collab_applications")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("User", ["creator_id"], ["id"], { name: "fk_collab_app_creator", onDelete: "CASCADE" })
+@ForeignKey("CollabOpportunity", ["opportunity_id"], ["id"], {
+  name: "fk_collab_app_opportunity",
+  onDelete: "CASCADE",
+})
+@Index("idx_collab_app_awaiting_receipt", ["shipped_at"], {
+  where: "deleted_at IS NULL AND received_at IS NULL",
+})
+@Index("idx_collab_app_creator", ["creator_id", "status"], { where: "deleted_at IS NULL" })
+@Index("idx_collab_app_deliver_by", ["deliver_by"], {
+  where: "deleted_at IS NULL AND completed_at IS NULL",
+})
+@Index("uq_collab_app_creator", ["opportunity_id", "creator_id"], {
+  unique: true,
+  where: "deleted_at IS NULL",
+})
 export class CollabApplication {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

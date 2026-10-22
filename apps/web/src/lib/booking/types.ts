@@ -5,7 +5,7 @@
 // should extend this file rather than redefining these types locally.
 //
 // Field lists mirror the ACTUAL backend entities as documented in
-// .superpowers/sdd/phase7-recon-api.md (booking-service + product-service,
+// .superpowers/sdd/phase7-recon-api.md (booking-service + catalog-service,
 // branch booking/phase-2-scheduling-resources) — not the original plan docs.
 
 export type LocationMode = "at_premises" | "home_visit" | "either";
@@ -15,7 +15,7 @@ export type CancellationRefundPolicy = "full" | "deposit_forfeit" | "percent";
 export type OfferingStatus = "draft" | "published" | "paused" | "archived";
 
 /**
- * GET /services/:slug — raw ServiceOffering entity (product-service). No
+ * GET /services/:slug — raw ServiceOffering entity (catalog-service). No
  * staff/location join — those come from separate booking-service calls.
  */
 export interface ServiceOffering {

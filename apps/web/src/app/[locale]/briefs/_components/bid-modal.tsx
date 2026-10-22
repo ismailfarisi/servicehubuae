@@ -50,63 +50,63 @@ export function BidModal({ brief, onClose }: { brief: PublicBrief; onClose: () =
 
   return (
     // biome-ignore lint/a11y/useKeyWithClickEvents: backdrop click-to-close; inner panel stops propagation
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" onClick={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-nl-espresso/50 p-4" onClick={onClose}>
       {/* biome-ignore lint/a11y/useKeyWithClickEvents: backdrop click-to-close; inner panel stops propagation */}
       <div
-        className="w-full max-w-md rounded-xl bg-background p-5 shadow-xl"
+        className="w-full max-w-md rounded-2xl border border-nl-cacao/10 bg-nl-linen p-6 shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="text-xs text-muted-foreground">{brief.vendor_name ?? "Brand"}</div>
-        <h2 className="mt-0.5 text-lg font-semibold">{brief.title}</h2>
+        <div className="text-xs font-medium text-nl-russet">{brief.vendor_name ?? "Brand"}</div>
+        <h2 className="mt-0.5 font-display text-xl font-bold tracking-tight text-nl-cacao">{brief.title}</h2>
 
         {!isCreator ? (
-          <div className="mt-4 text-sm text-muted-foreground">
+          <div className="mt-4 text-sm text-nl-russet">
             You need a creator account to bid.{" "}
-            <a href={`/${locale}/auth/login?returnTo=/${locale}/briefs`} className="text-primary underline">
+            <a href={`/${locale}/auth/login?returnTo=/${locale}/briefs`} className="font-semibold text-nl-amber-text hover:underline">
               Sign in
             </a>{" "}
             or apply to become a creator from your account.
           </div>
         ) : (
           <>
-            {body && <p className="mt-3 whitespace-pre-wrap text-sm text-muted-foreground">{body}</p>}
+            {body && <p className="mt-3 whitespace-pre-wrap text-sm text-nl-russet">{body}</p>}
             <div className="mt-4 flex flex-col gap-3">
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium">Your bid (AED, min 50)</span>
+              <label className="flex flex-col gap-1.5 text-sm">
+                <span className="font-medium text-nl-cacao">Your bid (AED, min 50)</span>
                 <input
                   type="number"
                   min="50"
                   step="0.01"
                   value={amountAed}
                   onChange={(e) => setAmountAed(e.target.value)}
-                  className="rounded border border-input bg-background px-2 py-1"
+                  className="rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2 text-sm text-nl-cacao outline-none transition-colors placeholder:text-nl-russet/60 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
                   placeholder="e.g. 150"
                 />
               </label>
-              <label className="flex flex-col gap-1 text-sm">
-                <span className="font-medium">Pitch</span>
+              <label className="flex flex-col gap-1.5 text-sm">
+                <span className="font-medium text-nl-cacao">Pitch</span>
                 <textarea
                   value={pitch}
                   onChange={(e) => setPitch(e.target.value)}
                   rows={3}
                   maxLength={500}
-                  className="rounded border border-input bg-background px-2 py-1"
+                  className="rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2 text-sm text-nl-cacao outline-none transition-colors placeholder:text-nl-russet/60 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
                   placeholder="What you'd make and why you're a fit"
                 />
               </label>
               {msg && (
                 <p className={`text-sm ${msg.kind === "err" ? "text-destructive" : "text-green-600"}`}>{msg.text}</p>
               )}
-              <div className="flex gap-2">
+              <div className="flex gap-2 pt-1">
                 <button
                   type="button"
                   disabled={busy || msg?.kind === "ok"}
                   onClick={submit}
-                  className="rounded-lg bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {msg?.kind === "ok" ? "Bid placed" : busy ? "Placing…" : "Place bid"}
                 </button>
-                <button type="button" onClick={onClose} className="rounded-lg border px-4 py-2 text-sm hover:bg-accent">
+                <button type="button" onClick={onClose} className="inline-flex items-center justify-center gap-2 rounded-lg border border-nl-cacao/15 bg-nl-linen px-5 py-2.5 text-sm font-semibold text-nl-cacao hover:bg-nl-pearl transition-colors">
                   Close
                 </button>
               </div>

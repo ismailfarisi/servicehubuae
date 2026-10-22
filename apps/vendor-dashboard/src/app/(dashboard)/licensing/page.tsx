@@ -2,7 +2,6 @@
 
 import { formatAED } from "@/lib/queries/creator-content";
 import {
-	type FeaturePlacement,
 	type LicenseGrant,
 	type LicenseOffer,
 	type OfferStatus,
@@ -18,7 +17,6 @@ import {
 	useRequestDownload,
 	useUnpinFeature,
 } from "@/lib/queries/licensing";
-import { useVendorProducts } from "@/lib/queries/products";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -213,68 +211,24 @@ function GrantPins({ grant }: { grant: LicenseGrant }) {
 	const features = useGrantFeatures(grant.id);
 	const pin = usePinFeature();
 	const unpin = useUnpinFeature();
-	const products = useVendorProducts({ status: "published", limit: 100 });
 
-	const [placement, setPlacement] = useState<FeaturePlacement>("storefront");
-	const [productId, setProductId] = useState("");
-
-	const productList: Array<{ id: string; name: string }> =
-		(
-			products.data as
-				| { items?: Array<{ id: string; name: string }> }
-				| undefined
-		)?.items ?? [];
-
-	const canPin =
-		placement === "storefront" || (placement === "product" && !!productId);
-
+	// Pins go to the vendor storefront; product placements went away with the
+	// product catalogue.
 	function handlePin() {
-		if (!canPin) return;
-		pin.mutate(
-			{
-				grantId: grant.id,
-				placement,
-				product_id: placement === "product" ? productId : undefined,
-			},
-			{ onSuccess: () => setProductId("") },
-		);
+		pin.mutate({ grantId: grant.id });
 	}
 
 	return (
 		<div className="flex flex-col gap-2">
 			{/* Pin control */}
 			<div className="flex flex-wrap items-center gap-1">
-				<select
-					value={placement}
-					onChange={(e) => setPlacement(e.target.value as FeaturePlacement)}
-					className="rounded border border-neutral-300 px-2 py-1 text-xs"
-				>
-					<option value="storefront">Storefront</option>
-					<option value="product">Product</option>
-				</select>
-
-				{placement === "product" && (
-					<select
-						value={productId}
-						onChange={(e) => setProductId(e.target.value)}
-						className="w-44 rounded border border-neutral-300 px-2 py-1 text-xs"
-					>
-						<option value="">Select a product…</option>
-						{productList.map((p) => (
-							<option key={p.id} value={p.id}>
-								{p.name}
-							</option>
-						))}
-					</select>
-				)}
-
 				<button
 					type="button"
-					disabled={pin.isPending || !canPin}
+					disabled={pin.isPending}
 					onClick={handlePin}
 					className="rounded bg-emerald-600 text-white px-2 py-1 text-xs disabled:opacity-50"
 				>
-					Pin
+					Pin to storefront
 				</button>
 			</div>
 
@@ -291,9 +245,7 @@ function GrantPins({ grant }: { grant: LicenseGrant }) {
 							className="flex items-center justify-between gap-2 text-xs text-neutral-600"
 						>
 							<span>
-								{f.placement === "storefront"
-									? "Storefront"
-									: `Product ${f.product_id?.slice(0, 8) ?? ""}…`}
+								Storefront
 							</span>
 							<button
 								type="button"

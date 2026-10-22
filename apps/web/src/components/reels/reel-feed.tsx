@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { getFeed, getReel, recordView, type GetFeedParams } from "@/lib/api/reels";
-import { ReelPlayer, type ReelTag } from "./reel-player";
+import { ReelPlayer } from "./reel-player";
 import { ReelOverlayActions } from "./reel-overlay-actions";
 import { FeedTabSwitcher } from "./feed-tab-switcher";
 
@@ -17,34 +17,6 @@ interface Props {
   // to the next reel from a permalink-style entry point.
   seedReelId?: string;
   hideTabSwitcher?: boolean;
-  // Scopes the continuation feed when initialContext is "category" (e.g. opened
-  // from a category listing's story rail). Ignored for other contexts.
-  categorySlug?: string;
-}
-
-function mapTags(raw: any[] | undefined): ReelTag[] {
-  return (raw ?? []).map((t: any) => ({
-    id: t.id,
-    timestampSeconds: Number(t.timestamp_seconds ?? t.timestampSeconds ?? 0),
-    display_x: t.display_x != null ? Number(t.display_x) : null,
-    display_y: t.display_y != null ? Number(t.display_y) : null,
-    product: t.product
-      ? {
-          id: t.product.id,
-          slug: t.product.slug,
-          name: t.product.name ?? "Product",
-          priceFils: Number(
-            t.product.price_fils ?? t.product.priceFils ?? t.product.price ?? 0,
-          ),
-          imageUrl: t.product.primary_image_url ?? t.product.imageUrl ?? "",
-        }
-      : {
-          id: t.product_id,
-          name: "Product",
-          priceFils: 0,
-          imageUrl: "",
-        },
-  }));
 }
 
 export function ReelFeed({
@@ -52,7 +24,6 @@ export function ReelFeed({
   locale = "en",
   seedReelId,
   hideTabSwitcher = false,
-  categorySlug,
 }: Props) {
   const [tab, setTab] = useState<FeedTab>("for_you");
   const [reels, setReels] = useState<any[]>([]);
@@ -70,7 +41,6 @@ export function ReelFeed({
       const data = await getFeed({
         context: initialContext,
         tab,
-        categorySlug: initialContext === "category" ? categorySlug : undefined,
         cursor: reset ? undefined : cursorRef.current ?? undefined,
         limit: 10,
       });
@@ -175,7 +145,6 @@ export function ReelFeed({
             reelId={r.id}
             playbackUrl={r.video_playback_url}
             thumbnailUrl={r.thumbnail_url}
-            tags={mapTags(r.tags)}
           />
           <ReelOverlayActions
             reelId={r.id}

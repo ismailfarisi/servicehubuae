@@ -4,7 +4,6 @@ import { useEffect } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "next/navigation";
 import { useAuthStore } from "@/stores/auth";
-import { MAISON_SERIF } from "@/components/ui/maison-primitives";
 
 /**
  * Tier guard for the creator dashboard. The parent account layout already
@@ -40,15 +39,7 @@ export default function CreatorAccountLayout({
 
   if (isLoading || !isCreator) {
     return (
-      <div
-        className="min-h-[40vh] flex items-center justify-center"
-        style={{
-          fontFamily: MAISON_SERIF,
-          fontStyle: "italic",
-          fontSize: 16,
-          color: "hsl(var(--nl-russet))",
-        }}
-      >
+      <div className="min-h-[40vh] flex items-center justify-center text-sm text-nl-russet">
         {tCommon("loading")}
       </div>
     );

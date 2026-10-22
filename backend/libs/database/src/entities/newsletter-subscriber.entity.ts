@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,13 @@ import {
 import type { User } from "./user.entity.ts";
 
 @Entity("newsletter_subscribers")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_newsletter_subscribers_user", ["user_id"])
+@Index("uq_newsletter_subscribers_email_active", ["email"], {
+  unique: true,
+  where: "deleted_at IS NULL",
+})
+@Index("uq_newsletter_subscribers_token", ["unsubscribe_token"], { unique: true })
 export class NewsletterSubscriber {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

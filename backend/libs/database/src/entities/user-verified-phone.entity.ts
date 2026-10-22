@@ -34,7 +34,7 @@ export class UserVerifiedPhone {
   @Column({ type: "varchar", length: 20 })
   phone!: string;
 
-  @Column({ type: "timestamptz" })
+  @Column({ type: "timestamptz", default: () => "now()" })
   verified_at!: Date;
 
   @CreateDateColumn({ type: "timestamptz" })

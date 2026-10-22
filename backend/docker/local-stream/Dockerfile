@@ -1,5 +1,5 @@
 # Local Cloudflare Stream stand-in (dev only) — see server.ts.
-FROM oven/bun:1.3.11
+FROM oven/bun:1.4.3
 RUN apt-get update \
   && apt-get install -y --no-install-recommends ffmpeg \
   && rm -rf /var/lib/apt/lists/*

@@ -4,7 +4,7 @@
  *
  *   bun scripts/dev-local.ts            # infra + migrations + seed + search + all services + 3 web apps
  *   bun scripts/dev-local.ts --no-web   # backend only
- *   bun scripts/dev-local.ts --reindex  # force a full Typesense products reindex first
+ *   bun scripts/dev-local.ts --reindex  # force a full Typesense service_offerings reindex first
  *   bun scripts/dev-local.ts --stop     # stop the docker infra containers
  *
  * Steps:
@@ -13,8 +13,9 @@
  *  2. docker compose up: postgres, redis, typesense, local-s3 (+ bucket init),
  *     and local-stream. Then wait until each one is healthy.
  *  3. Run TypeORM migrations and the idempotent seed.
- *  4. Create the Typesense `products` collection if it's missing. Nothing
- *     creates it at boot.
+ *  4. Create and fill the Typesense `service_offerings` collection if it's
+ *     missing (backend/scripts/reindex-services.ts). catalog-service only
+ *     creates it empty at boot.
  *  5. Start every backend service and the web, vendor and admin apps through
  *     turbo with `--env-mode=loose`. Turbo 2's strict mode would drop
  *     undeclared vars such as DB_PORT.
@@ -139,7 +140,7 @@ if ((await run(["docker", "info"], { quiet: true })).code !== 0) {
 ok("docker is running");
 ok(`bun ${Bun.version}`);
 
-const servicePorts = [3000, 3001, 3002, 3003, 3004, 3005, 3006, 3007, 3008];
+const servicePorts = [3000, 3001, 3002, 3004, 3005, 3006, 3007, 3008, 3009];
 const webPorts = args.has("--no-web") ? [] : [4000, 4001, 4002];
 const busy: number[] = [];
 for (const p of [...servicePorts, ...webPorts])
@@ -248,11 +249,18 @@ const collections = (await (
 		headers: { "X-TYPESENSE-API-KEY": tsKey },
 	})
 ).json()) as Array<{ name: string; num_documents: number }>;
-const products = collections.find(
-	(col) => col.name === (env.TYPESENSE_COLLECTION ?? "products"),
+const servicesCollection = collections.find(
+	(col) =>
+		col.name === (env.TYPESENSE_SERVICES_COLLECTION ?? "service_offerings"),
 );
-if (!products || args.has("--reindex")) {
-	const reindex = await run([BUN, "scripts/reindex-typesense.ts"], {
+// catalog-service creates the collection empty at boot, so an empty one is
+// treated like a missing one (the seed's demo services should be searchable).
+if (
+	!servicesCollection ||
+	servicesCollection.num_documents === 0 ||
+	args.has("--reindex")
+) {
+	const reindex = await run([BUN, "scripts/reindex-services.ts"], {
 		cwd: BACKEND,
 		quiet: true,
 	});
@@ -261,10 +269,12 @@ if (!products || args.has("--reindex")) {
 			"reindex failed",
 			(reindex.err || reindex.out).trim().split("\n").slice(-8).join("\n    "),
 		);
-	ok(reindex.out.match(/Reindex complete: .*/)?.[0] ?? "products reindexed");
+	ok(
+		reindex.out.match(/Reindexed .*/)?.[0] ?? "service_offerings reindexed",
+	);
 } else {
 	ok(
-		`products collection has ${products.num_documents} document(s) (use --reindex to rebuild)`,
+		`service_offerings collection has ${servicesCollection.num_documents} document(s) (use --reindex to rebuild)`,
 	);
 }
 

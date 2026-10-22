@@ -24,7 +24,6 @@ export interface MyReelSummary {
 	rejection_reason: string | null;
 	published_at: string | null;
 	created_at: string;
-	tags?: Array<{ id: string; product_id: string }>;
 }
 
 export interface GetMyReelsParams {
@@ -74,67 +73,18 @@ export async function updateReelMetadata(
 	return res.data.data;
 }
 
-export interface AddReelTagPayload {
-	productId: string;
-	variantId?: string;
-	timestampSeconds: number;
-	displayX?: number;
-	displayY?: number;
-}
-
-export async function addReelTag(reelId: string, payload: AddReelTagPayload) {
-	const res = await api.post(`/reels/${reelId}/tags`, payload);
-	return res.data.data;
-}
-
-export async function deleteReelTag(reelId: string, tagId: string) {
-	await api.delete(`/reels/${reelId}/tags/${tagId}`);
-}
-
-export interface TapReelTagResponse {
-	tag: {
-		id: string;
-		timestampSeconds: number;
-		displayX: number | null;
-		displayY: number | null;
-	};
-	product: {
-		id: string;
-		name: string;
-		priceFils: number;
-		imageUrl: string | null;
-		inStock: boolean;
-		brandId: string | null;
-		vendorId: string;
-	};
-}
-
-export async function tapReelTag(
-	reelId: string,
-	tagId: string,
-): Promise<TapReelTagResponse> {
-	await ensureGuestSessionToken();
-	const res = await api.post(`/reels/${reelId}/tags/${tagId}/taps`);
-	return res.data.data as TapReelTagResponse;
-}
-
 export async function deleteReel(reelId: string) {
 	await api.delete(`/reels/${reelId}`);
 }
 
 export interface GetFeedParams {
-	context: "home" | "product" | "brand" | "vendor" | "user" | "category";
+	context: "home" | "vendor" | "user";
 	tab?: "for_you" | "latest" | "following";
-	productId?: string;
-	brandId?: string;
 	vendorId?: string;
 	userId?: string;
-	categoryId?: string;
-	categorySlug?: string;
 	language?: string;
 	cursor?: string;
 	limit?: number;
-	author_kind?: "creator" | "customer" | "house" | "all";
 }
 
 export async function getFeed(params: GetFeedParams) {
@@ -201,28 +151,4 @@ export interface UserProfile {
 export async function getUserProfile(userId: string): Promise<UserProfile> {
 	const res = await api.get(`/users/${userId}`);
 	return res.data.data as UserProfile;
-}
-
-export interface TaggableProductRow {
-	product_id: string;
-	name: string;
-	thumbnail_url: string | null;
-	variant_label: string | null;
-	delivered_at: string | null;
-	source: "purchased" | "vendor_owned" | "permission";
-}
-
-export async function fetchTaggableProducts(
-	q: string,
-	limit = 20,
-): Promise<TaggableProductRow[]> {
-	const res = await api.get("/me/reels/taggable-products", {
-		params: { q: q || undefined, limit },
-		timeout: 4000,
-	});
-	const items =
-		(res.data?.data?.items as TaggableProductRow[] | undefined) ??
-		(res.data?.items as TaggableProductRow[] | undefined) ??
-		[];
-	return items;
 }

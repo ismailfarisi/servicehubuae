@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -10,6 +11,9 @@ import { ReelBriefStatus, ReelLicenseRightsScope } from "../enums.ts";
 
 /** A vendor's open request for a UGC reel to be produced (Slice 3 brief/bid marketplace). */
 @Entity("reel_briefs")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_brief_status_open", ["status", "bids_close_at"], { where: "deleted_at IS NULL" })
+@Index("idx_brief_vendor", ["vendor_id"], { where: "deleted_at IS NULL" })
 export class ReelBrief {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

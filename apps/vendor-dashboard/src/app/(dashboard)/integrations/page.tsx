@@ -39,12 +39,12 @@ export default function IntegrationsPage() {
           {[1, 2].map((i) => (
             <div
               key={i}
-              className="h-52 rounded-lg border border-pearl/14 bg-pearl/30 animate-pulse"
+              className="h-52 rounded-lg border border-pearl bg-pearl/30 animate-pulse"
             />
           ))}
         </div>
       ) : isError ? (
-        <div className="rounded-lg border border-pearl/14 bg-pearl/30 px-6 py-10 text-center">
+        <div className="rounded-lg border border-pearl bg-pearl/30 px-6 py-10 text-center">
           <p className="text-sm text-russet">
             Could not load integrations. Please refresh and try again.
           </p>

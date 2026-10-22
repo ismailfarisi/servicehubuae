@@ -49,10 +49,6 @@ const opportunityBody = {
   rightsScope: nullable(t.String()),
   feeFils: t.Optional(t.Union([t.Integer({ minimum: 0 }), t.Null()])),
   fundingSource: nullable(t.String()),
-  seededProductId: nullable(t.String({ format: "uuid" })),
-  seededVariantId: nullable(t.String({ format: "uuid" })),
-  seededQty: t.Optional(t.Union([t.Integer({ minimum: 0 }), t.Null()])),
-  seedingValueFils: t.Optional(t.Union([t.Integer({ minimum: 0 }), t.Null()])),
   locationId: nullable(t.String({ format: "uuid" })),
   startsAt: nullable(t.String({ format: "date-time" })),
   endsAt: nullable(t.String({ format: "date-time" })),
@@ -120,9 +116,7 @@ const collabVendorReadRoutes = new Elysia({ prefix: PREFIX })
  * Write surface. Gated by `bank.read` to match the licensing write group:
  * accepting a collab commits vendor funds for the paid types.
  *
- * `product_seeding` moves no money, so this is stricter than strictly necessary
- * for it. One guard per surface is easier to reason about than a per-type guard,
- * and a member who can seed product can already commit inventory.
+ * One guard per surface is easier to reason about than a per-type guard.
  */
 const collabVendorWriteRoutes = new Elysia({ prefix: PREFIX })
   .use(container)

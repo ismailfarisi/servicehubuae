@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +12,8 @@ import {
 // Home-visit coverage: which hyperlocal zones a vendor will travel to.
 @Entity("service_areas")
 @Index(["vendor_id", "area_id"], { unique: true, where: "deleted_at IS NULL" })
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_service_areas_vendor" })
 export class ServiceArea {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

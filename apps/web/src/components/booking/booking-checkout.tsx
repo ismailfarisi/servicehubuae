@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 import { useAuthStore } from "@/stores/auth";
 import { useAddresses } from "@/lib/queries/account";
@@ -21,7 +22,6 @@ import type {
 import { formatDateInZone, formatPrice, formatTimeInZone } from "@/lib/utils";
 import {
   Eyebrow,
-  MAISON_SANS,
   SerifTitle,
 } from "@/components/ui/maison-primitives";
 import { TermsBlock } from "@/components/booking/terms-block";
@@ -30,7 +30,7 @@ import {
   EMPTY_HOME_VISIT_ADDRESS,
   type HomeVisitAddressState,
 } from "@/components/booking/booking-address-form";
-import { BookingPayment } from "@/components/booking/booking-payment";
+import { isOnlinePaymentUnavailableError, ONLINE_PAYMENTS_ENABLED } from "@/lib/booking/online-payments";
 import { BookingSuccess } from "@/components/booking/booking-success";
 
 /** Poll GET /bookings/:id every 2s (see useBookingPoll); give up after 45s
@@ -39,11 +39,23 @@ import { BookingSuccess } from "@/components/booking/booking-success";
  * asking the customer to wait/retry rather than staring at a spinner. */
 const POLL_TIMEOUT_MS = 45_000;
 
+/**
+ * The card form (Stripe Elements) is loaded only when a deposit/prepay
+ * offering actually renders it, so a pay_at_venue booking never downloads or
+ * initialises Stripe. Online payments are off until MyFatoorah lands (M2),
+ * which replaces this component.
+ */
+const BookingPayment = dynamic(
+  () => import("@/components/booking/booking-payment").then((m) => m.BookingPayment),
+  { ssr: false },
+);
+
 type Phase =
   | "holding"
   | "hold-conflict"
   | "hold-error"
   | "blocked"
+  | "online-unavailable"
   | "form"
   | "hold-expired"
   | "creating"
@@ -145,12 +157,22 @@ function BookingCheckoutReady({
         setHoldData(data);
         holdExpiresAtRef.current = Date.now() + data.expires_in_seconds * 1000;
         setSecondsLeft(data.expires_in_seconds);
-        setPhase(data.allowed_payment_modes.length === 0 ? "blocked" : "form");
+        const modes = data.allowed_payment_modes;
+        if (modes.length === 0) {
+          setPhase("blocked");
+        } else if (!ONLINE_PAYMENTS_ENABLED && !modes.includes("pay_at_venue")) {
+          // Deposit/prepay only, and card payments are switched off.
+          setPhase("online-unavailable");
+        } else {
+          setPhase("form");
+        }
       })
       .catch((err: unknown) => {
         const error = err as { response?: { status?: number; data?: { message?: string } }; message?: string };
         if (error.response?.status === 409) {
           setPhase("hold-conflict");
+        } else if (isOnlinePaymentUnavailableError(err)) {
+          setPhase("online-unavailable");
         } else {
           setErrorMessage(error.response?.data?.message || error.message || t("genericError"));
           setPhase("hold-error");
@@ -205,7 +227,13 @@ function BookingCheckoutReady({
     [locations, selection.location],
   );
 
-  const paymentMode: PaymentMode | null = holdData?.allowed_payment_modes[0] ?? null;
+  // Show only what the offering allows. While online payments are off, a
+  // pay_at_venue option wins over any card mode the hold also returned.
+  const allowedModes = holdData?.allowed_payment_modes ?? [];
+  const paymentMode: PaymentMode | null =
+    !ONLINE_PAYMENTS_ENABLED && allowedModes.includes("pay_at_venue")
+      ? "pay_at_venue"
+      : (allowedModes[0] ?? null);
   // Pre-create estimate — also feeds the Stripe Elements `amount`/key in
   // BookingPayment, which must stay stable across the create call (changing
   // it would remount <Elements> and drop the card the customer just typed).
@@ -291,6 +319,8 @@ function BookingCheckoutReady({
         setPhase("create-conflict");
       } else if (error.response?.status === 422 && error.response.data?.error === "pay_at_venue_unavailable") {
         setPhase("blocked");
+      } else if (isOnlinePaymentUnavailableError(err)) {
+        setPhase("online-unavailable");
       } else {
         setErrorMessage(error.response?.data?.message || error.message || t("genericError"));
         setPhase("create-error");
@@ -323,9 +353,7 @@ function BookingCheckoutReady({
   if (phase === "holding") {
     return (
       <Shell>
-        <p style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-russet))" }}>
-          {t("holdingSlot")}
-        </p>
+        <p className="text-sm text-nl-russet">{t("holdingSlot")}</p>
       </Shell>
     );
   }
@@ -361,6 +389,19 @@ function BookingCheckoutReady({
     );
   }
 
+  if (phase === "online-unavailable") {
+    return (
+      <Shell>
+        <RePickPanel
+          title={t("onlineUnavailableTitle")}
+          body={t("onlineUnavailableBody")}
+          slug={slug}
+          pickAgainLabel={t("backToService")}
+        />
+      </Shell>
+    );
+  }
+
   if (phase === "payment-failed") {
     return (
       <Shell>
@@ -377,11 +418,9 @@ function BookingCheckoutReady({
   if (phase === "polling") {
     return (
       <Shell>
-        <div className="mt-6">
+        <div className="mt-6 rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 shadow-sm sm:p-6">
           <SerifTitle size={22}>{t("pollingTitle")}</SerifTitle>
-          <p className="mt-2" style={{ fontFamily: MAISON_SANS, fontSize: 12.5, color: "hsl(var(--nl-russet))" }}>
-            {t("pollingBody")}
-          </p>
+          <p className="mt-2 text-sm text-nl-russet">{t("pollingBody")}</p>
         </div>
       </Shell>
     );
@@ -420,24 +459,18 @@ function BookingCheckoutReady({
 
   return (
     <Shell>
-      <Eyebrow>{tService("bookThisService")}</Eyebrow>
-      <SerifTitle size={26} className="mt-2">
+      <Eyebrow className="text-sm">{tService("bookThisService")}</Eyebrow>
+      <SerifTitle size={28} className="mt-2">
         {t("title")}
       </SerifTitle>
 
       {secondsLeft !== null && (
-        <p
-          className="mt-2"
-          style={{ fontFamily: MAISON_SANS, fontSize: 12, color: "hsl(var(--nl-amber))" }}
-        >
+        <p className="mt-3 inline-flex items-center rounded-full bg-nl-pearl px-3 py-1 text-xs font-semibold text-nl-amber-text">
           {t("holdCountdown", { time: formatCountdown(secondsLeft) })}
         </p>
       )}
 
-      <div
-        className="mt-5"
-        style={{ border: "1px solid rgba(44,24,16,0.08)", background: "rgba(44,24,16,0.015)", padding: 18 }}
-      >
+      <div className="mt-5 divide-y divide-nl-cacao/10 rounded-2xl border border-nl-cacao/10 bg-nl-linen px-4 py-1 shadow-sm sm:px-5">
         <SummaryRow label={tBooking("stub.service")} value={offering.name} />
         <SummaryRow label={tBooking("stub.dateTime")} value={dateTimeLabel} />
         <SummaryRow label={tBooking("stub.price")} value={formatPrice(offering.price_fils, "AED", locale)} />
@@ -478,11 +511,7 @@ function BookingCheckoutReady({
       )}
 
       <div className="mt-6">
-        <label
-          htmlFor="booking-notes"
-          className="block uppercase mb-2"
-          style={{ fontFamily: MAISON_SANS, fontSize: 10, letterSpacing: "0.2em", color: "hsl(var(--nl-russet))" }}
-        >
+        <label htmlFor="booking-notes" className="mb-1.5 block text-sm font-semibold text-nl-cacao">
           {t("notesLabel")}
         </label>
         <textarea
@@ -491,23 +520,12 @@ function BookingCheckoutReady({
           onChange={(e) => setNotes(e.target.value)}
           placeholder={t("notesPlaceholder")}
           rows={3}
-          className="w-full outline-none"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 13,
-            color: "hsl(var(--nl-cacao))",
-            border: "1px solid rgba(44,24,16,0.16)",
-            background: "rgba(255,255,255,0.55)",
-            padding: "10px 14px",
-          }}
+          className="w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3.5 py-2.5 text-sm text-nl-cacao outline-none transition placeholder:text-nl-russet/70 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
         />
       </div>
 
       {errorMessage && (
-        <div
-          className="mt-4 p-3 text-sm"
-          style={{ background: "rgba(220, 38, 38, 0.06)", border: "1px solid rgba(220, 38, 38, 0.3)", color: "hsl(var(--destructive))" }}
-        >
+        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-destructive">
           {errorMessage}
         </div>
       )}
@@ -517,15 +535,7 @@ function BookingCheckoutReady({
           type="button"
           onClick={handleConfirmPayAtVenue}
           disabled={submitting || !addressReady}
-          className="w-full uppercase mt-6 transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-          style={{
-            background: "hsl(var(--nl-cacao))",
-            color: "hsl(var(--nl-linen))",
-            padding: "18px 0",
-            fontSize: 11,
-            letterSpacing: "0.28em",
-            border: "none",
-          }}
+          className="mt-6 inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {submitting ? t("processing") : t("confirmPayAtVenue")}
         </button>
@@ -564,9 +574,7 @@ function LoadingShell() {
   const tCommon = useTranslations("common");
   return (
     <Shell>
-      <p style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-russet))" }}>
-        {tCommon("loading")}
-      </p>
+      <p className="text-sm text-nl-russet">{tCommon("loading")}</p>
     </Shell>
   );
 }
@@ -584,15 +592,12 @@ function RePickPanel({
 }) {
   const locale = useLocale();
   return (
-    <div className="mt-6">
+    <div className="mt-6 rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 shadow-sm sm:p-6">
       <SerifTitle size={22}>{title}</SerifTitle>
-      <p className="mt-2 mb-4" style={{ fontFamily: MAISON_SANS, fontSize: 12.5, color: "hsl(var(--nl-russet))" }}>
-        {body}
-      </p>
+      <p className="mb-5 mt-2 text-sm text-nl-russet">{body}</p>
       <Link
         href={`/${locale}/service/${slug}`}
-        className="inline-block uppercase"
-        style={{ fontFamily: MAISON_SANS, fontSize: 10.5, letterSpacing: "0.18em", color: "hsl(var(--nl-amber))" }}
+        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90"
       >
         {pickAgainLabel}
       </Link>
@@ -602,16 +607,9 @@ function RePickPanel({
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 py-1.5">
-      <span
-        className="uppercase shrink-0"
-        style={{ fontFamily: MAISON_SANS, fontSize: 10, letterSpacing: "0.12em", color: "hsl(var(--nl-russet))" }}
-      >
-        {label}
-      </span>
-      <span className="text-end" style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-cacao))" }}>
-        {value}
-      </span>
+    <div className="flex items-baseline justify-between gap-4 py-3">
+      <span className="shrink-0 text-xs font-medium text-nl-russet">{label}</span>
+      <span className="text-end text-sm font-medium text-nl-cacao">{value}</span>
     </div>
   );
 }

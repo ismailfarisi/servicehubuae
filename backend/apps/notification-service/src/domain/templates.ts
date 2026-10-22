@@ -25,10 +25,8 @@ export interface NotificationTemplate {
   ) => { title: string; body: string; actionUrl?: string; emailHtmlExtra?: string };
 }
 
-// ─── Small render helpers (booking templates only — order-email-templates.ts
-// has its own richer copies for the standalone OrderEmailService; these are
-// deliberately minimal duplicates rather than a shared import, keeping this
-// file's only dependency the same as the rest of templates.ts: none). ───────
+// ─── Small render helpers (booking templates only; deliberately minimal and
+// dependency-free, like the rest of templates.ts). ───────────────────────────
 
 /** Minimal HTML entity escaping for interpolated, potentially external text
  * (Stripe failure reasons, freeform cancellation reasons, etc). */
@@ -61,65 +59,17 @@ function base64Utf8(text: string): string {
 }
 
 const TEMPLATES: Record<string, NotificationTemplate> = {
-  order_confirmed: {
-    title: "Order Confirmed",
-    bodyTemplate: "Your order {order_number} has been confirmed",
-    actionUrlTemplate: "/orders/{orderId}",
-  },
-  order_shipped: {
-    title: "Order Shipped",
-    bodyTemplate: "Your order has shipped. Track: {tracking_url}",
-    actionUrlTemplate: "/orders/{orderId}/tracking",
-  },
-  order_delivered: {
-    title: "Order Delivered",
-    bodyTemplate: "Your order has been delivered",
-    actionUrlTemplate: "/orders/{orderId}",
-  },
-  payment_received: {
-    title: "Payment Received",
-    bodyTemplate: "Payment of {amount} AED received",
-    actionUrlTemplate: "/orders/{orderId}",
-  },
+  // Vendor payout notice. No emitter until M5 rebuilds payouts on MyFatoorah
+  // supplier payouts; kept so the vendor money type is ready.
   payout_sent: {
     title: "Payout Sent",
     bodyTemplate: "Payout of {amount} AED sent to your account",
     actionUrlTemplate: "/vendor/payouts",
   },
-  vendor_new_order: {
-    title: "New Order Received",
-    bodyTemplate: "New order {order_number} ({amount})",
-    actionUrlTemplate: "/vendor/orders/{vendorOrderId}",
-  },
-  new_review: {
-    title: "New Review",
-    bodyTemplate: "New {rating} star review on {product_name}",
-    actionUrlTemplate: "/vendor/products/{productId}/reviews",
-  },
-  low_stock: {
-    title: "Low Stock Alert",
-    bodyTemplate: "{product_name} has only {quantity} left",
-    actionUrlTemplate: "/vendor/products/{productId}/inventory",
-  },
   vendor_approved: {
     title: "Vendor Approved",
     bodyTemplate: "Your vendor account has been approved",
     actionUrlTemplate: "/vendor/dashboard",
-  },
-  return_requested: {
-    title: "Return Requested",
-    bodyTemplate: "Return requested for order {order_number}",
-    actionUrlTemplate: "/vendor/returns/{returnId}",
-  },
-  dispute_opened: {
-    title: "Dispute Opened",
-    bodyTemplate: "Dispute opened for order {order_number}",
-    actionUrlTemplate: "/disputes/{disputeId}",
-  },
-  dispute_resolved: {
-    title: "Dispute Resolved",
-    bodyTemplate: "Dispute resolved: {resolution}",
-    actionUrlTemplate: "/disputes/{disputeId}",
   },
 
   // ─── Booking-service (Phase 5, spec §7) — 11 types, both audiences where

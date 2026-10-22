@@ -12,32 +12,24 @@ import {
 	toast,
 } from "@mypickuae/ui";
 import {
-	ArrowCounterClockwise,
 	CalendarBlank,
 	CalendarCheck,
 	Certificate,
 	ChartBar,
-	FileText,
 	FilmSlate,
 	Gavel,
 	Gear,
-	Handshake,
 	IdentificationCard,
-	Lightning,
 	ListChecks,
 	MapPin,
 	Megaphone,
-	Package,
 	Plug,
-	ShoppingCart,
 	SquaresFour,
 	Storefront,
 	Tag,
-	Truck,
 	Users,
 	UsersThree,
 	VideoCamera,
-	Wallet,
 } from "@phosphor-icons/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePathname, useRouter } from "next/navigation";
@@ -121,12 +113,6 @@ const channelsGroup = {
 			icon: <Plug size={20} />,
 		},
 	],
-};
-
-const financeItem = {
-	label: "Payouts",
-	href: "/payouts",
-	icon: <Wallet size={20} />,
 };
 
 const settingsGroup = {
@@ -217,7 +203,6 @@ export default function DashboardLayout({
 			marketingGroup,
 			creatorStudioGroup,
 			channelsGroup,
-			financeItem,
 			settingsGroup,
 		];
 	}, [hasOfferings, isVendorScoped]);
@@ -316,7 +301,7 @@ export default function DashboardLayout({
 					onChangePassword={() => setPwOpen(true)}
 					onMenuClick={() => setMobileOpen(true)}
 				/>
-				<div className="flex items-center justify-end px-4 lg:px-6 py-2 border-b border-pearl/14 empty:hidden">
+				<div className="flex items-center justify-end px-4 lg:px-6 py-2 border-b border-pearl empty:hidden">
 					<VendorPicker />
 				</div>
 				<main className="flex-1 overflow-y-auto p-4 lg:p-6 -ml-px">

@@ -19,7 +19,7 @@ export function MegaMenuPanel({ tab }: Props) {
 						<li key={sub.href}>
 							<Link
 								href={sub.href}
-								className={`text-[13px] text-nl-cacao hover:text-nl-amber ${
+								className={`text-sm text-nl-cacao hover:text-nl-amber-text transition-colors ${
 									sub.highlight ? "font-semibold" : ""
 								}`}
 							>
@@ -34,7 +34,7 @@ export function MegaMenuPanel({ tab }: Props) {
 				<div>
 					<Link
 						href={tab.brand_list.see_all_href}
-						className="flex items-baseline justify-between mb-3 text-[13px] font-semibold text-nl-cacao hover:text-nl-amber"
+						className="flex items-baseline justify-between mb-3 text-sm font-semibold text-nl-cacao hover:text-nl-amber-text transition-colors"
 					>
 						<span>{tab.brand_list.title}</span>
 						<span aria-hidden>›</span>
@@ -44,7 +44,7 @@ export function MegaMenuPanel({ tab }: Props) {
 							<li key={b.id}>
 								<Link
 									href={b.href}
-									className="text-[13px] text-nl-russet hover:text-nl-amber"
+									className="text-sm text-nl-russet hover:text-nl-cacao transition-colors"
 								>
 									{b.name}
 								</Link>
@@ -58,7 +58,7 @@ export function MegaMenuPanel({ tab }: Props) {
 				<div className="grid grid-cols-3 gap-4">
 					{tab.promo_tiles.map((p) => (
 						<Link key={p.href} href={p.href} className="group block">
-							<div className="relative aspect-square overflow-hidden bg-nl-pearl">
+							<div className="relative aspect-square overflow-hidden rounded-xl bg-nl-pearl">
 								<Image
 									src={p.image_url}
 									alt={p.title}
@@ -67,10 +67,10 @@ export function MegaMenuPanel({ tab }: Props) {
 									className="object-cover group-hover:scale-105 transition-transform duration-500"
 								/>
 							</div>
-							<div className="mt-2 text-[11px] tracking-[0.18em] uppercase text-nl-cacao">
+							<div className="mt-2.5 text-sm font-semibold text-nl-cacao">
 								{p.title}
 							</div>
-							<div className="text-[10px] tracking-[0.18em] uppercase text-nl-amber underline mt-0.5">
+							<div className="text-sm font-semibold text-nl-amber-text group-hover:underline mt-0.5">
 								{p.cta_text}
 							</div>
 						</Link>

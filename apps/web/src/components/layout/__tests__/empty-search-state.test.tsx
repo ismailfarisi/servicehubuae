@@ -13,7 +13,7 @@ vi.mock("next-intl", () => ({
 	useTranslations: () => (key: string) => key,
 }));
 vi.mock("@/lib/queries/recent-searches", () => ({
-	useRecentSearches: () => ({ data: [{ query: "dior" }, { query: "cerave" }] }),
+	useRecentSearches: () => ({ data: [{ query: "cleaning" }, { query: "plumber" }] }),
 	useClearRecentSearches: () => ({ mutate: () => {} }),
 }));
 
@@ -26,8 +26,8 @@ const wrap = (ui: React.ReactNode) => (
 describe("EmptySearchState", () => {
 	test("renders recent search chips", () => {
 		render(wrap(<EmptySearchState />));
-		expect(screen.getByText("dior")).toBeTruthy();
-		expect(screen.getByText("cerave")).toBeTruthy();
+		expect(screen.getByText("cleaning")).toBeTruthy();
+		expect(screen.getByText("plumber")).toBeTruthy();
 		expect(screen.getByText("Recent")).toBeTruthy();
 	});
 
@@ -38,7 +38,7 @@ describe("EmptySearchState", () => {
 
 	test("renders remove buttons for each chip", () => {
 		render(wrap(<EmptySearchState />));
-		expect(screen.getByLabelText("Remove dior")).toBeTruthy();
-		expect(screen.getByLabelText("Remove cerave")).toBeTruthy();
+		expect(screen.getByLabelText("Remove cleaning")).toBeTruthy();
+		expect(screen.getByLabelText("Remove plumber")).toBeTruthy();
 	});
 });

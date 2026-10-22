@@ -89,16 +89,16 @@ export const KIND_STYLE: Record<EngagementKind, KindStyle> = {
 		label: "Blocked time",
 		stripeClass: "border-l-taupe/60",
 		swatchClass:
-			"bg-[repeating-linear-gradient(135deg,rgba(122,107,90,0.55)_0px,rgba(122,107,90,0.55)_2px,transparent_2px,transparent_6px)]",
-		fillClass: "bg-[repeating-linear-gradient(135deg,rgba(122,107,90,0.14)_0px,rgba(122,107,90,0.14)_3px,transparent_3px,transparent_9px)] bg-linen",
+			"bg-[repeating-linear-gradient(135deg,rgba(100,116,139,0.55)_0px,rgba(100,116,139,0.55)_2px,transparent_2px,transparent_6px)]",
+		fillClass: "bg-[repeating-linear-gradient(135deg,rgba(100,116,139,0.14)_0px,rgba(100,116,139,0.14)_3px,transparent_3px,transparent_9px)] bg-linen",
 		textClass: "text-taupe",
 	},
 	break: {
 		label: "Break",
 		stripeClass: "border-l-taupe/60",
 		swatchClass:
-			"bg-[repeating-linear-gradient(135deg,rgba(122,107,90,0.55)_0px,rgba(122,107,90,0.55)_2px,transparent_2px,transparent_6px)]",
-		fillClass: "bg-[repeating-linear-gradient(135deg,rgba(122,107,90,0.14)_0px,rgba(122,107,90,0.14)_3px,transparent_3px,transparent_9px)] bg-linen",
+			"bg-[repeating-linear-gradient(135deg,rgba(100,116,139,0.55)_0px,rgba(100,116,139,0.55)_2px,transparent_2px,transparent_6px)]",
+		fillClass: "bg-[repeating-linear-gradient(135deg,rgba(100,116,139,0.14)_0px,rgba(100,116,139,0.14)_3px,transparent_3px,transparent_9px)] bg-linen",
 		textClass: "text-taupe",
 	},
 };

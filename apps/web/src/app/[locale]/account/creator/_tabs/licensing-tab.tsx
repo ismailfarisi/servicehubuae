@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState } from "react";
-import { MAISON_SANS, MAISON_SERIF } from "@/components/ui/maison-primitives";
 import {
   BOX,
   BUTTON_CLASS,
@@ -46,19 +45,9 @@ const STATUS_TONE: Record<LicenseOfferItem["status"], Tone> = {
   cancelled: "muted",
 };
 
-const META_LABEL = {
-  fontFamily: MAISON_SANS,
-  fontSize: 10,
-  letterSpacing: "0.18em",
-  textTransform: "uppercase",
-  color: "hsl(var(--nl-russet))",
-} as const;
+const META_LABEL = "text-xs font-medium text-nl-russet";
 
-const META_VALUE = {
-  fontFamily: MAISON_SANS,
-  fontSize: 12,
-  color: "hsl(var(--nl-cacao))",
-} as const;
+const META_VALUE = "text-sm text-nl-cacao";
 
 function aed(fils: string): string {
   return `AED ${(Number(fils) / 100).toFixed(2)}`;
@@ -97,15 +86,8 @@ function OfferHistory({ offerId }: { offerId: string }) {
   return (
     <div className="mt-2 space-y-1">
       {events.map((ev) => (
-        <div
-          key={ev.id}
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 11.5,
-            color: "hsl(var(--nl-russet))",
-          }}
-        >
-          <span className="capitalize" style={{ color: "hsl(var(--nl-cacao))" }}>
+        <div key={ev.id} className="text-xs text-nl-russet">
+          <span className="capitalize text-nl-cacao">
             {ev.actor}
           </span>{" "}
           {ev.event_type}
@@ -246,34 +228,14 @@ export function LicensingTab() {
                 <div className="min-w-0">
                   <a
                     href={`/reels/${o.reel_id}`}
-                    className="uppercase transition-colors hover:opacity-70"
-                    style={{
-                      fontFamily: MAISON_SANS,
-                      fontSize: 10,
-                      letterSpacing: "0.18em",
-                      color: "hsl(var(--nl-amber-text))",
-                    }}
+                    className="text-xs font-semibold text-nl-amber-text hover:underline"
                   >
                     Reel {o.reel_id.slice(0, 8)}…
                   </a>
-                  <div
-                    className="mt-1"
-                    style={{
-                      fontFamily: MAISON_SERIF,
-                      fontSize: 22,
-                      lineHeight: 1.15,
-                      color: "hsl(var(--nl-cacao))",
-                    }}
-                  >
+                  <div className="mt-1 font-display text-2xl font-bold leading-tight tracking-tight text-nl-cacao">
                     {aed(o.amount_fils)}
                   </div>
-                  <div
-                    style={{
-                      fontFamily: MAISON_SANS,
-                      fontSize: 11.5,
-                      color: "hsl(var(--nl-russet))",
-                    }}
-                  >
+                  <div className="text-xs text-nl-russet">
                     You receive {aedNet(o.amount_fils)} (after 20% fee)
                   </div>
                 </div>
@@ -282,31 +244,23 @@ export function LicensingTab() {
 
               <div className="mt-3.5 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
                 <div>
-                  <div style={META_LABEL}>Rights</div>
-                  <div style={META_VALUE}>{SCOPE_LABEL[o.rights_scope]}</div>
+                  <div className={META_LABEL}>Rights</div>
+                  <div className={META_VALUE}>{SCOPE_LABEL[o.rights_scope]}</div>
                 </div>
                 <div>
-                  <div style={META_LABEL}>Funded</div>
-                  <div style={META_VALUE}>{FUNDING_LABEL[o.funding_source]}</div>
+                  <div className={META_LABEL}>Funded</div>
+                  <div className={META_VALUE}>{FUNDING_LABEL[o.funding_source]}</div>
                 </div>
                 <div>
-                  <div style={META_LABEL}>Expires</div>
-                  <div style={META_VALUE}>
+                  <div className={META_LABEL}>Expires</div>
+                  <div className={META_VALUE}>
                     {new Date(o.expires_at).toLocaleString()}
                   </div>
                 </div>
               </div>
 
               {o.message && (
-                <div
-                  className="mt-3"
-                  style={{
-                    fontFamily: MAISON_SERIF,
-                    fontStyle: "italic",
-                    fontSize: 14,
-                    color: "hsl(var(--nl-russet))",
-                  }}
-                >
+                <div className="mt-3 rounded-lg bg-nl-pearl px-3 py-2 text-sm text-nl-russet">
                   “{o.message}”
                 </div>
               )}
@@ -355,11 +309,7 @@ export function LicensingTab() {
                   {/* Counter inline form */}
                   {isCounterOpen && (
                     <div
-                      className="flex flex-wrap items-end gap-3 p-3"
-                      style={{
-                        border: "1px solid rgba(44,24,16,0.10)",
-                        background: "rgba(255,255,255,0.4)",
-                      }}
+                      className="flex flex-wrap items-end gap-3 rounded-xl border border-nl-cacao/10 bg-nl-pearl/60 p-3"
                     >
                       <div className="flex flex-col">
                         <FieldLabel htmlFor={`counter-${o.id}`}>
@@ -423,13 +373,7 @@ export function LicensingTab() {
                   onClick={() =>
                     setShowHistory((prev) => ({ ...prev, [o.id]: !prev[o.id] }))
                   }
-                  className="uppercase transition-colors hover:opacity-70"
-                  style={{
-                    fontFamily: MAISON_SANS,
-                    fontSize: 10,
-                    letterSpacing: "0.18em",
-                    color: "hsl(var(--nl-amber-text))",
-                  }}
+                  className="text-sm font-semibold text-nl-amber-text hover:underline"
                 >
                   {isHistoryOpen ? "Hide history" : "View history"}
                 </button>

@@ -14,9 +14,8 @@ describe("MetaWhatsAppDispatcher", () => {
   it("maps variables through the registry's paramOrder into positional body params", async () => {
     const { dispatcher, whatsapp } = buildDispatcher();
 
-    const sent = await dispatcher.send("+971501234567", "order_shipped", {
-      order_number: "ORD-9",
-      tracking_url: "https://track/xyz",
+    const sent = await dispatcher.send("+971501234567", "payout_sent", {
+      amount: "1,250.00",
       unrelated: "ignored",
     });
 
@@ -24,15 +23,12 @@ describe("MetaWhatsAppDispatcher", () => {
     expect(whatsapp.sendTemplate).toHaveBeenCalledTimes(1);
     const [to, name, components] = whatsapp.sendTemplate.mock.calls[0]! as any[];
     expect(to).toBe("+971501234567");
-    expect(name).toBe("order_shipped");
-    // paramOrder pins {{1}} = order_number, {{2}} = tracking_url.
+    expect(name).toBe("payout_sent");
+    // paramOrder pins {{1}} = amount.
     expect(components).toEqual([
       {
         type: "body",
-        parameters: [
-          { type: "text", text: "ORD-9" },
-          { type: "text", text: "https://track/xyz" },
-        ],
+        parameters: [{ type: "text", text: "1,250.00" }],
       },
     ]);
   });
@@ -40,12 +36,12 @@ describe("MetaWhatsAppDispatcher", () => {
   it("skips the send when a declared template param is missing", async () => {
     const { dispatcher, whatsapp } = buildDispatcher();
 
-    // order_shipped declares tracking_url, but a shipped event carrying no
-    // tracking metadata leaves it blank — and Meta rejects a blank body
-    // parameter, so calling out is guaranteed to fail. Skip like an unmapped
-    // type instead of firing a doomed request.
-    const sent = await dispatcher.send("+971501234567", "order_shipped", {
-      order_number: "ORD-9",
+    // payout_sent declares amount; an event without it would leave the body
+    // parameter blank — and Meta rejects a blank body parameter, so calling
+    // out is guaranteed to fail. Skip like an unmapped type instead of firing
+    // a doomed request.
+    const sent = await dispatcher.send("+971501234567", "payout_sent", {
+      reference: "PO-9",
     });
 
     expect(sent).toBe(false);
@@ -67,15 +63,15 @@ describe("MetaWhatsAppDispatcher", () => {
       Promise.reject(new Error("WhatsApp send failed: 500")),
     );
 
-    await expect(
-      dispatcher.send("+971501234567", "order_confirmed", { order_number: "1" }),
-    ).rejects.toThrow("WhatsApp send failed");
+    await expect(dispatcher.send("+971501234567", "payout_sent", { amount: "1" })).rejects.toThrow(
+      "WhatsApp send failed",
+    );
   });
 });
 
 describe("StubWhatsAppDispatcher", () => {
   it("logs and reports success", async () => {
     const stub = new StubWhatsAppDispatcher();
-    await expect(stub.send("+971501234567", "order_confirmed", {})).resolves.toBe(true);
+    await expect(stub.send("+971501234567", "payout_sent", {})).resolves.toBe(true);
   });
 });

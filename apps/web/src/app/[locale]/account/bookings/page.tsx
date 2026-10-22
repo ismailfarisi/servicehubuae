@@ -3,17 +3,13 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
+import { CalendarClock } from "lucide-react";
 import { useMyBookingsBucket } from "@/lib/queries/booking";
 import { formatDateInZone, formatPrice, formatTimeInZone } from "@/lib/utils";
 import type { Booking } from "@/lib/booking/types";
-import { BOOKING_STATUS_BADGE_STYLE, bookingStatusTone } from "@/lib/booking/status";
+import { BOOKING_STATUS_BADGE_CLASS, bookingStatusTone } from "@/lib/booking/status";
 import { resolveBookingTimeZone } from "./booking-display";
-import {
-  Eyebrow,
-  SerifTitle,
-  MAISON_SERIF,
-  MAISON_SANS,
-} from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 
 
 type Bucket = "upcoming" | "past";
@@ -49,13 +45,17 @@ export default function MyBookingsPage() {
     <div>
       <div className="mb-5">
         <Eyebrow>{t("eyebrow")}</Eyebrow>
-        <SerifTitle size={26} className="mt-1.5">
+        <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
           {t("title")}
-        </SerifTitle>
+        </h1>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-2 mb-5" role="tablist" aria-label={t("title")}>
+      <div
+        className="inline-flex gap-1 mb-5 rounded-lg bg-nl-pearl p-1"
+        role="tablist"
+        aria-label={t("title")}
+      >
         {(["upcoming", "past"] as const).map((b) => (
           <button
             key={b}
@@ -63,15 +63,11 @@ export default function MyBookingsPage() {
             role="tab"
             aria-selected={bucket === b}
             onClick={() => setBucket(b)}
-            className="px-4 py-2 uppercase transition-colors"
-            style={{
-              fontFamily: MAISON_SANS,
-              fontSize: 10.5,
-              letterSpacing: "0.18em",
-              border: `1px solid ${bucket === b ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.16)"}`,
-              background: bucket === b ? "rgba(184,115,51,0.08)" : "transparent",
-              color: bucket === b ? "hsl(var(--nl-espresso))" : "hsl(var(--nl-russet))",
-            }}
+            className={`rounded-md px-4 py-2 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-nl-amber ${
+              bucket === b
+                ? "bg-nl-linen font-semibold text-nl-amber-text shadow-sm"
+                : "font-medium text-nl-russet hover:text-nl-cacao"
+            }`}
           >
             {b === "upcoming" ? t("tabUpcoming") : t("tabPast")}
           </button>
@@ -79,56 +75,30 @@ export default function MyBookingsPage() {
       </div>
 
       {query.isPending ? (
-        <div
-          style={{
-            fontFamily: MAISON_SERIF,
-            fontStyle: "italic",
-            fontSize: 16,
-            color: "hsl(var(--nl-russet))",
-          }}
-        >
-          {tCommon("loading")}
-        </div>
+        <div className="text-sm text-nl-russet">{tCommon("loading")}</div>
       ) : query.isError ? (
-        <div
-          className="py-8 text-center"
-          style={{ border: "1px solid rgba(184,60,40,0.3)" }}
-        >
-          <p style={{ fontFamily: MAISON_SANS, fontSize: 12.5, color: "hsl(var(--nl-russet))" }}>
-            {t("loadError")}
-          </p>
+        <div className="rounded-2xl border border-red-200 bg-red-50/60 py-8 text-center">
+          <p className="text-sm text-nl-russet">{t("loadError")}</p>
           <button
             type="button"
             onClick={() => query.refetch()}
-            className="mt-2 uppercase"
-            style={{
-              fontFamily: MAISON_SANS,
-              fontSize: 10.5,
-              letterSpacing: "0.16em",
-              color: "hsl(var(--nl-amber))",
-            }}
+            className="mt-2 text-sm font-semibold text-nl-amber-text hover:underline"
           >
             {tCommon("retry")}
           </button>
         </div>
       ) : bookings.length === 0 ? (
-        <div
-          className="py-12 text-center"
-          style={{
-            fontFamily: MAISON_SERIF,
-            fontStyle: "italic",
-            fontSize: 16,
-            color: "hsl(var(--nl-russet))",
-          }}
-        >
-          {t("noBookings")}
+        <div className="rounded-2xl border border-nl-cacao/10 bg-nl-linen px-6 py-12 text-center shadow-sm">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-nl-pearl text-nl-amber">
+            <CalendarClock className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
+          </div>
+          <p className="text-sm text-nl-russet">{t("noBookings")}</p>
         </div>
       ) : (
         <>
-          <div className="space-y-2 md:space-y-3">
+          <div className="space-y-3">
             {bookings.map((booking) => {
               const tone = bookingStatusTone(booking.status);
-              const style = BOOKING_STATUS_BADGE_STYLE[tone];
               // Vendors can operate outside Asia/Dubai (LocationForm offers
               // Asia/Riyadh, Africa/Cairo, Asia/Kolkata, UTC and preserves
               // arbitrary zones), so never silently assert a zone: when the
@@ -138,52 +108,29 @@ export default function MyBookingsPage() {
                 <Link
                   key={booking.id}
                   href={`/${locale}/account/bookings/${booking.id}`}
-                  className="block p-3.5 md:p-4 transition-colors"
-                  style={{
-                    border: "1px solid rgba(44,24,16,0.10)",
-                    background: "rgba(44,24,16,0.02)",
-                  }}
+                  className="block rounded-2xl border border-nl-cacao/10 bg-nl-linen p-4 shadow-sm transition-shadow hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-nl-amber"
                 >
                   <div className="flex items-center justify-between gap-2">
-                    <span
-                      className="truncate"
-                      style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-cacao))" }}
-                    >
+                    <span className="truncate text-sm font-semibold text-nl-cacao">
                       {booking.service_name}
                     </span>
                     <span
-                      className="uppercase whitespace-nowrap"
-                      style={{
-                        fontFamily: MAISON_SANS,
-                        fontSize: 10,
-                        letterSpacing: "0.18em",
-                        padding: "3px 8px",
-                        ...style,
-                      }}
+                      className={`inline-flex items-center whitespace-nowrap px-2.5 py-0.5 text-xs font-medium ${BOOKING_STATUS_BADGE_CLASS[tone]}`}
                     >
                       {t(`status.${booking.status}` as any)}
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-2 mt-1.5">
-                    <span
-                      className="truncate"
-                      style={{ fontFamily: MAISON_SANS, fontSize: 12, color: "hsl(var(--nl-russet))" }}
-                    >
+                    <span className="truncate text-sm text-nl-russet">
                       {formatDateInZone(booking.starts_at, zone.timeZone, locale)} ·{" "}
                       {formatTimeInZone(booking.starts_at, zone.timeZone, locale)}
                       {!zone.confirmed && ` (${zone.timeZone})`}
                     </span>
-                    <span
-                      className="whitespace-nowrap"
-                      style={{ fontFamily: MAISON_SERIF, fontSize: 15, color: "hsl(var(--nl-cacao))" }}
-                    >
+                    <span className="whitespace-nowrap font-display text-base font-bold text-nl-cacao">
                       {formatPrice(booking.price_fils, "AED", locale)}
                     </span>
                   </div>
-                  <div
-                    className="mt-1 truncate"
-                    style={{ fontFamily: MAISON_SANS, fontSize: 11, color: "hsl(var(--nl-russet))" }}
-                  >
+                  <div className="mt-1 truncate text-xs text-nl-russet">
                     #{booking.booking_number}
                   </div>
                 </Link>
@@ -191,10 +138,7 @@ export default function MyBookingsPage() {
             })}
           </div>
 
-          <div
-            className="mt-4 text-center"
-            style={{ fontFamily: MAISON_SANS, fontSize: 11, color: "hsl(var(--nl-russet))" }}
-          >
+          <div className="mt-4 text-center text-xs text-nl-russet">
             {t("showingCount", { shown: bookings.length, total })}
           </div>
 
@@ -204,13 +148,7 @@ export default function MyBookingsPage() {
                 type="button"
                 onClick={() => query.fetchNextPage()}
                 disabled={query.isFetchingNextPage}
-                className="uppercase disabled:opacity-50"
-                style={{
-                  fontFamily: MAISON_SANS,
-                  fontSize: 10.5,
-                  letterSpacing: "0.18em",
-                  color: "hsl(var(--nl-amber))",
-                }}
+                className="rounded-lg border border-nl-cacao/15 bg-nl-linen px-5 py-2.5 text-sm font-semibold text-nl-cacao hover:bg-nl-pearl transition-colors disabled:opacity-50"
               >
                 {query.isFetchingNextPage ? tCommon("loading") : t("loadMore")}
               </button>

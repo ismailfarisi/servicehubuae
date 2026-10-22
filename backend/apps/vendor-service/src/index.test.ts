@@ -4,16 +4,16 @@ import { VENDOR_TRANSITIONS, isValidTransition } from "./domain/types.ts";
 
 describe("vendor-service", () => {
   function createHealthApp() {
-    return new Elysia({ prefix: "/vendors" }).get("/health", () => ({
+    return new Elysia().get("/health", () => ({
       status: "ok",
       service: "vendor-service",
       timestamp: new Date().toISOString(),
     }));
   }
 
-  test("GET /vendors/health returns 200", async () => {
+  test("GET /health returns 200", async () => {
     const app = createHealthApp();
-    const res = await app.handle(new Request("http://localhost/vendors/health"));
+    const res = await app.handle(new Request("http://localhost/health"));
     expect(res.status).toBe(200);
     const body = (await res.json()) as any;
     expect(body.status).toBe("ok");

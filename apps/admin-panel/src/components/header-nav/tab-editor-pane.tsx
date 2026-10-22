@@ -1,6 +1,5 @@
 "use client";
 
-import { BrandListEditor } from "./brand-list-editor";
 import { PromoTileEditor } from "./promo-tile-editor";
 import type { HeaderNavTab } from "./types";
 
@@ -15,11 +14,11 @@ export function TabEditorPane({ tab, onChange }: Props) {
 	return (
 		<div className="space-y-6 p-4">
 			<section>
-				<h3 className="text-sm font-semibold text-nl-cacao mb-2">Label</h3>
+				<h3 className="text-sm font-semibold text-cacao mb-2">Label</h3>
 				<div className="grid grid-cols-2 gap-2">
 					{LOCALES.map((loc) => (
 						<label key={loc} className="block">
-							<span className="text-xs uppercase tracking-[0.18em] text-nl-russet">
+							<span className="text-xs uppercase tracking-[0.18em] text-taupe">
 								{loc}
 							</span>
 							<input
@@ -31,7 +30,7 @@ export function TabEditorPane({ tab, onChange }: Props) {
 										label: { ...tab.label, [loc]: e.target.value },
 									})
 								}
-								className="mt-1 w-full border border-nl-cacao/20 px-2 py-1.5 text-sm bg-transparent"
+								className="mt-1 w-full border border-cacao/20 px-2 py-1.5 text-sm bg-transparent"
 							/>
 						</label>
 					))}
@@ -39,7 +38,7 @@ export function TabEditorPane({ tab, onChange }: Props) {
 			</section>
 
 			<section>
-				<h3 className="text-sm font-semibold text-nl-cacao mb-2">Behavior</h3>
+				<h3 className="text-sm font-semibold text-cacao mb-2">Behavior</h3>
 				<label className="flex items-center gap-2 text-sm">
 					<input
 						type="checkbox"
@@ -53,15 +52,7 @@ export function TabEditorPane({ tab, onChange }: Props) {
 			</section>
 
 			<section>
-				<h3 className="text-sm font-semibold text-nl-cacao mb-2">Brand list</h3>
-				<BrandListEditor
-					value={tab.brand_list}
-					onChange={(brand_list) => onChange({ ...tab, brand_list })}
-				/>
-			</section>
-
-			<section>
-				<h3 className="text-sm font-semibold text-nl-cacao mb-2">
+				<h3 className="text-sm font-semibold text-cacao mb-2">
 					Promo tiles ({tab.promo_tiles.length}/3)
 				</h3>
 				<PromoTileEditor

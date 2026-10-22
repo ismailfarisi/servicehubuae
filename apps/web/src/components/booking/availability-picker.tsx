@@ -3,18 +3,14 @@
 /**
  * Availability picker — the conversion surface of the service PDP.
  *
- * Design pass (frontend-design skill, applied to the existing MyPickUAE
- * "Maison" brand system rather than inventing a new one):
- * - Date strip: horizontal-scroll day tabs (weekday in tracked uppercase
- *   sans, day number in serif) with a hairline underline that becomes solid
- *   amber when selected — no filled pill background, consistent with the
- *   brand's hairline-border / no-shadow language.
+ * Design (MyPickUAE blue & white UI):
+ * - Date strip: horizontal-scroll rounded day tabs (short weekday over a bold
+ *   day number); the selected day fills brand blue with white text.
  * - Slot grid: slots are grouped into Morning / Afternoon / Evening — a
  *   grouping that's true to the content (time of day genuinely matters when
  *   picking an appointment), not a decorative numbering scheme. Each slot is
- *   an outline pill; the selected slot fills amber and is "stamped" with the
- *   brand's crescent mark (MaisonMark) — ties the brand identity to the
- *   exact conversion moment instead of a generic checkmark.
+ *   a rounded outline button; the selected slot fills brand blue with a
+ *   check icon and exposes `aria-pressed`.
  * - Staff filter: a horizontal chip row ("Any professional" + initials
  *   avatars) sitting above the grid, changing the filter re-fetches
  *   availability with staff= (the backend merges slots across staff when no
@@ -29,7 +25,7 @@
  * - Timezone caption sits directly under the section heading so the
  *   time-of-day labels are never ambiguous.
  * - Loading uses the same skeleton-pulse convention as the product PDP;
- *   empty/error states are quiet, serif-italic, non-alarming.
+ *   empty/error states are quiet, rounded panels, non-alarming.
  *
  * Timezone correctness: the date-strip window and every day-tab key are
  * computed ENTIRELY in the offering's own timezone (never the browser's) —
@@ -42,7 +38,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Check, ChevronLeft, ChevronRight } from "lucide-react";
 import {
   addDaysToDateKey,
   dateKeyInZone,
@@ -53,17 +49,12 @@ import {
   todayKeyInZone,
 } from "@/lib/utils";
 import { useAvailability, useOfferingStaff } from "@/lib/queries/booking";
-import { useAreas, type DeliveryZone } from "@/lib/queries/areas";
+import { useAreas, type Area } from "@/lib/queries/areas";
 import type {
   AvailabilitySlot,
   LocationMode,
   VendorLocation,
 } from "@/lib/booking/types";
-import {
-  MAISON_SANS,
-  MAISON_SERIF,
-  MaisonMark,
-} from "@/components/ui/maison-primitives";
 
 const WINDOW_DAYS = 14;
 
@@ -337,7 +328,11 @@ export function AvailabilityPicker({
     <section aria-label={t("selectDate")}>
       {/* Visit mode toggle (either-mode offerings only) */}
       {locationMode === "either" && (
-        <div className="flex gap-2 mb-4" role="group" aria-label={t("locationLabel")}>
+        <div
+          className="mb-4 flex gap-1 rounded-xl bg-nl-pearl p-1"
+          role="group"
+          aria-label={t("locationLabel")}
+        >
           {(["at_premises", "home_visit"] as const).map((mode) => (
             <button
               key={mode}
@@ -347,25 +342,11 @@ export function AvailabilityPicker({
                 setSelectedStaffId(undefined);
                 setSelectedSlot(null);
               }}
-              className="flex-1 py-2.5 text-center uppercase transition-colors"
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 10.5,
-                letterSpacing: "0.16em",
-                border: `1px solid ${
-                  visitChoice === mode
-                    ? "hsl(var(--nl-amber))"
-                    : "rgba(44,24,16,0.16)"
-                }`,
-                background:
-                  visitChoice === mode
-                    ? "rgba(184,115,51,0.08)"
-                    : "transparent",
-                color:
-                  visitChoice === mode
-                    ? "hsl(var(--nl-espresso))"
-                    : "hsl(var(--nl-russet))",
-              }}
+              className={`min-h-[40px] flex-1 rounded-lg px-3 py-2 text-center text-sm font-semibold transition-colors ${
+                visitChoice === mode
+                  ? "bg-nl-linen text-nl-amber-text shadow-sm"
+                  : "text-nl-russet hover:text-nl-cacao"
+              }`}
             >
               {mode === "at_premises"
                 ? t("visitModeAtPremises")
@@ -376,16 +357,7 @@ export function AvailabilityPicker({
       )}
 
       {isHomeVisit && (
-        <p
-          className="mb-4"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 12,
-            color: "hsl(var(--nl-russet))",
-          }}
-        >
-          {t("homeVisitNote")}
-        </p>
+        <p className="mb-4 text-sm text-nl-russet">{t("homeVisitNote")}</p>
       )}
 
       {/* Area selector (home-visit offerings — required before any fetch) */}
@@ -393,13 +365,7 @@ export function AvailabilityPicker({
         <div className="mb-4">
           <label
             htmlFor="booking-area-select"
-            className="block mb-1.5 uppercase"
-            style={{
-              fontFamily: MAISON_SANS,
-              fontSize: 10,
-              letterSpacing: "0.18em",
-              color: "hsl(var(--nl-russet))",
-            }}
+            className="mb-1.5 block text-sm font-semibold text-nl-cacao"
           >
             {t("selectArea")}
           </label>
@@ -420,15 +386,7 @@ export function AvailabilityPicker({
       {/* Location selector (at_premises / either-at-premises with multiple branches) */}
       {showsPremises && activeLocations.length > 1 && (
         <div className="mb-4">
-          <label
-            className="block mb-1.5 uppercase"
-            style={{
-              fontFamily: MAISON_SANS,
-              fontSize: 10,
-              letterSpacing: "0.18em",
-              color: "hsl(var(--nl-russet))",
-            }}
-          >
+          <label className="mb-1.5 block text-sm font-semibold text-nl-cacao">
             {t("selectLocation")}
           </label>
           <div className="flex flex-wrap gap-2">
@@ -441,21 +399,11 @@ export function AvailabilityPicker({
                   setSelectedStaffId(undefined);
                   setSelectedSlot(null);
                 }}
-                className="px-3 py-2 transition-colors"
-                style={{
-                  fontFamily: MAISON_SANS,
-                  fontSize: 12,
-                  border: `1px solid ${
-                    selectedLocationId === loc.id
-                      ? "hsl(var(--nl-amber))"
-                      : "rgba(44,24,16,0.16)"
-                  }`,
-                  background:
-                    selectedLocationId === loc.id
-                      ? "rgba(184,115,51,0.08)"
-                      : "transparent",
-                  color: "hsl(var(--nl-cacao))",
-                }}
+                className={`rounded-lg border px-3.5 py-2 text-sm font-medium transition-colors ${
+                  selectedLocationId === loc.id
+                    ? "border-nl-amber bg-nl-pearl text-nl-amber-text"
+                    : "border-nl-cacao/15 bg-nl-linen text-nl-cacao hover:border-nl-amber/50"
+                }`}
               >
                 {loc.name}
               </button>
@@ -483,48 +431,18 @@ export function AvailabilityPicker({
 
       {/* Timezone caption */}
       {!selectionPending && (
-        <p
-          className="mb-2"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 10.5,
-            letterSpacing: "0.06em",
-            color: "hsl(var(--nl-russet))",
-          }}
-        >
+        <p className="mb-2 text-xs text-nl-russet">
           {t("timezoneNote", { tz: timezone })}
         </p>
       )}
 
       {/* Unserved-area empty state (distinct from "no openings for this day") */}
       {!selectionPending && unservedArea && (
-        <div
-          className="py-8 text-center"
-          style={{
-            border: "1px solid rgba(44,24,16,0.08)",
-            background: "rgba(44,24,16,0.015)",
-          }}
-        >
-          <p
-            style={{
-              fontFamily: MAISON_SERIF,
-              fontStyle: "italic",
-              fontSize: 14,
-              color: "hsl(var(--nl-cacao))",
-            }}
-          >
+        <div className="rounded-xl border border-nl-cacao/10 bg-nl-pearl px-4 py-8 text-center">
+          <p className="text-sm font-semibold text-nl-cacao">
             {t("unservedArea", { area: selectedArea?.name ?? "" })}
           </p>
-          <p
-            className="mt-1"
-            style={{
-              fontFamily: MAISON_SANS,
-              fontSize: 11,
-              color: "hsl(var(--nl-russet))",
-            }}
-          >
-            {t("unservedAreaHint")}
-          </p>
+          <p className="mt-1 text-xs text-nl-russet">{t("unservedAreaHint")}</p>
         </div>
       )}
 
@@ -540,13 +458,12 @@ export function AvailabilityPicker({
               }}
               disabled={windowOffset === 0}
               aria-label={t("earlier")}
-              className="shrink-0 h-9 w-7 flex items-center justify-center disabled:opacity-25"
-              style={{ color: "hsl(var(--nl-russet))" }}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-nl-russet transition-colors hover:bg-nl-pearl disabled:opacity-25 disabled:hover:bg-transparent"
             >
-              <ChevronLeft className="h-4 w-4 rtl:rotate-180" strokeWidth={1.5} />
+              <ChevronLeft className="h-4 w-4 rtl:rotate-180" strokeWidth={2} />
             </button>
             <div
-              className="flex-1 flex gap-1.5 overflow-x-auto pb-1"
+              className="flex flex-1 gap-1.5 overflow-x-auto px-0.5 py-1"
               style={{ scrollbarWidth: "thin" }}
             >
               {dayEntries.map(({ key }) => {
@@ -559,37 +476,25 @@ export function AvailabilityPicker({
                     key={key}
                     type="button"
                     onClick={() => setSelectedDateKey(key)}
-                    className="shrink-0 flex flex-col items-center justify-center transition-colors"
-                    style={{
-                      width: 52,
-                      height: 64,
-                      fontFamily: MAISON_SANS,
-                      borderBottom: `2px solid ${
-                        isSelected
-                          ? "hsl(var(--nl-amber))"
-                          : "rgba(44,24,16,0.12)"
-                      }`,
-                      opacity: availability && count === 0 ? 0.45 : 1,
-                    }}
+                    className={`relative flex h-16 w-[52px] shrink-0 flex-col items-center justify-center gap-0.5 rounded-xl border transition-colors ${
+                      isSelected
+                        ? "border-nl-amber bg-nl-amber text-white shadow-sm"
+                        : "border-nl-cacao/10 bg-nl-linen text-nl-cacao hover:border-nl-amber/50 hover:bg-nl-pearl"
+                    }`}
+                    style={{ opacity: availability && count === 0 ? 0.45 : 1 }}
                   >
                     {isToday && (
                       <span
-                        style={{
-                          width: 4,
-                          height: 4,
-                          borderRadius: "50%",
-                          background: "hsl(var(--nl-amber))",
-                          marginBottom: 2,
-                        }}
+                        aria-hidden="true"
+                        className={`absolute top-1.5 h-1 w-1 rounded-full ${
+                          isSelected ? "bg-white" : "bg-nl-amber"
+                        }`}
                       />
                     )}
                     <span
-                      className="uppercase"
-                      style={{
-                        fontSize: 9,
-                        letterSpacing: "0.1em",
-                        color: "hsl(var(--nl-russet))",
-                      }}
+                      className={`text-xs font-medium ${
+                        isSelected ? "text-white/80" : "text-nl-russet"
+                      }`}
                     >
                       {formatDateInZone(
                         dateKeyToUtcIso(key),
@@ -598,15 +503,7 @@ export function AvailabilityPicker({
                         { weekday: "short" },
                       )}
                     </span>
-                    <span
-                      style={{
-                        fontFamily: MAISON_SERIF,
-                        fontSize: 18,
-                        color: isSelected
-                          ? "hsl(var(--nl-amber))"
-                          : "hsl(var(--nl-cacao))",
-                      }}
-                    >
+                    <span className="font-display text-lg font-bold leading-none">
                       {dayNumber}
                     </span>
                   </button>
@@ -622,10 +519,9 @@ export function AvailabilityPicker({
               }}
               disabled={laterDisabled}
               aria-label={t("later")}
-              className="shrink-0 h-9 w-7 flex items-center justify-center disabled:opacity-25"
-              style={{ color: "hsl(var(--nl-russet))" }}
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-nl-russet transition-colors hover:bg-nl-pearl disabled:opacity-25 disabled:hover:bg-transparent"
             >
-              <ChevronRight className="h-4 w-4 rtl:rotate-180" strokeWidth={1.5} />
+              <ChevronRight className="h-4 w-4 rtl:rotate-180" strokeWidth={2} />
             </button>
           </div>
         </div>
@@ -680,28 +576,12 @@ export function AvailabilityPicker({
           type="button"
           disabled={!selectedSlot}
           onClick={handleContinue}
-          className="w-full py-3.5 uppercase transition-opacity disabled:opacity-40"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 11,
-            letterSpacing: "0.2em",
-            color: "hsl(var(--nl-espresso))",
-            background: "hsl(var(--nl-amber))",
-            border: "1px solid hsl(var(--nl-amber))",
-          }}
+          className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90 disabled:cursor-not-allowed disabled:opacity-40"
         >
           {t("continue")}
         </button>
         {!selectedSlot && (
-          <p
-            className="mt-2 text-center"
-            style={{
-              fontFamily: MAISON_SERIF,
-              fontStyle: "italic",
-              fontSize: 12,
-              color: "hsl(var(--nl-russet))",
-            }}
-          >
+          <p className="mt-2 text-center text-xs text-nl-russet">
             {t("selectPrompt")}
           </p>
         )}
@@ -718,7 +598,7 @@ function AreaSelect({
   value,
   onChange,
 }: {
-  areas: DeliveryZone[];
+  areas: Area[];
   isPending: boolean;
   isError: boolean;
   onRetry: () => void;
@@ -728,19 +608,14 @@ function AreaSelect({
   const t = useTranslations("booking");
 
   if (isPending) {
-    return (
-      <div
-        className="h-11 animate-pulse"
-        style={{ background: "rgba(44,24,16,0.06)" }}
-      />
-    );
+    return <div className="h-11 animate-pulse rounded-lg bg-nl-pearl" />;
   }
 
   if (isError) {
     return <ErrorNote message={t("areaLoadError")} onRetry={onRetry} />;
   }
 
-  const byEmirate = new Map<string, DeliveryZone[]>();
+  const byEmirate = new Map<string, Area[]>();
   for (const area of areas) {
     const bucket = byEmirate.get(area.emirate);
     if (bucket) bucket.push(area);
@@ -752,14 +627,7 @@ function AreaSelect({
       id="booking-area-select"
       value={value ?? ""}
       onChange={(e) => onChange(e.target.value || undefined)}
-      className="w-full bg-transparent outline-none"
-      style={{
-        fontFamily: MAISON_SANS,
-        fontSize: 13,
-        border: "1px solid rgba(44,24,16,0.16)",
-        padding: "10px 12px",
-        color: "hsl(var(--nl-cacao))",
-      }}
+      className="w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2.5 text-sm text-nl-cacao outline-none transition focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
     >
       <option value="" disabled>
         {t("selectAreaPlaceholder")}
@@ -795,17 +663,7 @@ function SlotGroup({
   if (slots.length === 0) return null;
   return (
     <div>
-      <div
-        className="mb-2"
-        style={{
-          fontFamily: MAISON_SERIF,
-          fontStyle: "italic",
-          fontSize: 12,
-          color: "hsl(var(--nl-amber))",
-        }}
-      >
-        {label}
-      </div>
+      <div className="mb-2 text-xs font-semibold text-nl-russet">{label}</div>
       <div
         className="grid gap-2"
         style={{ gridTemplateColumns: "repeat(auto-fill, minmax(84px, 1fr))" }}
@@ -818,22 +676,16 @@ function SlotGroup({
               key={slot.start}
               type="button"
               onClick={() => onSelect(slot)}
-              className="py-2.5 flex items-center justify-center gap-1 transition-colors"
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 12.5,
-                border: `1px solid ${
-                  isSelected ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.16)"
-                }`,
-                background: isSelected
-                  ? "hsl(var(--nl-amber))"
-                  : "rgba(255,255,255,0.55)",
-                color: isSelected
-                  ? "hsl(var(--nl-espresso))"
-                  : "hsl(var(--nl-cacao))",
-              }}
+              aria-pressed={isSelected}
+              className={`flex min-h-[40px] items-center justify-center gap-1 rounded-lg border py-2 text-sm font-medium transition-colors ${
+                isSelected
+                  ? "border-nl-amber bg-nl-amber text-white shadow-sm"
+                  : "border-nl-cacao/15 bg-nl-linen text-nl-cacao hover:border-nl-amber hover:bg-nl-pearl"
+              }`}
             >
-              {isSelected && <MaisonMark size={9} />}
+              {isSelected && (
+                <Check aria-hidden="true" className="h-3.5 w-3.5" strokeWidth={2.5} />
+              )}
               {formatTimeInZone(slot.start, timezone, locale)}
             </button>
           );
@@ -862,7 +714,7 @@ function StaffFilter({
     return (
       <div className="flex gap-2 mb-4 animate-pulse">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="h-9 w-24 rounded-full bg-muted" />
+          <div key={i} className="h-9 w-24 rounded-full bg-nl-pearl" />
         ))}
       </div>
     );
@@ -870,22 +722,19 @@ function StaffFilter({
 
   if (staff.length === 0) return null;
 
+  const chipClass = (isSelected: boolean) =>
+    `shrink-0 rounded-full border text-sm font-medium transition-colors ${
+      isSelected
+        ? "border-nl-amber bg-nl-pearl text-nl-amber-text"
+        : "border-nl-cacao/15 bg-nl-linen text-nl-cacao hover:border-nl-amber/50"
+    }`;
+
   return (
     <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
       <button
         type="button"
         onClick={() => onSelect(undefined)}
-        className="shrink-0 px-3.5 py-2 rounded-full transition-colors"
-        style={{
-          fontFamily: MAISON_SANS,
-          fontSize: 11.5,
-          letterSpacing: "0.02em",
-          border: `1px solid ${
-            !selectedStaffId ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.16)"
-          }`,
-          background: !selectedStaffId ? "rgba(184,115,51,0.08)" : "transparent",
-          color: "hsl(var(--nl-cacao))",
-        }}
+        className={`${chipClass(!selectedStaffId)} px-3.5 py-2`}
       >
         {t("anyProfessional")}
       </button>
@@ -896,29 +745,9 @@ function StaffFilter({
             key={member.id}
             type="button"
             onClick={() => onSelect(member.id)}
-            className="shrink-0 flex items-center gap-2 px-3 py-1.5 rounded-full transition-colors"
-            style={{
-              fontFamily: MAISON_SANS,
-              fontSize: 11.5,
-              border: `1px solid ${
-                isSelected ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.16)"
-              }`,
-              background: isSelected ? "rgba(184,115,51,0.08)" : "transparent",
-              color: "hsl(var(--nl-cacao))",
-            }}
+            className={`${chipClass(isSelected)} flex items-center gap-2 py-1.5 pe-3.5 ps-1.5`}
           >
-            <span
-              className="inline-flex items-center justify-center rounded-full shrink-0"
-              style={{
-                width: 22,
-                height: 22,
-                background: "rgba(184,115,51,0.15)",
-                fontFamily: MAISON_SERIF,
-                fontSize: 11,
-                color: "hsl(var(--nl-amber))",
-                overflow: "hidden",
-              }}
-            >
+            <span className="inline-flex h-6 w-6 shrink-0 items-center justify-center overflow-hidden rounded-full bg-nl-amber/15 font-display text-xs font-bold text-nl-amber-text">
               {member.avatar_url ? (
                 // Small avatar thumbnail — plain img is fine at this size.
                 // eslint-disable-next-line @next/next/no-img-element
@@ -944,7 +773,7 @@ function SlotGridSkeleton() {
     <div className="space-y-4 animate-pulse">
       {Array.from({ length: 2 }).map((_, g) => (
         <div key={g}>
-          <div className="h-3 w-16 rounded bg-muted mb-2" />
+          <div className="h-3 w-16 rounded bg-nl-pearl mb-2" />
           <div
             className="grid gap-2"
             style={{
@@ -952,7 +781,7 @@ function SlotGridSkeleton() {
             }}
           >
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="h-10 rounded bg-muted" />
+              <div key={i} className="h-10 rounded-lg bg-nl-pearl" />
             ))}
           </div>
         </div>
@@ -964,33 +793,9 @@ function SlotGridSkeleton() {
 function EmptyDay() {
   const t = useTranslations("booking");
   return (
-    <div
-      className="py-8 text-center"
-      style={{
-        border: "1px solid rgba(44,24,16,0.08)",
-        background: "rgba(44,24,16,0.015)",
-      }}
-    >
-      <p
-        style={{
-          fontFamily: MAISON_SERIF,
-          fontStyle: "italic",
-          fontSize: 14,
-          color: "hsl(var(--nl-cacao))",
-        }}
-      >
-        {t("noSlotsForDay")}
-      </p>
-      <p
-        className="mt-1"
-        style={{
-          fontFamily: MAISON_SANS,
-          fontSize: 11,
-          color: "hsl(var(--nl-russet))",
-        }}
-      >
-        {t("tryAnotherDay")}
-      </p>
+    <div className="rounded-xl border border-nl-cacao/10 bg-nl-pearl px-4 py-8 text-center">
+      <p className="text-sm font-semibold text-nl-cacao">{t("noSlotsForDay")}</p>
+      <p className="mt-1 text-xs text-nl-russet">{t("tryAnotherDay")}</p>
     </div>
   );
 }
@@ -1004,30 +809,13 @@ function ErrorNote({
 }) {
   const tCommon = useTranslations("common");
   return (
-    <div
-      className="py-5 px-4 text-center"
-      style={{ border: "1px solid rgba(184,60,40,0.3)" }}
-    >
-      <p
-        style={{
-          fontFamily: MAISON_SANS,
-          fontSize: 12.5,
-          color: "hsl(var(--nl-russet))",
-        }}
-      >
-        {message}
-      </p>
+    <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-5 text-center">
+      <p className="text-sm text-nl-russet">{message}</p>
       {onRetry && (
         <button
           type="button"
           onClick={onRetry}
-          className="mt-2 uppercase"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 10.5,
-            letterSpacing: "0.16em",
-            color: "hsl(var(--nl-amber))",
-          }}
+          className="mt-2 text-sm font-semibold text-nl-amber-text hover:underline"
         >
           {tCommon("retry")}
         </button>

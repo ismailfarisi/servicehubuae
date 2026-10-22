@@ -58,18 +58,18 @@ export default function AboutPage() {
 			</StaticSection>
 
 			<StaticSection heading="By the numbers">
-				<div className="grid grid-cols-2 md:grid-cols-4 gap-6 not-prose">
+				<div className="grid grid-cols-2 md:grid-cols-4 gap-4 not-prose">
 					{[
 						{ n: "Curated", l: "vendor network" },
 						{ n: "7", l: "categories" },
 						{ n: "5", l: "languages" },
 						{ n: "3", l: "emirates served same-day" },
 					].map((stat) => (
-						<div key={stat.l}>
-							<div className="font-serif text-3xl md:text-4xl text-nl-amber">
+						<div key={stat.l} className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 shadow-sm">
+							<div className="font-display font-bold tracking-tight text-3xl md:text-4xl text-nl-amber-text">
 								{stat.n}
 							</div>
-							<div className="text-[11px] tracking-[0.18em] uppercase text-nl-russet/80 mt-2">
+							<div className="text-sm font-medium text-nl-russet mt-1.5">
 								{stat.l}
 							</div>
 						</div>

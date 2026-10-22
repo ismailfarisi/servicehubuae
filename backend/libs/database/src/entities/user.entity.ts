@@ -18,6 +18,8 @@ import type { UserToken } from "./user-token.entity.ts";
 import type { UserTwoFactor } from "./user-two-factor.entity.ts";
 
 @Entity("users")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_users_creator_tier", ["creator_tier"], { where: "creator_tier <> 'regular'" })
 export class User {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

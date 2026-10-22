@@ -1,8 +1,10 @@
-import { CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { CreateDateColumn, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Reel } from "./reel.entity.ts";
 import { User } from "./user.entity.ts";
 
 @Entity("reel_saves")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_reel_saves_user_recent", ["user_id", "saved_at"])
 export class ReelSave {
   @PrimaryColumn("uuid")
   user_id!: string;

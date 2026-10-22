@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Star } from "lucide-react";
 import { useReviewBooking } from "@/lib/queries/booking";
-import { Eyebrow, MAISON_SANS } from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 
 /**
  * Review form — completed bookings only (task-3-brief.md's review
@@ -40,13 +40,8 @@ export function BookingReviewForm({
   const [body, setBody] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const inputStyle = {
-    border: "1px solid rgba(44,24,16,0.2)",
-    background: "rgba(255,255,255,0.55)",
-    fontFamily: MAISON_SANS,
-    fontSize: 13,
-    color: "hsl(var(--nl-cacao))",
-  } as const;
+  const inputClass =
+    "w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2 text-sm text-nl-cacao outline-none transition placeholder:text-nl-russet/70 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20";
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -71,10 +66,9 @@ export function BookingReviewForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="p-4 space-y-3"
-      style={{ border: "1px solid rgba(44,24,16,0.10)", background: "rgba(44,24,16,0.02)" }}
+      className="space-y-3 rounded-2xl border border-nl-cacao/10 bg-nl-linen p-4 shadow-sm sm:p-5"
     >
-      <Eyebrow>{t("title")}</Eyebrow>
+      <Eyebrow className="text-sm">{t("title")}</Eyebrow>
       <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <button
@@ -84,13 +78,14 @@ export function BookingReviewForm({
             onMouseEnter={() => setHoverRating(star)}
             onMouseLeave={() => setHoverRating(0)}
             aria-label={t("ratingLabel", { star })}
+            className="rounded-md p-0.5 transition-transform hover:scale-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-nl-amber"
           >
             <Star
-              className="h-6 w-6"
-              style={{
-                fill: star <= (hoverRating || rating) ? "hsl(var(--nl-amber))" : "transparent",
-                color: star <= (hoverRating || rating) ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.25)",
-              }}
+              className={`h-6 w-6 ${
+                star <= (hoverRating || rating)
+                  ? "fill-amber-400 text-amber-400"
+                  : "fill-transparent text-nl-cacao/25"
+              }`}
             />
           </button>
         ))}
@@ -100,35 +95,22 @@ export function BookingReviewForm({
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder={t("titlePlaceholder")}
-        className="w-full px-3 py-2"
-        style={inputStyle}
+        className={inputClass}
       />
       <textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
         placeholder={t("bodyPlaceholder")}
         rows={3}
-        className="w-full px-3 py-2"
-        style={inputStyle}
+        className={inputClass}
       />
 
-      {errorMessage && (
-        <p style={{ fontFamily: MAISON_SANS, fontSize: 12, color: "hsl(var(--destructive))" }}>{errorMessage}</p>
-      )}
+      {errorMessage && <p className="text-xs text-destructive">{errorMessage}</p>}
 
       <button
         type="submit"
         disabled={rating === 0 || reviewMutation.isPending}
-        className="uppercase disabled:opacity-50"
-        style={{
-          background: "hsl(var(--nl-amber))",
-          color: "hsl(var(--nl-espresso))",
-          fontFamily: MAISON_SANS,
-          fontSize: 11,
-          letterSpacing: "0.22em",
-          padding: "11px 24px",
-          border: "none",
-        }}
+        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90 disabled:cursor-not-allowed disabled:opacity-50"
       >
         {reviewMutation.isPending ? tCommon("loading") : t("submit")}
       </button>

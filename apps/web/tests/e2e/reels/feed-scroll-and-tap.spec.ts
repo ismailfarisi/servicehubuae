@@ -1,7 +1,8 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * M2 feed scroll + tag tap E2E skeleton.
+ * Reels feed scroll E2E skeleton. (Product tags and the product drawer were
+ * removed with the products domain.)
  *
  * Requires a live stack:
  *   - docker compose up (postgres, redis, all backend services)
@@ -10,15 +11,13 @@ import { test, expect } from "@playwright/test";
  *
  * Run locally with: REELS_E2E_STACK_UP=1 bun run test:e2e feed-scroll-and-tap
  */
-test.describe("Reels feed scroll + product drawer", () => {
+test.describe("Reels feed scroll", () => {
   test.skip(
     !process.env.REELS_E2E_STACK_UP,
     "Requires REELS_E2E_STACK_UP=1 and a running dev stack",
   );
 
-  test("scrolls feed and opens product drawer on tag tap", async ({ page }) => {
-    await page.goto("/auth/login");
-    // TODO(M2): fill login fixture once auth helper exists.
+  test("scrolls from the first reel to the next", async ({ page }) => {
     await page.goto("/en/reels");
 
     const first = page.locator("section[data-index='0']");
@@ -27,11 +26,5 @@ test.describe("Reels feed scroll + product drawer", () => {
     // Scroll to next reel via keyboard
     await first.press("PageDown");
     await expect(page.locator("section[data-index='1']")).toBeVisible();
-
-    // Click the first tag chip in the visible reel
-    await page.locator("section[data-index='1'] button").first().click();
-
-    // Product drawer should appear
-    await expect(page.locator("text=/view product/i")).toBeVisible();
   });
 });

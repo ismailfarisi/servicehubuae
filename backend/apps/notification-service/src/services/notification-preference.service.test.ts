@@ -12,7 +12,7 @@
 //
 // Phase 7 review (finding 1): that fix originally applied `in_app: true` to
 // EVERY NotificationType, silently switching on in-app notifications for
-// pre-existing types (order_shipped, dispute_*, ...) for every user without
+// pre-existing types (vendor_approved, payout_sent, ...) for every user without
 // explicit rows — no migration, no flag. The default is now scoped to the 11
 // booking types only, and the pre-existing types are asserted below to keep
 // their historical `false`.
@@ -47,9 +47,9 @@ describe("NotificationPreferenceService.getPreferences — absent-row defaults",
   ];
 
   // Types added to the enum after users' preference rows were seeded — the
-  // booking set plus vendor_new_order. These are the ones an absent row means
-  // "never asked" for, so they default in-app ON.
-  const POST_SEED_TYPES = [...BOOKING_TYPES, NotificationType.vendor_new_order];
+  // booking set. These are the ones an absent row means "never asked" for, so
+  // they default in-app ON.
+  const POST_SEED_TYPES = BOOKING_TYPES;
 
   it("a user with ZERO rows gets in_app=true for the BOOKING types only; email/push/sms=false for every type", async () => {
     const { service } = makeService([]);
@@ -66,19 +66,7 @@ describe("NotificationPreferenceService.getPreferences — absent-row defaults",
     }
   });
 
-  it("vendor_new_order defaults in_app-enabled for an existing vendor member", async () => {
-    // It post-dates every existing user's seeded rows, so without it in the
-    // post-seed set the absent row resolves to false and the new per-member
-    // dispatch reaches nobody who registered before this deploy.
-    const { service } = makeService([]);
-
-    const matrix = await service.getPreferences("user-1");
-
-    expect(matrix[NotificationType.vendor_new_order][NotificationChannel.in_app]).toBe(true);
-    expect(matrix[NotificationType.vendor_new_order][NotificationChannel.email]).toBe(false);
-  });
-
-  it("NON-booking types keep their pre-existing in_app=false default (finding 1: no silent behaviour change for order_*/dispute_*)", async () => {
+  it("NON-booking types keep their pre-existing in_app=false default (finding 1: no silent behaviour change for older types)", async () => {
     const { service } = makeService([]);
 
     const matrix = await service.getPreferences("user-1");
@@ -89,8 +77,8 @@ describe("NotificationPreferenceService.getPreferences — absent-row defaults",
     // in the review (an in-app notification for these must NOT switch on for a
     // user who never expressed a preference).
     expect(preExisting.length).toBeGreaterThan(0);
-    expect(preExisting).toContain(NotificationType.order_shipped);
-    expect(preExisting).toContain(NotificationType.dispute_opened);
+    expect(preExisting).toContain(NotificationType.vendor_approved);
+    expect(preExisting).toContain(NotificationType.payout_sent);
 
     for (const type of preExisting) {
       expect(matrix[type][NotificationChannel.in_app]).toBe(false);
@@ -98,14 +86,14 @@ describe("NotificationPreferenceService.getPreferences — absent-row defaults",
   });
 
   it("booking types specifically default in_app-enabled for a pre-booking-era user (the regression this fix closes)", async () => {
-    // A realistic pre-existing user: seeded rows for the ORDER-era types only
+    // A realistic pre-existing user: seeded rows for the older types only
     // (registration-time seed sets everything true), nothing for booking types.
-    const orderEraRows = [
-      { notification_type: NotificationType.order_confirmed, channel: "in_app", enabled: true },
-      { notification_type: NotificationType.order_confirmed, channel: "email", enabled: true },
-      { notification_type: NotificationType.order_shipped, channel: "in_app", enabled: true },
+    const olderRows = [
+      { notification_type: NotificationType.vendor_approved, channel: "in_app", enabled: true },
+      { notification_type: NotificationType.vendor_approved, channel: "email", enabled: true },
+      { notification_type: NotificationType.payout_sent, channel: "in_app", enabled: true },
     ];
-    const { service } = makeService(orderEraRows);
+    const { service } = makeService(olderRows);
 
     const matrix = await service.getPreferences("user-1");
 
@@ -128,7 +116,7 @@ describe("NotificationPreferenceService.getPreferences — absent-row defaults",
       expect(matrix[type][NotificationChannel.push]).toBe(false);
     }
     // Seeded rows still overlay as before.
-    expect(matrix[NotificationType.order_confirmed][NotificationChannel.email]).toBe(true);
+    expect(matrix[NotificationType.vendor_approved][NotificationChannel.email]).toBe(true);
   });
 
   it("an explicit in_app=false row (real opt-out) overlays the default and stays false", async () => {
@@ -177,7 +165,7 @@ describe("whatsapp channel — strictly opt-in", () => {
   it("an explicit whatsapp=true row (real opt-in) overlays the false default", async () => {
     const { service } = makeService([
       {
-        notification_type: NotificationType.order_confirmed,
+        notification_type: NotificationType.booking_confirmed,
         channel: NotificationChannel.whatsapp,
         enabled: true,
       },
@@ -185,8 +173,8 @@ describe("whatsapp channel — strictly opt-in", () => {
 
     const matrix = await service.getPreferences("user-1");
 
-    expect(matrix[NotificationType.order_confirmed][NotificationChannel.whatsapp]).toBe(true);
-    expect(matrix[NotificationType.order_shipped][NotificationChannel.whatsapp]).toBe(false);
+    expect(matrix[NotificationType.booking_confirmed][NotificationChannel.whatsapp]).toBe(true);
+    expect(matrix[NotificationType.booking_reminder][NotificationChannel.whatsapp]).toBe(false);
   });
 
   it("seedDefaultPreferences never creates whatsapp rows (the blanket enabled:true seed must not opt users in)", async () => {

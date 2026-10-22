@@ -38,9 +38,9 @@ export function PromoTileEditor({ tiles, onChange }: Props) {
 	return (
 		<div className="space-y-4">
 			{tiles.map((tile, idx) => (
-				<div key={tile.id} className="border border-nl-cacao/15 p-3 space-y-2">
+				<div key={tile.id} className="border border-cacao/15 p-3 space-y-2">
 					<div className="flex items-center justify-between">
-						<span className="text-xs uppercase tracking-[0.18em] text-nl-russet">
+						<span className="text-xs uppercase tracking-[0.18em] text-taupe">
 							Tile {idx + 1}
 						</span>
 						<button
@@ -48,7 +48,7 @@ export function PromoTileEditor({ tiles, onChange }: Props) {
 							aria-label="Remove tile"
 							onClick={() => removeTile(idx)}
 						>
-							<X className="h-3.5 w-3.5 text-nl-russet" />
+							<X className="h-3.5 w-3.5 text-taupe" />
 						</button>
 					</div>
 					<ImageInput
@@ -66,7 +66,7 @@ export function PromoTileEditor({ tiles, onChange }: Props) {
 						onChange={(cta_text) => updateTile(idx, { ...tile, cta_text })}
 					/>
 					<label className="block">
-						<span className="text-xs uppercase tracking-[0.18em] text-nl-russet">
+						<span className="text-xs uppercase tracking-[0.18em] text-taupe">
 							Link URL
 						</span>
 						<input
@@ -75,7 +75,7 @@ export function PromoTileEditor({ tiles, onChange }: Props) {
 							onChange={(e) =>
 								updateTile(idx, { ...tile, href: e.target.value })
 							}
-							className="mt-1 w-full border border-nl-cacao/20 px-2 py-1.5 text-sm"
+							className="mt-1 w-full border border-cacao/20 px-2 py-1.5 text-sm"
 						/>
 					</label>
 				</div>
@@ -84,7 +84,7 @@ export function PromoTileEditor({ tiles, onChange }: Props) {
 				<button
 					type="button"
 					onClick={addTile}
-					className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.22em] text-nl-russet hover:text-nl-cacao"
+					className="inline-flex items-center gap-1 text-xs uppercase tracking-[0.22em] text-taupe hover:text-cacao"
 				>
 					<Plus className="h-3.5 w-3.5" /> Add tile
 				</button>
@@ -100,7 +100,7 @@ function ImageInput({
 	const id = useId();
 	return (
 		<label htmlFor={id} className="block">
-			<span className="text-xs uppercase tracking-[0.18em] text-nl-russet">
+			<span className="text-xs uppercase tracking-[0.18em] text-taupe">
 				Image URL
 			</span>
 			<input
@@ -109,7 +109,7 @@ function ImageInput({
 				value={value}
 				placeholder="https://cdn..../image.jpg"
 				onChange={(e) => onChange(e.target.value)}
-				className="mt-1 w-full border border-nl-cacao/20 px-2 py-1.5 text-sm"
+				className="mt-1 w-full border border-cacao/20 px-2 py-1.5 text-sm"
 			/>
 		</label>
 	);
@@ -132,7 +132,7 @@ function LocaleField({
 }) {
 	return (
 		<div>
-			<span className="text-xs uppercase tracking-[0.18em] text-nl-russet">
+			<span className="text-xs uppercase tracking-[0.18em] text-taupe">
 				{label}
 			</span>
 			<div className="mt-1 grid grid-cols-2 gap-2">
@@ -143,7 +143,7 @@ function LocaleField({
 						placeholder={loc.toUpperCase()}
 						value={value[loc] ?? ""}
 						onChange={(e) => onChange({ ...value, [loc]: e.target.value })}
-						className="border border-nl-cacao/20 px-2 py-1.5 text-sm"
+						className="border border-cacao/20 px-2 py-1.5 text-sm"
 					/>
 				))}
 			</div>

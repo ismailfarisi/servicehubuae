@@ -39,7 +39,7 @@ export class Page {
   @Column({ type: "uuid", nullable: true })
   author_id!: string | null;
 
-  @ManyToOne("User", { nullable: true })
+  @ManyToOne("User", { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "author_id" })
   author!: User | null;
 

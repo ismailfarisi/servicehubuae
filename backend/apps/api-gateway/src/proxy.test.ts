@@ -1,38 +1,43 @@
 import { describe, expect, test } from "bun:test";
 import { resolveUpstream } from "./proxy.ts";
 
-describe("resolveUpstream", () => {
-  test("resolves /auth to auth service", () => {
-    const result = resolveUpstream("/auth");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3001");
-    expect(result!.upstreamPath).toBe("/auth");
-  });
+function targetOf(path: string): string | undefined {
+  return resolveUpstream(path)?.target;
+}
 
-  test("resolves /auth/login to auth service", () => {
+describe("resolveUpstream", () => {
+  test("resolves /auth and /auth/login to auth service", () => {
     const result = resolveUpstream("/auth/login");
     expect(result).not.toBeNull();
     expect(result!.target).toContain("3001");
     expect(result!.upstreamPath).toBe("/auth/login");
+    expect(targetOf("/auth")).toContain("3001");
+    expect(targetOf("/admin/users/abc")).toContain("3001");
   });
 
-  test("resolves /products to product service", () => {
-    const result = resolveUpstream("/products");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3002");
-  });
-
-  test("resolves /products/123 to product service", () => {
-    const result = resolveUpstream("/products/123");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3002");
-    expect(result!.upstreamPath).toBe("/products/123");
-  });
-
-  test("resolves /services/:slug (PDP) to product service", () => {
-    const result = resolveUpstream("/services/glow-facial");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3002");
+  test("resolves catalog prefixes to catalog service (3002)", () => {
+    for (const path of [
+      "/categories/tree",
+      "/categories/hair",
+      "/admin/categories",
+      "/services",
+      "/services/suggest",
+      "/services/by-id/abc-123",
+      "/services/glow-facial",
+      "/admin/service-offerings/abc/approve",
+      "/vendor/services",
+      "/vendor/services/abc",
+      "/areas",
+      "/admin/areas/abc",
+      "/media/presign",
+      "/me/recent-searches",
+      "/admin/search/services/reindex",
+    ]) {
+      const result = resolveUpstream(path);
+      expect(result).not.toBeNull();
+      expect(result!.target).toContain("3002");
+      expect(result!.upstreamPath).toBe(path);
+    }
   });
 
   test("resolves /services/:slug/availability to booking service", () => {
@@ -42,178 +47,86 @@ describe("resolveUpstream", () => {
     expect(result!.upstreamPath).toBe("/services/glow-facial/availability");
   });
 
-  test("resolves /orders to order service", () => {
-    const result = resolveUpstream("/orders");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-  });
-
-  test("resolves /orders/checkout/initiate to order service", () => {
-    const result = resolveUpstream("/orders/checkout/initiate");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-  });
-
-  test("resolves admin order cancellation to order service", () => {
-    const result = resolveUpstream("/admin/orders/11111111-1111-1111-1111-111111111111/cancel");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-    expect(result!.upstreamPath).toBe("/admin/orders/11111111-1111-1111-1111-111111111111/cancel");
-  });
-
-  test("resolves /admin/payout-adjustments to order service (guards against silent-404 regression)", () => {
-    // This prefix has shipped a silent-404 regression before (admin shipment
-    // routes, see admin shipment sub-routes test below) — a missing entry
-    // here 404s in production with no visible error. GET/POST both route
-    // through the same prefix registration.
-    const list = resolveUpstream("/admin/payout-adjustments");
-    const create = resolveUpstream("/admin/payout-adjustments");
-    expect(list).not.toBeNull();
-    expect(create).not.toBeNull();
-    expect(list!.target).toContain("3003");
-    expect(list!.upstreamPath).toBe("/admin/payout-adjustments");
-  });
-
-  test("resolves /admin/payouts/:id/adjustments to order service", () => {
-    const result = resolveUpstream(
-      "/admin/payouts/57cd3877-0418-4400-9039-1ec6470cf44e/adjustments",
-    );
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-    expect(result!.upstreamPath).toBe(
-      "/admin/payouts/57cd3877-0418-4400-9039-1ec6470cf44e/adjustments",
-    );
-  });
-
-  test("resolves admin shipment sub-routes (status/history/events) to order service", () => {
+  test("resolves booking prefixes to booking service (3009)", () => {
     for (const path of [
-      "/admin/shipments/57cd3877-0418-4400-9039-1ec6470cf44e/events",
-      "/admin/shipments/57cd3877-0418-4400-9039-1ec6470cf44e/history",
-      "/admin/shipments/57cd3877-0418-4400-9039-1ec6470cf44e/status",
+      "/booking/eligible",
+      "/bookings/hold",
+      "/bookings/abc",
+      "/me/bookings",
+      "/admin/bookings/dashboard",
+      "/vendor/booking/dashboard",
+      "/manage/blocks",
+      "/calendar/staff/abc/feed.ics",
     ]) {
-      const result = resolveUpstream(path);
-      expect(result).not.toBeNull();
-      expect(result!.target).toContain("3003");
-      expect(result!.upstreamPath).toBe(path);
+      expect(targetOf(path)).toContain("3009");
     }
   });
 
-  test("resolves /vendors to vendor service", () => {
-    const result = resolveUpstream("/vendors");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3004");
+  test("resolves vendor prefixes to vendor service (3004)", () => {
+    for (const path of [
+      "/vendors",
+      "/vendors/abc-123/members",
+      "/admin/vendors",
+      "/vendor/reels-program/opt-in",
+      "/vendor-members/invites/accept",
+      "/admin/role-permissions",
+      "/me/follows/vendors/recent",
+      "/webhooks/stripe/connect",
+    ]) {
+      expect(targetOf(path)).toContain("3004");
+    }
   });
 
-  test("resolves /vendor/reels-program to vendor service", () => {
-    const result = resolveUpstream("/vendor/reels-program");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3004");
-    expect(result!.upstreamPath).toBe("/vendor/reels-program");
+  test("resolves notification, cms, reels and integration prefixes", () => {
+    expect(targetOf("/notifications")).toContain("3005");
+    expect(targetOf("/webhooks/whatsapp")).toContain("3005");
+    expect(targetOf("/layouts/home")).toContain("3006");
+    expect(targetOf("/support/tickets")).toContain("3006");
+    expect(targetOf("/reels/feed")).toContain("3007");
+    expect(targetOf("/admin/reels/analytics")).toContain("3007");
+    expect(targetOf("/vendor/reels/analytics")).toContain("3007");
+    expect(targetOf("/users/abc/follow")).toContain("3007");
+    expect(targetOf("/vendor/integrations")).toContain("3008");
+    expect(targetOf("/integrations/inbound/abc")).toContain("3008");
   });
 
-  test("resolves /me/follows/vendors/:id to vendor service", () => {
-    const single = resolveUpstream("/me/follows/vendors/abc-123");
-    const recent = resolveUpstream("/me/follows/vendors/recent");
-    expect(single).not.toBeNull();
-    expect(recent).not.toBeNull();
-    expect(single!.target).toContain("3004");
-    expect(recent!.target).toContain("3004");
-    expect(single!.upstreamPath).toBe("/me/follows/vendors/abc-123");
-    expect(recent!.upstreamPath).toBe("/me/follows/vendors/recent");
-  });
-
-  test("resolves /vendor/reels-program/opt-in to vendor service", () => {
-    const result = resolveUpstream("/vendor/reels-program/opt-in");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3004");
-    expect(result!.upstreamPath).toBe("/vendor/reels-program/opt-in");
-  });
-
-  test("resolves /notifications to notification service", () => {
-    const result = resolveUpstream("/notifications");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3005");
-  });
-
-  test("resolves /cart to order service", () => {
-    const result = resolveUpstream("/cart");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-  });
-
-  test("resolves /cart/items to order service", () => {
-    const result = resolveUpstream("/cart/items");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-  });
-
-  test("resolves /checkout/initiate to order service", () => {
-    const result = resolveUpstream("/checkout/initiate");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-  });
-
-  test("resolves /webhooks/tamara to order service", () => {
-    const result = resolveUpstream("/webhooks/tamara");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-    expect(result!.upstreamPath).toBe("/webhooks/tamara");
-  });
-
-  test("resolves /buyer/orders to order service", () => {
-    const result = resolveUpstream("/buyer/orders");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-  });
-
-  test("resolves /reviews to order service", () => {
-    const result = resolveUpstream("/reviews");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-  });
-
-  test("resolves /shipping/rates to order service", () => {
-    const result = resolveUpstream("/shipping/rates");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3003");
-  });
-
-  test("resolves /categories to product service", () => {
-    const result = resolveUpstream("/categories/tree");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3002");
-  });
-
-  test("resolves /brands to product service", () => {
-    const result = resolveUpstream("/brands");
-    expect(result).not.toBeNull();
-    expect(result!.target).toContain("3002");
-  });
-
-  test("resolves /gift/boxes to product service", () => {
-    const boxes = resolveUpstream("/gift/boxes");
-    const occasions = resolveUpstream("/gift/occasions");
-    const admin = resolveUpstream("/admin/gift/occasions");
-    expect(boxes).not.toBeNull();
-    expect(occasions).not.toBeNull();
-    expect(admin).not.toBeNull();
-    expect(boxes!.target).toContain("3002");
-    expect(occasions!.target).toContain("3002");
-    expect(admin!.target).toContain("3002");
-    expect(boxes!.upstreamPath).toBe("/gift/boxes");
-    expect(admin!.upstreamPath).toBe("/admin/gift/occasions");
-  });
-
-  test("resolves /admin/gift-fulfillment to order service", () => {
-    const list = resolveUpstream("/admin/gift-fulfillment");
-    const detail = resolveUpstream("/admin/gift-fulfillment/abc-123");
-    const slip = resolveUpstream("/admin/gift-fulfillment/abc-123/packing-slip");
-    expect(list).not.toBeNull();
-    expect(detail).not.toBeNull();
-    expect(slip).not.toBeNull();
-    expect(list!.target).toContain("3003");
-    expect(detail!.target).toContain("3003");
-    expect(slip!.target).toContain("3003");
+  test("returns null for removed product/order-era routes", () => {
+    for (const path of [
+      "/products",
+      "/products/123",
+      "/orders",
+      "/cart",
+      "/checkout/initiate",
+      "/brands",
+      "/collections",
+      "/gift/boxes",
+      "/wishlist",
+      "/reviews",
+      "/shipping/delivery-zones",
+      "/webhooks/tamara",
+      "/webhooks/stripe",
+      "/admin/orders",
+      "/admin/payouts",
+      "/admin/coupons",
+      "/admin/flash-deals",
+      "/admin/sales-channels",
+      "/vendor/dashboard",
+      "/vendors/me/payouts",
+      "/search/trending",
+      "/bulk/jobs",
+      "/admin/affiliates",
+      "/me/affiliate",
+      "/a/AFF-ABC12345",
+      "/ref/CODE",
+      "/me/referrals",
+    ]) {
+      // /vendors/me/payouts now falls through to vendor-service (/vendors).
+      if (path.startsWith("/vendors")) {
+        expect(targetOf(path)).toContain("3004");
+        continue;
+      }
+      expect(resolveUpstream(path)).toBeNull();
+    }
   });
 
   test("returns null for unknown paths", () => {
@@ -222,31 +135,14 @@ describe("resolveUpstream", () => {
     expect(resolveUpstream("/api/something")).toBeNull();
   });
 
-  test("does not match partial prefix (e.g. /authorize)", () => {
-    // /authorize should NOT match /auth
+  test("does not match partial prefix (e.g. /authorize, /servicesextra)", () => {
     expect(resolveUpstream("/authorize")).toBeNull();
-  });
-
-  test("does not match /productsextra", () => {
-    expect(resolveUpstream("/productsextra")).toBeNull();
+    expect(resolveUpstream("/servicesextra")).toBeNull();
   });
 
   test("preserves full path as upstreamPath", () => {
-    const result = resolveUpstream("/vendors/abc-123/payouts");
+    const result = resolveUpstream("/vendors/abc-123/bank-accounts");
     expect(result).not.toBeNull();
-    expect(result!.upstreamPath).toBe("/vendors/abc-123/payouts");
-  });
-
-  test("/vendors/me/payouts routes to order service (more specific than /vendors)", () => {
-    const estimate = resolveUpstream("/vendors/me/payouts/estimate");
-    const list = resolveUpstream("/vendors/me/payouts");
-    const otherVendor = resolveUpstream("/vendors/abc-123/foo");
-    expect(estimate).not.toBeNull();
-    expect(list).not.toBeNull();
-    expect(otherVendor).not.toBeNull();
-    // Both payout paths must hit the same upstream (order-service), and
-    // unrelated /vendors/* paths must continue to hit vendor-service.
-    expect(estimate!.target).toBe(list!.target);
-    expect(estimate!.target).not.toBe(otherVendor!.target);
+    expect(result!.upstreamPath).toBe("/vendors/abc-123/bank-accounts");
   });
 });

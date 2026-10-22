@@ -45,20 +45,20 @@ export function AuthModal() {
         if (!v) close();
       }}
     >
-      <DialogContent className="max-h-[calc(100dvh-24px)] max-w-[880px] gap-0 overflow-y-auto overscroll-contain rounded-none p-0 sm:rounded-none">
+      <DialogContent className="max-h-[calc(100dvh-24px)] max-w-[880px] gap-0 overflow-y-auto overscroll-contain rounded-2xl p-0 shadow-xl sm:rounded-2xl">
         <div className="grid md:grid-cols-[0.95fr_1fr]">
           <div className="relative hidden min-h-[560px] md:block">
             <Image src="/login.webp" alt="" fill priority sizes="420px" className="object-cover" />
           </div>
           <div className="px-6 py-8 sm:px-10 md:px-12 md:py-12">
             <DialogHeader className="space-y-3 text-left sm:text-left">
-              <div className="text-[10px] font-medium uppercase tracking-[0.28em] text-nl-amber">
+              <div className="text-sm font-semibold text-nl-amber-text">
                 MyPickUAE account
               </div>
-              <DialogTitle className="font-serif text-[30px] font-normal leading-[1.05] tracking-normal text-nl-cacao md:text-[36px]">
+              <DialogTitle className="font-display text-2xl font-bold leading-tight tracking-tight text-nl-cacao md:text-3xl">
                 {copy.title}
               </DialogTitle>
-              <DialogDescription className="max-w-[360px] text-[14.5px] leading-6 text-nl-russet">
+              <DialogDescription className="max-w-[360px] text-sm leading-6 text-nl-russet">
                 {copy.description}
               </DialogDescription>
             </DialogHeader>

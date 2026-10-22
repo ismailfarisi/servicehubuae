@@ -73,7 +73,9 @@ export class RecomputeDailyRollupsJob {
 
       // 1) daily_reel_metrics — FULL JOIN CTE across event tables for this bucket_date.
       // Shares column: always 0 (no reel_shares event table in v1; tracked as running counter elsewhere).
-      // Commission semantics: attributed_* = non-voided; earned_commission_fils = earned + paid_out.
+      // product_taps / attributed_* / earned_commission_fils are written as 0: the
+      // reel commerce tables (reel_attributions, reel_commissions) were removed
+      // in the MyPickUAE fork.
       await m.query(
         `
         WITH v AS (
@@ -83,30 +85,18 @@ export class RecomputeDailyRollupsJob {
           SELECT reel_id, COUNT(*)::int AS likes FROM reel_likes  WHERE liked_at::date  = $1::date GROUP BY reel_id
         ), s AS (
           SELECT reel_id, COUNT(*)::int AS saves FROM reel_saves  WHERE saved_at::date  = $1::date GROUP BY reel_id
-        ), t AS (
-          SELECT reel_id, COUNT(*)::int AS product_taps
-            FROM reel_attributions WHERE tapped_at::date = $1::date GROUP BY reel_id
-        ), c AS (
-          SELECT reel_id,
-                 COUNT(DISTINCT order_id)           FILTER (WHERE status <> 'voided')::int AS attributed_orders,
-                 COALESCE(SUM(item_price_fils)       FILTER (WHERE status <> 'voided'), 0)::bigint AS attributed_gmv_fils,
-                 COALESCE(SUM(gross_commission_fils) FILTER (WHERE status IN ('earned','paid_out')), 0)::bigint AS earned_commission_fils
-            FROM reel_commissions WHERE created_at::date = $1::date GROUP BY reel_id
         )
         INSERT INTO daily_reel_metrics
           (reel_id, bucket_date, impressions, unique_viewers, likes, saves, shares,
            product_taps, attributed_orders, attributed_gmv_fils, earned_commission_fils)
-        SELECT COALESCE(v.reel_id, l.reel_id, s.reel_id, t.reel_id, c.reel_id) AS reel_id,
+        SELECT COALESCE(v.reel_id, l.reel_id, s.reel_id) AS reel_id,
                $1::date,
                COALESCE(v.impressions, 0), COALESCE(v.unique_viewers, 0),
                COALESCE(l.likes, 0), COALESCE(s.saves, 0), 0 /* shares: no event table; always 0 for v1 */,
-               COALESCE(t.product_taps, 0),
-               COALESCE(c.attributed_orders, 0), COALESCE(c.attributed_gmv_fils, 0), COALESCE(c.earned_commission_fils, 0)
+               0, 0, 0, 0
           FROM v
           FULL JOIN l  USING (reel_id)
-          FULL JOIN s  USING (reel_id)
-          FULL JOIN t  USING (reel_id)
-          FULL JOIN c  USING (reel_id);
+          FULL JOIN s  USING (reel_id);
       `,
         [bucketDate],
       );
@@ -133,49 +123,9 @@ export class RecomputeDailyRollupsJob {
         [bucketDate],
       );
 
-      // 3) daily_vendor_reel_metrics — aggregate metrics per vendor.
-      // A reel tagging multiple products of the same vendor is ONE (vendor, reel) pair — we
-      // de-dup via `vendor_reels` CTE before joining to metrics, otherwise SUM(impressions)
-      // etc. double-count across duplicate tag rows.
-      // NOTE: A reel tagging products of multiple vendors is counted once per vendor, so sum
-      // across vendors may exceed platform total. Intentional v1 "reel reach" semantic.
-      await m.query(
-        `
-        WITH vendor_reels AS (
-          SELECT DISTINCT p.vendor_id, rpt.reel_id
-            FROM reel_product_tags rpt
-            JOIN products p ON p.id = rpt.product_id
-        ), vendor_taps AS (
-          SELECT p2.vendor_id, COUNT(*)::int AS product_taps
-            FROM reel_attributions ra
-            JOIN products p2 ON p2.id = ra.product_id
-           WHERE ra.tapped_at::date = $1::date
-           GROUP BY p2.vendor_id
-        ), vendor_commissions AS (
-          SELECT rc.vendor_id,
-                 COUNT(DISTINCT rc.order_id) FILTER (WHERE rc.status <> 'voided')::int         AS attributed_orders,
-                 COALESCE(SUM(rc.item_price_fils) FILTER (WHERE rc.status <> 'voided'), 0)::bigint AS attributed_gmv_fils
-            FROM reel_commissions rc
-           WHERE rc.created_at::date = $1::date
-           GROUP BY rc.vendor_id
-        )
-        INSERT INTO daily_vendor_reel_metrics
-          (vendor_id, bucket_date, reel_count, impressions, product_taps, attributed_orders, attributed_gmv_fils)
-        SELECT vr.vendor_id, $1::date,
-               COUNT(DISTINCT vr.reel_id)::int,
-               COALESCE(SUM(drm.impressions), 0)::int,
-               COALESCE(MAX(vt.product_taps), 0)::int,
-               COALESCE(MAX(vc.attributed_orders), 0)::int,
-               COALESCE(MAX(vc.attributed_gmv_fils), 0)::bigint
-          FROM vendor_reels vr
-          JOIN daily_reel_metrics drm ON drm.reel_id = vr.reel_id
-          LEFT JOIN vendor_taps vt        ON vt.vendor_id = vr.vendor_id
-          LEFT JOIN vendor_commissions vc ON vc.vendor_id = vr.vendor_id
-         WHERE drm.bucket_date = $1::date
-         GROUP BY vr.vendor_id;
-      `,
-        [bucketDate],
-      );
+      // 3) daily_vendor_reel_metrics is not populated: it mapped reels to vendors
+      // through reel_product_tags -> products, both removed in the MyPickUAE fork.
+      // TODO(reels): repopulate once reels can be tagged with service offerings.
     });
 
     console.log("[reels.analytics.rollup.complete]", {

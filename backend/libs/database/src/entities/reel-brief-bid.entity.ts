@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +13,13 @@ import type { ReelBrief } from "./reel-brief.entity.ts";
 
 /** A creator's auction bid on a brief; once accepted, the delivery vehicle. */
 @Entity("reel_brief_bids")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_bid_brief", ["brief_id", "status"])
+@Index("idx_bid_creator", ["creator_id"])
+@Index("uq_bid_awarded", ["brief_id"], {
+  unique: true,
+  where: "status IN ('accepted', 'delivered', 'revision_requested')",
+})
 export class ReelBriefBid {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

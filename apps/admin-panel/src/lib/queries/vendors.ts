@@ -120,24 +120,6 @@ export function useUpdateVendor() {
 	});
 }
 
-export function useUsePlatformShipping() {
-	const queryClient = useQueryClient();
-	return useMutation({
-		mutationFn: async ({ vendorId }: { vendorId: string }) => {
-			const { data } = await api.patch(
-				`/admin/vendors/${vendorId}/use-platform-shipping`,
-			);
-			return data.data;
-		},
-		onSuccess: (_data, { vendorId }) => {
-			queryClient.invalidateQueries({ queryKey: ["admin", "vendors"] });
-			queryClient.invalidateQueries({
-				queryKey: ["admin", "vendors", vendorId],
-			});
-		},
-	});
-}
-
 export function useUploadVendorDocument() {
 	const queryClient = useQueryClient();
 	return useMutation({

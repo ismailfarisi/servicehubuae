@@ -1,31 +1,18 @@
 "use client";
 
-import {
-  Eyebrow,
-  MAISON_SANS,
-  MAISON_SERIF,
-  SerifTitle,
-} from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 import { useRequireAuth } from "@/hooks/use-require-auth";
 import { useAuthStore } from "@/stores/auth";
 import {
   ArrowLeft,
   CalendarClock,
   ChevronRight,
-  Gift,
-  Heart,
   LifeBuoy,
-  Link2,
   type LucideIcon,
   MapPin,
-  Package,
-  PackageX,
-  Search,
   Settings,
-  Sparkles,
   Star,
   Video,
-  Wallet,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
@@ -35,8 +22,8 @@ interface NavItem {
   key: string;
   icon: LucideIcon;
   href: string;
-  /** Message key to use for the label, if different from `key` (e.g. "affiliate" is
-   * reserved for the nested `account.affiliate.*` translation block). */
+  /** Message key to use for the label, if different from `key` (when the
+   * natural key is already taken by a nested translation block). */
   labelKey?: string;
 }
 
@@ -85,15 +72,7 @@ export default function AccountLayout({
 
   if (!isReady) {
     return (
-      <div
-        className="min-h-[60vh] flex items-center justify-center bg-background"
-        style={{
-          fontFamily: MAISON_SERIF,
-          fontStyle: "italic",
-          fontSize: 16,
-          color: "hsl(var(--nl-russet))",
-        }}
-      >
+      <div className="min-h-[60vh] flex items-center justify-center bg-background text-sm text-nl-russet">
         {tCommon("loading")}
       </div>
     );
@@ -104,95 +83,25 @@ export default function AccountLayout({
       <div className="max-w-6xl mx-auto px-4 md:px-8 py-6 md:py-10">
         {/* Profile header — mobile: menu landing only, desktop: always */}
         <div className={`${isIndex ? "flex" : "hidden md:flex"} items-center gap-4 mb-6 md:mb-8`}>
-          <div
-            className="h-14 w-14 rounded-full overflow-hidden shrink-0 flex items-center justify-center"
-            style={{
-              border: "1px solid rgba(184,115,51,0.5)",
-              background: "rgba(184,115,51,0.08)",
-            }}
-          >
-            <span
-              style={{
-                fontFamily: MAISON_SERIF,
-                fontSize: 22,
-                color: "hsl(var(--nl-amber))",
-              }}
-            >
+          <div className="h-14 w-14 rounded-full overflow-hidden shrink-0 flex items-center justify-center bg-nl-pearl ring-1 ring-nl-amber/20">
+            <span className="font-display text-xl font-bold text-nl-amber-text">
               {(user?.first_name?.charAt(0) ?? user?.email?.charAt(0) ?? "U").toUpperCase()}
             </span>
           </div>
           <div className="min-w-0 flex-1">
             <Eyebrow>Account</Eyebrow>
-            <SerifTitle size={24} className="mt-1.5 truncate">
+            <h1 className="mt-0.5 truncate font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
               {user?.first_name} {user?.last_name}
-            </SerifTitle>
-            <p
-              className="truncate"
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 12,
-                color: "hsl(var(--nl-russet))",
-              }}
-            >
+            </h1>
+            <p className="truncate text-sm text-nl-russet">
               {user?.email}
             </p>
           </div>
         </div>
 
-        {/* Beauty profile nudge — shown when profile not yet completed */}
-        {user && user.beauty_profile_completed === false && (
-          <div
-            className={`mb-5 ${isIndex ? "flex" : "hidden md:flex"} items-center justify-between gap-4 flex-wrap`}
-            style={{
-              border: "1px solid rgba(184,115,51,0.35)",
-              background: "rgba(184,115,51,0.05)",
-              padding: "14px 18px",
-            }}
-          >
-            <div className="flex items-center gap-3 min-w-0">
-              <Sparkles
-                className="shrink-0"
-                style={{
-                  width: 16,
-                  height: 16,
-                  color: "hsl(var(--nl-amber))",
-                }}
-                strokeWidth={1.5}
-              />
-              <span
-                style={{
-                  fontFamily: MAISON_SANS,
-                  fontSize: 12,
-                  letterSpacing: "0.04em",
-                  color: "hsl(var(--nl-cacao))",
-                }}
-              >
-                Finish your beauty profile to get personalised picks.
-              </span>
-            </div>
-            <Link
-              href={`/${locale}/beauty-quiz`}
-              className="shrink-0 transition-colors"
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 10.5,
-                letterSpacing: "0.18em",
-                textTransform: "uppercase",
-                color: "hsl(var(--nl-espresso))",
-                background: "hsl(var(--nl-amber))",
-                padding: "7px 14px",
-                border: "1px solid hsl(var(--nl-amber))",
-                display: "inline-block",
-              }}
-            >
-              Take the quiz
-            </Link>
-          </div>
-        )}
-
         <div className="flex flex-col md:flex-row gap-5 md:gap-10">
           <nav
-            className={`${isIndex ? "flex" : "hidden"} flex-col md:flex md:flex-col gap-0 md:gap-0.5 md:w-52 shrink-0`}
+            className={`${isIndex ? "flex" : "hidden"} flex-col md:flex md:flex-col gap-0.5 w-full md:w-56 shrink-0 self-start rounded-2xl border border-nl-cacao/10 bg-nl-linen p-2 shadow-sm`}
             aria-label="Account navigation"
           >
             {visibleNavItems.map(({ key, labelKey, icon: Icon, href }) => {
@@ -202,24 +111,23 @@ export default function AccountLayout({
                 <Link
                   key={key}
                   href={fullHref}
-                  className={`flex items-center justify-between md:justify-start gap-3 py-3.5 md:py-2.5 px-0 md:px-3 border-b border-nl-cacao/10 md:border-b-0 md:border-l uppercase transition-colors ${
+                  aria-current={isActive ? "page" : undefined}
+                  className={`flex items-center justify-between md:justify-start gap-3 rounded-lg px-3 py-3 md:py-2.5 text-sm transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-nl-amber ${
                     isActive
-                      ? "text-nl-amber md:border-nl-amber"
-                      : "text-nl-cacao md:text-nl-russet md:border-transparent hover:text-nl-cacao"
+                      ? "bg-nl-pearl text-nl-amber-text font-semibold"
+                      : "text-nl-cacao font-medium hover:bg-nl-pearl"
                   }`}
-                  style={{
-                    fontFamily: MAISON_SANS,
-                    fontSize: 10.5,
-                    letterSpacing: "0.18em",
-                  }}
                 >
                   <span className="flex items-center gap-3 min-w-0">
-                    <Icon className="h-4 w-4 shrink-0" strokeWidth={1.25} />
+                    <Icon
+                      className={`h-[18px] w-[18px] shrink-0 ${isActive ? "text-nl-amber" : "text-nl-russet"}`}
+                      strokeWidth={1.75}
+                    />
                     <span className="leading-tight line-clamp-1">{t(labelKey ?? key)}</span>
                   </span>
                   <ChevronRight
-                    className="h-4 w-4 shrink-0 opacity-40 md:hidden"
-                    strokeWidth={1.25}
+                    className="h-4 w-4 shrink-0 text-nl-russet opacity-60 md:hidden rtl:rotate-180"
+                    strokeWidth={1.75}
                   />
                 </Link>
               );
@@ -229,17 +137,12 @@ export default function AccountLayout({
             {!isIndex && (
               <Link
                 href={`/${locale}/account`}
-                className="md:hidden flex items-center gap-2 mb-4 text-nl-cacao"
-                style={{
-                  fontFamily: MAISON_SANS,
-                  fontSize: 11,
-                  letterSpacing: "0.1em",
-                }}
+                className="md:hidden inline-flex items-center gap-2 mb-4 text-sm font-semibold text-nl-amber-text hover:underline"
               >
-                <ArrowLeft className="h-4 w-4" strokeWidth={1.5} />
-                <span className="uppercase">{tCommon("back")}</span>
+                <ArrowLeft className="h-4 w-4 rtl:rotate-180" strokeWidth={1.75} />
+                <span>{tCommon("back")}</span>
                 {activeItem && (
-                  <span className="opacity-50 normal-case">
+                  <span className="font-normal text-nl-russet">
                     · {t(activeItem.labelKey ?? activeItem.key)}
                   </span>
                 )}

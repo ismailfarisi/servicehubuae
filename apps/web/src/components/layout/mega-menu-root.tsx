@@ -110,7 +110,7 @@ export function MegaMenuRoot({ tabs }: Props) {
 					CLOSE_DELAY_MS,
 				);
 			}}
-			className="absolute inset-x-0 top-full z-50 bg-nl-linen border-t border-nl-cacao/10 shadow-[0_24px_60px_rgba(26,18,8,0.12)] animate-fade-in-up"
+			className="absolute inset-x-0 top-full z-50 bg-nl-linen border-t border-nl-cacao/10 rounded-b-2xl shadow-[0_24px_48px_hsl(var(--nl-cacao)/0.12)] animate-fade-in-up"
 		>
 			<div className="max-w-[1400px] mx-auto px-4 md:px-12">
 				<MegaMenuPanel tab={openTab} />

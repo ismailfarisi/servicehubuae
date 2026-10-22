@@ -98,7 +98,7 @@ export function ActivityTab({ integrationId }: ActivityTabProps) {
         <h2 className="text-sm font-semibold uppercase tracking-wide text-taupe">Delivery Log</h2>
         <Button
           onClick={() => setTestFireOpen(true)}
-          className="bg-amber text-cacao hover:bg-amber/90 text-xs uppercase tracking-wide"
+          className="bg-amber text-linen hover:bg-amber/90 text-xs uppercase tracking-wide"
           size="sm"
         >
           <Flask size={14} className="mr-1.5" />

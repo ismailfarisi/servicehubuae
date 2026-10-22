@@ -1,19 +1,5 @@
-import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
-
-export function useProductSearch(query: string) {
-  return useQuery({
-    queryKey: ["product-search", query],
-    queryFn: () =>
-      api.get("/products", { params: { search: query, limit: 8 } }).then((r) => {
-        const items = r.data.data?.data ?? r.data.data ?? [];
-        return Array.isArray(items) ? items : [];
-      }),
-    enabled: query.length >= 2,
-    placeholderData: keepPreviousData,
-    staleTime: 30_000,
-  });
-}
 
 export function useMyBids() {
   return useQuery({
@@ -35,6 +21,7 @@ export function usePlaceBid() {
     mutationFn: (data: {
       section_id: string;
       bid_amount_fils: number;
+      // Sponsored carousels: the featured service offering id (legacy field name).
       product_id?: string;
       content?: Record<string, unknown>;
       starts_at: string;

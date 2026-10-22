@@ -11,15 +11,15 @@ interface RegisterFormProps {
 }
 
 const fieldClassName =
-  "mt-2 w-full border border-nl-cacao/15 bg-white/55 px-4 py-3 text-[15px] text-nl-cacao outline-none transition-colors placeholder:text-nl-russet/45 focus:border-nl-amber focus:bg-white focus:ring-2 focus:ring-nl-amber/15";
+  "mt-1.5 w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-4 py-3 text-[15px] text-nl-cacao outline-none transition-colors placeholder:text-nl-russet/60 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20";
 
-const labelClassName = "text-[10px] font-medium uppercase tracking-[0.22em] text-nl-russet";
+const labelClassName = "text-sm font-medium text-nl-cacao";
 
 const submitClassName =
-  "w-full bg-nl-cacao px-5 py-3.5 text-[11px] font-medium uppercase tracking-[0.24em] text-nl-linen transition-colors hover:bg-nl-espresso focus:outline-none focus:ring-2 focus:ring-nl-amber focus:ring-offset-2 focus:ring-offset-nl-linen disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90 focus:outline-none focus:ring-2 focus:ring-nl-amber focus:ring-offset-2 focus:ring-offset-nl-linen disabled:cursor-not-allowed disabled:opacity-50";
 
 const switchClassName =
-  "font-medium text-nl-amber underline-offset-4 transition-colors hover:text-nl-cacao hover:underline";
+  "font-semibold text-nl-amber-text underline-offset-4 hover:underline";
 
 export function RegisterForm({ onAuthenticated, onSwitchToLogin }: RegisterFormProps) {
   const t = useTranslations("auth");
@@ -129,7 +129,7 @@ export function RegisterForm({ onAuthenticated, onSwitchToLogin }: RegisterFormP
         />
       </div>
       {error && (
-        <p className="border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
       )}

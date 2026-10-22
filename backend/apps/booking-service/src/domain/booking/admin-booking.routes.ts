@@ -57,6 +57,13 @@ export const adminBookingRoutes = new Elysia()
       }),
     },
   )
+  // Platform KPI tiles (see booking-dashboard.service.ts for the windows).
+  // Static segment, so it never collides with /admin/bookings/:id.
+  .get(
+    "/admin/bookings/dashboard",
+    // biome-ignore lint/suspicious/noExplicitAny: guarded context is loosely typed
+    async ({ bookingDashboardService }: any) => ok(await bookingDashboardService.adminDashboard()),
+  )
   .get(
     "/admin/bookings/:id",
     // biome-ignore lint/suspicious/noExplicitAny: guarded context is loosely typed

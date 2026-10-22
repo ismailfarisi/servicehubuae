@@ -4,7 +4,7 @@ import {
 	type VendorLocation,
 	type VendorLocationInput,
 	useCreateLocation,
-	useDeliveryZones,
+	useAreas,
 	useUpdateLocation,
 } from "@/lib/queries/locations";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -145,7 +145,7 @@ export function LocationForm({ location, canWrite }: LocationFormProps) {
 	const { mutateAsync: createLocation, isPending: creating } = useCreateLocation();
 	const { mutateAsync: updateLocation, isPending: updating } = useUpdateLocation();
 	const isPending = creating || updating;
-	const { data: zones = [] } = useDeliveryZones();
+	const { data: zones = [] } = useAreas();
 
 	const form = useForm<LocationFormValues>({
 		resolver: zodResolver(locationFormSchema),
@@ -239,7 +239,7 @@ export function LocationForm({ location, canWrite }: LocationFormProps) {
 									control={form.control}
 									name="is_active"
 									render={({ field }) => (
-										<FormItem className="flex items-center justify-between rounded-lg border border-pearl/28 p-3">
+										<FormItem className="flex items-center justify-between rounded-lg border border-input p-3">
 											<div>
 												<FormLabel>Active</FormLabel>
 												<p className="text-xs text-muted-foreground">
@@ -310,13 +310,13 @@ export function LocationForm({ location, canWrite }: LocationFormProps) {
 								name="area_id"
 								render={({ field }) => (
 									<FormItem className="col-span-2">
-										<FormLabel>Zone</FormLabel>
+										<FormLabel>Area</FormLabel>
 										<Select value={field.value} onValueChange={field.onChange}>
 											<SelectTrigger>
-												<SelectValue placeholder="Select a zone" />
+												<SelectValue placeholder="Select an area" />
 											</SelectTrigger>
 											<SelectContent>
-												<SelectItem value={NO_ZONE}>No zone</SelectItem>
+												<SelectItem value={NO_ZONE}>No area</SelectItem>
 												{zones.map((z) => (
 													<SelectItem key={z.id} value={z.id}>
 														{z.name} ({z.city})
@@ -325,7 +325,7 @@ export function LocationForm({ location, canWrite }: LocationFormProps) {
 											</SelectContent>
 										</Select>
 										<p className="text-xs text-muted-foreground">
-											Used for zone-based routing — separate from the
+											Used for area-based routing — separate from the
 											vendor-wide home-visit coverage on the Service Areas
 											tab.
 										</p>

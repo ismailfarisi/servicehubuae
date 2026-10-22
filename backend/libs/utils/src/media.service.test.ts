@@ -1,10 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import {
-  ASSET_TYPE_CONFIG,
-  type MediaAssetType,
-  buildAssetKey,
-  isAssetType,
-} from "./asset-type-config.ts";
+import { ASSET_TYPE_CONFIG, buildAssetKey, isAssetType } from "./asset-type-config.ts";
 import { MediaService } from "./media.service.ts";
 
 describe("MediaService asset config", () => {

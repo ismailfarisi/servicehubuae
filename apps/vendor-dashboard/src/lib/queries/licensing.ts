@@ -191,7 +191,9 @@ export interface LicenseGrant {
   active: boolean;
 }
 
-export type FeaturePlacement = "product" | "storefront";
+// Storefront is the only placement (product placements went away with the
+// product catalogue).
+export type FeaturePlacement = "storefront";
 
 export interface GrantFeature {
   id: string;
@@ -199,7 +201,6 @@ export interface GrantFeature {
   reel_id: string;
   vendor_id: string;
   placement: FeaturePlacement;
-  product_id: string | null;
   position: number | null;
   created_at: string;
 }
@@ -233,26 +234,16 @@ export function useGrantFeatures(grantId: string | null) {
 
 export interface PinFeatureInput {
   grantId: string;
-  placement: FeaturePlacement;
-  product_id?: string;
   position?: number;
 }
 
 export function usePinFeature() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      grantId,
-      placement,
-      product_id,
-      position,
-    }: PinFeatureInput) => {
-      const body: {
-        placement: FeaturePlacement;
-        product_id?: string;
-        position?: number;
-      } = { placement };
-      if (product_id) body.product_id = product_id;
+    mutationFn: async ({ grantId, position }: PinFeatureInput) => {
+      const body: { placement: FeaturePlacement; position?: number } = {
+        placement: "storefront",
+      };
       if (position != null) body.position = position;
       const { data } = await api.post<{ data: GrantFeature }>(
         `/vendor/reels/licensing/grants/${grantId}/feature`,
@@ -331,7 +322,6 @@ export interface VendorBrief {
   awarded_bid_id: string | null;
   bids_close_at: string;
   budget_guide_fils: string | null;
-  target_product_id: string | null;
   target_category: string | null;
   created_at: string;
   updated_at: string;
@@ -363,7 +353,6 @@ export interface CreateBriefInput {
   rights_scope: RightsScope;
   bids_close_at: string; // ISO
   budget_guide_fils?: number;
-  target_product_id?: string;
   target_category?: string;
 }
 

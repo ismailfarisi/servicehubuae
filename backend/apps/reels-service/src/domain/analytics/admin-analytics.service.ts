@@ -1,4 +1,5 @@
 import { AppDataSource } from "@mypickuae/database";
+import { reelLinkedToVendorSql } from "../shared/reel-vendor-link.ts";
 import {
   type Period,
   type PeriodRange,
@@ -7,14 +8,14 @@ import {
   resolvePeriod,
 } from "./rollup.service.ts";
 
+/** Platform-wide reel engagement. Commerce metrics (product taps, attributed
+ *  orders/GMV, creator commissions) went away with products. */
 export interface Overview {
   impressions: number;
   unique_viewers: number;
+  likes: number;
+  saves: number;
   engagementRate: number;
-  productTapRate: number;
-  attributedOrders: number;
-  attributedGmvFils: number;
-  earnedCommissionFils: number;
 }
 
 export interface DeltaCount {
@@ -28,59 +29,39 @@ export interface DeltaRate {
 export interface OverviewWithDeltas {
   kpis: {
     impressions: DeltaCount;
+    likes: DeltaCount;
+    saves: DeltaCount;
     engagementRate: DeltaRate;
-    productTapRate: DeltaRate;
-    attributedOrders: DeltaCount;
-    attributedGmvFils: DeltaCount;
-    earnedCommissionFils: DeltaCount;
   };
   timeseries: Array<{
     date: string;
     impressions: number;
-    attributedGmvFils: number;
-    attributedOrders: number;
-    earnedCommissionFils: number;
+    likes: number;
+    saves: number;
     engagementRate: number;
-    productTapRate: number;
   }>;
-  funnel: {
-    impressions: number;
-    taps: number;
-    orders: number;
-    earnedCommissions: number;
-  };
   asOf: string;
 }
+
+export type AdminLeaderboardType = "top_reels" | "top_creators";
 
 export function rollUpOverview(rows: ReelMetricsRow[]): Overview {
   const sum = rows.reduce(
     (acc, r) => ({
       impressions: acc.impressions + r.impressions,
       unique_viewers: acc.unique_viewers + r.unique_viewers,
+      likes: acc.likes + r.likes,
+      saves: acc.saves + r.saves,
       engagement_events: acc.engagement_events + r.likes + r.saves + r.shares, // shares always 0 in v1
-      product_taps: acc.product_taps + r.product_taps,
-      attributedOrders: acc.attributedOrders + r.attributed_orders,
-      attributedGmvFils: acc.attributedGmvFils + r.attributed_gmv_fils,
-      earnedCommissionFils: acc.earnedCommissionFils + r.earned_commission_fils,
     }),
-    {
-      impressions: 0,
-      unique_viewers: 0,
-      engagement_events: 0,
-      product_taps: 0,
-      attributedOrders: 0,
-      attributedGmvFils: 0,
-      earnedCommissionFils: 0,
-    },
+    { impressions: 0, unique_viewers: 0, likes: 0, saves: 0, engagement_events: 0 },
   );
   return {
     impressions: sum.impressions,
     unique_viewers: sum.unique_viewers,
+    likes: sum.likes,
+    saves: sum.saves,
     engagementRate: sum.impressions > 0 ? sum.engagement_events / sum.impressions : 0,
-    productTapRate: sum.impressions > 0 ? sum.product_taps / sum.impressions : 0,
-    attributedOrders: sum.attributedOrders,
-    attributedGmvFils: sum.attributedGmvFils,
-    earnedCommissionFils: sum.earnedCommissionFils,
   };
 }
 
@@ -89,29 +70,12 @@ export function computeDeltas(curr: Overview, prev: Overview): OverviewWithDelta
     p === 0 ? (c === 0 ? 0 : null) : ((c - p) / p) * 100;
   const pp = (c: number, p: number): number => (c - p) * 100;
   return {
-    impressions: {
-      value: curr.impressions,
-      deltaPct: pct(curr.impressions, prev.impressions),
-    },
-    attributedOrders: {
-      value: curr.attributedOrders,
-      deltaPct: pct(curr.attributedOrders, prev.attributedOrders),
-    },
-    attributedGmvFils: {
-      value: curr.attributedGmvFils,
-      deltaPct: pct(curr.attributedGmvFils, prev.attributedGmvFils),
-    },
-    earnedCommissionFils: {
-      value: curr.earnedCommissionFils,
-      deltaPct: pct(curr.earnedCommissionFils, prev.earnedCommissionFils),
-    },
+    impressions: { value: curr.impressions, deltaPct: pct(curr.impressions, prev.impressions) },
+    likes: { value: curr.likes, deltaPct: pct(curr.likes, prev.likes) },
+    saves: { value: curr.saves, deltaPct: pct(curr.saves, prev.saves) },
     engagementRate: {
       value: curr.engagementRate,
       deltaPp: pp(curr.engagementRate, prev.engagementRate),
-    },
-    productTapRate: {
-      value: curr.productTapRate,
-      deltaPp: pp(curr.productTapRate, prev.productTapRate),
     },
   };
 }
@@ -127,36 +91,21 @@ export class AdminAnalyticsService {
       opts,
     );
 
-    const currAgg = rollUpOverview(curr);
-    const prevAgg = rollUpOverview(prev);
-
     const timeseriesMap = new Map<
       string,
-      {
-        date: string;
-        impressions: number;
-        attributedGmvFils: number;
-        attributedOrders: number;
-        earnedCommissionFils: number;
-        _taps: number;
-        _eng: number;
-      }
+      { date: string; impressions: number; likes: number; saves: number; _eng: number }
     >();
     for (const r of curr) {
       const bucket = timeseriesMap.get(r.bucket_date) ?? {
         date: r.bucket_date,
         impressions: 0,
-        attributedGmvFils: 0,
-        attributedOrders: 0,
-        earnedCommissionFils: 0,
-        _taps: 0,
+        likes: 0,
+        saves: 0,
         _eng: 0,
       };
       bucket.impressions += r.impressions;
-      bucket.attributedGmvFils += r.attributed_gmv_fils;
-      bucket.attributedOrders += r.attributed_orders;
-      bucket.earnedCommissionFils += r.earned_commission_fils;
-      bucket._taps += r.product_taps;
+      bucket.likes += r.likes;
+      bucket.saves += r.saves;
       bucket._eng += r.likes + r.saves + r.shares;
       timeseriesMap.set(r.bucket_date, bucket);
     }
@@ -164,27 +113,15 @@ export class AdminAnalyticsService {
       .map((b) => ({
         date: b.date,
         impressions: b.impressions,
-        attributedGmvFils: b.attributedGmvFils,
-        attributedOrders: b.attributedOrders,
-        earnedCommissionFils: b.earnedCommissionFils,
+        likes: b.likes,
+        saves: b.saves,
         engagementRate: b.impressions > 0 ? b._eng / b.impressions : 0,
-        productTapRate: b.impressions > 0 ? b._taps / b.impressions : 0,
       }))
       .sort((a, b) => a.date.localeCompare(b.date));
 
     return {
-      kpis: computeDeltas(currAgg, prevAgg),
+      kpis: computeDeltas(rollUpOverview(curr), rollUpOverview(prev)),
       timeseries,
-      funnel: {
-        impressions: currAgg.impressions,
-        taps: curr.reduce((a, r) => a + r.product_taps, 0),
-        orders: currAgg.attributedOrders,
-        // Distinct reels with any earned commission in the period. Counting reel-day rows
-        // instead would scale with period length and break the funnel's monotonic read.
-        earnedCommissions: new Set(
-          curr.filter((r) => r.earned_commission_fils > 0).map((r) => r.reel_id),
-        ).size,
-      },
       asOf: new Date().toISOString(),
     };
   }
@@ -207,7 +144,7 @@ export class AdminAnalyticsService {
   }
 
   async leaderboard(
-    type: "creators_commission" | "creators_gmv" | "reels_orders" | "products_gmv" | "vendors_gmv",
+    type: AdminLeaderboardType,
     period: Period,
     limit: number,
     opts: { vendorId?: string } = {},
@@ -217,117 +154,53 @@ export class AdminAnalyticsService {
     const safeLimit = Math.min(500, Math.max(1, Math.trunc(Number(limit)) || 20));
     const range = resolvePeriod(period, new Date());
     const params: unknown[] = [range.from, range.to];
-    // Reels don't have a direct `vendor_id`. Filter reels through reel_product_tags → products.vendor_id.
-    // Vendor filter only applies to reels_orders and products_gmv. On creators_* and vendors_gmv, the UI
-    // should disable the filter dropdown.
-    const reelVendorClause = opts.vendorId
-      ? ` AND EXISTS (SELECT 1 FROM reel_product_tags rpt
-                      JOIN products p2 ON p2.id = rpt.product_id
-                      WHERE rpt.reel_id = drm.reel_id AND p2.vendor_id = $3) `
-      : " ";
+    // Optional vendor filter: reels linked to the vendor (licence grant,
+    // delivered collab or team upload).
+    const vendorClause = opts.vendorId ? ` AND ${reelLinkedToVendorSql("r", "$3")} ` : " ";
     if (opts.vendorId) params.push(opts.vendorId);
 
-    let sql = "";
-    if (type === "creators_commission") {
-      // users has first_name/last_name/email/avatar_url (no handle/display_name columns).
-      sql = `
-        SELECT dcm.creator_id AS id,
+    // users has first_name/last_name/email/avatar_url; reels.user_id links to users.
+    const sql =
+      type === "top_creators"
+        ? `
+        SELECT u.id AS id,
                u.email AS label,
                (COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, '')) AS sub_label,
                u.avatar_url,
-               SUM(dcm.earned_commission_fils)::bigint AS value,
-               SUM(dcm.attributed_orders)::int         AS orders,
-               SUM(dcm.attributed_gmv_fils)::bigint    AS gmv_fils,
-               SUM(dcm.reel_count)::int                AS reels
-          FROM daily_creator_metrics dcm
-          JOIN users u ON u.id = dcm.creator_id
-         WHERE dcm.bucket_date BETWEEN $1 AND $2
-         GROUP BY dcm.creator_id, u.email, u.first_name, u.last_name, u.avatar_url
-         ORDER BY SUM(dcm.earned_commission_fils) DESC
-         LIMIT ${safeLimit};
-      `;
-    } else if (type === "creators_gmv") {
-      sql = `
-        SELECT dcm.creator_id AS id,
-               u.email AS label,
-               (COALESCE(u.first_name, '') || ' ' || COALESCE(u.last_name, '')) AS sub_label,
-               u.avatar_url,
-               SUM(dcm.attributed_gmv_fils)::bigint AS value,
-               SUM(dcm.attributed_orders)::int      AS orders,
-               SUM(dcm.reel_count)::int             AS reels
-          FROM daily_creator_metrics dcm
-          JOIN users u ON u.id = dcm.creator_id
-         WHERE dcm.bucket_date BETWEEN $1 AND $2
-         GROUP BY dcm.creator_id, u.email, u.first_name, u.last_name, u.avatar_url
-         ORDER BY SUM(dcm.attributed_gmv_fils) DESC
-         LIMIT ${safeLimit};
-      `;
-    } else if (type === "reels_orders") {
-      // reels.user_id (not creator_id) links to users.
-      sql = `
+               COUNT(DISTINCT r.id)::int    AS reels,
+               SUM(drm.impressions)::int    AS impressions,
+               SUM(drm.likes)::int          AS likes,
+               SUM(drm.saves)::int          AS saves
+          FROM daily_reel_metrics drm
+          JOIN reels r ON r.id = drm.reel_id
+          JOIN users u ON u.id = r.user_id
+         WHERE drm.bucket_date BETWEEN $1 AND $2 ${vendorClause}
+         GROUP BY u.id, u.email, u.first_name, u.last_name, u.avatar_url
+         ORDER BY impressions DESC
+         LIMIT ${safeLimit};`
+        : `
         SELECT drm.reel_id AS id,
                r.caption   AS label,
                u.email     AS sub_label,
                r.thumbnail_url,
-               SUM(drm.attributed_orders)::int     AS value,
-               SUM(drm.attributed_gmv_fils)::bigint AS gmv_fils,
-               SUM(drm.impressions)::int           AS impressions
+               SUM(drm.impressions)::int AS impressions,
+               SUM(drm.likes)::int       AS likes,
+               SUM(drm.saves)::int       AS saves
           FROM daily_reel_metrics drm
           JOIN reels r ON r.id = drm.reel_id
           JOIN users u ON u.id = r.user_id
-         WHERE drm.bucket_date BETWEEN $1 AND $2 ${reelVendorClause}
+         WHERE drm.bucket_date BETWEEN $1 AND $2 ${vendorClause}
          GROUP BY drm.reel_id, r.caption, u.email, r.thumbnail_url
-         ORDER BY SUM(drm.attributed_orders) DESC
-         LIMIT ${safeLimit};
-      `;
-    } else if (type === "products_gmv") {
-      // products has no thumbnail_url column; pull the primary product_images row.
-      sql = `
-        SELECT p.id AS id,
-               p.name AS label,
-               v.business_name AS sub_label,
-               (SELECT pi.thumbnail_url
-                  FROM product_images pi
-                 WHERE pi.product_id = p.id AND pi.deleted_at IS NULL
-                 ORDER BY pi.is_primary DESC, pi.sort_order ASC
-                 LIMIT 1) AS thumbnail_url,
-               COALESCE(SUM(rc.item_price_fils) FILTER (WHERE rc.status <> 'voided'), 0)::bigint AS value,
-               (COUNT(DISTINCT rc.order_id) FILTER (WHERE rc.status <> 'voided'))::int           AS orders,
-               COUNT(DISTINCT rc.reel_id)::int                                                    AS reels
-          FROM reel_commissions rc
-          JOIN products p ON p.id = rc.product_id
-          JOIN vendors v  ON v.id = rc.vendor_id
-         WHERE rc.created_at::date BETWEEN $1 AND $2 ${opts.vendorId ? " AND rc.vendor_id = $3 " : " "}
-         GROUP BY p.id, p.name, v.business_name
-         ORDER BY SUM(rc.item_price_fils) FILTER (WHERE rc.status <> 'voided') DESC NULLS LAST
-         LIMIT ${safeLimit};
-      `;
-    } else if (type === "vendors_gmv") {
-      sql = `
-        SELECT dvrm.vendor_id AS id,
-               v.business_name AS label,
-               v.slug AS sub_label,
-               v.logo_url AS avatar_url,
-               SUM(dvrm.attributed_gmv_fils)::bigint AS value,
-               SUM(dvrm.attributed_orders)::int      AS orders,
-               SUM(dvrm.reel_count)::int             AS reels
-          FROM daily_vendor_reel_metrics dvrm
-          JOIN vendors v ON v.id = dvrm.vendor_id
-         WHERE dvrm.bucket_date BETWEEN $1 AND $2
-         GROUP BY dvrm.vendor_id, v.business_name, v.slug, v.logo_url
-         ORDER BY SUM(dvrm.attributed_gmv_fils) DESC
-         LIMIT ${safeLimit};
-      `;
-    }
+         ORDER BY impressions DESC
+         LIMIT ${safeLimit};`;
     const rows: Record<string, unknown>[] = await AppDataSource.query(sql, params);
     return {
       rows: rows.map((r) => ({
         ...r,
-        value: Number(r.value ?? 0),
-        gmv_fils: r.gmv_fils != null ? Number(r.gmv_fils) : undefined,
-        orders: r.orders != null ? Number(r.orders) : undefined,
+        impressions: Number(r.impressions ?? 0),
+        likes: Number(r.likes ?? 0),
+        saves: Number(r.saves ?? 0),
         reels: r.reels != null ? Number(r.reels) : undefined,
-        impressions: r.impressions != null ? Number(r.impressions) : undefined,
       })),
       asOf: new Date().toISOString(),
     };
@@ -335,12 +208,9 @@ export class AdminAnalyticsService {
 }
 
 async function vendorReelIds(vendorId: string): Promise<Set<string>> {
-  const rows: { reel_id: string }[] = await AppDataSource.query(
-    `SELECT DISTINCT rpt.reel_id
-       FROM reel_product_tags rpt
-       JOIN products p ON p.id = rpt.product_id
-      WHERE p.vendor_id = $1`,
+  const rows: { id: string }[] = await AppDataSource.query(
+    `SELECT r.id FROM reels r WHERE ${reelLinkedToVendorSql("r", "$1")}`,
     [vendorId],
   );
-  return new Set(rows.map((r) => r.reel_id));
+  return new Set(rows.map((r) => r.id));
 }

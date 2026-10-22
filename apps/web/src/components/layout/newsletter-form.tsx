@@ -66,13 +66,15 @@ export function NewsletterForm() {
 					: {})}
 				data-state="newsletter-subscribed"
 			>
-				<div className="flex items-center gap-2.5 border-b border-nl-cacao pb-3">
-					<Check className="h-5 w-5 text-nl-cacao" strokeWidth={1.25} />
-					<span className="font-serif text-lg md:text-[22px] text-nl-cacao">
+				<div className="flex items-center gap-3 rounded-xl border border-nl-amber/20 bg-nl-pearl px-4 py-3.5">
+					<span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-nl-amber text-white">
+						<Check className="h-4 w-4" strokeWidth={2} />
+					</span>
+					<span className="font-display font-semibold text-base md:text-lg text-nl-cacao">
 						You're subscribed — welcome to the edit.
 					</span>
 				</div>
-				<p className="mt-5 text-[10.5px] tracking-[0.18em] uppercase text-nl-russet">
+				<p className="mt-4 text-sm text-nl-russet">
 					Check your inbox for a confirmation.
 				</p>
 			</div>
@@ -81,7 +83,7 @@ export function NewsletterForm() {
 
 	return (
 		<form className="w-full" onSubmit={handleSubmit} aria-label="Newsletter signup">
-			<div className="flex items-end border-b border-nl-cacao pb-1">
+			<div className="flex flex-col sm:flex-row gap-2.5">
 				<input
 					type="email"
 					required
@@ -89,34 +91,30 @@ export function NewsletterForm() {
 					onChange={(e) => setEmail(e.target.value)}
 					placeholder="your@email.com"
 					aria-label="Email address"
-					className="flex-1 min-w-0 bg-transparent outline-none font-serif text-lg md:text-[22px] text-nl-cacao placeholder:text-nl-cacao/40 py-3"
+					className="flex-1 min-w-0 min-h-[44px] rounded-lg border border-nl-cacao/15 bg-nl-linen px-4 py-3 text-base text-nl-cacao placeholder:text-nl-russet/70 outline-none transition-colors focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
 				/>
 				<button
 					type="submit"
 					disabled={status === "submitting"}
-					className="inline-flex items-center gap-2.5 bg-nl-cacao text-nl-linen px-5 py-3.5 md:px-6 md:py-[14px] text-[10.5px] tracking-[0.22em] uppercase hover:bg-nl-espresso transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+					className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-3 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
 				>
 					{status === "submitting" ? "Subscribing…" : "Subscribe"}
-					<ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" strokeWidth={1.25} />
+					<ArrowRight className="h-4 w-4 rtl:rotate-180" strokeWidth={2} />
 				</button>
 			</div>
 			{status === "error" && (
-				<p className="mt-3 text-[10.5px] tracking-[0.18em] uppercase text-red-700" role="alert">
+				<p className="mt-3 text-sm text-red-700" role="alert">
 					Something went wrong. Please try again.
 				</p>
 			)}
-			<div className="flex flex-wrap gap-4 md:gap-[18px] mt-5 text-[10.5px] tracking-[0.18em] uppercase text-nl-russet">
+			<div className="flex flex-wrap gap-4 md:gap-5 mt-4 text-sm text-nl-russet">
 				<span className="inline-flex items-center gap-1.5">
-					<Check className="h-3.5 w-3.5" strokeWidth={1.25} />
+					<Check className="h-4 w-4 text-nl-amber" strokeWidth={2} />
 					No spam
 				</span>
 				<span className="inline-flex items-center gap-1.5">
-					<Check className="h-3.5 w-3.5" strokeWidth={1.25} />
+					<Check className="h-4 w-4 text-nl-amber" strokeWidth={2} />
 					Unsubscribe anytime
-				</span>
-				<span className="inline-flex items-center gap-1.5">
-					<Check className="h-3.5 w-3.5" strokeWidth={1.25} />
-					38K subscribers
 				</span>
 			</div>
 		</form>

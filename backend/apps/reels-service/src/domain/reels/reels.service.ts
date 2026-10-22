@@ -7,10 +7,8 @@ import {
   VendorMember,
   VendorMemberStatus,
 } from "@mypickuae/database";
-import { In, type Repository } from "typeorm";
+import type { Repository } from "typeorm";
 import type { TrustService } from "../creator-tier/trust.service.ts";
-import type { CategoryCohortInvalidator } from "../feed/category-cohort-invalidator.ts";
-import { collectCategorySeedIdsForReel } from "../moderation/moderation.service.ts";
 import type { CloudflareStreamClient } from "../upload/cloudflare-stream.client.ts";
 
 export interface RequestUploadInput {
@@ -34,7 +32,6 @@ export class ReelsService {
   constructor(
     private readonly cloudflare: CloudflareStreamClient,
     private readonly trustService: TrustService,
-    private readonly invalidator?: CategoryCohortInvalidator,
   ) {}
 
   setUploadRecoveryScheduler(scheduler: UploadRecoveryScheduler): void {
@@ -144,11 +141,6 @@ export class ReelsService {
     return count > 0;
   }
 
-  private async countTagsForReel(reelId: string): Promise<number> {
-    // Product tagging was removed with the commerce domain; reels carry no tags.
-    return 0;
-  }
-
   private async isTrustedUser(userId: string): Promise<boolean> {
     // Delegation kept as a private method so existing publish tests that
     // mock `(service as any).isTrustedUser = ...` continue to work.
@@ -163,9 +155,6 @@ export class ReelsService {
     if (reel.status !== ReelStatus.draft) throw new Error("reel_not_in_draft_state");
 
     await this.refreshCloudflareMetadataBeforePublish(reel);
-
-    const tagCount = await this.countTagsForReel(input.reelId);
-    if (tagCount < 1) throw new Error("at_least_one_tag");
 
     const trusted = await this.isTrustedUser(input.userId);
     if (trusted) {
@@ -226,13 +215,7 @@ export class ReelsService {
     if (!reel) throw new Error("reel_not_found");
     if (reel.user_id !== userId) throw new Error("not_the_owner");
 
-    const seeds = this.invalidator
-      ? await collectCategorySeedIdsForReel(reelId, AppDataSource)
-      : [];
     await repo.softRemove(reel);
-    if (this.invalidator && seeds.length > 0) {
-      void this.invalidator.enqueue({ seedCategoryIds: seeds });
-    }
   }
 
   async updateMetadata(

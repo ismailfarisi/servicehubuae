@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Eyebrow, MAISON_SANS, MaisonMark, SerifTitle } from "@/components/ui/maison-primitives";
+import { Eyebrow, MaisonMark, SerifTitle } from "@/components/ui/maison-primitives";
 import type { Booking, OfferingStaffMember, VendorLocation } from "@/lib/booking/types";
 import { formatDateInZone, formatPrice, formatTimeInZone } from "@/lib/utils";
 
@@ -36,20 +36,15 @@ export function BookingSuccess({
 
   return (
     <div className="mt-6">
-      <div className="flex items-center gap-2 mb-3">
+      <div className="mb-3 flex items-center gap-2">
         <MaisonMark size={18} />
-        <Eyebrow amber>{t("successTitle")}</Eyebrow>
+        <Eyebrow amber className="text-sm">
+          {t("successTitle")}
+        </Eyebrow>
       </div>
       <SerifTitle size={24}>{booking.service_name}</SerifTitle>
 
-      <div
-        className="mt-5"
-        style={{
-          border: "1px solid rgba(44,24,16,0.08)",
-          background: "rgba(44,24,16,0.015)",
-          padding: 18,
-        }}
-      >
+      <div className="mt-5 divide-y divide-nl-cacao/10 rounded-2xl border border-nl-cacao/10 bg-nl-linen px-4 py-1 shadow-sm sm:px-5">
         <SummaryRow label={t("successBookingNumber")} value={booking.booking_number} />
         <SummaryRow
           label={t("successDateTime")}
@@ -69,22 +64,11 @@ export function BookingSuccess({
         )}
       </div>
 
-      <p
-        className="mt-4"
-        style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-cacao))" }}
-      >
-        {chargedCopy}
-      </p>
+      <p className="mt-4 text-sm text-nl-cacao">{chargedCopy}</p>
 
       <Link
         href={`/${locale}/account/bookings`}
-        className="mt-6 inline-block uppercase"
-        style={{
-          fontFamily: MAISON_SANS,
-          fontSize: 10.5,
-          letterSpacing: "0.18em",
-          color: "hsl(var(--nl-amber))",
-        }}
+        className="mt-6 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90"
       >
         {t("viewBookings")}
       </Link>
@@ -94,16 +78,9 @@ export function BookingSuccess({
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 py-1.5">
-      <span
-        className="uppercase shrink-0"
-        style={{ fontFamily: MAISON_SANS, fontSize: 10, letterSpacing: "0.12em", color: "hsl(var(--nl-russet))" }}
-      >
-        {label}
-      </span>
-      <span className="text-end" style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-cacao))" }}>
-        {value}
-      </span>
+    <div className="flex items-baseline justify-between gap-4 py-3">
+      <span className="shrink-0 text-xs font-medium text-nl-russet">{label}</span>
+      <span className="text-end text-sm font-medium text-nl-cacao">{value}</span>
     </div>
   );
 }

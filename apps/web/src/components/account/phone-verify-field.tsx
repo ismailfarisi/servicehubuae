@@ -62,10 +62,8 @@ export function saveAddressErrorMessage(err: any): string | null {
   return null;
 }
 
-const labelStyle: CSSProperties = {
-  fontSize: 10,
-  letterSpacing: "0.2em",
-};
+const ACTION_CLASS =
+  "text-xs font-semibold text-nl-amber-text hover:underline disabled:opacity-40 disabled:cursor-not-allowed disabled:no-underline";
 
 export function PhoneVerifyField({
   value,
@@ -144,22 +142,14 @@ export function PhoneVerifyField({
       />
 
       {isVerified && (
-        <p
-          className="flex items-center gap-1 uppercase"
-          style={{ ...labelStyle, color: "hsl(var(--nl-russet))" }}
-        >
-          <Check className="h-3 w-3" strokeWidth={1.5} style={{ color: "hsl(var(--nl-amber))" }} />
+        <p className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+          <Check className="h-3 w-3" strokeWidth={2} />
           Verified
         </p>
       )}
 
       {!isVerified && unchanged && (
-        <p
-          className="uppercase"
-          style={{ ...labelStyle, color: "hsl(var(--nl-russet))", opacity: 0.7 }}
-        >
-          Unchanged — no verification needed
-        </p>
+        <p className="text-xs text-nl-russet">Unchanged — no verification needed</p>
       )}
 
       {!isVerified && !unchanged && !codeSent && (
@@ -173,8 +163,7 @@ export function PhoneVerifyField({
               onError: (err) => setError(messageFor(err)),
             });
           }}
-          className="uppercase disabled:opacity-40 disabled:cursor-not-allowed"
-          style={{ ...labelStyle, color: "hsl(var(--nl-amber-text))" }}
+          className={ACTION_CLASS}
         >
           {start.isPending ? "Sending…" : "Verify this number"}
         </button>
@@ -187,13 +176,7 @@ export function PhoneVerifyField({
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="Enter code"
-            className="px-2.5 py-1.5 text-sm outline-none"
-            style={{
-              border: "1px solid rgba(44,24,16,0.2)",
-              background: "rgba(255,255,255,0.6)",
-              color: "hsl(var(--nl-cacao))",
-              width: 110,
-            }}
+            className="w-[110px] rounded-lg border border-nl-cacao/15 bg-nl-linen px-2.5 py-1.5 text-sm text-nl-cacao outline-none transition-colors focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
           />
           <button
             type="button"
@@ -211,8 +194,7 @@ export function PhoneVerifyField({
                 },
               );
             }}
-            className="uppercase disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ ...labelStyle, color: "hsl(var(--nl-amber-text))" }}
+            className="inline-flex items-center justify-center rounded-lg bg-nl-amber px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             {confirm.isPending ? "Checking…" : "Confirm"}
           </button>

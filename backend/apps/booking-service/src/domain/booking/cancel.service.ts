@@ -51,14 +51,7 @@ import {
 import { BadRequestError, NotFoundError } from "@mypickuae/plugins";
 import type { Repository } from "typeorm";
 import { deriveRecoverableAmount, resolveAuthPi } from "./booking-money.ts";
-import type {
-  BookingPaymentCaptureInput,
-  BookingPaymentCaptureResult,
-  BookingPaymentRefundInput,
-  BookingPaymentRefundResult,
-  BookingPaymentVoidInput,
-  BookingPaymentVoidResult,
-} from "./booking-payment.client.ts";
+import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";
 import { computeCancellation } from "./booking-policy.ts";
 import {
   type BookingActor,
@@ -66,13 +59,9 @@ import {
   InvalidBookingTransitionError,
 } from "./booking-status.service.ts";
 
-// ── Narrow DI seams (mirrors reschedule.service.ts) — this file never imports
-// the concrete BookingPaymentClient; it only needs void/capture/refund. ──────
-export interface CancelPaymentClient {
-  void(input: BookingPaymentVoidInput): Promise<BookingPaymentVoidResult>;
-  capture(input: BookingPaymentCaptureInput): Promise<BookingPaymentCaptureResult>;
-  refund(input: BookingPaymentRefundInput): Promise<BookingPaymentRefundResult>;
-}
+// ── Narrow DI seams (mirrors reschedule.service.ts) — this file only needs
+// the gateway's void/capture/refund. ─────────────────────────────────────────
+export type CancelPaymentClient = Pick<BookingPaymentGateway, "void" | "capture" | "refund">;
 export interface NotificationEventQueueLike {
   add(name: string, data: unknown): Promise<unknown>;
 }
@@ -260,7 +249,7 @@ export class CancelService {
             // Prepay confirmed but never authorized (booked before the
             // booking-auth job fired, or the off-session auth failed). Only a
             // SetupIntent exists — a saved-card verification, no money held, and
-            // BookingPaymentClient has no setup-intent-cancel path (same as
+            // the payment gateway has no setup-cancel path (same as
             // BookingReaperService's prepay leg). Nothing to void.
             console.log(
               `[cancel] prepay booking ${booking.id} not yet authorized — nothing to void (SetupIntent holds no money)`,
@@ -281,9 +270,7 @@ export class CancelService {
           const pi = await resolveAuthPi(this.paymentRepo, booking, "[cancel]");
           if (!pi) return;
           // Capture ONLY the forfeit; Stripe auto-releases the remainder of a
-          // manual-capture PI when amount_to_capture < authorized
-          // (order-service /internal/booking-payments/capture forwards
-          // amount_fils as amount_to_capture — verified Phase 4 Task 2).
+          // manual-capture PI when the captured amount < authorized.
           await this.paymentClient.capture({
             bookingId: booking.id,
             paymentIntentId: pi,
@@ -292,12 +279,10 @@ export class CancelService {
           return;
         }
         case "refund":
-          // Deposit refund — RefundService resolves the captured deposit
+          // Deposit refund — the gateway resolves the captured deposit
           // Payment row by booking_id internally (no PI id needed) and caps at
-          // its amount. Deliberately NO free-text `reason`: order-service's
-          // RefundService forwards `reason` straight to Stripe's refund `reason`
-          // param, which only accepts duplicate|fraudulent|requested_by_customer
-          // — a prose string 400s there. The human-readable in/out-window +
+          // its amount. Deliberately NO free-text `reason` (payment providers
+          // typically accept only an enum there). The human-readable in/out-window +
           // refund/forfeit detail is already recorded on the booking_status_history
           // row; the refund itself is tagged via reference_type="cancellation".
           await this.paymentClient.refund({

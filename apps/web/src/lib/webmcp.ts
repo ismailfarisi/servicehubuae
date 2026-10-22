@@ -1,4 +1,4 @@
-import { useCartStore } from "@/stores/cart";
+import { searchResultsHref } from "./links";
 
 type WebMcpToolResponse = {
 	content: Array<{ type: "text"; text: string }>;
@@ -64,17 +64,17 @@ export async function registerMyPickUAEWebMcpServiceWorker({
 function createMyPickUAEWebMcpTools(locale: string): WebMcpTool[] {
 	return [
 		{
-			name: "mypickuae.searchProducts",
-			title: "Search MyPickUAE products",
+			name: "mypickuae.searchServices",
+			title: "Search MyPickUAE services",
 			description:
-				"Navigate the MyPickUAE storefront to product search results for a concise customer-provided query.",
+				"Navigate the MyPickUAE storefront to service search results for a concise customer-provided query.",
 			inputSchema: {
 				type: "object",
 				properties: {
 					query: {
 						type: "string",
 						description:
-							"Product, brand, category, or beauty concern to search for.",
+							"Service, category, or job to search for (e.g. \"AC repair\", \"deep cleaning\").",
 						minLength: 1,
 						maxLength: 120,
 					},
@@ -94,7 +94,7 @@ function createMyPickUAEWebMcpTools(locale: string): WebMcpTool[] {
 					};
 				}
 
-				const path = `/${locale}/search?q=${encodeURIComponent(query)}`;
+				const path = searchResultsHref(locale, query);
 				window.location.assign(path);
 
 				return {
@@ -106,44 +106,22 @@ function createMyPickUAEWebMcpTools(locale: string): WebMcpTool[] {
 			},
 		},
 		{
-			name: "mypickuae.getCartSummary",
-			title: "Get MyPickUAE cart summary",
+			name: "mypickuae.openMyBookings",
+			title: "Open my MyPickUAE bookings",
 			description:
-				"Read the visible MyPickUAE cart drawer state and current item count.",
-			inputSchema: {
-				type: "object",
-				properties: {},
-				additionalProperties: false,
-			},
-			annotations: { readOnlyHint: true },
-			async execute() {
-				const { itemCount, isSlideOverOpen } = useCartStore.getState();
-				const itemLabel = itemCount === 1 ? "item" : "items";
-
-				return {
-					content: [
-						{ type: "text", text: `Cart contains ${itemCount} ${itemLabel}.` },
-					],
-					structuredContent: { itemCount, isOpen: isSlideOverOpen },
-				};
-			},
-		},
-		{
-			name: "mypickuae.openCart",
-			title: "Open MyPickUAE cart",
-			description:
-				"Open the MyPickUAE cart drawer so the customer can review their cart in the page.",
+				"Navigate to the customer's bookings page so they can review upcoming and past appointments.",
 			inputSchema: {
 				type: "object",
 				properties: {},
 				additionalProperties: false,
 			},
 			async execute() {
-				useCartStore.getState().openSlideOver();
+				const path = `/${locale}/account/bookings`;
+				window.location.assign(path);
 
 				return {
-					content: [{ type: "text", text: "Cart opened." }],
-					structuredContent: { isOpen: true },
+					content: [{ type: "text", text: "Opened My bookings." }],
+					structuredContent: { navigated: true, path },
 				};
 			},
 		},

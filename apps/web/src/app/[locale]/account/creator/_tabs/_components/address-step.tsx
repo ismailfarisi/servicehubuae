@@ -85,14 +85,11 @@ export function AddressStep({
             {list.map((a) => (
               <label
                 key={a.id}
-                className="flex cursor-pointer items-start gap-3 p-3 transition-colors"
-                style={{
-                  border: `1px solid ${
-                    selected === a.id ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.16)"
-                  }`,
-                  background:
-                    selected === a.id ? "rgba(184,115,51,0.06)" : "rgba(255,255,255,0.55)",
-                }}
+                className={`flex cursor-pointer items-start gap-3 rounded-xl border p-3 transition-colors ${
+                  selected === a.id
+                    ? "border-nl-amber bg-nl-pearl"
+                    : "border-nl-cacao/15 bg-nl-linen hover:bg-nl-pearl"
+                }`}
               >
                 <input
                   type="radio"
@@ -102,9 +99,9 @@ export function AddressStep({
                   onChange={() => setSelected(a.id)}
                 />
                 <MaisonRadio selected={selected === a.id} />
-                <span style={{ fontSize: 13, color: "hsl(var(--nl-cacao))" }}>
-                  <span className="block">{a.line1}</span>
-                  <span className="block" style={{ color: "hsl(var(--nl-russet))" }}>
+                <span className="text-sm text-nl-cacao">
+                  <span className="block font-medium">{a.line1}</span>
+                  <span className="block text-nl-russet">
                     {a.city}
                   </span>
                 </span>

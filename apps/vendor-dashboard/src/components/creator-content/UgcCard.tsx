@@ -1,6 +1,6 @@
 "use client";
 
-import { type DiscoveryCard, formatAED } from "@/lib/queries/creator-content";
+import type { DiscoveryCard } from "@/lib/queries/creator-content";
 
 export function UgcCard({
   card,
@@ -37,16 +37,9 @@ export function UgcCard({
       <div className="p-2 flex flex-col gap-1">
         <p className="truncate text-sm font-medium">{card.creator.name}</p>
         {card.caption && <p className="truncate text-xs text-neutral-500">{card.caption}</p>}
-        <div className="flex flex-wrap gap-1">
-          {card.tagged_products.slice(0, 3).map((p) => (
-            <span key={p.id} className="rounded bg-neutral-100 px-1 text-xs">
-              {p.name}
-            </span>
-          ))}
-        </div>
         <div className="flex items-center justify-between text-xs text-neutral-600">
           <span>{card.engagement.views} views</span>
-          {card.attributed && <span>{formatAED(card.attributed.gmv_fils)}</span>}
+          <span>{card.engagement.likes} likes</span>
         </div>
         <button
           type="button"

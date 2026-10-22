@@ -17,9 +17,9 @@ const tabs: NavTab[] = [
   {
     id: "t1",
     kind: "category",
-    label: "Makeup",
-    href: "/c/makeup",
-    subcategories: [{ label: "Lipstick", href: "/c/lipstick" }],
+    label: "Cleaning",
+    href: "/en/services?category=cleaning",
+    subcategories: [{ label: "Deep cleaning", href: "/en/services?category=deep-cleaning" }],
     brand_list: { title: "Brands", see_all_href: "/brands", brands: [] },
     promo_tiles: [],
   },
@@ -33,17 +33,21 @@ describe("MobileNavDrawer", () => {
 
   it("renders tab labels when open and expands children on click", () => {
     renderDrawer({ open: true, onClose: () => {}, tabs });
-    expect(screen.getByText("Makeup")).toBeInTheDocument();
-    expect(screen.queryByText("Lipstick")).not.toBeInTheDocument();
-    fireEvent.click(screen.getByText("Makeup"));
-    expect(screen.getByText("Lipstick")).toBeInTheDocument();
+    expect(screen.getByText("Cleaning")).toBeInTheDocument();
+    expect(screen.queryByText("Deep cleaning")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByText("Cleaning"));
+    expect(screen.getByText("Deep cleaning")).toBeInTheDocument();
   });
 
   it("shows core quick links even when tabs are empty", () => {
     renderDrawer({ open: true, onClose: () => {}, tabs: [] });
     expect(screen.getByText("Reels")).toBeInTheDocument();
-    expect(screen.getByText("Brands")).toBeInTheDocument();
-    expect(screen.getByText("Track Order")).toBeInTheDocument();
+    expect(screen.getByText("Services")).toBeInTheDocument();
+    expect(screen.getByText("My Bookings")).toBeInTheDocument();
+    expect(screen.getByText("Become a vendor").closest("a")?.getAttribute("href")).toBe(
+      "http://localhost:4001/login",
+    );
+    expect(screen.queryByText("Brands")).toBeNull();
     expect(screen.getByText("Log In")).toBeInTheDocument();
   });
 

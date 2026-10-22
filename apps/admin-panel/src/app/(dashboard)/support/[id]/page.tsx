@@ -15,7 +15,7 @@ import {
   StatusBadge,
 } from "@mypickuae/ui";
 import { useTicket, useUpdateTicket, useAddMessage } from "@/lib/queries/support";
-import { ArrowLeft, Send, StickyNote, User, ShoppingCart } from "lucide-react";
+import { ArrowLeft, CalendarCheck, Send, StickyNote, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 interface Message {
@@ -37,8 +37,8 @@ interface Ticket {
   // Flat columns + selectively-joined relations (id/email/name only).
   assigned_to?: string | null;
   assignedToUser?: { id?: string; email?: string; first_name?: string; last_name?: string } | null;
-  order_id?: string | null;
-  order?: { id?: string; order_number?: string } | null;
+  /** Booking this ticket is about, if any. */
+  booking_id?: string | null;
   user_id?: string | null;
   user?: { id?: string; email?: string; first_name?: string; last_name?: string } | null;
   guest_email?: string | null;
@@ -333,16 +333,16 @@ export default function SupportTicketDetailPage() {
             </div>
           </div>
 
-          {/* Linked order */}
-          {t.order_id && (
+          {/* Linked booking */}
+          {t.booking_id && (
             <div className="rounded-xl border border-gray-200 bg-linen p-4 space-y-2">
-              <h3 className="text-xs font-semibold text-taupe uppercase tracking-wide">Linked Order</h3>
+              <h3 className="text-xs font-semibold text-taupe uppercase tracking-wide">Linked Booking</h3>
               <Link
-                href={`/orders/${t.order_id}`}
+                href={`/bookings/${t.booking_id}`}
                 className="flex items-center gap-2 text-amber hover:text-amber text-sm font-medium"
               >
-                <ShoppingCart size={14} />
-                {t.order?.order_number ?? `Order #${t.order_id.slice(0, 8)}`}
+                <CalendarCheck size={14} />
+                {`Booking #${t.booking_id.slice(0, 8)}`}
               </Link>
             </div>
           )}

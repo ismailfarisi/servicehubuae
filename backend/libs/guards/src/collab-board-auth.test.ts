@@ -22,7 +22,7 @@ describe("GET /reels/collab-board route classification", () => {
   test("serves an anonymous request instead of 401-ing", async () => {
     const res = await app().handle(new Request("http://localhost/reels/collab-board"));
     expect(res.status).toBe(200);
-    expect((await res.json()).user).toBeNull();
+    expect(((await res.json()) as { user: unknown }).user).toBeNull();
   });
 
   test("a sibling vendor collab route still requires auth", async () => {

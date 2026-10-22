@@ -39,7 +39,7 @@ function makeHarness(seed: { opportunity?: Partial<CollabOpportunity>; committed
     opportunities.push({
       id: "opp-1",
       vendor_id: "v1",
-      type: CollabOpportunityType.product_seeding,
+      type: CollabOpportunityType.paid_campaign,
       visibility: CollabVisibility.board,
       status: CollabOpportunityStatus.draft,
       title: "t",
@@ -47,10 +47,8 @@ function makeHarness(seed: { opportunity?: Partial<CollabOpportunity>; committed
       slots_total: 1,
       slots_filled: 0,
       applications_close_at: new Date("2026-12-01T00:00:00Z"),
-      seeded_product_id: "p1",
-      seeded_qty: 1,
-      fee_fils: null,
-      funding_source: null,
+      fee_fils: "50000",
+      funding_source: "payout_balance",
       location_id: null,
       starts_at: null,
       ends_at: null,
@@ -120,12 +118,12 @@ afterEach(() => {
 
 const baseCreate = {
   vendorId: "v1",
-  type: CollabOpportunityType.product_seeding,
+  type: CollabOpportunityType.paid_campaign,
   visibility: CollabVisibility.board,
-  title: "Seed our new serum",
-  description: "Post a reel using it",
-  seededProductId: "p1",
-  seededQty: 1,
+  title: "Feature our salon",
+  description: "Post a reel about your visit",
+  feeFils: 50_000,
+  fundingSource: "payout_balance" as any,
   applicationsCloseAt: new Date("2026-12-01T00:00:00Z"),
 };
 
@@ -148,9 +146,8 @@ describe("CollabService.createOpportunity", () => {
 
   it("stores fee as a string, since bigint columns round-trip as strings", async () => {
     const { svc } = use();
-    // paid_campaign is gated in phase 1, so exercise the conversion via seeding value
-    const opp = await svc.createOpportunity({ ...baseCreate, seedingValueFils: 24_900 });
-    expect(opp.seeding_value_fils).toBe("24900");
+    const opp = await svc.createOpportunity({ ...baseCreate, feeFils: 24_900 });
+    expect(opp.fee_fils).toBe("24900");
   });
 
   it("accepts paid_campaign now that phase 3 has landed its money path", async () => {
@@ -168,7 +165,11 @@ describe("CollabService.createOpportunity", () => {
   it("still rejects a paid_campaign with no fee", async () => {
     const { svc } = use();
     await expect(
-      svc.createOpportunity({ ...baseCreate, type: CollabOpportunityType.paid_campaign }),
+      svc.createOpportunity({
+        ...baseCreate,
+        type: CollabOpportunityType.paid_campaign,
+        feeFils: undefined,
+      }),
     ).rejects.toThrow("fee_required");
   });
 
@@ -180,18 +181,11 @@ describe("CollabService.createOpportunity", () => {
     ).rejects.toThrow("location_required");
   });
 
-  it("rejects product_seeding with no product", async () => {
+  it("rejects product_seeding with 422 now that products are gone", async () => {
     const { svc } = use();
-    await expect(svc.createOpportunity({ ...baseCreate, seededProductId: null })).rejects.toThrow(
-      "seeded_product_required",
-    );
-  });
-
-  it("rejects product_seeding with qty 0", async () => {
-    const { svc } = use();
-    await expect(svc.createOpportunity({ ...baseCreate, seededQty: 0 })).rejects.toThrow(
-      "seeded_qty_required",
-    );
+    await expect(
+      svc.createOpportunity({ ...baseCreate, type: CollabOpportunityType.product_seeding }),
+    ).rejects.toThrow("product_seeding_unavailable");
   });
 
   it("rejects slots_total of 0", async () => {
@@ -278,9 +272,9 @@ describe("CollabService.updateOpportunity", () => {
     const { svc } = use({ opportunity: {} });
     const opp = await svc.updateOpportunity("v1", "opp-1", {
       // @ts-expect-error type is deliberately excluded from UpdateOpportunityInput
-      type: CollabOpportunityType.paid_campaign,
+      type: CollabOpportunityType.event_appearance,
     });
-    expect(opp.type).toBe(CollabOpportunityType.product_seeding);
+    expect(opp.type).toBe(CollabOpportunityType.paid_campaign);
   });
 
   it("refuses to shrink slots_total below slots_filled", async () => {
@@ -292,8 +286,8 @@ describe("CollabService.updateOpportunity", () => {
 
   it("refuses a patch that would break the type's required fields", async () => {
     const { svc } = use({ opportunity: {} });
-    await expect(svc.updateOpportunity("v1", "opp-1", { seededQty: 0 })).rejects.toThrow(
-      "seeded_qty_required",
+    await expect(svc.updateOpportunity("v1", "opp-1", { feeFils: 0 })).rejects.toThrow(
+      "fee_required",
     );
   });
 
@@ -322,8 +316,6 @@ function patchReadRepos(seed: {
   opportunities: any[];
   applications?: any[];
   vendors?: any[];
-  products?: any[];
-  images?: any[];
   users?: any[];
 }) {
   const repoFor = (entity: unknown) => {
@@ -356,36 +348,24 @@ describe("listBoard and listApplicationsForCreator hydration", () => {
   const baseOpp = {
     id: "opp-1",
     vendor_id: "v1",
-    type: CollabOpportunityType.product_seeding,
+    type: CollabOpportunityType.paid_campaign,
     visibility: CollabVisibility.board,
     status: CollabOpportunityStatus.open,
-    title: "Seed our new serum",
+    title: "Feature our salon",
     description: "d",
     slots_total: 3,
     slots_filled: 0,
     applications_close_at: new Date("2026-12-01T00:00:00Z"),
-    seeded_product_id: "p1",
-    seeded_qty: 1,
-    fee_fils: null,
+    fee_fils: "50000",
     min_follower_count: null,
     required_categories: null,
     required_platforms: null,
   };
 
-  it("hydrates vendor and product identity onto board rows", async () => {
+  it("hydrates vendor identity onto board rows", async () => {
     const restore = patchReadRepos({
       opportunities: [baseOpp],
       vendors: [{ id: "v1", business_name: "Glow Labs", logo_url: "https://cdn/glow.png" }],
-      products: [{ id: "p1", name: "Vitamin C Serum" }],
-      images: [
-        {
-          product_id: "p1",
-          is_primary: true,
-          sort_order: 0,
-          medium_url: "https://cdn/serum-med.jpg",
-          url: "https://cdn/serum.jpg",
-        },
-      ],
     });
     try {
       const svc = new CollabService({} as any);
@@ -393,29 +373,21 @@ describe("listBoard and listApplicationsForCreator hydration", () => {
       expect(rows).toHaveLength(1);
       expect(rows[0]!.opportunity.vendor_name).toBe("Glow Labs");
       expect(rows[0]!.opportunity.vendor_logo_url).toBe("https://cdn/glow.png");
-      expect(rows[0]!.opportunity.seeded_product_name).toBeNull();
-      expect(rows[0]!.opportunity.seeded_product_image_url).toBeNull();
     } finally {
       restore();
     }
   });
 
-  it("leaves product fields null for a non-seeding opportunity with no image rows", async () => {
+  it("nulls the vendor logo when the vendor has none", async () => {
     const restore = patchReadRepos({
-      opportunities: [
-        { ...baseOpp, type: CollabOpportunityType.paid_campaign, seeded_product_id: null },
-      ],
+      opportunities: [{ ...baseOpp }],
       vendors: [{ id: "v1", business_name: "Glow Labs", logo_url: null }],
-      products: [],
-      images: [],
     });
     try {
       const svc = new CollabService({} as any);
       const rows = await svc.listBoard();
       expect(rows[0]!.opportunity.vendor_name).toBe("Glow Labs");
       expect(rows[0]!.opportunity.vendor_logo_url).toBeNull();
-      expect(rows[0]!.opportunity.seeded_product_name).toBeNull();
-      expect(rows[0]!.opportunity.seeded_product_image_url).toBeNull();
     } finally {
       restore();
     }
@@ -434,15 +406,13 @@ describe("listBoard and listApplicationsForCreator hydration", () => {
         },
       ],
       vendors: [{ id: "v1", business_name: "Glow Labs", logo_url: null }],
-      products: [{ id: "p1", name: "Vitamin C Serum" }],
-      images: [],
     });
     try {
       const svc = new CollabService({} as any);
       const rows = await svc.listApplicationsForCreator("c1");
       expect(rows).toHaveLength(1);
       expect(rows[0]!.application.id).toBe("app-1");
-      expect(rows[0]!.opportunity?.title).toBe("Seed our new serum");
+      expect(rows[0]!.opportunity?.title).toBe("Feature our salon");
       expect(rows[0]!.opportunity?.vendor_name).toBe("Glow Labs");
     } finally {
       restore();
@@ -465,16 +435,14 @@ describe("application creator hydration", () => {
   const opp = {
     id: "opp-1",
     vendor_id: "v1",
-    type: CollabOpportunityType.product_seeding,
+    type: CollabOpportunityType.paid_campaign,
     visibility: CollabVisibility.board,
     status: CollabOpportunityStatus.open,
-    title: "Seed our new serum",
+    title: "Feature our salon",
     description: "d",
     slots_total: 3,
     slots_filled: 0,
-    seeded_product_id: null,
-    seeded_qty: 1,
-    fee_fils: null,
+    fee_fils: "50000",
   };
   const app = {
     id: "app-1",
@@ -519,8 +487,6 @@ describe("application creator hydration", () => {
       opportunities: [opp],
       applications: [app],
       vendors: [{ id: "v1", business_name: "Glow Labs", logo_url: null }],
-      products: [],
-      images: [],
       users: [{ id: "c1", first_name: "Nora", last_name: "Ali", avatar_url: null }],
     });
     try {

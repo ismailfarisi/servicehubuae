@@ -220,8 +220,8 @@ function GridColumn({
 						disabled={!canWrite}
 						onClick={() => onCellClick(col.key, rowStart)}
 						className={cn(
-							"absolute left-0 right-0 border-t border-pearl/14 group",
-							rowStart % 60 === 0 && "border-t-pearl/28",
+							"absolute left-0 right-0 border-t border-pearl group",
+							rowStart % 60 === 0 && "border-t-pearl",
 							canWrite && "hover:bg-amber/5",
 						)}
 						style={{ top: minutesToTopPx(rowStart, startMin), height: ROW_PX }}

@@ -20,11 +20,9 @@ export interface WhatsAppTemplateMapping {
 }
 
 const WHATSAPP_TEMPLATES: Record<string, WhatsAppTemplateMapping> = {
-  order_confirmed: { templateName: "order_confirmed", paramOrder: ["order_number"] },
-  order_shipped: { templateName: "order_shipped", paramOrder: ["order_number", "tracking_url"] },
-  order_delivered: { templateName: "order_delivered", paramOrder: ["order_number"] },
+  // Booking/quotation templates are added here once they are approved in the
+  // MyPickUAE Meta WhatsApp Business account.
   payout_sent: { templateName: "payout_sent", paramOrder: ["amount"] },
-  vendor_new_order: { templateName: "vendor_new_order", paramOrder: ["order_number", "amount"] },
 };
 
 export function getWhatsAppTemplate(type: string): WhatsAppTemplateMapping | undefined {

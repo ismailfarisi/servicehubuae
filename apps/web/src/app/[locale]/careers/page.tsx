@@ -46,16 +46,16 @@ export default function CareersPage() {
 			</StaticSection>
 
 			<StaticSection heading="What we value">
-				<div className="grid md:grid-cols-2 gap-6 not-prose">
+				<div className="grid md:grid-cols-2 gap-4 not-prose">
 					{VALUES.map((v) => (
 						<div
 							key={v.t}
-							className="border border-nl-cacao/10 p-5 bg-white/40"
+							className="rounded-2xl border border-nl-cacao/10 p-6 bg-nl-linen shadow-sm"
 						>
-							<h3 className="font-serif text-lg text-nl-cacao mb-2">
+							<h3 className="font-display font-semibold text-lg text-nl-cacao mb-2">
 								{v.t}
 							</h3>
-							<p className="text-[14px] text-nl-russet leading-[1.6]">
+							<p className="text-sm text-nl-russet leading-relaxed">
 								{v.d}
 							</p>
 						</div>
@@ -74,7 +74,7 @@ export default function CareersPage() {
 					Send a short note and what you&rsquo;ve shipped to{" "}
 					<a
 						href="mailto:info@mypickuae.com"
-						className="text-nl-amber hover:underline"
+						className="font-medium text-nl-amber-text hover:underline"
 					>
 						info@mypickuae.com
 					</a>

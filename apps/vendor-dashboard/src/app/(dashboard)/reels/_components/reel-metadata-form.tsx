@@ -9,7 +9,6 @@ import { Button } from "@mypickuae/ui";
 import { PaperPlaneTilt } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { ProductTagPicker } from "./product-tag-picker";
 import { ThumbnailPicker } from "./thumbnail-picker";
 
 const LANGUAGES = [
@@ -26,13 +25,6 @@ export function ReelMetadataForm({ reel }: { reel: MyReelSummary }) {
 	const [language, setLanguage] = useState(reel.language_code || "en");
 	const [thumbnail, setThumbnail] = useState(reel.thumbnail_url);
 	const [sponsored, setSponsored] = useState(reel.is_sponsored_disclosed);
-	const [tags, setTags] = useState(
-		(reel.tags ?? []).map((tag) => ({
-			id: tag.id,
-			product: tag.product ?? { id: tag.product_id, name: tag.product_id },
-			timestampSeconds: Number(tag.timestamp_seconds),
-		})),
-	);
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -65,10 +57,6 @@ export function ReelMetadataForm({ reel }: { reel: MyReelSummary }) {
 	}
 
 	async function handlePublish() {
-		if (tags.length === 0) {
-			setError("Add at least one product tag before publishing.");
-			return;
-		}
 		setBusy(true);
 		setError(null);
 		try {
@@ -148,7 +136,7 @@ export function ReelMetadataForm({ reel }: { reel: MyReelSummary }) {
 							checked={sponsored}
 							onChange={(event) => setSponsored(event.target.checked)}
 						/>
-						Sponsored or gifted products
+						Sponsored or gifted
 					</label>
 				</div>
 
@@ -156,13 +144,6 @@ export function ReelMetadataForm({ reel }: { reel: MyReelSummary }) {
 					candidates={[reel.thumbnail_url]}
 					initialUrl={thumbnail}
 					onChange={setThumbnail}
-				/>
-
-				<ProductTagPicker
-					reelId={reel.id}
-					videoDurationSeconds={reel.video_duration_seconds}
-					initialTags={tags}
-					onChange={setTags}
 				/>
 
 				{error && (
@@ -183,7 +164,7 @@ export function ReelMetadataForm({ reel }: { reel: MyReelSummary }) {
 					<Button
 						type="button"
 						onClick={handlePublish}
-						disabled={busy || tags.length === 0}
+						disabled={busy}
 					>
 						<PaperPlaneTilt size={16} className="mr-2" />
 						{busy ? "Publishing..." : "Publish"}

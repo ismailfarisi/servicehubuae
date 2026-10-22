@@ -3,7 +3,7 @@
 import {
 	useCreateServiceArea,
 	useDeleteServiceArea,
-	useDeliveryZones,
+	useAreas,
 	useServiceAreas,
 } from "@/lib/queries/locations";
 import {
@@ -34,10 +34,10 @@ const travelBufferSchema = z.coerce
 
 // Vendor-wide home-visit coverage (task-5-brief.md: service_areas has no
 // location_id — it's not tied to a specific branch). Area choices come from
-// the public delivery-zones list.
+// the public GET /areas list.
 export function ServiceAreasPanel({ canWrite }: { canWrite: boolean }) {
 	const { data: areas = [], isLoading: loadingAreas } = useServiceAreas();
-	const { data: zones = [], isLoading: loadingZones } = useDeliveryZones();
+	const { data: zones = [], isLoading: loadingZones } = useAreas();
 	const createArea = useCreateServiceArea();
 	const deleteArea = useDeleteServiceArea();
 
@@ -87,9 +87,9 @@ export function ServiceAreasPanel({ canWrite }: { canWrite: boolean }) {
 			// covers the two-tabs/stale-cache race the review flagged.)
 			const isConflict = e?.response?.status === 409;
 			toast({
-				title: isConflict ? "Zone already added" : "Could not add service area",
+				title: isConflict ? "Area already added" : "Could not add service area",
 				description: isConflict
-					? "This zone is already part of your service coverage."
+					? "This area is already part of your service coverage."
 					: (e?.response?.data?.message ?? "Please try again."),
 				variant: "destructive",
 			});
@@ -115,18 +115,18 @@ export function ServiceAreasPanel({ canWrite }: { canWrite: boolean }) {
 	return (
 		<div className="space-y-4">
 			<p className="text-sm text-taupe">
-				Zones your staff will travel to for home-visit services. Offerings with
+				Areas your staff will travel to for home-visit services. Offerings with
 				location mode "Home visit" or "Either" only surface slots for customers
-				inside a covered zone.
+				inside a covered area.
 			</p>
 
 			{canWrite && (
-				<div className="flex items-end gap-2 rounded-lg border border-pearl/28 p-3">
+				<div className="flex items-end gap-2 rounded-lg border border-input p-3">
 					<div className="flex-1">
-						<Label className="mb-1 block text-xs">Zone</Label>
+						<Label className="mb-1 block text-xs">Area</Label>
 						<Select value={selectedZone} onValueChange={setSelectedZone}>
 							<SelectTrigger>
-								<SelectValue placeholder="Select a zone" />
+								<SelectValue placeholder="Select an area" />
 							</SelectTrigger>
 							<SelectContent>
 								{availableZones.map((zone) => (
@@ -163,12 +163,12 @@ export function ServiceAreasPanel({ canWrite }: { canWrite: boolean }) {
 					title="No service areas yet"
 					description={
 						canWrite
-							? "Add zones you'll travel to for home-visit bookings."
+							? "Add areas you'll travel to for home-visit bookings."
 							: "This vendor hasn't configured any home-visit coverage yet."
 					}
 				/>
 			) : (
-				<div className="rounded-lg border border-pearl/14 divide-y divide-pearl/14">
+				<div className="rounded-lg border border-pearl divide-y divide-pearl">
 					{areas.map((area) => (
 						<div key={area.id} className="flex items-center justify-between px-4 py-3">
 							<div>

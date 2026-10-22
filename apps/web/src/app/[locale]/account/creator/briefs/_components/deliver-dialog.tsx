@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { MAISON_SANS } from "@/components/ui/maison-primitives";
 import {
   Body,
   BUTTON_CLASS,
@@ -80,13 +79,12 @@ export function DeliverDialog({
               type="button"
               key={r.id}
               onClick={() => setSelected(r.id)}
-              className="overflow-hidden transition-colors"
-              style={{
-                border: `1px solid ${
-                  selected === r.id ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.16)"
-                }`,
-                background: selected === r.id ? "rgba(184,115,51,0.06)" : "transparent",
-              }}
+              aria-pressed={selected === r.id}
+              className={`overflow-hidden rounded-xl border transition-colors ${
+                selected === r.id
+                  ? "border-nl-amber bg-nl-pearl ring-2 ring-nl-amber/20"
+                  : "border-nl-cacao/15 bg-nl-linen hover:border-nl-amber/50"
+              }`}
             >
               {r.thumbnail_url ? (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -96,15 +94,7 @@ export function DeliverDialog({
                   className="h-28 w-full object-cover"
                 />
               ) : (
-                <div
-                  className="flex h-28 w-full items-center justify-center"
-                  style={{
-                    background: "rgba(44,24,16,0.07)",
-                    fontFamily: MAISON_SANS,
-                    fontSize: 11,
-                    color: "hsl(var(--nl-russet))",
-                  }}
-                >
+                <div className="flex h-28 w-full items-center justify-center bg-nl-pearl text-xs text-nl-russet">
                   {r.id.slice(0, 6)}…
                 </div>
               )}

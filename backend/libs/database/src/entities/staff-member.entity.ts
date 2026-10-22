@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -10,6 +11,9 @@ import {
 
 // A bookable resource (stylist/therapist). Staff = capacity.
 @Entity("staff_members")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("User", ["user_id"], ["id"], { name: "fk_staff_members_user" })
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_staff_members_vendor" })
 export class StaffMember {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

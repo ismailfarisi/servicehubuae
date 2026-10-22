@@ -1,6 +1,6 @@
 "use client";
 
-import { MAISON_SANS } from "@/components/ui/maison-primitives";
+import { MAISON_SANS, MAISON_SERIF } from "@/components/ui/maison-primitives";
 import type { ReactNode } from "react";
 import {
   BUTTON_CLASS,
@@ -27,23 +27,19 @@ import {
  * media kit). This component owns only the chrome.
  */
 
-/** Section heading — small tracked caps over a short rule, as on the brand-facing kit. */
+/** Section heading — a small display-sans title, as on the brand-facing kit. */
 export function SectionLabel({ children }: { children: ReactNode }) {
   return (
     <h2
-      className="uppercase"
       style={{
-        fontFamily: MAISON_SANS,
-        fontSize: 10.5,
-        letterSpacing: "0.22em",
-        color: "hsl(var(--nl-russet))",
+        fontFamily: MAISON_SERIF,
+        fontSize: 16,
+        fontWeight: 600,
+        letterSpacing: "-0.01em",
+        color: "hsl(var(--nl-cacao))",
       }}
     >
       {children}
-      <span
-        className="mt-1.5 block"
-        style={{ height: 1, width: 32, background: "hsl(var(--nl-amber))" }}
-      />
     </h2>
   );
 }
@@ -91,13 +87,11 @@ export function EditableSection({
         <div className="flex items-center gap-3">
           {aside && (
             <span
-              className="uppercase"
               style={{
                 fontFamily: MAISON_SANS,
-                fontSize: 10,
-                letterSpacing: "0.16em",
+                fontSize: 12,
+                fontWeight: 500,
                 color: "hsl(var(--nl-russet))",
-                opacity: 0.75,
               }}
             >
               {aside}
@@ -107,7 +101,7 @@ export function EditableSection({
             <button
               type="button"
               onClick={onEdit}
-              className={`${BUTTON_CLASS} hover:bg-[rgba(44,24,16,0.04)]`}
+              className={`${BUTTON_CLASS} hover:!bg-nl-pearl`}
               style={{ ...SMALL_QUIET, padding: "5px 10px" }}
             >
               {editLabel}

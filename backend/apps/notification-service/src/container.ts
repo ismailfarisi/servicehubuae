@@ -1,8 +1,5 @@
 import { config } from "@mypickuae/config";
-import {
-  AppDataSource,
-  User,
-} from "@mypickuae/database";
+import { AppDataSource, User } from "@mypickuae/database";
 import { EmailService, WhatsAppService } from "@mypickuae/utils";
 import { Elysia } from "elysia";
 import { createClient } from "redis";

@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +12,12 @@ import {
 // Per-location admin (RBAC), layered on the vendor-wide vendor_members.
 @Entity("location_memberships")
 @Index(["vendor_location_id", "user_id"], { unique: true, where: "deleted_at IS NULL" })
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("User", ["user_id"], ["id"], { name: "fk_lm_user" })
+@ForeignKey("VendorLocation", ["vendor_location_id"], ["id"], {
+  name: "fk_lm_location",
+  onDelete: "CASCADE",
+})
 export class LocationMembership {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

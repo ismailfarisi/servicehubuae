@@ -37,8 +37,8 @@ export default function VendorReelAnalyticsPage() {
 		!isLoading &&
 		overview &&
 		overview.kpis.impressions.value === 0 &&
-		overview.kpis.productTaps.value === 0 &&
-		overview.kpis.attributedOrders.value === 0;
+		overview.kpis.likes.value === 0 &&
+		overview.kpis.saves.value === 0;
 
 	if (isEmpty) {
 		return (
@@ -52,7 +52,7 @@ export default function VendorReelAnalyticsPage() {
 				/>
 				<Card>
 					<CardContent className="p-10 text-center space-y-3">
-						<h2 className="text-lg font-semibold">No reels are tagging your products yet.</h2>
+						<h2 className="text-lg font-semibold">No reels are linked to your business yet.</h2>
 						<p className="text-sm text-gray-500">Invite creators from the Reels Program to start earning visibility.</p>
 						<Link href="/reels-program" className="inline-block px-4 py-2 rounded-md bg-primary text-primary-foreground text-sm">
 							Learn about the Reels Program →

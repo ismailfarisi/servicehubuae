@@ -21,8 +21,8 @@ export default function ContactPage() {
 			intro="Customer care answers in Arabic and English, seven days a week."
 		>
 			<StaticSection heading="Get in touch">
-				<div className="border border-nl-cacao/10 p-5 bg-white/40 not-prose">
-					<p className="text-[14px]">
+				<div className="rounded-2xl border border-nl-cacao/10 p-6 bg-nl-linen shadow-sm not-prose">
+					<p className="text-base font-semibold">
 						<a
 							href={`tel:${PHONE.replace(/\s/g, "")}`}
 							className="text-nl-cacao hover:underline"
@@ -31,10 +31,10 @@ export default function ContactPage() {
 						</a>
 					</p>
 					{EMAILS.map((email) => (
-						<p key={email} className="text-[14px] mt-1">
+						<p key={email} className="text-sm mt-1.5">
 							<a
 								href={`mailto:${email}`}
-								className="text-nl-amber hover:underline"
+								className="font-medium text-nl-amber-text hover:underline"
 							>
 								{email}
 							</a>

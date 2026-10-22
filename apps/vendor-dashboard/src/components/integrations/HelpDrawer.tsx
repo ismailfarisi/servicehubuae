@@ -104,7 +104,7 @@ export function HelpDrawer({ open, onOpenChange }: HelpDrawerProps) {
         </p>
 
         {/* ── Tab strip ─────────────────────────────────────── */}
-        <div className="border-b border-pearl/14">
+        <div className="border-b border-pearl">
           {TABS.map((tab, index) => (
             <button
               // biome-ignore lint/suspicious/noArrayIndexKey: stable tab order
@@ -124,7 +124,7 @@ export function HelpDrawer({ open, onOpenChange }: HelpDrawerProps) {
         </div>
 
         {/* ── Code snippet ──────────────────────────────────── */}
-        <pre className="bg-linen rounded-md border border-pearl/14 p-4 font-mono text-xs text-cacao overflow-x-auto leading-relaxed whitespace-pre">
+        <pre className="bg-linen rounded-md border border-pearl p-4 font-mono text-xs text-cacao overflow-x-auto leading-relaxed whitespace-pre">
           {TABS[activeTab]?.snippet}
         </pre>
 
@@ -140,7 +140,7 @@ export function HelpDrawer({ open, onOpenChange }: HelpDrawerProps) {
           <ul className="space-y-2">
             {HEADERS.map((h) => (
               <li key={h.name} className="flex items-start gap-3">
-                <code className="shrink-0 rounded border border-pearl/14 bg-pearl/30 px-2 py-0.5 font-mono text-xs text-cacao">
+                <code className="shrink-0 rounded border border-pearl bg-pearl/30 px-2 py-0.5 font-mono text-xs text-cacao">
                   {h.name}
                 </code>
                 <span className="text-xs text-taupe">{h.description}</span>
@@ -150,17 +150,17 @@ export function HelpDrawer({ open, onOpenChange }: HelpDrawerProps) {
         </div>
 
         {/* ── Inbound note ──────────────────────────────────── */}
-        <p className="text-xs text-taupe border-t border-pearl/14 pt-4 leading-relaxed">
+        <p className="text-xs text-taupe border-t border-pearl pt-4 leading-relaxed">
           <span className="font-semibold text-cacao">
             Inbound (vendor → us):
           </span>{" "}
           requests you send to our inbound URL must be signed with your inbound
           secret using the same scheme — include{" "}
-          <code className="rounded border border-pearl/14 bg-pearl/30 px-1 font-mono text-xs text-cacao">
+          <code className="rounded border border-pearl bg-pearl/30 px-1 font-mono text-xs text-cacao">
             X-Signature
           </code>{" "}
           and{" "}
-          <code className="rounded border border-pearl/14 bg-pearl/30 px-1 font-mono text-xs text-cacao">
+          <code className="rounded border border-pearl bg-pearl/30 px-1 font-mono text-xs text-cacao">
             X-Timestamp
           </code>
           . The timestamp must be within 5 minutes of our server time.

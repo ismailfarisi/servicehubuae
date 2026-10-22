@@ -18,8 +18,8 @@ export default function ReelEditPage({
       .catch((e) => setError(e?.response?.data?.error ?? e?.message ?? "Failed to load"));
   }, [params.reelId]);
 
-  if (error) return <div className="p-6 text-red-600">{error}</div>;
-  if (!reel) return <div className="p-6">Loading...</div>;
+  if (error) return <div className="p-6 text-sm text-destructive">{error}</div>;
+  if (!reel) return <div className="p-6 text-sm text-nl-russet">Loading...</div>;
 
   return <ReelMetadataForm reel={reel} />;
 }

@@ -16,7 +16,7 @@ const tabs: HeaderNavTab[] = [
 		position: 0,
 		brand_list: {
 			title: { en: "Brands" },
-			see_all_href: "/brands",
+			see_all_href: "",
 			brand_ids: [],
 		},
 		promo_tiles: [],
@@ -32,7 +32,7 @@ const tabs: HeaderNavTab[] = [
 		position: 1,
 		brand_list: {
 			title: { en: "Brands" },
-			see_all_href: "/brands",
+			see_all_href: "",
 			brand_ids: [],
 		},
 		promo_tiles: [],

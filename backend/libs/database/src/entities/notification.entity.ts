@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +13,10 @@ import { NotificationChannel, NotificationType } from "../enums.ts";
 import type { User } from "./user.entity.ts";
 
 @Entity("notifications")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_notifications_created_at", ["created_at"])
+@Index("idx_notifications_user_id", ["user_id"])
+@Index("idx_notifications_user_read", ["user_id", "is_read"])
 export class Notification {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

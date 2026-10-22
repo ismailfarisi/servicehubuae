@@ -2,15 +2,13 @@ import axios from "axios";
 import { API_URL } from "./config";
 
 export interface SitemapEntry {
-	/** Locale-less path, e.g. "/product/foo". Locale is added by the XML layer. */
+	/**
+	 * Locale-less path, e.g. "/service/foo" or "/services?category=cleaning".
+	 * Locale is added by the XML layer.
+	 */
 	path: string;
 	lastModified?: Date;
 }
-
-/** API ceiling. limit=1000 returns HTTP 500. */
-const PAGE_SIZE = 250;
-/** Safety stop for the cursor loop: 100 * 250 = 25,000 products. */
-const MAX_PAGES = 100;
 
 /** Backend hard maximum: t.Numeric({ minimum: 1, maximum: 50 }) on GET /services. */
 const SERVICE_PAGE_SIZE = 50;
@@ -18,9 +16,8 @@ const SERVICE_PAGE_SIZE = 50;
 const MAX_SERVICE_PAGES = 100;
 
 /**
- * Fetch and fail loudly. The previous sitemap wrapped every call in an empty
- * catch, so three separate upstream failures silently produced a sitemap
- * containing only the homepage. A visible error is strictly better.
+ * Fetch and fail loudly. A sitemap that silently swallows upstream failures
+ * ends up advertising only the homepage; a visible error is strictly better.
  */
 async function fetchJson(path: string): Promise<any> {
 	const url = `${API_URL}${path}`;
@@ -40,149 +37,106 @@ async function fetchJson(path: string): Promise<any> {
 	}
 }
 
-export async function getProducts(): Promise<SitemapEntry[]> {
-	const entries: SitemapEntry[] = [];
-	let cursor: string | number | null = 1;
-	let hitPageCap = true; // Assume we hit the cap; set to false on natural exit
+interface ServiceRow {
+	slug?: string | null;
+	vendor_id?: string | null;
+	vendor_slug?: string | null;
+	created_at?: number | null;
+}
 
-	for (let page = 0; page < MAX_PAGES && cursor; page++) {
+/**
+ * Every published service offering from catalog-service GET /services.
+ * The endpoint returns only PUBLISHED offerings, so this is empty until the
+ * first one is approved.
+ *
+ * Paginates via the 1-based `page` param. Fails loudly (throws) rather than
+ * silently truncating if the page cap is hit while `total` says more remain.
+ */
+async function fetchServiceRows(): Promise<ServiceRow[]> {
+	const rows: ServiceRow[] = [];
+	let total: number | undefined;
+
+	for (let page = 1; page <= MAX_SERVICE_PAGES; page++) {
 		const body = await fetchJson(
-			`/products?limit=${PAGE_SIZE}&cursor=${cursor}`,
+			`/services?limit=${SERVICE_PAGE_SIZE}&page=${page}`,
 		);
-		const items = body?.data?.data ?? [];
-		if (!items.length) {
-			hitPageCap = false; // Empty page means catalog was exhausted
-			break;
-		}
+		const items: ServiceRow[] = Array.isArray(body?.data) ? body.data : [];
+		if (typeof body?.total === "number") total = body.total;
 
-		for (const product of items) {
-			if (!product?.slug) continue;
-			entries.push({
-				path: `/product/${product.slug}`,
-				...(product.created_at
-					? { lastModified: new Date(product.created_at) }
-					: {}),
-			});
-		}
+		if (!items.length) break;
+		rows.push(...items);
 
-		cursor = body?.data?.cursor ?? null;
+		// Stop once we've collected everything the API told us to expect. If
+		// the API never reported a total (malformed response), don't loop
+		// blindly — treat the page we have as the whole list.
+		if (total === undefined || rows.length >= total) break;
 	}
 
-	// If cursor became null, we exited via cursor exhaustion (natural end)
-	if (cursor === null) {
-		hitPageCap = false;
-	}
-
-	// If we exited the loop because page cap was reached while cursor is still
-	// truthy, the catalog exceeds our size limit and we must fail loudly
-	if (hitPageCap && cursor !== null && cursor !== undefined) {
+	if (total !== undefined && rows.length < total) {
 		console.error(
-			`[sitemap] product cursor loop hit page cap at ${MAX_PAGES} iterations with cursor still truthy`,
+			`[sitemap] service page loop hit page cap at ${MAX_SERVICE_PAGES} iterations with total=${total} fetchedCount=${rows.length}`,
 		);
 		throw new Error(
-			`sitemap upstream failed: product catalog exceeded expected size (page cap: ${MAX_PAGES})`,
+			`sitemap upstream failed: service catalog exceeded expected size (page cap: ${MAX_SERVICE_PAGES})`,
 		);
 	}
 
+	return rows;
+}
+
+/** Service detail pages: /service/:slug. */
+export async function getServices(): Promise<SitemapEntry[]> {
+	const rows = await fetchServiceRows();
+	return rows
+		.filter((row) => row?.slug)
+		.map((row) => ({
+			path: `/service/${row.slug}`,
+			// created_at on the search document is unix seconds.
+			...(typeof row.created_at === "number" && row.created_at > 0
+				? { lastModified: new Date(row.created_at * 1000) }
+				: {}),
+		}));
+}
+
+/**
+ * Vendor storefronts, derived from published services so we never advertise
+ * a vendor with nothing bookable (GET /vendors is not public anyway). The
+ * vendor page resolves either a slug or a UUID, so the id is the fallback when
+ * the search document carries no vendor_slug.
+ */
+export async function getVendors(): Promise<SitemapEntry[]> {
+	const rows = await fetchServiceRows();
+	const seen = new Set<string>();
+	const entries: SitemapEntry[] = [];
+	for (const row of rows) {
+		const key = row?.vendor_slug || row?.vendor_id;
+		if (!key || seen.has(key)) continue;
+		seen.add(key);
+		entries.push({ path: `/vendor/${key}` });
+	}
 	return entries;
 }
 
 /**
- * Total product count for computing sitemap index chunk counts, without
- * paginating the entire catalog. Issues a single request.
+ * Category landings. Categories have no page of their own: each is the
+ * service listing filtered by `category`, which the listing page treats as a
+ * canonical (indexable) URL.
  */
-export async function getProductCount(): Promise<number> {
-	const body = await fetchJson("/products?limit=1");
-	const total = body?.data?.total;
-	if (typeof total !== "number") {
-		throw new Error(
-			"sitemap upstream failed: /products?limit=1 response missing data.total",
-		);
-	}
-	return total;
-}
-
 export async function getCategories(): Promise<SitemapEntry[]> {
 	const body = await fetchJson("/categories/tree");
 	const entries: SitemapEntry[] = [];
 
 	const walk = (nodes: any[]) => {
 		for (const node of nodes ?? []) {
-			if (node?.slug) entries.push({ path: `/c/${node.slug}` });
+			if (node?.slug) {
+				entries.push({
+					path: `/services?category=${encodeURIComponent(node.slug)}`,
+				});
+			}
 			if (node?.children?.length) walk(node.children);
 		}
 	};
-	walk(body?.data ?? []);
-
-	return entries;
-}
-
-export async function getBrands(): Promise<SitemapEntry[]> {
-	const body = await fetchJson("/brands");
-	return (body?.data ?? [])
-		.filter((brand: any) => brand?.slug)
-		.map((brand: any) => ({ path: `/brand/${brand.slug}` }));
-}
-
-/**
- * Vendors come from product facets rather than /vendors, which is not in the
- * public route allowlist. This is also more correct: facets only contain
- * vendors that have live products, so we never advertise an empty storefront.
- */
-export async function getVendors(): Promise<SitemapEntry[]> {
-	const body = await fetchJson("/products?limit=1");
-	return (body?.data?.facets?.vendors ?? [])
-		.filter((vendor: any) => vendor?.value)
-		.map((vendor: any) => ({ path: `/vendor/${vendor.value}` }));
-}
-
-/**
- * Service offerings for the sitemap. GET /services returns only PUBLISHED
- * offerings, so this yields an empty list until the first one is approved —
- * which is exactly the intent: the section ships now and starts emitting on
- * its own, with no follow-up task to remember.
- *
- * Paginates via the `page` query param (1-based) rather than a cursor, since
- * that's what GET /services supports. Like getProducts, this fails loudly
- * (throws) rather than silently truncating if the page cap is hit while the
- * response's `total` says more services remain.
- */
-export async function getServices(): Promise<SitemapEntry[]> {
-	const entries: SitemapEntry[] = [];
-	let fetchedCount = 0;
-	let total: number | undefined;
-
-	for (let page = 1; page <= MAX_SERVICE_PAGES; page++) {
-		const body = await fetchJson(`/services?limit=${SERVICE_PAGE_SIZE}&page=${page}`);
-		// biome-ignore lint/suspicious/noExplicitAny: untyped sitemap source row
-		const items: any[] = body?.data ?? [];
-		if (typeof body?.total === "number") total = body.total;
-
-		if (!items.length) break;
-
-		fetchedCount += items.length;
-		for (const service of items) {
-			if (!service?.slug) continue;
-			entries.push({ path: `/service/${service.slug}` });
-		}
-
-		// Stop once we've collected everything the API told us to expect. If
-		// the API never reported a total (malformed response), don't loop
-		// blindly — treat the page we have as the whole list.
-		if (total === undefined || fetchedCount >= total) break;
-	}
-
-	// If the total the API reported is more than we managed to fetch within
-	// the page cap, the service catalog exceeds our size limit and we must
-	// fail loudly rather than return a silently truncated sitemap.
-	if (total !== undefined && fetchedCount < total) {
-		console.error(
-			`[sitemap] service page loop hit page cap at ${MAX_SERVICE_PAGES} iterations with total=${total} fetchedCount=${fetchedCount}`,
-		);
-		throw new Error(
-			`sitemap upstream failed: service catalog exceeded expected size (page cap: ${MAX_SERVICE_PAGES})`,
-		);
-	}
+	walk(Array.isArray(body?.data) ? body.data : []);
 
 	return entries;
 }

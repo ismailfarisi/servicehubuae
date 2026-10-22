@@ -70,6 +70,6 @@ describe("MyPickUAE WebMCP service worker assets", () => {
 
 		expect(worker).toContain("self.agent");
 		expect(worker).toContain("provideContext");
-		expect(worker).toContain("mypickuae.service.searchProducts");
+		expect(worker).toContain("mypickuae.service.searchServices");
 	});
 });

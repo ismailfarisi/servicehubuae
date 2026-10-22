@@ -15,18 +15,18 @@ export function StaticPageLayout({
 }: StaticPageLayoutProps) {
 	return (
 		<div className="bg-nl-linen text-nl-cacao">
-			<section className="bg-nl-espresso text-nl-pearl">
-				<div className="max-w-[1400px] mx-auto px-4 md:px-12 py-16 md:py-24">
+			<section className="bg-nl-pearl border-b border-nl-cacao/5">
+				<div className="max-w-[1400px] mx-auto px-4 md:px-12 py-14 md:py-20">
 					{eyebrow && (
-						<p className="text-[10px] tracking-[0.22em] uppercase text-nl-amber mb-4">
+						<p className="text-sm font-semibold text-nl-amber-text mb-3">
 							{eyebrow}
 						</p>
 					)}
-					<h1 className="font-serif text-4xl md:text-6xl leading-[1.05]">
+					<h1 className="font-display font-bold tracking-tight text-4xl md:text-5xl leading-tight text-nl-cacao">
 						{title}
 					</h1>
 					{intro && (
-						<p className="font-serif italic text-lg md:text-xl text-nl-linen/85 mt-5 max-w-[640px] leading-[1.55]">
+						<p className="text-lg md:text-xl text-nl-russet mt-4 max-w-[640px] leading-relaxed">
 							{intro}
 						</p>
 					)}
@@ -49,11 +49,11 @@ export function StaticSection({ heading, children }: StaticSectionProps) {
 	return (
 		<section>
 			{heading && (
-				<h2 className="font-serif text-2xl md:text-3xl text-nl-cacao mb-4">
+				<h2 className="font-display font-bold tracking-tight text-2xl md:text-3xl leading-tight text-nl-cacao mb-4">
 					{heading}
 				</h2>
 			)}
-			<div className="text-nl-russet text-[15px] md:text-base leading-[1.75] space-y-4">
+			<div className="text-nl-russet text-[15px] md:text-base leading-relaxed space-y-4">
 				{children}
 			</div>
 		</section>

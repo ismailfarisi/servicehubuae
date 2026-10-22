@@ -8,51 +8,41 @@ import { ChatWidget } from "@/components/support/chat-widget";
 import type { Metadata, Viewport } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
-import {
-	Antic_Didone,
-	DM_Sans,
-	Inter_Tight,
-	Playfair_Display,
-} from "next/font/google";
+import { IBM_Plex_Sans_Arabic, Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { notFound } from "next/navigation";
 import Script from "next/script";
 import { routing } from "../../../i18n/routing";
 import { SITE_URL } from "@/lib/seo/config";
 import "../globals.css";
 
-const playfair = Playfair_Display({
+const inter = Inter({
 	subsets: ["latin"],
-	variable: "--font-playfair",
+	variable: "--font-inter",
 	display: "swap",
 });
 
-const dmSans = DM_Sans({
+const jakarta = Plus_Jakarta_Sans({
 	subsets: ["latin"],
-	variable: "--font-dm-sans",
+	variable: "--font-jakarta",
 	display: "swap",
 });
 
-const anticDidone = Antic_Didone({
-	subsets: ["latin"],
-	weight: "400",
-	variable: "--font-antic",
-	display: "swap",
-});
-
-const interTight = Inter_Tight({
-	subsets: ["latin"],
-	variable: "--font-inter-tight",
+// Inter and Jakarta have no Arabic glyphs; this covers the ar locale.
+const plexArabic = IBM_Plex_Sans_Arabic({
+	subsets: ["arabic"],
+	weight: ["400", "500", "600", "700"],
+	variable: "--font-arabic",
 	display: "swap",
 });
 
 export const metadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
 	title: {
-		default: "MyPickUAE — UAE Beauty Marketplace",
+		default: "MyPickUAE — Book Trusted Services in the UAE",
 		template: "%s | MyPickUAE",
 	},
 	description:
-		"Shop beauty, fragrance, skincare, makeup and wellness from trusted local and international vendors across the UAE.",
+		"Compare and book cleaning, AC maintenance, beauty, pest control and more from trusted vendors across the UAE.",
 	manifest: "/manifest.webmanifest",
 };
 
@@ -93,9 +83,9 @@ export default async function LocaleLayout({
 		<html
 			lang={locale}
 			dir={dir}
-			className={`${playfair.variable} ${dmSans.variable} ${anticDidone.variable} ${interTight.variable}`}
+			className={`${inter.variable} ${jakarta.variable} ${plexArabic.variable}`}
 		>
-			<body className="min-h-screen flex flex-col font-sans">
+			<body className="min-h-screen flex flex-col font-sans antialiased">
 				<NextIntlClientProvider messages={messages} locale={locale}>
 					<Providers>
 						<HideOnReels>

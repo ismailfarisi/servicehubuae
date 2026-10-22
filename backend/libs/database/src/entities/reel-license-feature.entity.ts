@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +13,17 @@ import type { ReelLicenseGrant } from "./reel-license-grant.entity.ts";
 
 /** A vendor's pin of a licensed reel onto a product PDP or their storefront. Soft delete = unpin. */
 @Entity("reel_license_features")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_rlf_product", ["product_id", "position"], { where: "deleted_at IS NULL" })
+@Index("idx_rlf_vendor", ["vendor_id", "placement", "position"], { where: "deleted_at IS NULL" })
+@Index("uq_rlf_storefront", ["grant_id", "placement"], {
+  unique: true,
+  where: "product_id IS NULL AND deleted_at IS NULL",
+})
+@Index("uq_rlf_surface", ["grant_id", "placement", "product_id"], {
+  unique: true,
+  where: "deleted_at IS NULL",
+})
 export class ReelLicenseFeature {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

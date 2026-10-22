@@ -45,7 +45,7 @@ export function DashboardHeader({
 	onMenuClick,
 }: DashboardHeaderProps) {
 	return (
-		<header className="flex items-center justify-between h-16 px-4 lg:px-6 bg-linen border-b border-pearl/14">
+		<header className="flex items-center justify-between h-16 px-4 lg:px-6 bg-linen border-b border-pearl">
 			{/* Left: hamburger (mobile) + breadcrumbs */}
 			<div className="flex items-center gap-3 min-w-0">
 				{onMenuClick && (
@@ -53,7 +53,7 @@ export function DashboardHeader({
 						type="button"
 						onClick={onMenuClick}
 						aria-label="Open menu"
-						className="lg:hidden -ml-1 p-1.5 rounded-sm text-cacao hover:bg-pearl/30 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+						className="lg:hidden -ml-1 p-1.5 rounded-md text-cacao hover:bg-background transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
 					>
 						<List className="w-6 h-6" />
 					</button>
@@ -67,7 +67,7 @@ export function DashboardHeader({
 						return (
 							<span key={index} className="flex items-center gap-1">
 								{index > 0 && (
-									<CaretRight className="w-4 h-4 text-amber/60 flex-shrink-0" />
+									<CaretRight className="w-4 h-4 text-taupe/50 flex-shrink-0" />
 								)}
 								{isLast ? (
 									<span className="font-semibold text-cacao whitespace-nowrap">
@@ -76,7 +76,7 @@ export function DashboardHeader({
 								) : crumb.href ? (
 									<Link
 										href={crumb.href}
-										className="text-amber hover:underline whitespace-nowrap"
+										className="text-taupe hover:text-amber whitespace-nowrap transition-colors"
 									>
 										{crumb.label}
 									</Link>
@@ -97,13 +97,13 @@ export function DashboardHeader({
 					<button
 						type="button"
 						className={cn(
-							"flex items-center gap-2 px-3 py-2 rounded-sm hover:bg-pearl/30 border border-pearl/28 text-cacao",
+							"flex items-center gap-2 px-3 py-2 rounded-sm hover:bg-pearl/30 border border-input text-cacao",
 							"transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
 						)}
 					>
 						<Avatar className="w-8 h-8">
 							{user.avatar && <AvatarImage src={user.avatar} alt={user.name} />}
-							<AvatarFallback className="text-xs">
+							<AvatarFallback className="text-xs font-semibold bg-accent text-amber">
 								{getInitials(user.name)}
 							</AvatarFallback>
 						</Avatar>

@@ -151,10 +151,10 @@ export function useDeleteServiceArea() {
 	});
 }
 
-// ─── Delivery zones (area picker source — public order-service endpoint,
-// same one apps/web's lib/queries/areas.ts consumes) ─────────────────────
+// ─── Areas (area picker source — public catalog-service GET /areas, active
+// areas sorted by sort_order then name) ─────────────────────────────────────
 
-export interface DeliveryZone {
+export interface Area {
 	id: string;
 	name: string;
 	slug: string;
@@ -165,11 +165,11 @@ export interface DeliveryZone {
 	sort_order: number;
 }
 
-export function useDeliveryZones() {
-	return useQuery<DeliveryZone[]>({
-		queryKey: ["shipping", "delivery-zones"],
+export function useAreas() {
+	return useQuery<Area[]>({
+		queryKey: ["areas"],
 		queryFn: async () => {
-			const { data } = await api.get("/shipping/delivery-zones");
+			const { data } = await api.get("/areas");
 			return data.data ?? [];
 		},
 		staleTime: 10 * 60_000,

@@ -26,8 +26,8 @@ jobs:
     outputs:
       api-gateway: ${{ steps.filter.outputs.api-gateway }}
       auth-service: ${{ steps.filter.outputs.auth-service }}
-      product-service: ${{ steps.filter.outputs.product-service }}
-      order-service: ${{ steps.filter.outputs.order-service }}
+      catalog-service: ${{ steps.filter.outputs.catalog-service }}
+      booking-service: ${{ steps.filter.outputs.booking-service }}
       vendor-service: ${{ steps.filter.outputs.vendor-service }}
       notification-service: ${{ steps.filter.outputs.notification-service }}
       cms-service: ${{ steps.filter.outputs.cms-service }}
@@ -46,11 +46,11 @@ jobs:
             auth-service:
               - 'backend/apps/auth-service/**'
               - 'backend/libs/**'
-            product-service:
-              - 'backend/apps/product-service/**'
+            catalog-service:
+              - 'backend/apps/catalog-service/**'
               - 'backend/libs/**'
-            order-service:
-              - 'backend/apps/order-service/**'
+            booking-service:
+              - 'backend/apps/booking-service/**'
               - 'backend/libs/**'
             vendor-service:
               - 'backend/apps/vendor-service/**'
@@ -80,6 +80,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.3
       - run: bun install --frozen-lockfile
       - name: Lint
         run: bunx --bun @biomejs/biome@1.9.4 check --diagnostic-level=error .
@@ -89,8 +91,8 @@ jobs:
           bunx turbo run test
           --filter='@mypickuae/api-gateway'
           --filter='@mypickuae/auth-service'
-          --filter='@mypickuae/product-service'
-          --filter='@mypickuae/order-service'
+          --filter='@mypickuae/catalog-service'
+          --filter='@mypickuae/booking-service'
           --filter='@mypickuae/vendor-service'
           --filter='@mypickuae/notification-service'
           --filter='@mypickuae/cms-service'
@@ -128,23 +130,6 @@ jobs:
           GOOGLE_DRIVE_API_KEY: ${{ secrets.STAGING_GOOGLE_DRIVE_API_KEY }}
           GOOGLE_GEMINI_API_KEY: ${{ secrets.STAGING_GOOGLE_GEMINI_API_KEY }}
           TYPESENSE_API_KEY: ${{ secrets.STAGING_TYPESENSE_API_KEY }}
-          TAMARA_API_TOKEN: ${{ secrets.STAGING_TAMARA_API_TOKEN }}
-          TAMARA_API_BASE_URL: ${{ secrets.STAGING_TAMARA_API_BASE_URL }}
-          TAMARA_NOTIFICATION_TOKEN: ${{ secrets.STAGING_TAMARA_NOTIFICATION_TOKEN }}
-          TAMARA_SUCCESS_URL: ${{ secrets.STAGING_TAMARA_SUCCESS_URL }}
-          TAMARA_FAILURE_URL: ${{ secrets.STAGING_TAMARA_FAILURE_URL }}
-          TAMARA_CANCEL_URL: ${{ secrets.STAGING_TAMARA_CANCEL_URL }}
-          TAMARA_NOTIFICATION_URL: ${{ secrets.STAGING_TAMARA_NOTIFICATION_URL }}
-          POSTAPLUS_PARTNER_KEY: ${{ secrets.STAGING_POSTAPLUS_PARTNER_KEY }}
-          POSTAPLUS_TENANT: ${{ secrets.STAGING_POSTAPLUS_TENANT }}
-          POSTAPLUS_CUSTOMER: ${{ secrets.STAGING_POSTAPLUS_CUSTOMER }}
-          POSTAPLUS_CREATED_BY: ${{ secrets.STAGING_POSTAPLUS_CREATED_BY }}
-          POSTAPLUS_BASE_URL: ${{ secrets.STAGING_POSTAPLUS_BASE_URL }}
-          POSTAPLUS_SHIPMENT_TYPE: ${{ secrets.STAGING_POSTAPLUS_SHIPMENT_TYPE }}
-          POSTAPLUS_PACKAGE_TYPE: ${{ secrets.STAGING_POSTAPLUS_PACKAGE_TYPE }}
-          POSTAPLUS_SERVICE: ${{ secrets.STAGING_POSTAPLUS_SERVICE }}
-          POSTAPLUS_VEHICLE: ${{ secrets.STAGING_POSTAPLUS_VEHICLE }}
-          POSTAPLUS_PICKUP_TYPE: ${{ secrets.STAGING_POSTAPLUS_PICKUP_TYPE }}
           SMS_OTP_PROVIDER: ${{ secrets.STAGING_SMS_OTP_PROVIDER }}
           TWILIO_ACCOUNT_SID: ${{ secrets.STAGING_TWILIO_ACCOUNT_SID }}
           TWILIO_AUTH_TOKEN: ${{ secrets.STAGING_TWILIO_AUTH_TOKEN }}
@@ -169,23 +154,6 @@ jobs:
             "google/drive-api-key|GOOGLE_DRIVE_API_KEY"
             "google/gemini-api-key|GOOGLE_GEMINI_API_KEY"
             "typesense/api-key|TYPESENSE_API_KEY"
-            "tamara/api-token|TAMARA_API_TOKEN"
-            "tamara/api-base-url|TAMARA_API_BASE_URL"
-            "tamara/notification-token|TAMARA_NOTIFICATION_TOKEN"
-            "tamara/success-url|TAMARA_SUCCESS_URL"
-            "tamara/failure-url|TAMARA_FAILURE_URL"
-            "tamara/cancel-url|TAMARA_CANCEL_URL"
-            "tamara/notification-url|TAMARA_NOTIFICATION_URL"
-            "postaplus/partner-key|POSTAPLUS_PARTNER_KEY"
-            "postaplus/tenant|POSTAPLUS_TENANT"
-            "postaplus/customer|POSTAPLUS_CUSTOMER"
-            "postaplus/created-by|POSTAPLUS_CREATED_BY"
-            "postaplus/base-url|POSTAPLUS_BASE_URL"
-            "postaplus/shipment-type|POSTAPLUS_SHIPMENT_TYPE"
-            "postaplus/package-type|POSTAPLUS_PACKAGE_TYPE"
-            "postaplus/service|POSTAPLUS_SERVICE"
-            "postaplus/vehicle|POSTAPLUS_VEHICLE"
-            "postaplus/pickup-type|POSTAPLUS_PICKUP_TYPE"
             "sms/otp-provider|SMS_OTP_PROVIDER"
             "twilio/account-sid|TWILIO_ACCOUNT_SID"
             "twilio/auth-token|TWILIO_AUTH_TOKEN"
@@ -258,22 +226,22 @@ jobs:
       image-tag: ${{ github.sha }}
     secrets: inherit
 
-  build-product-service:
+  build-catalog-service:
     needs: [backend-checks, detect-changes]
-    if: needs.detect-changes.outputs.product-service == 'true'
+    if: needs.detect-changes.outputs.catalog-service == 'true'
     uses: ./.github/workflows/build-service.yml
     with:
-      service: product-service
+      service: catalog-service
       environment: staging
       image-tag: ${{ github.sha }}
     secrets: inherit
 
-  build-order-service:
+  build-booking-service:
     needs: [backend-checks, detect-changes]
-    if: needs.detect-changes.outputs.order-service == 'true'
+    if: needs.detect-changes.outputs.booking-service == 'true'
     uses: ./.github/workflows/build-service.yml
     with:
-      service: order-service
+      service: booking-service
       environment: staging
       image-tag: ${{ github.sha }}
     secrets: inherit
@@ -336,8 +304,8 @@ jobs:
       - sync-secrets-to-ssm
       - build-api-gateway
       - build-auth-service
-      - build-product-service
-      - build-order-service
+      - build-catalog-service
+      - build-booking-service
       - build-vendor-service
       - build-notification-service
       - build-cms-service

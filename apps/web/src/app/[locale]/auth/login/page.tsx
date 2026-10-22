@@ -18,7 +18,7 @@ function LoginContent() {
 
   return (
     <div className="container max-w-md py-12 md:py-20 px-4">
-      <h1 className="font-serif text-[28px] md:text-[32px] text-nl-cacao mb-2 text-center">
+      <h1 className="font-display text-3xl font-bold leading-tight tracking-tight text-nl-cacao mb-2 text-center">
         {t("loginTitle")}
       </h1>
       {method === "phone" ? (
@@ -36,7 +36,7 @@ function LoginContent() {
       <button
         type="button"
         onClick={() => setMethod(method === "phone" ? "email" : "phone")}
-        className="mt-6 w-full min-h-[44px] text-sm text-nl-russet underline underline-offset-4"
+        className="mt-6 w-full min-h-[44px] text-sm font-semibold text-nl-amber-text underline-offset-4 hover:underline"
       >
         {method === "phone" ? t("useEmailInstead") : t("usePhoneInstead")}
       </button>

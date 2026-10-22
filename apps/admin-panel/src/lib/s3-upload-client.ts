@@ -38,27 +38,4 @@ export const s3UploadClient: S3UploadClient = {
 		});
 		return { url: data.url };
 	},
-
-	async presignLayoutVideo(input) {
-		const { data } = await api.post("/media/videos/layout/presign", {
-			filename: input.filename,
-			content_type: input.contentType,
-			size_bytes: input.sizeBytes,
-		});
-		return { uploadUrl: data.url, key: data.key };
-	},
-
-	async processLayoutVideo(input) {
-		const { data } = await api.post("/media/videos/layout/process", { key: input.key });
-		return { id: data.video.id, status: data.video.status };
-	},
-
-	async getLayoutVideo(id) {
-		const { data } = await api.get(`/media/videos/layout/${id}`);
-		return data;
-	},
-
-	async deleteLayoutVideo(id) {
-		await api.delete(`/media/videos/layout/${id}`);
-	},
 };

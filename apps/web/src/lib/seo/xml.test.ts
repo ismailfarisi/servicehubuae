@@ -14,15 +14,15 @@ function parseAndCheckXml(xml: string): Document {
 
 describe("buildUrlset", () => {
 	it("emits one <url> per locale with reciprocal hreflang links", () => {
-		const xml = buildUrlset([{ path: "/product/foo" }]);
+		const xml = buildUrlset([{ path: "/service/foo" }]);
 
-		expect(xml).toContain("<loc>https://www.mypickuae.com/en/product/foo</loc>");
-		expect(xml).toContain("<loc>https://www.mypickuae.com/ar/product/foo</loc>");
+		expect(xml).toContain("<loc>https://www.mypickuae.com/en/service/foo</loc>");
+		expect(xml).toContain("<loc>https://www.mypickuae.com/ar/service/foo</loc>");
 		expect(xml).toContain(
-			'<xhtml:link rel="alternate" hreflang="ar" href="https://www.mypickuae.com/ar/product/foo"/>',
+			'<xhtml:link rel="alternate" hreflang="ar" href="https://www.mypickuae.com/ar/service/foo"/>',
 		);
 		expect(xml).toContain(
-			'<xhtml:link rel="alternate" hreflang="x-default" href="https://www.mypickuae.com/en/product/foo"/>',
+			'<xhtml:link rel="alternate" hreflang="x-default" href="https://www.mypickuae.com/en/service/foo"/>',
 		);
 	});
 
@@ -45,8 +45,8 @@ describe("buildUrlset", () => {
 		// raw "&" never reaches the XML layer at all — it becomes "%26" before
 		// `escapeXml` runs. That's a stronger fix than escaping: the character
 		// is gone, not just escaped.
-		expect(buildUrlset([{ path: "/product/a&b" }])).toContain("a%26b");
-		expect(buildUrlset([{ path: "/product/a&b" }])).not.toContain("a&b");
+		expect(buildUrlset([{ path: "/service/a&b" }])).toContain("a%26b");
+		expect(buildUrlset([{ path: "/service/a&b" }])).not.toContain("a&b");
 	});
 
 	it("is valid when empty", () => {
@@ -67,7 +67,7 @@ describe("buildUrlset", () => {
 	});
 
 	it("emits exactly one <url> per locale with correct hreflang alternates and x-default", () => {
-		const xml = buildUrlset([{ path: "/product/foo" }]);
+		const xml = buildUrlset([{ path: "/service/foo" }]);
 		const doc = parseAndCheckXml(xml);
 
 		// Count the number of <url> elements
@@ -120,14 +120,14 @@ describe("buildUrlset", () => {
 
 describe("buildSitemapIndex", () => {
 	it("lists each child sitemap as an absolute url", () => {
-		const xml = buildSitemapIndex(["static.xml", "products-0.xml"]);
+		const xml = buildSitemapIndex(["static.xml", "services.xml"]);
 
 		expect(xml).toContain("<sitemapindex");
 		expect(xml).toContain(
 			"<loc>https://www.mypickuae.com/sitemaps/static.xml</loc>",
 		);
 		expect(xml).toContain(
-			"<loc>https://www.mypickuae.com/sitemaps/products-0.xml</loc>",
+			"<loc>https://www.mypickuae.com/sitemaps/services.xml</loc>",
 		);
 	});
 });

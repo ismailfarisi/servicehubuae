@@ -1,9 +1,5 @@
 "use client";
-import {
-  Eyebrow,
-  MAISON_SANS,
-  SerifTitle,
-} from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 import { CreatorSummaryCard } from "@/components/creator/creator-summary-card";
 import { PayoutRequestCard } from "@/components/creator/payout-request-card";
 import { useTranslations } from "next-intl";
@@ -74,36 +70,30 @@ export default function CreatorDashboardPage() {
   return (
     <div className="space-y-6">
       <div className="mb-5">
-        <Eyebrow>CREATOR</Eyebrow>
-        <SerifTitle size={26} className="mt-1.5">
+        <Eyebrow>Creator</Eyebrow>
+        <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
           My media kit
-        </SerifTitle>
+        </h1>
       </div>
 
       <MediaKitSection />
 
-      <hr style={{ border: 0, borderTop: "1px solid rgba(44,24,16,0.10)", margin: "36px 0 0" }} />
+      <hr className="mt-9 border-0 border-t border-nl-cacao/10" />
 
       <CreatorSummaryCard />
       <PayoutRequestCard />
 
-      <div
-        className="flex flex-wrap gap-1 border-b"
-        style={{ borderColor: "rgba(44,24,16,0.10)" }}
-      >
+      <div className="flex flex-wrap gap-1 border-b border-nl-cacao/10">
         {TABS.map(({ key, label }) => (
           <button
             key={key}
             type="button"
             onClick={() => selectTab(key)}
-            className="uppercase transition-colors px-3 py-2.5 border-b -mb-px"
-            style={{
-              fontFamily: MAISON_SANS,
-              fontSize: 10.5,
-              letterSpacing: "0.18em",
-              color: tab === key ? "hsl(var(--nl-amber))" : "hsl(var(--nl-russet))",
-              borderColor: tab === key ? "hsl(var(--nl-amber))" : "transparent",
-            }}
+            className={`-mb-px border-b-2 px-3 py-2.5 text-sm transition-colors ${
+              tab === key
+                ? "border-nl-amber font-semibold text-nl-amber-text"
+                : "border-transparent font-medium text-nl-russet hover:text-nl-cacao"
+            }`}
           >
             {label}
           </button>

@@ -10,11 +10,11 @@ describe("seo alternates", () => {
 	});
 
 	it("builds an absolute, locale-prefixed url", () => {
-		expect(absoluteUrl("en", "/product/foo")).toBe(
-			"https://www.mypickuae.com/en/product/foo",
+		expect(absoluteUrl("en", "/service/foo")).toBe(
+			"https://www.mypickuae.com/en/service/foo",
 		);
-		expect(absoluteUrl("ar", "/product/foo")).toBe(
-			"https://www.mypickuae.com/ar/product/foo",
+		expect(absoluteUrl("ar", "/service/foo")).toBe(
+			"https://www.mypickuae.com/ar/service/foo",
 		);
 	});
 
@@ -23,42 +23,48 @@ describe("seo alternates", () => {
 	});
 
 	it("leaves a plain ASCII slug unchanged", () => {
-		expect(absoluteUrl("en", "/product/foo-bar")).toBe(
-			"https://www.mypickuae.com/en/product/foo-bar",
+		expect(absoluteUrl("en", "/service/foo-bar")).toBe(
+			"https://www.mypickuae.com/en/service/foo-bar",
 		);
 	});
 
 	it("percent-encodes a space in a slug", () => {
-		expect(absoluteUrl("en", "/product/foo bar")).toBe(
-			"https://www.mypickuae.com/en/product/foo%20bar",
+		expect(absoluteUrl("en", "/service/foo bar")).toBe(
+			"https://www.mypickuae.com/en/service/foo%20bar",
 		);
 	});
 
 	it("percent-encodes non-ASCII characters in a slug", () => {
-		expect(absoluteUrl("en", "/product/منتج")).toBe(
-			"https://www.mypickuae.com/en/product/%D9%85%D9%86%D8%AA%D8%AC",
+		expect(absoluteUrl("en", "/service/منتج")).toBe(
+			"https://www.mypickuae.com/en/service/%D9%85%D9%86%D8%AA%D8%AC",
 		);
 	});
 
 	it("builds reciprocal hreflang alternates with x-default on en", () => {
-		expect(buildAlternates("en", "/product/foo")).toEqual({
-			canonical: "https://www.mypickuae.com/en/product/foo",
+		expect(buildAlternates("en", "/service/foo")).toEqual({
+			canonical: "https://www.mypickuae.com/en/service/foo",
 			languages: {
-				en: "https://www.mypickuae.com/en/product/foo",
-				ar: "https://www.mypickuae.com/ar/product/foo",
-				"x-default": "https://www.mypickuae.com/en/product/foo",
+				en: "https://www.mypickuae.com/en/service/foo",
+				ar: "https://www.mypickuae.com/ar/service/foo",
+				"x-default": "https://www.mypickuae.com/en/service/foo",
 			},
 		});
 	});
 
 	it("self-references the canonical to the rendering locale, not en", () => {
-		expect(buildAlternates("ar", "/product/foo")).toEqual({
-			canonical: "https://www.mypickuae.com/ar/product/foo",
+		expect(buildAlternates("ar", "/service/foo")).toEqual({
+			canonical: "https://www.mypickuae.com/ar/service/foo",
 			languages: {
-				en: "https://www.mypickuae.com/en/product/foo",
-				ar: "https://www.mypickuae.com/ar/product/foo",
-				"x-default": "https://www.mypickuae.com/en/product/foo",
+				en: "https://www.mypickuae.com/en/service/foo",
+				ar: "https://www.mypickuae.com/ar/service/foo",
+				"x-default": "https://www.mypickuae.com/en/service/foo",
 			},
 		});
+	});
+
+	it("passes a query string through unencoded", () => {
+		expect(absoluteUrl("ar", "/services?category=home-maintenance")).toBe(
+			"https://www.mypickuae.com/ar/services?category=home-maintenance",
+		);
 	});
 });

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -11,6 +12,8 @@ import type { ReelLicenseOffer } from "./reel-license-offer.entity.ts";
 
 /** Append-only negotiation/audit trail for a license offer. No soft delete (immutable log). */
 @Entity("reel_license_offer_events")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_rloe_offer_created", ["offer_id", "created_at"])
 export class ReelLicenseOfferEvent {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

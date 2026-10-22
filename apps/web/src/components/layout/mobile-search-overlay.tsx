@@ -4,7 +4,7 @@ import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import type { NavTab } from "@/lib/api/navigation";
 import { useRecordSearch } from "@/hooks/use-record-search";
 import { useRecentSearches } from "@/lib/queries/recent-searches";
-import { useSearchSuggest } from "@/lib/queries/search";
+import { searchResultsHref, useSearchSuggest } from "@/lib/queries/search";
 import { ArrowLeft, Search, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
@@ -57,13 +57,13 @@ export function MobileSearchOverlay({ open, onClose, tabs }: Props) {
 		const q = query.trim();
 		if (!q) return;
 		recordSearch(q);
-		router.push(`/${locale}/search?q=${encodeURIComponent(q)}`);
+		router.push(searchResultsHref(locale, q));
 		onClose();
 	}
 
 	const hasAnyResults =
 		!!data &&
-		data.products.length + data.categories.length + data.brands.length > 0;
+		data.services.length + data.categories.length > 0;
 	const hasRecents = !!recents?.length;
 
 	return (
@@ -133,24 +133,6 @@ export function MobileSearchOverlay({ open, onClose, tabs }: Props) {
 				) : (
 					<div className="text-center text-sm text-muted-foreground/70 py-12">
 						{t("noResultsFor", { query })}
-						{data?.did_you_mean && (
-							<div className="mt-2">
-								Did you mean{" "}
-								<button
-									type="button"
-									className="text-primary hover:underline"
-									onMouseDown={() => {
-										const suggestion = data.did_you_mean ?? "";
-										router.push(
-											`/${locale}/search?q=${encodeURIComponent(suggestion)}`,
-										);
-										onClose();
-									}}
-								>
-									&ldquo;{data.did_you_mean}&rdquo;
-								</button>?
-							</div>
-						)}
 					</div>
 				)}
 			</div>

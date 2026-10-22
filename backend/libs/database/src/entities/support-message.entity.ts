@@ -19,14 +19,14 @@ export class SupportMessage {
   @Column({ type: "uuid" })
   ticket_id!: string;
 
-  @ManyToOne("SupportTicket")
+  @ManyToOne("SupportTicket", { onDelete: "CASCADE" })
   @JoinColumn({ name: "ticket_id" })
   ticket!: SupportTicket;
 
   @Column({ type: "uuid", nullable: true })
   sender_id!: string | null;
 
-  @ManyToOne("User", { nullable: true })
+  @ManyToOne("User", { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "sender_id" })
   sender!: User | null;
 

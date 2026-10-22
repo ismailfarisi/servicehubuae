@@ -35,7 +35,7 @@ jobs:
         with:
           # Pinned: bun 1.3.14 regressed source-barrel circular-import
           # resolution ("Export named X not found"). 1.3.13 matches dev.
-          bun-version: 1.3.13
+          bun-version: 1.4.3
       - run: bun install --frozen-lockfile
       - name: Lint
         run: bunx --bun @biomejs/biome@1.9.4 check --diagnostic-level=error .
@@ -58,8 +58,7 @@ jobs:
         service:
           - api-gateway
           - auth-service
-          - product-service
-          - order-service
+          - catalog-service
           - vendor-service
           - notification-service
           - cms-service
@@ -144,8 +143,7 @@ jobs:
           # Service ports
           GATEWAY_PORT=3000
           AUTH_PORT=3001
-          PRODUCT_PORT=3002
-          ORDER_PORT=3003
+          CATALOG_PORT=3002
           VENDOR_PORT=3004
           NOTIFICATION_PORT=3005
           CMS_PORT=3006
@@ -155,8 +153,7 @@ jobs:
 
           # Service hostnames (docker-compose service names)
           AUTH_HOST=auth-service
-          PRODUCT_HOST=product-service
-          ORDER_HOST=order-service
+          CATALOG_HOST=catalog-service
           VENDOR_HOST=vendor-service
           NOTIFICATION_HOST=notification-service
           CMS_HOST=cms-service
@@ -173,6 +170,9 @@ jobs:
           ENCRYPTION_KEY=${{ secrets.STAGING_ENCRYPTION_KEY }}
           BOOKING_ICAL_FEED_SECRET=${{ secrets.STAGING_BOOKING_ICAL_FEED_SECRET }}
 
+          # Card payments stay off until the MyFatoorah module ships (M2).
+          ONLINE_PAYMENTS_ENABLED=false
+
           # Storefront phone OTP
           SMS_OTP_PROVIDER=${{ secrets.STAGING_SMS_OTP_PROVIDER }}
           TWILIO_ACCOUNT_SID=${{ secrets.STAGING_TWILIO_ACCOUNT_SID }}
@@ -182,27 +182,6 @@ jobs:
           # Stripe
           STRIPE_SECRET_KEY=${{ secrets.STAGING_STRIPE_SECRET_KEY }}
           STRIPE_CONNECT_WEBHOOK_SECRET=${{ secrets.STAGING_STRIPE_CONNECT_WEBHOOK_SECRET }}
-
-          # Tamara
-          TAMARA_API_TOKEN=${{ secrets.STAGING_TAMARA_API_TOKEN }}
-          TAMARA_API_BASE_URL=${{ secrets.STAGING_TAMARA_API_BASE_URL }}
-          TAMARA_NOTIFICATION_TOKEN=${{ secrets.STAGING_TAMARA_NOTIFICATION_TOKEN }}
-          TAMARA_SUCCESS_URL=${{ secrets.STAGING_TAMARA_SUCCESS_URL }}
-          TAMARA_FAILURE_URL=${{ secrets.STAGING_TAMARA_FAILURE_URL }}
-          TAMARA_CANCEL_URL=${{ secrets.STAGING_TAMARA_CANCEL_URL }}
-          TAMARA_NOTIFICATION_URL=${{ secrets.STAGING_TAMARA_NOTIFICATION_URL }}
-
-          # PostaPlus
-          POSTAPLUS_PARTNER_KEY=${{ secrets.STAGING_POSTAPLUS_PARTNER_KEY }}
-          POSTAPLUS_TENANT=${{ secrets.STAGING_POSTAPLUS_TENANT }}
-          POSTAPLUS_CUSTOMER=${{ secrets.STAGING_POSTAPLUS_CUSTOMER }}
-          POSTAPLUS_CREATED_BY=${{ secrets.STAGING_POSTAPLUS_CREATED_BY }}
-          POSTAPLUS_BASE_URL=${{ secrets.STAGING_POSTAPLUS_BASE_URL }}
-          POSTAPLUS_SHIPMENT_TYPE=${{ secrets.STAGING_POSTAPLUS_SHIPMENT_TYPE }}
-          POSTAPLUS_PACKAGE_TYPE=${{ secrets.STAGING_POSTAPLUS_PACKAGE_TYPE }}
-          POSTAPLUS_SERVICE=${{ secrets.STAGING_POSTAPLUS_SERVICE }}
-          POSTAPLUS_VEHICLE=${{ secrets.STAGING_POSTAPLUS_VEHICLE }}
-          POSTAPLUS_PICKUP_TYPE=${{ secrets.STAGING_POSTAPLUS_PICKUP_TYPE }}
 
           # AWS (S3 media + SES email — staying on AWS for now per migration plan)
           # Must match the media bucket's actual region. S3 reports it via
@@ -220,7 +199,7 @@ jobs:
           TYPESENSE_PORT=8108
           TYPESENSE_PROTOCOL=http
           TYPESENSE_API_KEY=${{ secrets.STAGING_TYPESENSE_API_KEY }}
-          TYPESENSE_COLLECTION=products
+          TYPESENSE_SERVICES_COLLECTION=service_offerings
 
           # Frontend URLs (required at config-load time; used for email links + CORS allowlist)
           # STAGING ONLY: allow this team's Vercel branch-preview origins to
@@ -249,8 +228,6 @@ jobs:
 
           # Cache TTLs (seconds)
           CATEGORY_TREE_CACHE_TTL=3600
-          PRODUCT_DETAIL_CACHE_TTL=600
-          PRODUCT_LIST_CACHE_TTL=300
 
           # Misc
           GOOGLE_DRIVE_API_KEY=${{ secrets.STAGING_GOOGLE_DRIVE_API_KEY }}

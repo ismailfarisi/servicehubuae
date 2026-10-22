@@ -19,7 +19,6 @@ export interface LedgerContext {
   referenceType: string;
   referenceId: string;
   description?: string;
-  orderId?: string | null;
   /** Optional caller-provided transaction manager for in-transaction writes */
   manager?: EntityManager;
 }
@@ -107,7 +106,6 @@ export class CreatorWalletService {
       balance_before: balanceBefore,
       balance_after: balanceAfter,
       transaction_type: ctx.transactionType,
-      order_id: ctx.orderId ?? null,
       reference_type: ctx.referenceType,
       reference_id: ctx.referenceId,
       description: ctx.description ?? null,

@@ -10,7 +10,7 @@ describe("ReelsService.requestUpload", () => {
         assetId: "asset-123",
       })),
     };
-    const service = new ReelsService(fakeClient as any, {} as any, {} as any);
+    const service = new ReelsService(fakeClient as any, {} as any);
     const save = mock(async (reel: any) => ({ ...reel, id: "reel-1" }));
     (service as any).reelRepo = {
       findOne: mock(async () => null),
@@ -45,7 +45,7 @@ describe("ReelsService.requestUpload", () => {
         assetId: "asset-123",
       })),
     };
-    const service = new ReelsService(fakeClient as any, {} as any, {} as any);
+    const service = new ReelsService(fakeClient as any, {} as any);
     const save = mock(async (reel: any) => ({ ...reel, id: "reel-1" }));
     (service as any).reelRepo = {
       findOne: mock(async () => null),
@@ -74,7 +74,7 @@ describe("ReelsService.requestUpload", () => {
 
 describe("ReelsService.createDraftFromAsset", () => {
   it("marks drafts from active vendor members as house reels", async () => {
-    const service = new ReelsService({} as any, {} as any, {} as any);
+    const service = new ReelsService({} as any, {} as any);
     const save = mock(async (reel: any) => ({ ...reel, id: "reel-1" }));
     (service as any).reelRepo = {
       findOne: mock(async () => null),

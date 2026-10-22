@@ -15,7 +15,7 @@ export function ReelAnalyticsHeader({
   onRefresh,
   isRefreshing,
   title = "Reel Analytics",
-  subtitle = "Performance of reels tagging your products.",
+  subtitle = "Engagement on reels linked to your business.",
 }: {
   period: Period;
   onPeriodChange: (p: Period) => void;

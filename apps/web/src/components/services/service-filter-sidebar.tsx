@@ -67,12 +67,16 @@ export function ServiceFilterSidebar({ config }: { config: ServiceFacetConfig })
   }, [router]);
 
   return (
-    <aside aria-label={t("filters")} data-pending={isPending ? "" : undefined}>
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-[10px] tracking-[0.2em] uppercase text-nl-russet">
+    <aside
+      aria-label={t("filters")}
+      data-pending={isPending ? "" : undefined}
+      className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-4 shadow-sm sm:p-5"
+    >
+      <div className="mb-4 flex items-center justify-between border-b border-nl-cacao/10 pb-3">
+        <h2 className="font-display text-base font-semibold text-nl-cacao">
           {t("filters")}
         </h2>
-        <button type="button" onClick={clearAll} className="text-[10px] uppercase text-nl-amber">
+        <button type="button" onClick={clearAll} className="text-sm font-semibold text-nl-amber-text hover:underline">
           {t("clearAll")}
         </button>
       </div>
@@ -80,33 +84,35 @@ export function ServiceFilterSidebar({ config }: { config: ServiceFacetConfig })
       {/* Facets with no values are hidden, not rendered empty — the rating
           group in particular has no data until real reviews exist. */}
       {config.areas.length > 0 && (
-        <fieldset className="mb-6">
-          <legend className="text-[10px] uppercase tracking-[0.2em] text-nl-russet mb-2">
+        <fieldset className="mb-5 last:mb-0">
+          <legend className="mb-2 text-sm font-semibold text-nl-cacao">
             {t("area")}
           </legend>
           {config.areas.map((area) => (
-            <label key={area.value} className="flex items-center gap-2 py-1 text-sm">
+            <label key={area.value} className="flex cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-sm text-nl-cacao transition-colors hover:bg-nl-pearl">
               <input
                 type="checkbox"
+                className="h-4 w-4 shrink-0 rounded border-nl-cacao/30 accent-nl-amber"
                 aria-label={area.label}
                 checked={draft.area === area.value}
                 onChange={() => toggle("area", area.value)}
               />
               <span>{area.label}</span>
-              {area.count != null && <span className="text-nl-russet">({area.count})</span>}
+              {area.count != null && <span className="ms-auto text-xs text-nl-russet">({area.count})</span>}
             </label>
           ))}
         </fieldset>
       )}
 
-      <fieldset className="mb-6">
-        <legend className="text-[10px] uppercase tracking-[0.2em] text-nl-russet mb-2">
+      <fieldset className="mb-5 last:mb-0">
+        <legend className="mb-2 text-sm font-semibold text-nl-cacao">
           {t("visit")}
         </legend>
         {VISIT_OPTIONS.map((opt) => (
-          <label key={opt.value} className="flex items-center gap-2 py-1 text-sm">
+          <label key={opt.value} className="flex cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-sm text-nl-cacao transition-colors hover:bg-nl-pearl">
             <input
               type="checkbox"
+              className="h-4 w-4 shrink-0 rounded border-nl-cacao/30 accent-nl-amber"
               aria-label={t(opt.labelKey)}
               checked={draft.visit === opt.value}
               onChange={() => toggle("visit", opt.value)}
@@ -117,14 +123,15 @@ export function ServiceFilterSidebar({ config }: { config: ServiceFacetConfig })
       </fieldset>
 
       {config.categories.length > 0 && (
-        <fieldset className="mb-6">
-          <legend className="text-[10px] uppercase tracking-[0.2em] text-nl-russet mb-2">
+        <fieldset className="mb-5 last:mb-0">
+          <legend className="mb-2 text-sm font-semibold text-nl-cacao">
             {t("category")}
           </legend>
           {config.categories.map((cat) => (
-            <label key={cat.value} className="flex items-center gap-2 py-1 text-sm">
+            <label key={cat.value} className="flex cursor-pointer items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-sm text-nl-cacao transition-colors hover:bg-nl-pearl">
               <input
                 type="checkbox"
+                className="h-4 w-4 shrink-0 rounded border-nl-cacao/30 accent-nl-amber"
                 aria-label={cat.label}
                 checked={draft.category === cat.value}
                 onChange={() => toggle("category", cat.value)}
@@ -135,8 +142,8 @@ export function ServiceFilterSidebar({ config }: { config: ServiceFacetConfig })
         </fieldset>
       )}
 
-      <fieldset className="mb-6">
-        <legend className="text-[10px] uppercase tracking-[0.2em] text-nl-russet mb-2">
+      <fieldset className="mb-5 last:mb-0">
+        <legend className="mb-2 text-sm font-semibold text-nl-cacao">
           {t("priceAed")}
         </legend>
         <div className="flex items-center gap-2">
@@ -146,16 +153,16 @@ export function ServiceFilterSidebar({ config }: { config: ServiceFacetConfig })
             aria-label={t("minPrice")}
             value={draft.minPrice ?? ""}
             onChange={(e) => commit({ ...draft, minPrice: e.target.value })}
-            className="w-full border px-2 py-1 text-sm"
+            className="w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2 text-sm text-nl-cacao outline-none transition focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
           />
-          <span>–</span>
+          <span className="text-nl-russet">–</span>
           <input
             type="number"
             min={0}
             aria-label={t("maxPrice")}
             value={draft.maxPrice ?? ""}
             onChange={(e) => commit({ ...draft, maxPrice: e.target.value })}
-            className="w-full border px-2 py-1 text-sm"
+            className="w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3 py-2 text-sm text-nl-cacao outline-none transition focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
           />
         </div>
       </fieldset>

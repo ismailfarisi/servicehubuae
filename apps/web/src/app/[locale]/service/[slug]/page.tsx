@@ -4,16 +4,13 @@ import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { ServiceDetailClient } from "./client";
 
-// Mirrors the product PDP's rendering strategy (force-dynamic, not ISR —
-// availability is inherently live data, so a cached shell would go stale
-// fast; see apps/web/src/app/[locale]/product/[slug]/page.tsx).
+// force-dynamic, not ISR — availability is inherently live data, so a cached
+// shell would go stale fast.
 export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
-  // NOTE: product-service exposes GET /services/:slug only — there is no
-  // GET /services list endpoint to pre-build top slugs from (see
-  // backend/apps/product-service/src/routes/service.routes.ts). All service
-  // PDPs render on-demand.
+  // All service detail pages render on demand (catalog-service
+  // GET /services/:slug); nothing is pre-built.
   return [];
 }
 

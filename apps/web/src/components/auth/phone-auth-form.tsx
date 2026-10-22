@@ -8,12 +8,12 @@ import { useState } from "react";
 type Step = "phone" | "code" | "register";
 
 const fieldClassName =
-  "mt-2 w-full border border-nl-cacao/15 bg-white/55 px-4 py-3 text-[15px] text-nl-cacao outline-none transition-colors placeholder:text-nl-russet/45 focus:border-nl-amber focus:bg-white focus:ring-2 focus:ring-nl-amber/15";
+  "mt-1.5 w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-4 py-3 text-[15px] text-nl-cacao outline-none transition-colors placeholder:text-nl-russet/60 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20";
 
-const labelClassName = "text-[10px] font-medium uppercase tracking-[0.22em] text-nl-russet";
+const labelClassName = "text-sm font-medium text-nl-cacao";
 
 const submitClassName =
-  "w-full bg-nl-cacao px-5 py-3.5 text-[11px] font-medium uppercase tracking-[0.24em] text-nl-linen transition-colors hover:bg-nl-espresso focus:outline-none focus:ring-2 focus:ring-nl-amber focus:ring-offset-2 focus:ring-offset-nl-linen disabled:cursor-not-allowed disabled:opacity-50";
+  "inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90 focus:outline-none focus:ring-2 focus:ring-nl-amber focus:ring-offset-2 focus:ring-offset-nl-linen disabled:cursor-not-allowed disabled:opacity-50";
 
 export function PhoneAuthForm({ onAuthenticated }: { onAuthenticated: () => void }) {
   const t = useTranslations("auth");
@@ -95,18 +95,18 @@ export function PhoneAuthForm({ onAuthenticated }: { onAuthenticated: () => void
   if (step === "code") {
     return (
       <form onSubmit={submitCode} className="space-y-5">
-        <div className="flex items-center justify-between gap-4 border border-nl-cacao/15 bg-white/40 px-4 py-3">
+        <div className="flex items-center justify-between gap-4 rounded-xl border border-nl-cacao/10 bg-nl-pearl px-4 py-3">
           <div className="min-w-0">
-            <div className={labelClassName}>{t("codeSentTo")}</div>
+            <div className="text-xs font-medium text-nl-russet">{t("codeSentTo")}</div>
             {/* Phone numbers stay LTR even on the Arabic and Urdu storefronts. */}
-            <div dir="ltr" className="mt-1 truncate text-[15px] text-nl-cacao">
+            <div dir="ltr" className="mt-1 truncate text-[15px] font-semibold text-nl-cacao">
               {verifiedPhone}
             </div>
           </div>
           <button
             type="button"
             aria-label={t("changePhone")}
-            className="shrink-0 text-[10px] font-medium uppercase tracking-[0.22em] text-nl-russet underline underline-offset-4 transition-colors hover:text-nl-cacao"
+            className="shrink-0 text-sm font-semibold text-nl-amber-text underline-offset-4 hover:underline"
             onClick={editPhone}
           >
             {tCommon("edit")}
@@ -126,7 +126,7 @@ export function PhoneAuthForm({ onAuthenticated }: { onAuthenticated: () => void
           />
         </div>
         {error && (
-          <p className="border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
             {error}
           </p>
         )}
@@ -181,7 +181,7 @@ export function PhoneAuthForm({ onAuthenticated }: { onAuthenticated: () => void
           />
         </div>
         {error && (
-          <p className="border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+          <p className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
             {error}
           </p>
         )}
@@ -203,13 +203,13 @@ export function PhoneAuthForm({ onAuthenticated }: { onAuthenticated: () => void
           value={phone}
           onChange={setPhone}
           required
-          className="mt-2 flex border border-nl-cacao/15 bg-white/55 focus-within:border-nl-amber focus-within:bg-white focus-within:ring-2 focus-within:ring-nl-amber/15"
-          prefixClassName="flex items-center border-r border-nl-cacao/15 px-4 text-[15px] font-medium text-nl-cacao"
-          inputClassName="w-full bg-transparent px-4 py-3 text-[15px] text-nl-cacao outline-none placeholder:text-nl-russet/45"
+          className="mt-1.5 flex overflow-hidden rounded-lg border border-nl-cacao/15 bg-nl-linen transition-colors focus-within:border-nl-amber focus-within:ring-2 focus-within:ring-nl-amber/20"
+          prefixClassName="flex items-center border-e border-nl-cacao/15 bg-nl-pearl px-4 text-[15px] font-medium text-nl-cacao"
+          inputClassName="w-full bg-transparent px-4 py-3 text-[15px] text-nl-cacao outline-none placeholder:text-nl-russet/60"
         />
       </div>
       {error && (
-        <p className="border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+        <p className="rounded-lg border border-destructive/20 bg-destructive/5 px-3 py-2 text-sm text-destructive">
           {error}
         </p>
       )}

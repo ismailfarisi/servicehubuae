@@ -115,7 +115,10 @@ export class RollupService {
 /**
  * Same-shape aggregation over raw event tables, filtered to `today`.
  * Single SQL that the caller runs with a `today` param ('YYYY-MM-DD').
- * Excludes voided commissions from attributed_orders + attributed_gmv_fils.
+ *
+ * product_taps / attributed_* / earned_commission_fils stay in the row shape
+ * but are always 0: the reel commerce tables (reel_attributions,
+ * reel_commissions) were removed in the MyPickUAE fork.
  */
 export function buildTodayReelSql(): string {
   return `
@@ -130,35 +133,20 @@ export function buildTodayReelSql(): string {
       SELECT reel_id, COUNT(*)::int AS likes FROM reel_likes WHERE liked_at::date = $1::date GROUP BY reel_id
     ), s AS (
       SELECT reel_id, COUNT(*)::int AS saves FROM reel_saves WHERE saved_at::date = $1::date GROUP BY reel_id
-    ), t AS (
-      SELECT reel_id, COUNT(*)::int AS product_taps
-        FROM reel_attributions
-       WHERE tapped_at::date = $1::date
-       GROUP BY reel_id
-    ), c AS (
-      SELECT reel_id,
-             COUNT(DISTINCT order_id)           FILTER (WHERE status <> 'voided')::int AS attributed_orders,
-             COALESCE(SUM(item_price_fils)       FILTER (WHERE status <> 'voided'), 0)::bigint AS attributed_gmv_fils,
-             COALESCE(SUM(gross_commission_fils) FILTER (WHERE status IN ('earned','paid_out')), 0)::bigint AS earned_commission_fils
-        FROM reel_commissions
-       WHERE created_at::date = $1::date
-       GROUP BY reel_id
     )
-    SELECT COALESCE(v.reel_id, l.reel_id, s.reel_id, t.reel_id, c.reel_id) AS reel_id,
+    SELECT COALESCE(v.reel_id, l.reel_id, s.reel_id) AS reel_id,
            $1::date AS bucket_date,
            COALESCE(v.impressions, 0)             AS impressions,
            COALESCE(v.unique_viewers, 0)          AS unique_viewers,
            COALESCE(l.likes, 0)                   AS likes,
            COALESCE(s.saves, 0)                   AS saves,
            0                                      AS shares,
-           COALESCE(t.product_taps, 0)            AS product_taps,
-           COALESCE(c.attributed_orders, 0)       AS attributed_orders,
-           COALESCE(c.attributed_gmv_fils, 0)     AS attributed_gmv_fils,
-           COALESCE(c.earned_commission_fils, 0)  AS earned_commission_fils
+           0                                      AS product_taps,
+           0                                      AS attributed_orders,
+           0                                      AS attributed_gmv_fils,
+           0                                      AS earned_commission_fils
       FROM v
       FULL JOIN l  USING (reel_id)
       FULL JOIN s  USING (reel_id)
-      FULL JOIN t  USING (reel_id)
-      FULL JOIN c  USING (reel_id)
   `;
 }

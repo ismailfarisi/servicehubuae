@@ -1,4 +1,3 @@
-import { useCartStore } from "@/stores/cart";
 import { afterEach, describe, expect, test, vi } from "vitest";
 import { registerMyPickUAEWebMcpTools } from "./webmcp";
 
@@ -6,7 +5,6 @@ describe("registerMyPickUAEWebMcpTools", () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
 		Reflect.deleteProperty(document, "modelContext");
-		useCartStore.setState({ itemCount: 0, isSlideOverOpen: false });
 	});
 
 	test("does nothing when WebMCP is unavailable", () => {
@@ -22,11 +20,10 @@ describe("registerMyPickUAEWebMcpTools", () => {
 
 		const cleanup = registerMyPickUAEWebMcpTools({ locale: "en" });
 
-		expect(registerTool).toHaveBeenCalledTimes(3);
+		expect(registerTool).toHaveBeenCalledTimes(2);
 		expect(registerTool.mock.calls.map(([tool]) => tool.name)).toEqual([
-			"mypickuae.searchProducts",
-			"mypickuae.getCartSummary",
-			"mypickuae.openCart",
+			"mypickuae.searchServices",
+			"mypickuae.openMyBookings",
 		]);
 
 		const signals = registerTool.mock.calls.map(
@@ -40,28 +37,19 @@ describe("registerMyPickUAEWebMcpTools", () => {
 		expect(signals.every((signal) => signal.aborted)).toBe(true);
 	});
 
-	test("opens the cart and returns the current cart summary", async () => {
+	test("rejects an empty search query without navigating", async () => {
 		const registerTool = vi.fn();
 		Object.defineProperty(document, "modelContext", {
 			configurable: true,
 			value: { registerTool },
 		});
-		useCartStore.setState({ itemCount: 4, isSlideOverOpen: false });
 
 		registerMyPickUAEWebMcpTools({ locale: "en" });
 
-		const summaryTool = registerTool.mock.calls[1][0];
-		const openCartTool = registerTool.mock.calls[2][0];
-
-		await expect(summaryTool.execute({})).resolves.toEqual({
-			content: [{ type: "text", text: "Cart contains 4 items." }],
-			structuredContent: { itemCount: 4, isOpen: false },
+		const searchTool = registerTool.mock.calls[0][0];
+		await expect(searchTool.execute({ query: "   " })).resolves.toEqual({
+			content: [{ type: "text", text: "Search query is required." }],
+			structuredContent: { navigated: false },
 		});
-
-		await expect(openCartTool.execute({})).resolves.toEqual({
-			content: [{ type: "text", text: "Cart opened." }],
-			structuredContent: { isOpen: true },
-		});
-		expect(useCartStore.getState().isSlideOverOpen).toBe(true);
 	});
 });

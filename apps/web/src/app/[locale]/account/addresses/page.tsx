@@ -9,13 +9,8 @@ import {
   useDeleteAddress,
 } from "@/lib/queries/account";
 import { AddressForm } from "@/components/account/address-form";
-import { MapPin, Trash2, Edit2 } from "lucide-react";
-import {
-  Eyebrow,
-  SerifTitle,
-  MAISON_SERIF,
-  MAISON_SANS,
-} from "@/components/ui/maison-primitives";
+import { MapPin, Trash2, Edit2, Plus } from "lucide-react";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 
 export default function AddressesPage() {
   const t = useTranslations("account");
@@ -29,27 +24,19 @@ export default function AddressesPage() {
 
   if (isLoading)
     return (
-      <div
-        className="py-12 text-center"
-        style={{
-          fontFamily: MAISON_SERIF,
-          fontStyle: "italic",
-          fontSize: 16,
-          color: "hsl(var(--nl-russet))",
-        }}
-      >
+      <div className="py-12 text-center text-sm text-nl-russet">
         {tCommon("loading")}
       </div>
     );
 
   return (
     <div>
-      <div className="flex items-start justify-between mb-5">
+      <div className="flex items-start justify-between gap-3 mb-5">
         <div>
-          <Eyebrow>ADDRESSES</Eyebrow>
-          <SerifTitle size={26} className="mt-1.5">
+          <Eyebrow>Addresses</Eyebrow>
+          <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
             {t("addresses")}
-          </SerifTitle>
+          </h1>
         </div>
         <button
           type="button"
@@ -57,14 +44,9 @@ export default function AddressesPage() {
             setShowForm(true);
             setEditingId(null);
           }}
-          className="uppercase shrink-0"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 11,
-            letterSpacing: "0.22em",
-            color: "hsl(var(--nl-amber))",
-          }}
+          className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-nl-amber px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors"
         >
+          <Plus className="h-4 w-4" strokeWidth={2} aria-hidden="true" />
           {tCommon("addAddress")}
         </button>
       </div>
@@ -86,11 +68,7 @@ export default function AddressesPage() {
         {(addresses || []).map((addr: any) => (
           <div
             key={addr.id}
-            style={{
-              border: "1px solid rgba(44,24,16,0.10)",
-              background: "rgba(44,24,16,0.02)",
-              padding: 16,
-            }}
+            className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-4 md:p-5 shadow-sm"
           >
             {editingId === addr.id ? (
               <AddressForm
@@ -105,33 +83,16 @@ export default function AddressesPage() {
             ) : (
               <div className="flex items-start justify-between gap-3">
                 <div className="flex gap-3 min-w-0 flex-1">
-                  <MapPin
-                    className="h-5 w-5 mt-0.5 shrink-0 text-nl-russet"
-                    strokeWidth={1.25}
-                  />
+                  <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-nl-pearl text-nl-amber">
+                    <MapPin className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                  </div>
                   <div className="min-w-0 flex-1">
                     <p
-                      className="flex flex-wrap items-center gap-2"
-                      style={{
-                        fontFamily: MAISON_SANS,
-                        fontSize: 13,
-                        fontWeight: 500,
-                        color: "hsl(var(--nl-cacao))",
-                      }}
+                      className="flex flex-wrap items-center gap-2 text-sm font-semibold text-nl-cacao"
                     >
                       <span className="break-words">{addr.full_name}</span>
                       {addr.is_default && (
-                        <span
-                          className="uppercase whitespace-nowrap"
-                          style={{
-                            fontFamily: MAISON_SANS,
-                            fontSize: 10,
-                            letterSpacing: "0.18em",
-                            color: "hsl(var(--nl-amber))",
-                            border: "1px solid rgba(184,115,51,0.4)",
-                            padding: "2px 7px",
-                          }}
-                        >
+                        <span className="inline-flex items-center whitespace-nowrap rounded-full bg-nl-pearl px-2.5 py-0.5 text-xs font-medium text-nl-amber-text">
                           {t("defaultAddress")}
                         </span>
                       )}
@@ -158,10 +119,10 @@ export default function AddressesPage() {
                   <button
                     type="button"
                     onClick={() => setEditingId(addr.id)}
-                    className="p-1 text-nl-russet hover:text-nl-cacao transition-colors"
+                    className="rounded-lg p-2 text-nl-russet hover:bg-nl-pearl hover:text-nl-amber-text transition-colors"
                     aria-label={tCommon("edit")}
                   >
-                    <Edit2 className="h-4 w-4" strokeWidth={1.25} />
+                    <Edit2 className="h-4 w-4" strokeWidth={1.75} />
                   </button>
                   <button
                     type="button"
@@ -170,10 +131,10 @@ export default function AddressesPage() {
                         deleteAddress.mutate(addr.id);
                       }
                     }}
-                    className="p-1 text-nl-russet transition-colors hover:text-[hsl(var(--nl-cacao))]"
+                    className="rounded-lg p-2 text-nl-russet transition-colors hover:bg-red-50 hover:text-red-600"
                     aria-label={tCommon("delete")}
                   >
-                    <Trash2 className="h-4 w-4" strokeWidth={1.25} />
+                    <Trash2 className="h-4 w-4" strokeWidth={1.75} />
                   </button>
                 </div>
               </div>

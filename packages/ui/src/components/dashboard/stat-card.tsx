@@ -28,20 +28,22 @@ function normalizeTrend(trend: StatCardProps["trend"]): TrendObject | null {
 export function StatCard({ title, value, trend, icon }: StatCardProps) {
 	const t = normalizeTrend(trend);
 	return (
-		<Card className="rounded-lg bg-cacao border border-pearl/14 p-6 shadow-lg">
-			<CardHeader className="flex flex-row items-center justify-between pb-2">
-				<CardTitle className="text-sm font-medium text-pearl uppercase tracking-wide">
-					{title}
-				</CardTitle>
-				{icon && <span className="text-taupe">{icon}</span>}
+		<Card className="p-6 transition-shadow hover:shadow-md">
+			<CardHeader className="flex flex-row items-center justify-between space-y-0 p-0 pb-3">
+				<CardTitle className="text-sm font-medium text-taupe">{title}</CardTitle>
+				{icon && (
+					<span className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-amber">
+						{icon}
+					</span>
+				)}
 			</CardHeader>
-			<CardContent>
-				<div className="text-3xl font-bold text-linen">{value}</div>
+			<CardContent className="p-0">
+				<div className="text-3xl font-bold tracking-tight text-cacao">{value}</div>
 				{t && (
 					<div
 						className={cn(
 							"flex items-center gap-1 mt-1 text-xs font-medium",
-							t.direction === "up" ? "text-amber" : "text-russet",
+							t.direction === "up" ? "text-success" : "text-russet",
 						)}
 					>
 						{t.direction === "up" ? (

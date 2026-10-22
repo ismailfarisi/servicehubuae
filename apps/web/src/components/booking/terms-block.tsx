@@ -45,23 +45,11 @@ export function TermsBlock({ offering }: { offering: ServiceOffering }) {
           });
 
   return (
-    <div
-      className="mt-6"
-      style={{
-        border: "1px solid rgba(44,24,16,0.08)",
-        background: "rgba(44,24,16,0.015)",
-        padding: 18,
-      }}
-    >
-      <Eyebrow className="mb-2.5">{t("title")}</Eyebrow>
+    <div className="mt-6 rounded-2xl border border-nl-cacao/10 bg-nl-pearl/60 p-4 sm:p-5">
+      <Eyebrow className="mb-3 text-sm">{t("title")}</Eyebrow>
       <ul
-        className="space-y-1.5"
-        style={{
-          fontFamily: "var(--font-inter-tight), var(--font-dm-sans), sans-serif",
-          fontSize: 12.5,
-          color: "hsl(var(--nl-cacao))",
-          lineHeight: 1.5,
-        }}
+        className="list-disc space-y-2 ps-5 text-sm leading-relaxed text-nl-cacao marker:text-nl-amber"
+        style={{ fontFamily: "var(--font-inter), var(--font-arabic), sans-serif" }}
       >
         <li>{paymentCopy}</li>
         {depositCopy && <li>{depositCopy}</li>}

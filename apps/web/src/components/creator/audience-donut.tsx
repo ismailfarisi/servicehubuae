@@ -14,15 +14,15 @@ import type { CreatorMediaKitSegment } from "@/lib/api/creator-media-kit";
  * vendor app, so the creator's page and the page a brand opens agree.
  */
 
-/** Warm tints in donut order. Alpha steps fill in where the palette has no
- *  distinct sixth hue — adjacent slices stay separable either way. */
+/** Blue / navy tints in donut order. Alpha steps fill in where the palette has
+ *  no distinct sixth hue — adjacent slices stay separable either way. */
 export const SEGMENT_COLORS = [
   "hsl(var(--nl-amber))",
   "hsl(var(--nl-russet))",
   "hsl(var(--nl-cacao))",
-  "rgba(184,115,51,0.55)",
+  "hsl(var(--nl-amber) / 0.55)",
   "hsl(var(--nl-pearl))",
-  "rgba(44,24,16,0.28)",
+  "hsl(var(--nl-cacao) / 0.28)",
 ];
 
 export function AudienceDonut({

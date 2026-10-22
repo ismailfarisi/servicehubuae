@@ -32,7 +32,6 @@ export interface CreateBriefInput {
   rightsScope: ReelLicenseRightsScope;
   bidsCloseAt: Date;
   budgetGuideFils?: number | null;
-  targetProductId?: string | null;
   targetCategory?: string | null;
 }
 
@@ -91,7 +90,6 @@ export class BriefService {
           rights_scope: input.rightsScope,
           bids_close_at: input.bidsCloseAt,
           budget_guide_fils: input.budgetGuideFils != null ? String(input.budgetGuideFils) : null,
-          target_product_id: input.targetProductId ?? null,
           target_category: input.targetCategory ?? null,
           status: ReelBriefStatus.open,
         }),
@@ -111,7 +109,7 @@ export class BriefService {
     patch: Partial<
       Pick<
         CreateBriefInput,
-        "title" | "brief" | "budgetGuideFils" | "bidsCloseAt" | "targetProductId" | "targetCategory"
+        "title" | "brief" | "budgetGuideFils" | "bidsCloseAt" | "targetCategory"
       >
     >,
   ): Promise<ReelBrief> {
@@ -125,8 +123,6 @@ export class BriefService {
       if (patch.budgetGuideFils !== undefined)
         brief.budget_guide_fils =
           patch.budgetGuideFils != null ? String(patch.budgetGuideFils) : null;
-      if (patch.targetProductId !== undefined)
-        brief.target_product_id = patch.targetProductId ?? null;
       if (patch.targetCategory !== undefined) brief.target_category = patch.targetCategory ?? null;
       return manager.getRepository(ReelBrief).save(brief);
     });

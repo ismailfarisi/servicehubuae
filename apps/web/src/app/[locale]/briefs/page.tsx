@@ -23,13 +23,13 @@ async function getOpenBriefs(): Promise<PublicBrief[]> {
 export default async function BriefsBoardPage() {
   const briefs = await getOpenBriefs();
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className="mx-auto max-w-5xl px-4 py-8 md:py-12">
       <div className="mb-6">
-        <Eyebrow>CREATOR BRIEFS</Eyebrow>
+        <Eyebrow className="text-sm">Creator briefs</Eyebrow>
         <SerifTitle size={30} className="mt-1.5">
           Open briefs
         </SerifTitle>
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 text-sm text-nl-russet">
           Brands looking for UGC reels. Pitch your price and what you&apos;d make.
         </p>
       </div>

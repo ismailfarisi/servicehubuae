@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../api";
 
-// Service-offering CRUD lives on product-service, mounted at /vendor/services
+// Service-offering CRUD lives on catalog-service, mounted at /vendor/services
 // (see .superpowers/sdd/phase7-recon-api.md §3). Enum literals below are the
 // exact wire values — do not rename without checking the backend DTOs.
 

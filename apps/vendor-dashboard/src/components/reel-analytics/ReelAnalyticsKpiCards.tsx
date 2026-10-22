@@ -1,7 +1,6 @@
 "use client";
 import {
   type VendorOverview,
-  formatAED,
   formatCount,
   formatDeltaPct,
 } from "@/lib/queries/reel-analytics";
@@ -56,8 +55,8 @@ export function ReelAnalyticsKpiCards({
 }) {
   if (isLoading)
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {["a", "b", "c", "d"].map((k) => (
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {["a", "b", "c"].map((k) => (
           <Skeleton key={k} className="h-20 rounded-xl" />
         ))}
       </div>
@@ -65,26 +64,21 @@ export function ReelAnalyticsKpiCards({
   if (!overview) return null;
   const { kpis } = overview;
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       <K
         label="Impressions"
         value={formatCount(kpis.impressions.value)}
         delta={formatDeltaPct(kpis.impressions.deltaPct)}
       />
       <K
-        label="Product Taps"
-        value={formatCount(kpis.productTaps.value)}
-        delta={formatDeltaPct(kpis.productTaps.deltaPct)}
+        label="Likes"
+        value={formatCount(kpis.likes.value)}
+        delta={formatDeltaPct(kpis.likes.deltaPct)}
       />
       <K
-        label="Attributed Orders"
-        value={formatCount(kpis.attributedOrders.value)}
-        delta={formatDeltaPct(kpis.attributedOrders.deltaPct)}
-      />
-      <K
-        label="Attributed GMV"
-        value={formatAED(kpis.attributedGmvFils.value)}
-        delta={formatDeltaPct(kpis.attributedGmvFils.deltaPct)}
+        label="Saves"
+        value={formatCount(kpis.saves.value)}
+        delta={formatDeltaPct(kpis.saves.deltaPct)}
       />
     </div>
   );

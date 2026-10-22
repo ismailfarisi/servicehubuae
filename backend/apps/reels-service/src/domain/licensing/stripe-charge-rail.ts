@@ -1,5 +1,5 @@
 import { ReelLicenseFundingSource } from "@mypickuae/database";
-import { BadRequestError } from "@mypickuae/plugins";
+import { BadRequestError, ServiceUnavailableError } from "@mypickuae/plugins";
 import type { FundingRail, HoldInput, HoldResult } from "./funding-rail.ts";
 
 /**
@@ -54,10 +54,19 @@ export class StripeChargeRail implements FundingRail {
   }
 }
 
-/** Real Stripe binding. apiVersion + secret match order-service/container.ts. */
+/**
+ * Real Stripe binding. The client is null when STRIPE_SECRET_KEY is unset
+ * (the default): the service still boots, and any card-funded licensing call
+ * fails with 503 "stripe_not_configured" instead of a null dereference.
+ */
 export class StripeChargeGateway implements ChargeGateway {
   // biome-ignore lint/suspicious/noExplicitAny: Stripe is dynamically imported to avoid a hard dep when unconfigured.
-  constructor(private readonly stripe: any) {}
+  constructor(private readonly client: any) {}
+  // biome-ignore lint/suspicious/noExplicitAny: see constructor.
+  private get stripe(): any {
+    if (!this.client) throw new ServiceUnavailableError("stripe_not_configured");
+    return this.client;
+  }
   async authorize(input: {
     amountFils: number;
     currency: string;

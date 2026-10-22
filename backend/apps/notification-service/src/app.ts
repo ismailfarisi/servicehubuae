@@ -8,6 +8,12 @@ import { whatsappWebhookRoutes } from "./routes/whatsapp-webhook.routes.ts";
 export const app = new Elysia()
   .use(requestLogger)
   .use(errorHandler)
+  // Root health check (gateway /health polls every service at GET /health).
+  .get("/health", () => ({
+    status: "ok",
+    service: "notification-service",
+    timestamp: new Date().toISOString(),
+  }))
   .use(notificationRoutes)
   .use(notificationPreferenceRoutes)
   .use(newsletterRoutes)

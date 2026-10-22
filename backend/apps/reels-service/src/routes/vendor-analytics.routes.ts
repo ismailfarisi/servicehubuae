@@ -3,6 +3,7 @@ import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 import { leaderboardToCsv } from "../domain/analytics/csv.ts";
 import type { Period } from "../domain/analytics/rollup.service.ts";
+import type { VendorLeaderboardType } from "../domain/analytics/vendor-analytics.service.ts";
 
 /**
  * Vendor analytics HTTP endpoints. All responses are scoped to the vendor
@@ -20,8 +21,8 @@ function parsePeriod(raw: unknown): Period {
   return typeof raw === "string" && (PERIODS as string[]).includes(raw) ? (raw as Period) : "30d";
 }
 
-type LBType = "my_products" | "reels_tagging_me" | "creators_promoting_me";
-const LB_TYPES: LBType[] = ["my_products", "reels_tagging_me", "creators_promoting_me"];
+type LBType = VendorLeaderboardType;
+const LB_TYPES: LBType[] = ["top_reels", "top_creators"];
 
 export const vendorAnalyticsRoutes = new Elysia({ prefix: "/vendor/reels/analytics" })
   .use(container)
@@ -45,7 +46,7 @@ export const vendorAnalyticsRoutes = new Elysia({ prefix: "/vendor/reels/analyti
   .get(
     "/leaderboard",
     async ({ query, member, vendorAnalyticsService }: any) => {
-      const type: LBType = LB_TYPES.includes(query.type) ? query.type : "my_products";
+      const type: LBType = LB_TYPES.includes(query.type) ? query.type : "top_reels";
       const limit = Math.min(Number(query.limit ?? 20), 100);
       const data = await vendorAnalyticsService.leaderboard(
         member.vid,
@@ -66,23 +67,15 @@ export const vendorAnalyticsRoutes = new Elysia({ prefix: "/vendor/reels/analyti
   .get(
     "/leaderboard.csv",
     async ({ query, member, vendorAnalyticsService, set }: any) => {
-      const type: LBType = LB_TYPES.includes(query.type) ? query.type : "my_products";
+      const type: LBType = LB_TYPES.includes(query.type) ? query.type : "top_reels";
       const period = parsePeriod(query.period);
       const { rows } = await vendorAnalyticsService.leaderboard(member.vid, type, period, 500);
 
       const columnsByType: Record<LBType, string[]> = {
-        my_products: ["id", "label", "reels", "orders", "value"],
-        reels_tagging_me: ["id", "label", "sub_label", "impressions", "orders", "value"],
-        creators_promoting_me: ["id", "label", "sub_label", "reels", "orders", "value"],
+        top_reels: ["id", "label", "sub_label", "impressions", "likes", "saves"],
+        top_creators: ["id", "label", "sub_label", "reels", "impressions", "likes", "saves"],
       };
-      const currencyByType: Record<LBType, Set<string>> = {
-        my_products: new Set(["value"]),
-        reels_tagging_me: new Set(["value"]),
-        creators_promoting_me: new Set(["value"]),
-      };
-      const csv = leaderboardToCsv(columnsByType[type], rows, {
-        currencyColumns: currencyByType[type],
-      });
+      const csv = leaderboardToCsv(columnsByType[type], rows);
       set.headers["content-type"] = "text/csv; charset=utf-8";
       set.headers["content-disposition"] =
         `attachment; filename="my-reel-analytics-${type}-${period}.csv"`;

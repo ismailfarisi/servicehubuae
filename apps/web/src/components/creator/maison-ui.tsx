@@ -10,25 +10,27 @@ import { useEffect, type ReactNode } from "react";
  * The rest of /account is styled inline, page by page (see settings, wallet,
  * orders). The creator dashboard is a dozen files deep with the same handful of
  * controls repeated throughout, so the tokens live here instead of being copied
- * into each tab. Values are the storefront's, not new ones: square corners,
- * amber primary on espresso text, hairline cacao borders, MAISON_SANS for
- * tracked uppercase labels and MAISON_SERIF for titles and figures.
+ * into each tab. Values are the storefront's, not new ones: rounded corners,
+ * blue primary with white text, light navy borders, MAISON_SANS for labels and
+ * body copy and MAISON_SERIF (the display sans) for titles and figures.
  */
 
-/** Panel / row surface — same hairline box used by wallet and orders rows. */
+/** Panel / row surface — the rounded white card used by wallet and orders rows. */
 export const BOX = {
-  border: "1px solid rgba(44,24,16,0.10)",
-  background: "rgba(44,24,16,0.02)",
+  border: "1px solid hsl(var(--nl-cacao) / 0.10)",
+  background: "hsl(var(--nl-linen))",
+  borderRadius: 16,
+  boxShadow: "0 1px 2px hsl(var(--nl-cacao) / 0.05)",
 } as const;
 
 export const INPUT_CLASS =
-  "w-full px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-nl-amber";
+  "w-full px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20";
 
 export const INPUT_STYLE = {
-  border: "1px solid rgba(44,24,16,0.2)",
-  background: "rgba(255,255,255,0.55)",
+  border: "1px solid hsl(var(--nl-cacao) / 0.15)",
+  background: "hsl(var(--nl-linen))",
   color: "hsl(var(--nl-cacao))",
-  borderRadius: 0,
+  borderRadius: "var(--radius)",
   fontFamily: MAISON_SANS,
 } as const;
 
@@ -37,64 +39,64 @@ export const BUTTON_CLASS =
 
 const BUTTON_BASE = {
   fontFamily: MAISON_SANS,
-  fontSize: 10.5,
-  letterSpacing: "0.2em",
-  textTransform: "uppercase",
-  padding: "11px 22px",
-  borderRadius: 0,
+  fontSize: 14,
+  fontWeight: 600,
+  padding: "10px 20px",
+  borderRadius: "var(--radius)",
 } as const;
 
 export const PRIMARY_BUTTON = {
   ...BUTTON_BASE,
   background: "hsl(var(--nl-amber))",
-  color: "hsl(var(--nl-espresso))",
+  color: "white",
   border: "1px solid hsl(var(--nl-amber))",
+  boxShadow: "0 1px 2px hsl(var(--nl-cacao) / 0.08)",
 } as const;
 
 export const SECONDARY_BUTTON = {
   ...BUTTON_BASE,
-  background: "transparent",
+  background: "hsl(var(--nl-linen))",
   color: "hsl(var(--nl-cacao))",
-  border: "1px solid rgba(44,24,16,0.4)",
+  border: "1px solid hsl(var(--nl-cacao) / 0.15)",
 } as const;
 
-export const SECONDARY_BUTTON_CLASS = `${BUTTON_CLASS} hover:bg-[rgba(44,24,16,0.04)]`;
+export const SECONDARY_BUTTON_CLASS = `${BUTTON_CLASS} hover:!bg-nl-pearl`;
 
 /** Text-only action — withdraw, delete, "view history". */
 export const QUIET_BUTTON = {
   ...BUTTON_BASE,
   background: "transparent",
-  color: "hsl(var(--nl-russet))",
+  color: "hsl(var(--nl-amber-text))",
   border: "1px solid transparent",
 } as const;
 
 /** Compact variants for controls sitting inside a card row. */
-export const SMALL_PRIMARY = { ...PRIMARY_BUTTON, padding: "8px 16px", fontSize: 10 } as const;
-export const SMALL_SECONDARY = { ...SECONDARY_BUTTON, padding: "8px 16px", fontSize: 10 } as const;
-export const SMALL_QUIET = { ...QUIET_BUTTON, padding: "8px 12px", fontSize: 10 } as const;
+export const SMALL_PRIMARY = { ...PRIMARY_BUTTON, padding: "7px 14px", fontSize: 13 } as const;
+export const SMALL_SECONDARY = { ...SECONDARY_BUTTON, padding: "7px 14px", fontSize: 13 } as const;
+export const SMALL_QUIET = { ...QUIET_BUTTON, padding: "7px 12px", fontSize: 13 } as const;
 
 export type Tone = "amber" | "success" | "danger" | "muted";
 
 /** Same tinted-outline treatment the order status chips use. */
 const TONE: Record<Tone, { border: string; background: string; color: string }> = {
   amber: {
-    border: "rgba(184,115,51,0.4)",
-    background: "rgba(184,115,51,0.07)",
-    color: "hsl(var(--nl-russet))",
+    border: "hsl(var(--nl-amber) / 0.3)",
+    background: "hsl(var(--nl-amber) / 0.08)",
+    color: "hsl(var(--nl-amber-text))",
   },
   success: {
-    border: "rgba(74,103,65,0.35)",
-    background: "rgba(74,103,65,0.08)",
-    color: "rgb(74,103,65)",
+    border: "hsl(142 60% 35% / 0.3)",
+    background: "hsl(142 60% 35% / 0.08)",
+    color: "hsl(142 64% 26%)",
   },
   danger: {
-    border: "rgba(140,55,45,0.35)",
-    background: "rgba(140,55,45,0.07)",
-    color: "rgb(140,55,45)",
+    border: "hsl(var(--destructive) / 0.3)",
+    background: "hsl(var(--destructive) / 0.06)",
+    color: "hsl(var(--destructive))",
   },
   muted: {
-    border: "rgba(44,24,16,0.18)",
-    background: "rgba(44,24,16,0.04)",
+    border: "hsl(var(--nl-cacao) / 0.12)",
+    background: "hsl(var(--nl-pearl))",
     color: "hsl(var(--nl-russet))",
   },
 };
@@ -103,12 +105,13 @@ export function Pill({ tone = "muted", children }: { tone?: Tone; children: Reac
   const t = TONE[tone];
   return (
     <span
-      className="inline-block uppercase whitespace-nowrap"
+      className="inline-block whitespace-nowrap capitalize"
       style={{
         fontFamily: MAISON_SANS,
-        fontSize: 10,
-        letterSpacing: "0.18em",
-        padding: "3px 8px",
+        fontSize: 12,
+        fontWeight: 500,
+        padding: "2px 10px",
+        borderRadius: 999,
         border: `1px solid ${t.border}`,
         background: t.background,
         color: t.color,
@@ -119,15 +122,14 @@ export function Pill({ tone = "muted", children }: { tone?: Tone; children: Reac
   );
 }
 
-/** Serif italic placeholder used for every loading/empty state under /account. */
+/** Muted placeholder used for every loading/empty state under /account. */
 export function Quiet({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <p
       className={className}
       style={{
-        fontFamily: MAISON_SERIF,
-        fontStyle: "italic",
-        fontSize: 15,
+        fontFamily: MAISON_SANS,
+        fontSize: 14,
         color: "hsl(var(--nl-russet))",
       }}
     >
@@ -165,12 +167,12 @@ export function FieldLabel({ children, htmlFor }: { children: ReactNode; htmlFor
   return (
     <label
       htmlFor={htmlFor}
-      className="mb-1.5 block uppercase"
+      className="mb-1.5 block"
       style={{
         fontFamily: MAISON_SANS,
-        fontSize: 10,
-        letterSpacing: "0.2em",
-        color: "hsl(var(--nl-russet))",
+        fontSize: 13,
+        fontWeight: 500,
+        color: "hsl(var(--nl-cacao))",
       }}
     >
       {children}
@@ -185,7 +187,8 @@ export function ErrorNote({ children }: { children: ReactNode }) {
       className="px-4 py-3"
       style={{
         fontFamily: MAISON_SANS,
-        fontSize: 12.5,
+        fontSize: 13,
+        borderRadius: "var(--radius)",
         border: `1px solid ${TONE.danger.border}`,
         background: TONE.danger.background,
         color: TONE.danger.color,
@@ -202,8 +205,8 @@ export function StatusLine({ kind, children }: { kind: "ok" | "err"; children: R
     <p
       style={{
         fontFamily: MAISON_SANS,
-        fontSize: 12.5,
-        color: kind === "ok" ? "hsl(140,30%,32%)" : "hsl(0,55%,42%)",
+        fontSize: 13,
+        color: kind === "ok" ? "hsl(142 64% 26%)" : "hsl(var(--destructive))",
       }}
     >
       {children}
@@ -224,16 +227,16 @@ export function FilterChip({
     <button
       type="button"
       onClick={onClick}
-      className="uppercase transition-colors"
+      className="transition-colors"
       style={{
         fontFamily: MAISON_SANS,
-        fontSize: 10,
-        letterSpacing: "0.18em",
-        padding: "7px 14px",
-        borderRadius: 0,
-        border: `1px solid ${active ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.2)"}`,
-        background: active ? "hsl(var(--nl-amber))" : "transparent",
-        color: active ? "hsl(var(--nl-espresso))" : "hsl(var(--nl-russet))",
+        fontSize: 13,
+        fontWeight: 500,
+        padding: "6px 14px",
+        borderRadius: 999,
+        border: `1px solid ${active ? "hsl(var(--nl-amber))" : "hsl(var(--nl-cacao) / 0.15)"}`,
+        background: active ? "hsl(var(--nl-amber))" : "hsl(var(--nl-linen))",
+        color: active ? "white" : "hsl(var(--nl-russet))",
       }}
     >
       {children}
@@ -242,8 +245,8 @@ export function FilterChip({
 }
 
 /**
- * Centred modal on the linen ground, matching the checkout address drawer:
- * espresso-tinted scrim, square panel, eyebrow + serif title, X to dismiss.
+ * Centred modal on a white card, matching the checkout address drawer:
+ * navy-tinted scrim, rounded panel, eyebrow + display title, X to dismiss.
  */
 export function MaisonDialog({
   eyebrow,
@@ -278,7 +281,7 @@ export function MaisonDialog({
         tabIndex={-1}
         aria-label={closeLabel}
         className="fixed inset-0 z-40 cursor-default"
-        style={{ background: "rgba(26,18,8,0.55)" }}
+        style={{ background: "hsl(var(--nl-espresso) / 0.5)" }}
         onClick={onClose}
       />
       {/* biome-ignore lint/a11y/useSemanticElements: a native <dialog> brings its own backdrop and centring, which fight this scrim + panel layout */}
@@ -289,27 +292,26 @@ export function MaisonDialog({
         className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none"
       >
         <div
-          className="w-full max-w-md max-h-[85vh] overflow-y-auto pointer-events-auto"
+          className="w-full max-w-md max-h-[85vh] overflow-y-auto rounded-2xl pointer-events-auto"
           style={{
             background: "hsl(var(--nl-linen))",
             color: "hsl(var(--nl-cacao))",
             fontFamily: MAISON_SANS,
-            boxShadow: "0 24px 60px rgba(26,18,8,0.35)",
+            boxShadow: "0 24px 60px hsl(var(--nl-espresso) / 0.25)",
           }}
         >
           <div
             className="flex items-start justify-between gap-4"
             style={{
               padding: "20px 22px 16px",
-              borderBottom: "1px solid rgba(44,24,16,0.1)",
+              borderBottom: "1px solid hsl(var(--nl-cacao) / 0.1)",
             }}
           >
             <div>
               <div
-                className="uppercase"
                 style={{
-                  fontSize: 10,
-                  letterSpacing: "0.28em",
+                  fontSize: 13,
+                  fontWeight: 600,
                   color: "hsl(var(--nl-amber-text))",
                 }}
               >
@@ -318,10 +320,11 @@ export function MaisonDialog({
               <h2
                 style={{
                   fontFamily: MAISON_SERIF,
-                  fontSize: 24,
-                  lineHeight: 1.1,
+                  fontSize: 22,
+                  lineHeight: 1.2,
+                  letterSpacing: "-0.01em",
                   marginTop: 4,
-                  fontWeight: 400,
+                  fontWeight: 700,
                 }}
               >
                 {title}
@@ -331,7 +334,7 @@ export function MaisonDialog({
               type="button"
               onClick={onClose}
               aria-label={closeLabel}
-              className="grid place-items-center transition-colors hover:bg-black/5 shrink-0"
+              className="grid place-items-center rounded-full transition-colors hover:bg-nl-pearl shrink-0"
               style={{ width: 34, height: 34, color: "hsl(var(--nl-russet))" }}
             >
               <X className="h-4 w-4" strokeWidth={1.25} />

@@ -15,11 +15,11 @@ export function MessageThread({ messages }: { messages: TicketMessage[] }) {
               alignSelf: isCustomer ? "flex-end" : "flex-start",
               maxWidth: "80%",
               padding: "8px 12px",
-              borderRadius: 12,
+              borderRadius: 16,
               fontFamily: MAISON_SANS,
               fontSize: 14,
-              background: isCustomer ? "hsl(var(--nl-amber))" : "hsl(var(--nl-linen))",
-              color: isCustomer ? "hsl(var(--nl-espresso))" : "hsl(var(--nl-cacao))",
+              background: isCustomer ? "hsl(var(--nl-amber))" : "hsl(var(--nl-pearl))",
+              color: isCustomer ? "white" : "hsl(var(--nl-cacao))",
             }}
           >
             {m.message}

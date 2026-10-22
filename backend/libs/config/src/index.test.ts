@@ -3,10 +3,12 @@ import { config } from "./index.ts";
 
 describe("config", () => {
   test("has all required port keys", () => {
+    expect(config.port).not.toHaveProperty("product");
+    expect(config.port).not.toHaveProperty("order");
     expect(config.port).toHaveProperty("gateway");
     expect(config.port).toHaveProperty("auth");
-    expect(config.port).toHaveProperty("product");
-    expect(config.port).toHaveProperty("order");
+    expect(config.port).toHaveProperty("catalog");
+    expect(config.port).toHaveProperty("booking");
     expect(config.port).toHaveProperty("vendor");
     expect(config.port).toHaveProperty("notification");
   });
@@ -21,10 +23,10 @@ describe("config", () => {
   test("default ports are in expected range", () => {
     expect(config.port.gateway).toBe(3000);
     expect(config.port.auth).toBe(3001);
-    expect(config.port.product).toBe(3002);
-    expect(config.port.order).toBe(3003);
+    expect(config.port.catalog).toBe(3002);
     expect(config.port.vendor).toBe(3004);
     expect(config.port.notification).toBe(3005);
+    expect(config.port.booking).toBe(3009);
   });
 
   test("has database configuration", () => {
@@ -63,83 +65,50 @@ describe("config", () => {
     expect(config.jwt.refreshSecret).toBe("dev-refresh-secret");
   });
 
-  // Regression for C1 (Tamara redirect final review): WEB_URL is never set in
-  // production, so the Tamara merchant-redirect allowlist must fail safe to
-  // the real storefront origins rather than resolving to `[]` — an empty
-  // allowlist silently discards every client-supplied redirect URL.
-  test("tamara redirect allowlist is never empty, even without WEB_URL set", () => {
-    expect(config.tamara.allowedRedirectOrigins.length).toBeGreaterThan(0);
-    expect(config.tamara.allowedRedirectOrigins).toContain("https://mypickuae.com");
-    expect(config.tamara.allowedRedirectOrigins).toContain("https://www.mypickuae.com");
+  test("payments.onlineEnabled defaults to false until MyFatoorah ships", () => {
+    if (process.env.ONLINE_PAYMENTS_ENABLED === undefined) {
+      expect(config.payments.onlineEnabled).toBe(false);
+    }
+    expect(typeof config.payments.onlineEnabled).toBe("boolean");
   });
 
-  // Regression for N2 (Tamara redirect final review, round 2): a `||`
-  // default before safeOrigin() only covers unset/empty WEB_URL — a
-  // SET-but-malformed value (e.g. an operator typing "mypickuae.com" with no
-  // scheme, which is exactly what an operator is likely to type into a
-  // secret named WEB_URL/PROD_WEB_URL) is truthy, reaches safeOrigin(),
-  // resolves to null, and gets filtered out, silently re-opening the same
-  // `[]`-allowlist outage C1 fixed. The fallback must apply AFTER parsing.
-  //
+  test("stripe keys default to empty strings (no committed secrets)", () => {
+    if (!process.env.STRIPE_SECRET_KEY) expect(config.stripe.secretKey).toBe("");
+    if (!process.env.STRIPE_CONNECT_WEBHOOK_SECRET) {
+      expect(config.stripe.connectWebhookSecret).toBe("");
+    }
+  });
+
   // `config` is a single module-level object evaluated once at import time,
-  // so exercising this requires re-importing the module with the env it
-  // should read already set (a cache-busting query string forces Bun to
-  // re-evaluate rather than return the cached singleton — verified via a
-  // throwaway probe test before writing this one). Because the module also
-  // eagerly evaluates several requireEnv() production gates unrelated to
-  // Tamara, those must be stubbed too so the re-import doesn't throw.
-  test("tamara redirect allowlist falls back to canonical origins when WEB_URL/WEB_WWW_URL are malformed in production", async () => {
-    const keysToRestore = [
-      "NODE_ENV",
-      "WEB_URL",
-      "WEB_WWW_URL",
-      "DB_PASSWORD",
-      "JWT_ACCESS_SECRET",
-      "JWT_REFRESH_SECRET",
-      "TWO_FA_ENCRYPTION_KEY",
-      "INTERNAL_SERVICE_SECRET",
-      "VENDOR_ENCRYPTION_KEY",
-      "ENCRYPTION_KEY",
-      "TYPESENSE_API_KEY",
-      "VENDOR_DASHBOARD_URL",
-      "ADMIN_PANEL_URL",
-    ] as const;
-    const originalValues = Object.fromEntries(keysToRestore.map((k) => [k, process.env[k]]));
+  // so exercising production mode requires re-importing the module with the
+  // env already set (a cache-busting query string forces Bun to re-evaluate).
+  test("loads in production when every required secret is set", async () => {
+    const required = {
+      NODE_ENV: "production",
+      DB_PASSWORD: "test-db-password",
+      JWT_ACCESS_SECRET: "test-access-secret",
+      JWT_REFRESH_SECRET: "test-refresh-secret",
+      TWO_FA_ENCRYPTION_KEY: "test-2fa-key",
+      INTERNAL_SERVICE_SECRET: "test-internal-secret",
+      VENDOR_ENCRYPTION_KEY: "test-vendor-encryption-key",
+      ENCRYPTION_KEY: "test-encryption-key",
+      TYPESENSE_API_KEY: "test-typesense-key",
+      VENDOR_DASHBOARD_URL: "https://vendor.mypickuae.com",
+      ADMIN_PANEL_URL: "https://admin.mypickuae.com",
+    } as const;
+    const keys = Object.keys(required) as (keyof typeof required)[];
+    const originalValues = Object.fromEntries(keys.map((k) => [k, process.env[k]]));
 
     try {
-      process.env.NODE_ENV = "production";
-      // Scheme-less: exactly what an operator is likely to paste into the
-      // secret. `new URL(...)` throws on these, so safeOrigin() returns null.
-      process.env.WEB_URL = "mypickuae.com";
-      process.env.WEB_WWW_URL = "www.mypickuae.com";
-      // Unrelated production-only requireEnv() gates evaluated eagerly at
-      // module load — stub so the re-import doesn't throw before we even
-      // get to the Tamara allowlist.
-      process.env.DB_PASSWORD = "test-db-password";
-      process.env.JWT_ACCESS_SECRET = "test-access-secret";
-      process.env.JWT_REFRESH_SECRET = "test-refresh-secret";
-      process.env.TWO_FA_ENCRYPTION_KEY = "test-2fa-key";
-      process.env.INTERNAL_SERVICE_SECRET = "test-internal-secret";
-      process.env.VENDOR_ENCRYPTION_KEY = "test-vendor-encryption-key";
-      process.env.ENCRYPTION_KEY = "test-encryption-key";
-      process.env.TYPESENSE_API_KEY = "test-typesense-key";
-      process.env.VENDOR_DASHBOARD_URL = "https://vendor.mypickuae.com";
-      process.env.ADMIN_PANEL_URL = "https://admin.mypickuae.com";
-
+      for (const key of keys) process.env[key] = required[key];
       const reimported: { config: typeof config } = await import(
         `./index.ts?reimport=${Date.now()}-${Math.random()}`
       );
-
       expect(reimported.config.isProduction).toBe(true);
-      expect(reimported.config.tamara.allowedRedirectOrigins).toContain("https://mypickuae.com");
-      expect(reimported.config.tamara.allowedRedirectOrigins).toContain("https://www.mypickuae.com");
-      // The malformed inputs themselves must not have leaked through as
-      // literal origins (that would mean safeOrigin()/the fallback did
-      // nothing rather than failing safe).
-      expect(reimported.config.tamara.allowedRedirectOrigins).not.toContain("mypickuae.com");
-      expect(reimported.config.tamara.allowedRedirectOrigins).not.toContain("www.mypickuae.com");
+      expect(reimported.config.port.catalog).toBe(3002);
+      expect(reimported.config).not.toHaveProperty("tamara");
     } finally {
-      for (const key of keysToRestore) {
+      for (const key of keys) {
         const original = originalValues[key];
         if (original === undefined) {
           delete process.env[key];

@@ -1,161 +1,131 @@
 "use client";
 
-import { useState } from "react";
+import { getMembershipsFromToken } from "@/lib/auth";
+import { formatAED } from "@/lib/queries/creator-content";
+import { useVendorBookingDashboard } from "@/lib/queries/dashboard";
+import { Card, CardContent, Skeleton, StatCard } from "@mypickuae/ui";
 import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
-import { StatCard, Skeleton, Card, CardContent, CardHeader, CardTitle } from "@mypickuae/ui";
-import { TrendUp, ShoppingCart, Eye, Percent, Warning } from "@phosphor-icons/react";
-import { useVendorStats, useRevenueChart, useVendorWarehouses } from "@/lib/queries/dashboard";
+  CalendarBlank,
+  CalendarCheck,
+  CheckCircle,
+  ClockCountdown,
+  ListChecks,
+  Percent,
+  Star,
+  Wallet,
+} from "@phosphor-icons/react";
+import Link from "next/link";
 
-const PERIOD_OPTIONS = [
-  { label: "7 Days", value: "7d" },
-  { label: "30 Days", value: "30d" },
-  { label: "90 Days", value: "90d" },
+const QUICK_LINKS = [
+  {
+    href: "/calendar",
+    label: "Bookings calendar",
+    description: "See today's bookings, block time and take walk-ins.",
+    icon: <CalendarBlank size={22} />,
+  },
+  {
+    href: "/services",
+    label: "Services",
+    description: "Add services, set prices and send them for review.",
+    icon: <ListChecks size={22} />,
+  },
 ];
 
-function WarehouseSetupBanner() {
-  const { data: warehouses, isSuccess } = useVendorWarehouses();
-  // Only warn on a definitive answer — a fetch error must not cry wolf.
-  if (!isSuccess) return null;
-  const hasUsableWarehouse = (warehouses ?? []).some((w) => w.is_active && w.is_default);
-  if (hasUsableWarehouse) return null;
-  return (
-    <div className="flex items-start gap-3 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3">
-      <Warning size={20} weight="fill" className="text-amber-500 flex-shrink-0 mt-0.5" />
-      <div>
-        <p className="text-sm font-semibold text-amber-900">No pickup warehouse configured</p>
-        <p className="text-sm text-amber-800">
-          Orders cannot ship until a default warehouse with your pickup address is set up. Please
-          contact MyPickUAE support to add one.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function formatCurrency(fils: number) {
-  return `AED ${(fils / 100).toLocaleString("en-AE", { minimumFractionDigits: 2 })}`;
+function formatRating(avg: number | null | undefined, count: number | undefined) {
+  if (avg == null || !count) return "No ratings yet";
+  return `${Number(avg).toFixed(1)} (${count})`;
 }
 
 export default function DashboardPage() {
-  const [period, setPeriod] = useState("7d");
-  const { data: stats, isLoading: statsLoading } = useVendorStats();
-  const { data: revenueData, isLoading: revenueLoading } = useRevenueChart(period);
+  // The endpoint needs an active vendor membership; an admin session without
+  // one would only get a 400.
+  const isVendorScoped = getMembershipsFromToken().length > 0;
+  const { data: stats, isLoading, isError } = useVendorBookingDashboard({
+    enabled: isVendorScoped,
+  });
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Dashboard</h1>
-        <p className="text-gray-500 text-sm">Welcome back! Here&apos;s how your store is performing.</p>
+        <p className="text-gray-500 text-sm">
+          Welcome back! Here&apos;s how your bookings are going.
+        </p>
       </div>
 
-      <WarehouseSetupBanner />
+      {isError && (
+        <div className="rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          We couldn&apos;t load your booking stats right now. Please try again shortly.
+        </div>
+      )}
 
-      {/* Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {statsLoading ? (
-          <>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-28 rounded-xl" />
-            ))}
-          </>
+        {isVendorScoped && isLoading ? (
+          Array.from({ length: 8 }).map((_, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton placeholders
+            <Skeleton key={i} className="h-28 rounded-xl" />
+          ))
         ) : (
           <>
             <StatCard
-              title="Revenue Today"
-              value={stats?.revenue_today != null ? formatCurrency(stats.revenue_today) : "—"}
-              icon={<TrendUp size={20} />}
-              trend={stats?.revenue_today_change}
+              title="Bookings today"
+              value={stats?.bookings_today ?? "—"}
+              icon={<CalendarCheck size={20} />}
             />
             <StatCard
-              title="Orders Today"
-              value={stats?.orders_today ?? "—"}
-              icon={<ShoppingCart size={20} />}
-              trend={stats?.orders_today_change}
+              title="Upcoming (7 days)"
+              value={stats?.upcoming_7d ?? "—"}
+              icon={<ClockCountdown size={20} />}
             />
             <StatCard
-              title="Page Views"
-              value={stats?.page_views != null ? stats.page_views.toLocaleString() : "—"}
-              icon={<Eye size={20} />}
-              trend={stats?.page_views_change}
+              title="Completed (30 days)"
+              value={stats?.completed_30d ?? "—"}
+              icon={<CheckCircle size={20} />}
             />
             <StatCard
-              title="Conversion Rate"
-              value={stats?.conversion_rate != null ? `${stats.conversion_rate.toFixed(2)}%` : "—"}
+              title="Revenue (30 days)"
+              value={formatAED(stats?.revenue_30d_fils)}
+              icon={<Wallet size={20} />}
+            />
+            <StatCard
+              title="Commission (30 days)"
+              value={formatAED(stats?.commission_30d_fils)}
               icon={<Percent size={20} />}
-              trend={stats?.conversion_rate_change}
+            />
+            <StatCard
+              title="Published services"
+              value={stats?.published_services ?? "—"}
+              icon={<ListChecks size={20} />}
+            />
+            <StatCard
+              title="Pending review"
+              value={stats?.pending_review_services ?? "—"}
+              icon={<ClockCountdown size={20} />}
+            />
+            <StatCard
+              title="Rating"
+              value={stats ? formatRating(stats.rating_avg, stats.rating_count) : "—"}
+              icon={<Star size={20} />}
             />
           </>
         )}
       </div>
 
-      {/* Revenue Chart */}
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle className="text-base font-semibold">Revenue Over Time</CardTitle>
-          <div className="flex gap-1">
-            {PERIOD_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setPeriod(opt.value)}
-                className={`px-3 py-1 text-xs rounded-md transition-colors ${
-                  period === opt.value
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        </CardHeader>
-        <CardContent>
-          {revenueLoading ? (
-            <Skeleton className="h-64 w-full rounded-lg" />
-          ) : (
-            <ResponsiveContainer width="100%" height={264}>
-              <LineChart
-                data={revenueData ?? []}
-                margin={{ top: 4, right: 16, left: 0, bottom: 0 }}
-              >
-                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-                <XAxis
-                  dataKey="date"
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
-                  tickFormatter={(v) => `AED ${(v / 100).toLocaleString("en-AE")}`}
-                  tick={{ fontSize: 12 }}
-                  tickLine={false}
-                  axisLine={false}
-                  width={80}
-                />
-                <Tooltip
-                  formatter={(value: number) => [formatCurrency(value), "Revenue"]}
-                  contentStyle={{ fontSize: 12, borderRadius: 8 }}
-                />
-                <Line
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="hsl(var(--primary))"
-                  strokeWidth={2}
-                  dot={false}
-                  activeDot={{ r: 4 }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {QUICK_LINKS.map((link) => (
+          <Link key={link.href} href={link.href} className="block">
+            <Card className="h-full transition-colors hover:border-primary">
+              <CardContent className="flex items-start gap-3 p-5">
+                <span className="text-primary mt-0.5">{link.icon}</span>
+                <div>
+                  <p className="font-semibold text-gray-900">{link.label}</p>
+                  <p className="text-sm text-gray-500">{link.description}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
+        ))}
+      </div>
     </div>
   );
 }

@@ -71,7 +71,7 @@ function LoginPageInner() {
         {/* Logo */}
         <div className="flex justify-center mb-2">
           <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground font-bold text-lg">
-            F
+            MP
           </div>
         </div>
         <CardTitle className="text-2xl text-center">Admin Panel</CardTitle>

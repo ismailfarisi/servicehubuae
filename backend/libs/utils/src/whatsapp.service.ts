@@ -7,7 +7,7 @@ export interface WhatsAppConfig {
   apiBaseUrl: string;
   /** Meta template language code sent with every template, e.g. "en". */
   templateLanguage: string;
-  /** Injectable for tests, mirroring the Tamara client in order-service. */
+  /** Injectable for tests. */
   fetch?: FetchLike;
 }
 

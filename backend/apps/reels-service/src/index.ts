@@ -9,10 +9,8 @@ import {
   expireBriefsJob,
   expireCollabsJob,
   expireOffersJob,
-  invalidateCategoryCohortJob,
   rankingJob,
   recomputeDailyRollupsJob,
-  refreshHotCategoriesJob,
 } from "./container.ts";
 
 await ensureDatabase();
@@ -27,12 +25,6 @@ cohortJob.start();
 // The ranking job recomputes a single reel's score on engagement events,
 // debounced per-reel at 2 min.
 rankingJob.start();
-// Hourly refresh of the reel_hot_categories driver table — drives which
-// categories get precomputed cohorts in the 10-min cohort job.
-refreshHotCategoriesJob.start();
-// Consumes reels-cache-invalidation events published when reels are
-// moderated or soft-deleted, flushing the exact affected cohort keys.
-invalidateCategoryCohortJob.start();
 // Daily rollup recompute (03:00 UTC): rebuilds the last 14 days of
 // `reel_daily_rollups` from source event tables so admin + vendor
 // analytics queries return fast aggregate reads.

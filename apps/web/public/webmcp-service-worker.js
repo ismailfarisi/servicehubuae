@@ -1,5 +1,5 @@
-const SEARCH_TOOL_NAME = "mypickuae.service.searchProducts";
-const OPEN_CART_TOOL_NAME = "mypickuae.service.openCart";
+const SEARCH_TOOL_NAME = "mypickuae.service.searchServices";
+const OPEN_BOOKINGS_TOOL_NAME = "mypickuae.service.openMyBookings";
 
 self.addEventListener("install", () => {
 	self.skipWaiting();
@@ -23,9 +23,9 @@ function registerWebMcpTools() {
 		tools: [
 			{
 				name: SEARCH_TOOL_NAME,
-				title: "Search MyPickUAE products",
+				title: "Search MyPickUAE services",
 				description:
-					"Open MyPickUAE search results for a concise customer-provided product, brand, category, or beauty concern.",
+					"Open MyPickUAE service search results for a concise customer-provided service, category, or job.",
 				inputSchema: {
 					type: "object",
 					properties: {
@@ -58,7 +58,7 @@ function registerWebMcpTools() {
 					}
 
 					const locale = normalizeLocale(params.locale);
-					const path = `/${locale}/search?q=${encodeURIComponent(query)}`;
+					const path = `/${locale}/services?q=${encodeURIComponent(query)}`;
 					await self.clients.openWindow(path);
 
 					return {
@@ -70,10 +70,10 @@ function registerWebMcpTools() {
 				},
 			},
 			{
-				name: OPEN_CART_TOOL_NAME,
-				title: "Open MyPickUAE cart",
+				name: OPEN_BOOKINGS_TOOL_NAME,
+				title: "Open my MyPickUAE bookings",
 				description:
-					"Open the MyPickUAE cart page for customer review in a browser window.",
+					"Open the customer's MyPickUAE bookings page in a browser window.",
 				inputSchema: {
 					type: "object",
 					properties: {
@@ -87,11 +87,11 @@ function registerWebMcpTools() {
 				},
 				async execute(params) {
 					const locale = normalizeLocale(params.locale);
-					const path = `/${locale}/cart`;
+					const path = `/${locale}/account/bookings`;
 					await self.clients.openWindow(path);
 
 					return {
-						content: [{ type: "text", text: "Opened MyPickUAE cart." }],
+						content: [{ type: "text", text: "Opened MyPickUAE bookings." }],
 						structuredContent: { openedWindow: true, path },
 					};
 				},

@@ -7,9 +7,9 @@ vi.mock("next-intl", () => ({
 	useLocale: () => "en",
 	useTranslations: () => (k: string) => k,
 }));
-vi.mock("@/lib/queries/search", () => ({
+vi.mock("@/lib/queries/search", async (importOriginal) => ({
+	...(await importOriginal<typeof import("@/lib/queries/search")>()),
 	useSearchSuggest: () => ({ data: undefined }),
-	useTrendingSearches: () => ({ data: [] }),
 }));
 vi.mock("@/lib/queries/recent-searches", () => ({
 	useRecentSearches: () => ({ data: [] }),

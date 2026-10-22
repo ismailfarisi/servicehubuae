@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -21,6 +22,12 @@ import { EngagementKind, EngagementStatus } from "../enums.ts";
 // above), so these mirror the migration's unfiltered indexes exactly.
 @Index("idx_engagement_staff_start", ["staff_member_id", "starts_at"])
 @Index("idx_engagement_vendor_start", ["vendor_id", "starts_at"])
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("StaffMember", ["staff_member_id"], ["id"], {
+  name: "fk_engagement_staff",
+  onDelete: "CASCADE",
+})
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_engagement_vendor" })
 export class StaffEngagement {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

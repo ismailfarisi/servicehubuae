@@ -14,6 +14,11 @@ import type { VendorBankAccount } from "./vendor-bank-account.entity.ts";
 import type { Vendor } from "./vendor.entity.ts";
 
 @Entity("vendor_payouts")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("uq_vendor_payouts_vendor_period_active", ["vendor_id", "period_start", "period_end"], {
+  unique: true,
+  where: "deleted_at IS NULL",
+})
 export class VendorPayout {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

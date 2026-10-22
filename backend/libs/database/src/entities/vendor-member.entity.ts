@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   JoinColumn,
   ManyToOne,
@@ -14,6 +15,29 @@ import type { User } from "./user.entity.ts";
 import type { Vendor } from "./vendor.entity.ts";
 
 @Entity("vendor_members")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("User", ["invited_by_user_id"], ["id"], {
+  name: "FK_vendor_members_invited_by",
+  onDelete: "SET NULL",
+})
+@ForeignKey("User", ["revoked_by_user_id"], ["id"], {
+  name: "FK_vendor_members_revoked_by",
+  onDelete: "SET NULL",
+})
+@Index("idx_vendor_members_user_status", ["user_id", "status"], { where: "deleted_at IS NULL" })
+@Index("uq_vendor_members_active", ["vendor_id", "user_id"], {
+  unique: true,
+  where: "status = 'active' AND deleted_at IS NULL",
+})
+@Index("uq_vendor_members_active_owner", ["vendor_id"], {
+  unique: true,
+  where: "role = 'owner' AND status = 'active' AND deleted_at IS NULL",
+})
+@Index("uq_vendor_members_invite_token", ["invite_token"], {
+  unique: true,
+  where: "invite_token IS NOT NULL",
+})
+@Index("uq_vendor_members_pending_email", { synchronize: false })
 export class VendorMember {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

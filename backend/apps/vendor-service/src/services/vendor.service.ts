@@ -391,7 +391,6 @@ export class VendorService {
         }
       }
 
-
       // 5. Create owner membership row (Phase 3a — role stays 'customer')
       await manager.query(
         `INSERT INTO vendor_members (id, vendor_id, user_id, email, role, status, accepted_at, created_at, updated_at)

@@ -1,14 +1,14 @@
 {
   "name": "mypickuae",
   "private": true,
-  "packageManager": "bun@1.3.11",
+  "packageManager": "bun@1.4.3",
   "scripts": {
     "dev": "turbo run dev --concurrency 15",
     "dev:local": "bun scripts/dev-local.ts",
     "dev:web": "turbo run dev --filter=@mypickuae/web",
     "dev:vendor": "turbo run dev --filter=@mypickuae/vendor-dashboard",
     "dev:admin": "turbo run dev --filter=@mypickuae/admin-panel",
-    "dev:backend": "turbo run dev --filter=@mypickuae/api-gateway --filter=@mypickuae/auth-service --filter=@mypickuae/product-service --filter=@mypickuae/order-service --filter=@mypickuae/vendor-service --filter=@mypickuae/notification-service --filter=@mypickuae/cms-service"
+    "dev:backend": "turbo run dev --filter=@mypickuae/api-gateway --filter=@mypickuae/auth-service --filter=@mypickuae/catalog-service --filter=@mypickuae/booking-service --filter=@mypickuae/vendor-service --filter=@mypickuae/notification-service --filter=@mypickuae/cms-service --filter=@mypickuae/integration-service --filter=@mypickuae/reels-service"
   },
   "workspaces": [
     "apps/*",

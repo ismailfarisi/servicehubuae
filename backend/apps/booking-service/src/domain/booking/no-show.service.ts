@@ -38,14 +38,7 @@ import { ForbiddenError, HttpError, NotFoundError } from "@mypickuae/plugins";
 import type { Repository } from "typeorm";
 import { computeAutoCompleteFireTime } from "./booking-autocomplete.service.ts";
 import { deriveRecoverableAmount, resolveAuthPi } from "./booking-money.ts";
-import type {
-  BookingPaymentCaptureInput,
-  BookingPaymentCaptureResult,
-  BookingPaymentRefundInput,
-  BookingPaymentRefundResult,
-  BookingPaymentVoidInput,
-  BookingPaymentVoidResult,
-} from "./booking-payment.client.ts";
+import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";
 import { computeNoShow } from "./booking-policy.ts";
 import {
   type BookingActor,
@@ -54,13 +47,8 @@ import {
 } from "./booking-status.service.ts";
 
 // Narrow DI seam (mirrors cancel.service.ts's CancelPaymentClient) — this file
-// never imports the concrete BookingPaymentClient; it only needs void/capture/
-// refund.
-export interface NoShowPaymentClient {
-  void(input: BookingPaymentVoidInput): Promise<BookingPaymentVoidResult>;
-  capture(input: BookingPaymentCaptureInput): Promise<BookingPaymentCaptureResult>;
-  refund(input: BookingPaymentRefundInput): Promise<BookingPaymentRefundResult>;
-}
+// only needs the gateway's void/capture/refund.
+export type NoShowPaymentClient = Pick<BookingPaymentGateway, "void" | "capture" | "refund">;
 export interface NotificationEventQueueLike {
   add(name: string, data: unknown): Promise<unknown>;
 }
@@ -264,10 +252,10 @@ export class NoShowService {
           return;
         }
         case "refund":
-          // Deposit remainder refund — RefundService resolves the captured
+          // Deposit remainder refund — the gateway resolves the captured
           // deposit Payment row by booking_id internally and caps at its amount.
-          // No free-text `reason` (order-service forwards it to Stripe's refund
-          // `reason`, which only accepts an enum). Tagged no_show_reversal.
+          // No free-text `reason` (payment providers typically accept only an
+          // enum there). Tagged no_show_reversal.
           await this.paymentClient.refund({
             bookingId: booking.id,
             amountFils: decision.refundFils,

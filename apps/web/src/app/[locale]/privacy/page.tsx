@@ -125,7 +125,7 @@ export default function PrivacyPage() {
 					Email{" "}
 					<a
 						href="mailto:info@mypickuae.com"
-						className="text-nl-amber hover:underline"
+						className="font-medium text-nl-amber-text hover:underline"
 					>
 						info@mypickuae.com
 					</a>{" "}
@@ -153,7 +153,7 @@ export default function PrivacyPage() {
 					has created an account, email{" "}
 					<a
 						href="mailto:info@mypickuae.com"
-						className="text-nl-amber hover:underline"
+						className="font-medium text-nl-amber-text hover:underline"
 					>
 						info@mypickuae.com
 					</a>{" "}

@@ -1,6 +1,7 @@
 "use client";
 
-import { Eyebrow, MAISON_SANS, MAISON_SERIF } from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
+import { Check, MapPin } from "lucide-react";
 import { AudienceDonut, SEGMENT_COLORS } from "@/components/creator/audience-donut";
 import { EditableSection, SectionLabel } from "@/components/creator/editable-section";
 import {
@@ -142,17 +143,7 @@ function initials(name: string, fallback: string): string {
  *  a blank space the creator can't identify as "something goes here". */
 function Unset({ children }: { children: string }) {
   return (
-    <span
-      style={{
-        fontFamily: MAISON_SERIF,
-        fontStyle: "italic",
-        fontSize: 14,
-        color: "hsl(var(--nl-russet))",
-        opacity: 0.6,
-      }}
-    >
-      {children}
-    </span>
+    <span className="text-sm text-nl-russet/70">{children}</span>
   );
 }
 
@@ -162,7 +153,7 @@ function RemoveButton({ onClick, label }: { onClick: () => void; label: string }
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={`${BUTTON_CLASS} hover:bg-[rgba(44,24,16,0.04)]`}
+      className={`${BUTTON_CLASS} hover:!bg-nl-pearl`}
       style={{ ...SMALL_QUIET, padding: "6px 10px" }}
     >
       ✕
@@ -450,8 +441,8 @@ export function MediaKitSection() {
       <section className="grid gap-6 p-5 md:grid-cols-[minmax(0,380px)_1fr] md:gap-8 md:p-7" style={BOX}>
         <div className="space-y-2.5">
           <div
-            className="w-full overflow-hidden"
-            style={{ aspectRatio: "4 / 5", background: "rgba(44,24,16,0.05)" }}
+            className="w-full overflow-hidden rounded-xl bg-nl-pearl"
+            style={{ aspectRatio: "4 / 5" }}
           >
             {intro ? (
               // Portfolio videos carry no thumbnail (uploaded with process:
@@ -461,19 +452,12 @@ export function MediaKitSection() {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={user.avatar_url} alt="" className="h-full w-full object-cover" />
             ) : (
-              <div
-                className="flex h-full w-full items-center justify-center"
-                style={{
-                  fontFamily: MAISON_SERIF,
-                  fontSize: 44,
-                  color: "hsl(var(--nl-amber))",
-                }}
-              >
+              <div className="flex h-full w-full items-center justify-center font-display text-5xl font-bold text-nl-amber">
                 {initials(displayName, user?.email?.charAt(0) ?? "U")}
               </div>
             )}
           </div>
-          <Body size={11.5}>
+          <Body size={12}>
             {intro
               ? "Your intro video is the first thing a brand sees. Your photo is shown wherever a video isn't."
               : "Add an intro video and it replaces your photo here — it's the first thing a brand sees."}
@@ -549,7 +533,7 @@ export function MediaKitSection() {
                     className={INPUT_CLASS}
                     style={INPUT_STYLE}
                     maxLength={120}
-                    placeholder="Beauty & Makeup Creator"
+                    placeholder="Home & Lifestyle Creator"
                     value={form.headline}
                     onChange={(e) => update("headline", e.target.value)}
                   />
@@ -604,64 +588,31 @@ export function MediaKitSection() {
                     ))}
                   </div>
                   <div className="mt-1.5">
-                    <Body size={11.5}>Only you see these. Brands never get your handles.</Body>
+                    <Body size={12}>Only you see these. Brands never get your handles.</Body>
                   </div>
                 </div>
               </div>
             ) : (
               <div>
                 {profile?.primary_category && (
-                  <span
-                    className="inline-block uppercase"
-                    style={{
-                      fontFamily: MAISON_SANS,
-                      fontSize: 10,
-                      letterSpacing: "0.22em",
-                      padding: "6px 14px",
-                      background: "hsl(var(--nl-russet))",
-                      color: "hsl(var(--nl-linen))",
-                    }}
-                  >
+                  <span className="inline-flex items-center rounded-full bg-nl-pearl px-3 py-1 text-xs font-semibold text-nl-amber-text">
                     {profile.primary_category}
                   </span>
                 )}
-                <h1
-                  className="mt-3.5"
-                  style={{
-                    fontFamily: MAISON_SERIF,
-                    fontSize: 38,
-                    lineHeight: 1.1,
-                    fontWeight: 400,
-                    color: "hsl(var(--nl-cacao))",
-                  }}
-                >
+                <h1 className="mt-3.5 font-display text-3xl md:text-4xl font-bold tracking-tight leading-tight text-nl-cacao">
                   {displayName || <Unset>Add your name</Unset>}
                 </h1>
                 {kit?.headline && (
-                  <p
-                    className="mt-2 uppercase"
-                    style={{
-                      fontFamily: MAISON_SANS,
-                      fontSize: 11,
-                      letterSpacing: "0.28em",
-                      color: "hsl(var(--nl-russet))",
-                    }}
-                  >
+                  <p className="mt-2 text-sm font-medium text-nl-russet">
                     {kit.headline}
                   </p>
                 )}
-                <div className="my-5 flex items-center gap-3">
-                  <span className="h-px flex-1" style={{ background: "rgba(44,24,16,0.12)" }} />
-                  <span style={{ color: "hsl(var(--nl-amber))" }}>♥</span>
-                  <span className="h-px flex-1" style={{ background: "rgba(44,24,16,0.12)" }} />
-                </div>
-                <div style={{ fontFamily: MAISON_SANS, fontSize: 13.5, lineHeight: 1.6, color: "hsl(var(--nl-cacao))" }}>
+                <hr className="my-5 border-0 border-t border-nl-cacao/10" />
+                <div className="text-sm leading-relaxed text-nl-cacao">
                   {profile?.bio || <Unset>Add a short bio — brands read this first.</Unset>}
                 </div>
-                <p className="mt-4" style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-russet))" }}>
-                  <span className="me-2" style={{ color: "hsl(var(--nl-amber))" }}>
-                    ◉
-                  </span>
+                <p className="mt-4 flex items-center text-sm text-nl-russet">
+                  <MapPin className="me-2 h-4 w-4 shrink-0 text-nl-amber" strokeWidth={1.75} aria-hidden="true" />
                   {kit?.location_label || <Unset>Where are you based?</Unset>}
                 </p>
               </div>
@@ -691,7 +642,7 @@ export function MediaKitSection() {
                 className={INPUT_CLASS}
                 style={INPUT_STYLE}
                 maxLength={2000}
-                placeholder="Beauty lover & content creator sharing makeup, skincare and self-care tips."
+                placeholder="Content creator sharing home, wellness and lifestyle tips across the UAE."
                 value={form.about}
                 onChange={(e) => update("about", e.target.value)}
               />
@@ -707,44 +658,19 @@ export function MediaKitSection() {
                 value={form.pull_quote}
                 onChange={(e) => update("pull_quote", e.target.value)}
               />
-              <p
-                className="mt-1.5"
-                style={{
-                  fontFamily: MAISON_SERIF,
-                  fontStyle: "italic",
-                  fontSize: 12,
-                  color: "hsl(var(--nl-amber-text))",
-                }}
-              >
+              <p className="mt-1.5 text-xs text-nl-amber-text">
                 Set in display type beside your photo.
               </p>
             </div>
           </div>
         ) : (
           <div className="space-y-5 md:max-w-2xl">
-            <div
-              className="whitespace-pre-wrap"
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 13.5,
-                lineHeight: 1.65,
-                color: "hsl(var(--nl-cacao))",
-              }}
-            >
+            <div className="whitespace-pre-wrap text-sm leading-relaxed text-nl-cacao">
               {kit?.about || <Unset>Tell brands who you are and how you work.</Unset>}
             </div>
             {kit?.pull_quote && (
-              <p
-                style={{
-                  fontFamily: MAISON_SERIF,
-                  fontStyle: "italic",
-                  fontSize: 19,
-                  lineHeight: 1.3,
-                  color: "hsl(var(--nl-russet))",
-                }}
-              >
+              <p className="rounded-xl bg-nl-pearl px-4 py-3 text-lg leading-snug text-nl-russet">
                 {kit.pull_quote}
-                <span className="ms-2 not-italic">♡</span>
               </p>
             )}
           </div>
@@ -803,20 +729,10 @@ export function MediaKitSection() {
             {kit.content_types.map((item) => (
               <li
                 key={item}
-                className="flex items-center gap-2.5"
-                style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-cacao))" }}
+                className="flex items-center gap-2.5 text-sm text-nl-cacao"
               >
-                <span
-                  className="grid shrink-0 place-items-center"
-                  style={{
-                    width: 24,
-                    height: 24,
-                    border: "1px solid rgba(184,115,51,0.35)",
-                    fontSize: 10,
-                    color: "hsl(var(--nl-amber))",
-                  }}
-                >
-                  ✦
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-full bg-nl-pearl text-nl-amber">
+                  <Check className="h-3.5 w-3.5" strokeWidth={2.25} aria-hidden="true" />
                 </span>
                 {item}
               </li>
@@ -896,30 +812,13 @@ export function MediaKitSection() {
             />
           </div>
         ) : kit?.stats?.length ? (
-          <div
-            className="grid grid-cols-2 gap-px sm:grid-cols-4"
-            style={{ background: "rgba(44,24,16,0.10)" }}
-          >
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
             {kit.stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="px-4 py-5 text-center"
-                style={{ background: "hsl(var(--nl-linen))" }}
-              >
-                <div
-                  style={{ fontFamily: MAISON_SERIF, fontSize: 26, color: "hsl(var(--nl-cacao))" }}
-                >
+              <div key={stat.label} className="rounded-xl bg-nl-pearl px-4 py-5 text-center">
+                <div className="font-display text-2xl font-bold tracking-tight text-nl-cacao">
                   {stat.value}
                 </div>
-                <div
-                  className="mt-1.5 uppercase"
-                  style={{
-                    fontFamily: MAISON_SANS,
-                    fontSize: 10,
-                    letterSpacing: "0.16em",
-                    color: "hsl(var(--nl-russet))",
-                  }}
-                >
+                <div className="mt-1 text-xs font-medium text-nl-russet">
                   {stat.label}
                 </div>
               </div>
@@ -1030,12 +929,7 @@ export function MediaKitSection() {
                   {kit.audience.map((segment, i) => (
                     <li
                       key={segment.label}
-                      className="flex items-baseline gap-2.5"
-                      style={{
-                        fontFamily: MAISON_SANS,
-                        fontSize: 13,
-                        color: "hsl(var(--nl-cacao))",
-                      }}
+                      className="flex items-baseline gap-2.5 text-sm text-nl-cacao"
                     >
                       <span
                         className="shrink-0 rounded-full"
@@ -1055,26 +949,15 @@ export function MediaKitSection() {
             )}
             {kit && kit.top_locations.length > 0 && (
               <div className="min-w-[200px] flex-1 p-4" style={BOX}>
-                <div
-                  className="uppercase"
-                  style={{
-                    fontFamily: MAISON_SANS,
-                    fontSize: 10,
-                    letterSpacing: "0.18em",
-                    color: "hsl(var(--nl-russet))",
-                  }}
-                >
-                  Top locations
-                </div>
+                <div className="text-sm font-semibold text-nl-cacao">Top locations</div>
                 <dl className="mt-3 space-y-2">
                   {kit.top_locations.map((location) => (
                     <div
                       key={location.label}
-                      className="flex justify-between"
-                      style={{ fontFamily: MAISON_SANS, fontSize: 13 }}
+                      className="flex justify-between text-sm"
                     >
-                      <dt style={{ color: "hsl(var(--nl-russet))" }}>{location.label}</dt>
-                      <dd style={{ color: "hsl(var(--nl-cacao))" }}>{location.percent}%</dd>
+                      <dt className="text-nl-russet">{location.label}</dt>
+                      <dd className="font-medium text-nl-cacao">{location.percent}%</dd>
                     </div>
                   ))}
                 </dl>
@@ -1094,22 +977,13 @@ export function MediaKitSection() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <SectionLabel>Recent work</SectionLabel>
           <div className="flex items-center gap-3">
-            <span
-              className="uppercase"
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 10,
-                letterSpacing: "0.16em",
-                color: "hsl(var(--nl-russet))",
-                opacity: 0.75,
-              }}
-            >
+            <span className="text-xs font-medium text-nl-russet">
               {samples.length}/{SAMPLE_LIMIT}
             </span>
             <button
               type="button"
               onClick={() => setManagingWork((v) => !v)}
-              className={`${BUTTON_CLASS} hover:bg-[rgba(44,24,16,0.04)]`}
+              className={`${BUTTON_CLASS} hover:!bg-nl-pearl`}
               style={{ ...SMALL_QUIET, padding: "5px 10px" }}
             >
               {managingWork ? "Done" : "Manage"}
@@ -1126,19 +1000,11 @@ export function MediaKitSection() {
                 <video
                   src={sample.video_url}
                   controls
-                  className="w-full object-cover"
-                  style={{ aspectRatio: "3 / 4", border: "1px solid rgba(44,24,16,0.10)" }}
+                  className="w-full rounded-xl border border-nl-cacao/10 object-cover"
+                  style={{ aspectRatio: "3 / 4" }}
                 />
                 {sample.caption && (
-                  <figcaption
-                    className="text-center uppercase"
-                    style={{
-                      fontFamily: MAISON_SANS,
-                      fontSize: 10,
-                      letterSpacing: "0.14em",
-                      color: "hsl(var(--nl-russet))",
-                    }}
-                  >
+                  <figcaption className="text-center text-xs text-nl-russet">
                     {sample.caption}
                   </figcaption>
                 )}
@@ -1147,8 +1013,8 @@ export function MediaKitSection() {
                     type="button"
                     disabled={mediaBusy}
                     onClick={() => handleDeleteSample(sample.id)}
-                    className={`${BUTTON_CLASS} w-full hover:bg-[rgba(44,24,16,0.04)]`}
-                    style={{ ...SMALL_QUIET, padding: "6px 10px", color: "rgb(140,55,45)" }}
+                    className={`${BUTTON_CLASS} w-full hover:!bg-red-50`}
+                    style={{ ...SMALL_QUIET, padding: "6px 10px", color: "rgb(185 28 28)" }}
                   >
                     {t("creatorShowcaseDelete")}
                   </button>
@@ -1185,15 +1051,7 @@ export function MediaKitSection() {
 
       {/* ── Collaborations ───────────────────────────────────────────────── */}
       <section className="grid items-center gap-6 p-6 md:grid-cols-2" style={BOX}>
-        <p
-          style={{
-            fontFamily: MAISON_SERIF,
-            fontStyle: "italic",
-            fontSize: 24,
-            lineHeight: 1.25,
-            color: "hsl(var(--nl-cacao))",
-          }}
-        >
+        <p className="font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
           Let's create something beautiful together!
         </p>
         <EditableSection
@@ -1221,14 +1079,7 @@ export function MediaKitSection() {
               />
             </div>
           ) : (
-            <div
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 13.5,
-                lineHeight: 1.6,
-                color: "hsl(var(--nl-cacao))",
-              }}
-            >
+            <div className="text-sm leading-relaxed text-nl-cacao">
               {kit?.collaboration_note || (
                 <Unset>Say what kind of collaborations you want to be invited to.</Unset>
               )}

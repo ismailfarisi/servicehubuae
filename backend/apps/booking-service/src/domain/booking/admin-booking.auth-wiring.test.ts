@@ -115,6 +115,21 @@ describe("admin-booking.routes.ts auth wiring (role check actually discriminates
     expect(res.status).not.toBe(403);
   });
 
+  it("a customer JWT is rejected with 403 on GET /admin/bookings/dashboard", async () => {
+    const res = await req("GET", "/admin/bookings/dashboard", signCustomer());
+    expect(res.status).toBe(403);
+  });
+
+  it("a valid admin JWT clears the guard for GET /admin/bookings/dashboard (reaches the dashboard handler, not /:id)", async () => {
+    const res = await req("GET", "/admin/bookings/dashboard", signAdmin());
+    expect(res.status).not.toBe(401);
+    expect(res.status).not.toBe(403);
+    // /admin/bookings/:id validates :id as a uuid — had "dashboard" fallen
+    // through to it, params validation would answer 400/422.
+    expect(res.status).not.toBe(400);
+    expect(res.status).not.toBe(422);
+  });
+
   it("a valid admin JWT clears the guard for POST /admin/bookings/:id/complete (reaches the handler)", async () => {
     const res = await req("POST", `/admin/bookings/${UUID}/complete`, signAdmin());
     expect(res.status).not.toBe(401);

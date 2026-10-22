@@ -18,6 +18,7 @@ import { vendorLayoutRoutes } from "./routes/vendor-layout.routes.ts";
 export const app = new Elysia()
   .use(requestLogger)
   .use(errorHandler)
+  .get("/health", () => ({ status: "ok", service: "cms-service" }))
   .use(pageRoutes)
   .use(bannerRoutes)
   .use(settingRoutes)

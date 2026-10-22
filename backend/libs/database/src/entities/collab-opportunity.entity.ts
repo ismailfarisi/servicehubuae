@@ -1,8 +1,11 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
+  Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -31,6 +34,17 @@ export interface CollabDeliverable {
  * draft that could never become a valid opportunity is not worth storing.
  */
 @Entity("collab_opportunities")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_collab_opp_vendor", onDelete: "CASCADE" })
+@Check("ck_collab_slots", "slots_total > 0 AND slots_filled >= 0 AND slots_filled <= slots_total")
+@Check(
+  "ck_collab_type_fields",
+  "(type = 'product_seeding' AND seeded_product_id IS NOT NULL AND seeded_qty IS NOT NULL AND seeded_qty > 0) OR (type = 'paid_campaign' AND fee_fils IS NOT NULL AND fee_fils > 0 AND funding_source IS NOT NULL) OR (type = 'event_appearance' AND location_id IS NOT NULL AND starts_at IS NOT NULL AND ends_at IS NOT NULL AND ends_at > starts_at)",
+)
+@Index("idx_collab_board", ["status", "visibility", "applications_close_at"], {
+  where: "deleted_at IS NULL",
+})
+@Index("idx_collab_vendor", ["vendor_id", "status"], { where: "deleted_at IS NULL" })
 export class CollabOpportunity {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

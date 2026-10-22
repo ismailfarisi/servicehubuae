@@ -15,9 +15,10 @@ import type { DownloadProvider } from "./download-provider.ts";
 const SETTING = { downloadTtl: "reels_license_download_ttl_seconds" };
 const DEFAULTS = { downloadTtl: 3600 };
 
+/** Licensed reels pin to the vendor storefront only; product placement went
+ *  away with products. (`placement`/`product_id` columns stay in the table —
+ *  every new pin is `storefront` with a NULL product_id.) */
 export interface PinInput {
-  placement: ReelFeaturePlacement;
-  productId?: string | null;
   position?: number;
 }
 
@@ -51,7 +52,7 @@ export class RightsService {
     return scope === ReelLicenseRightsScope.off_platform || scope === ReelLicenseRightsScope.both;
   }
 
-  /** Pin a licensed reel to a product PDP or the vendor storefront (idempotent restore). */
+  /** Pin a licensed reel to the vendor storefront (idempotent restore). */
   async pinFeature(
     vendorId: string,
     grantId: string,
@@ -59,37 +60,19 @@ export class RightsService {
   ): Promise<ReelLicenseFeature> {
     const grant = await this.loadActiveGrant(vendorId, grantId);
     if (!this.scopeAllowsPin(grant.scope)) throw new BadRequestError("scope_denies_pin");
-    const productId =
-      input.placement === ReelFeaturePlacement.product ? (input.productId ?? null) : null;
-    if (input.placement === ReelFeaturePlacement.product && !productId) {
-      throw new BadRequestError("product_required_for_product_placement");
-    }
     const repo = AppDataSource.getRepository(ReelLicenseFeature);
+    const storefront = {
+      grant_id: grant.id,
+      placement: ReelFeaturePlacement.storefront,
+      product_id: IsNull(),
+    };
 
     // Idempotent restore: revive a soft-deleted matching feature instead of inserting a duplicate.
-    const existing = await repo.findOne({
-      where: {
-        grant_id: grant.id,
-        placement: input.placement,
-        product_id: productId === null ? IsNull() : productId,
-      },
-      withDeleted: true,
-    });
+    const existing = await repo.findOne({ where: storefront, withDeleted: true });
     if (existing) {
       existing.deleted_at = null;
       if (input.position !== undefined) existing.position = input.position;
       return repo.save(existing);
-    }
-    // Storefront has no partial-unique guard (NULL product_id) — enforce single live pin in code.
-    if (input.placement === ReelFeaturePlacement.storefront) {
-      const liveStorefront = await repo.findOne({
-        where: {
-          grant_id: grant.id,
-          placement: ReelFeaturePlacement.storefront,
-          deleted_at: IsNull(),
-        },
-      });
-      if (liveStorefront) return liveStorefront;
     }
     try {
       return await repo.save(
@@ -97,23 +80,16 @@ export class RightsService {
           grant_id: grant.id,
           reel_id: grant.reel_id,
           vendor_id: vendorId,
-          placement: input.placement,
-          product_id: productId,
+          placement: ReelFeaturePlacement.storefront,
+          product_id: null,
           position: input.position ?? 0,
         }),
       );
     } catch (e) {
-      // Concurrent double-pin lost the race to the partial-unique index (uq_rlf_surface for a product,
-      // uq_rlf_storefront for the storefront). Resolve idempotently: return the live row the winner created.
+      // Concurrent double-pin lost the race to uq_rlf_storefront. Resolve
+      // idempotently: return the live row the winner created.
       if (this.isUniqueViolation(e)) {
-        const live = await repo.findOne({
-          where: {
-            grant_id: grant.id,
-            placement: input.placement,
-            product_id: productId === null ? IsNull() : productId,
-            deleted_at: IsNull(),
-          },
-        });
+        const live = await repo.findOne({ where: { ...storefront, deleted_at: IsNull() } });
         if (live) return live;
       }
       throw e;
@@ -183,11 +159,11 @@ export class RightsService {
   }
 
   /**
-   * Public read: licensed reels a vendor has featured on a product PDP (productId) or storefront
-   * (vendorId). Only surfaces features whose grant is still active and in-platform-scoped, ordered
-   * by position. Exactly one of productId/vendorId must be provided.
+   * Public read: licensed reels a vendor has featured on its storefront. Only
+   * surfaces features whose grant is still active and in-platform-scoped,
+   * ordered by position.
    */
-  async listFeaturedReels(args: { productId?: string; vendorId?: string }): Promise<
+  async listFeaturedReels(args: { vendorId?: string }): Promise<
     Array<{
       feature_id: string;
       reel_id: string;
@@ -197,9 +173,7 @@ export class RightsService {
       featured: true;
     }>
   > {
-    if ((!args.productId && !args.vendorId) || (args.productId && args.vendorId)) {
-      throw new BadRequestError("product_id_or_vendor_id_required");
-    }
+    if (!args.vendorId) throw new BadRequestError("vendor_id_required");
     const qb = AppDataSource.getRepository(ReelLicenseFeature)
       .createQueryBuilder("f")
       .innerJoin(ReelLicenseGrant, "g", "g.id = f.grant_id")
@@ -210,18 +184,9 @@ export class RightsService {
       .andWhere("(g.expires_at IS NULL OR g.expires_at > now())")
       .andWhere("g.scope IN (:...scopes)", {
         scopes: [ReelLicenseRightsScope.in_platform, ReelLicenseRightsScope.both],
-      });
-    if (args.productId) {
-      qb.andWhere("f.placement = :pl", { pl: ReelFeaturePlacement.product }).andWhere(
-        "f.product_id = :pid",
-        { pid: args.productId },
-      );
-    } else {
-      qb.andWhere("f.placement = :pl", { pl: ReelFeaturePlacement.storefront }).andWhere(
-        "f.vendor_id = :vid",
-        { vid: args.vendorId },
-      );
-    }
+      })
+      .andWhere("f.placement = :pl", { pl: ReelFeaturePlacement.storefront })
+      .andWhere("f.vendor_id = :vid", { vid: args.vendorId });
     const rows = await qb
       .orderBy("f.position", "ASC")
       .addOrderBy("f.created_at", "ASC")

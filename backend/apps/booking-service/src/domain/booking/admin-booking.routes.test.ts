@@ -25,6 +25,16 @@ describe("admin booking routes are mounted", () => {
     expect(res.status).toBe(401);
   });
 
+  it("GET /admin/bookings/dashboard requires auth (not 404, not swallowed by /:id)", async () => {
+    const res = await req("GET", "/admin/bookings/dashboard");
+    expect(res.status).toBe(401);
+  });
+
+  it("GET /vendor/booking/dashboard requires auth (not 404)", async () => {
+    const res = await req("GET", "/vendor/booking/dashboard");
+    expect(res.status).toBe(401);
+  });
+
   it("does not shadow the customer /me/bookings route", async () => {
     const res = await req("GET", "/me/bookings");
     expect(res.status).toBe(401);

@@ -13,18 +13,10 @@ import {
   SimpleSelect,
 } from "@mypickuae/ui";
 import { Loader2 } from "lucide-react";
+import { EntityCombobox, type LookupItem } from "@/components/ui/entity-combobox";
 import {
-  EntityCombobox,
-  EntityMultiCombobox,
-  type LookupItem,
-} from "@/components/ui/entity-combobox";
-import {
-  getAdminBrandByIdLookup,
-  getAdminProductByIdLookup,
   getAdminUserByIdLookup,
   getAdminVendorByIdLookup,
-  searchAdminBrandsLookup,
-  searchAdminProductsLookup,
   searchAdminUsersLookup,
   searchAdminVendorsLookup,
 } from "@/lib/queries/lookups";
@@ -34,37 +26,36 @@ import {
   revokeTaggingPermission,
 } from "@/lib/api/reels-admin";
 
-type Scope = "any_product" | "specific_brand" | "specific_vendor" | "specific_products";
+// The backend enum still carries the commerce-era "specific_brand" and
+// "specific_products" scopes; products and brands no longer exist, so only the
+// platform-wide and per-vendor scopes can be granted here. Old rows with the
+// legacy scopes are still listed (and can be revoked).
+type Scope = "any_product" | "specific_vendor";
 
 const SCOPE_OPTIONS: { value: Scope; label: string; help: string }[] = [
   {
     value: "any_product",
-    label: "Any product",
-    help: "User may tag any product in the catalog.",
-  },
-  {
-    value: "specific_brand",
-    label: "Specific brand",
-    help: "User may only tag products belonging to the chosen brand.",
+    label: "Any vendor",
+    help: "User may tag any vendor's services in their reels.",
   },
   {
     value: "specific_vendor",
     label: "Specific vendor",
-    help: "User may only tag products sold by the chosen vendor.",
-  },
-  {
-    value: "specific_products",
-    label: "Specific products",
-    help: "User may only tag the exact products listed below.",
+    help: "User may only tag services from the chosen vendor.",
   },
 ];
+
+const SCOPE_LABELS: Record<string, string> = {
+  any_product: "Any vendor",
+  specific_vendor: "Specific vendor",
+  specific_brand: "Legacy (brand)",
+  specific_products: "Legacy (products)",
+};
 
 const DEFAULT_FORM = {
   userId: "",
   scope: "any_product" as Scope,
-  brandId: "",
   vendorId: "",
-  productIds: [] as string[],
   expiresAt: "",
   reason: "",
 };
@@ -101,22 +92,13 @@ function ResolvedLabel({
 }
 
 function TargetCell({ p }: { p: any }) {
-  if (p.scope === "specific_brand" && p.brand_id) {
-    return <ResolvedLabel id={p.brand_id} getById={getAdminBrandByIdLookup} />;
-  }
   if (p.scope === "specific_vendor" && p.vendor_id) {
     return <ResolvedLabel id={p.vendor_id} getById={getAdminVendorByIdLookup} />;
   }
-  if (p.scope === "specific_products" && p.product_ids?.length) {
-    return (
-      <div className="space-y-1">
-        {p.product_ids.map((pid: string) => (
-          <ResolvedLabel key={pid} id={pid} getById={getAdminProductByIdLookup} />
-        ))}
-      </div>
-    );
+  if (p.scope === "specific_brand" || p.scope === "specific_products") {
+    return <span className="text-muted-foreground">— (legacy commerce scope)</span>;
   }
-  return <span className="text-muted-foreground">— (any product)</span>;
+  return <span className="text-muted-foreground">— (any vendor)</span>;
 }
 
 export function TaggingPermissionsTable() {
@@ -150,16 +132,8 @@ export function TaggingPermissionsTable() {
       setError("Please choose a user.");
       return;
     }
-    if (form.scope === "specific_brand" && !form.brandId) {
-      setError("Please choose a brand for the “specific brand” scope.");
-      return;
-    }
     if (form.scope === "specific_vendor" && !form.vendorId) {
       setError("Please choose a vendor for the “specific vendor” scope.");
-      return;
-    }
-    if (form.scope === "specific_products" && form.productIds.length === 0) {
-      setError("Please choose at least one product for the “specific products” scope.");
       return;
     }
 
@@ -168,10 +142,7 @@ export function TaggingPermissionsTable() {
       await grantTaggingPermission({
         userId: form.userId,
         scope: form.scope,
-        brandId: form.scope === "specific_brand" ? form.brandId : undefined,
         vendorId: form.scope === "specific_vendor" ? form.vendorId : undefined,
-        productIds:
-          form.scope === "specific_products" ? form.productIds : undefined,
         expiresAt: form.expiresAt || undefined,
         reason: form.reason || undefined,
       });
@@ -200,7 +171,7 @@ export function TaggingPermissionsTable() {
       <div>
         <h1 className="text-2xl font-bold text-cacao">Reels — Tagging Permissions</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          Control which users may tag products in their reels, and how broadly.
+          Control which users may tag vendors in their reels, and how broadly.
         </p>
       </div>
 
@@ -251,7 +222,7 @@ export function TaggingPermissionsTable() {
                         <ResolvedLabel id={p.user_id} getById={getAdminUserByIdLookup} />
                       </td>
                       <td className="p-2">
-                        <Badge variant="secondary">{p.scope}</Badge>
+                        <Badge variant="secondary">{SCOPE_LABELS[p.scope] ?? p.scope}</Badge>
                       </td>
                       <td className="p-2">
                         <TargetCell p={p} />
@@ -315,28 +286,13 @@ export function TaggingPermissionsTable() {
                   setForm({
                     ...form,
                     scope: v as Scope,
-                    brandId: "",
                     vendorId: "",
-                    productIds: [],
                   })
                 }
                 options={SCOPE_OPTIONS.map((s) => ({ label: s.label, value: s.value }))}
               />
               <p className="text-xs text-muted-foreground">{scopeMeta.help}</p>
             </div>
-
-            {form.scope === "specific_brand" && (
-              <div className="space-y-1.5">
-                <Label>Brand</Label>
-                <EntityCombobox
-                  value={form.brandId || null}
-                  onChange={(id) => setForm({ ...form, brandId: id ?? "" })}
-                  search={searchAdminBrandsLookup}
-                  getById={getAdminBrandByIdLookup}
-                  placeholder="Search brands…"
-                />
-              </div>
-            )}
 
             {form.scope === "specific_vendor" && (
               <div className="space-y-1.5">
@@ -347,19 +303,6 @@ export function TaggingPermissionsTable() {
                   search={searchAdminVendorsLookup}
                   getById={getAdminVendorByIdLookup}
                   placeholder="Search vendors…"
-                />
-              </div>
-            )}
-
-            {form.scope === "specific_products" && (
-              <div className="space-y-1.5 md:col-span-2">
-                <Label>Products</Label>
-                <EntityMultiCombobox
-                  values={form.productIds}
-                  onChange={(ids) => setForm({ ...form, productIds: ids })}
-                  search={searchAdminProductsLookup}
-                  getById={getAdminProductByIdLookup}
-                  placeholder="Search products by name or SKU…"
                 />
               </div>
             )}

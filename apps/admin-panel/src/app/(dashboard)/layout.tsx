@@ -10,41 +10,25 @@ import {
 } from "@mypickuae/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-	AlertTriangle,
 	BarChart3,
-	Box,
 	CalendarCheck,
 	ClipboardList,
-	Coins,
-	CreditCard,
 	FileText,
 	FolderTree,
-	Gift,
 	Image,
 	LayoutDashboard,
-	LayoutGrid,
-	Megaphone,
+	MapPin,
 	Menu,
 	MessageSquare,
-	Package,
-	Percent,
-	Plug,
-	RotateCcw,
 	Settings,
 	ShieldCheck,
 	ShoppingCart,
 	Slack,
-	Sliders,
-	Sparkles,
-	Star,
 	Store,
 	Tag,
-	Truck,
 	UserCheck,
 	Users,
 	Video,
-	Wallet,
-	Zap,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -52,7 +36,7 @@ import { useEffect, useState } from "react";
 const navItems = [
 	{ label: "Dashboard", href: "/", icon: <LayoutDashboard size={20} /> },
 	{
-		label: "Bookings & Operations",
+		label: "Bookings & Catalogue",
 		icon: <ShoppingCart size={20} />,
 		children: [
 			{
@@ -64,6 +48,11 @@ const navItems = [
 				label: "Service Approvals",
 				href: "/bookings/service-approvals",
 				icon: <ClipboardList size={20} />,
+			},
+			{
+				label: "Categories",
+				href: "/categories",
+				icon: <FolderTree size={20} />,
 			},
 		],
 	},
@@ -123,18 +112,6 @@ const navItems = [
 		],
 	},
 	{
-		label: "Finance",
-		icon: <Wallet size={20} />,
-		children: [
-			{
-				label: "Commissions",
-				href: "/commissions",
-				icon: <Percent size={20} />,
-			},
-			{ label: "Payouts", href: "/payouts", icon: <Wallet size={20} /> },
-		],
-	},
-	{
 		label: "System & Security",
 		icon: <ShieldCheck size={20} />,
 		children: [
@@ -164,29 +141,9 @@ const navItems = [
 		icon: <Settings size={20} />,
 		children: [
 			{
-				label: "Payment Methods",
-				href: "/settings/payment-methods",
-				icon: <CreditCard size={20} />,
-			},
-			{
-				label: "Shipping Rates",
-				href: "/settings/shipping-rates",
-				icon: <Truck size={20} />,
-			},
-			{
-				label: "Shipping Contribution Tiers",
-				href: "/settings/shipping-contribution-tiers",
-				icon: <Coins size={20} />,
-			},
-			{
-				label: "Shipping Providers",
-				href: "/settings/shipping-providers",
-				icon: <Plug size={20} />,
-			},
-			{
-				label: "AI Image Enhance",
-				href: "/settings/ai",
-				icon: <Sparkles size={20} />,
+				label: "Areas",
+				href: "/settings/areas",
+				icon: <MapPin size={20} />,
 			},
 			{
 				label: "Slack",
@@ -204,12 +161,6 @@ const SEGMENT_LABEL_OVERRIDES: Record<string, string> = {
 	seo: "SEO",
 	kyc: "KYC",
 	bnpl: "BNPL",
-	"flash-deals": "Flash Deals",
-	"shipping-rates": "Shipping Rates",
-	"shipping-contribution-tiers": "Shipping Contribution Tiers",
-	"shipping-providers": "Shipping Providers",
-	"payment-methods": "Payment Methods",
-	"cart-abandonment": "Cart Abandonment",
 	"audit-log": "Audit Log",
 	"role-permissions": "Role Permissions",
 	"tagging-permissions": "Tagging Permissions",
@@ -224,8 +175,6 @@ function labelForSegment(seg: string, prev?: string) {
 		if (prev === "layouts") return "Layout";
 		if (prev === "pages") return "Page";
 		if (prev === "vendors") return "Vendor";
-		if (prev === "products") return "Product";
-		if (prev === "orders") return "Order";
 		if (prev === "bookings") return "Booking";
 		if (prev === "service-approvals") return "Service";
 		return "Detail";

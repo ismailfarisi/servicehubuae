@@ -21,7 +21,7 @@ import type {
 // Phase 7 review: the original fix applied `in_app: true` to EVERY
 // NotificationType, which silently changed behaviour for pre-existing types
 // too — a user with no explicit rows would suddenly start receiving in-app
-// notifications for `order_shipped`, `dispute_*`, etc. There is no migration
+// notifications for every older type. There is no migration
 // and no flag behind that, so it is scoped back: the `in_app: true` default
 // applies ONLY to the booking types that post-date the seeding, and every
 // pre-existing type keeps its historical blanket `false`.
@@ -37,7 +37,7 @@ const BASE_ABSENT_ROW_CHANNEL_DEFAULTS: Record<NotificationChannel, boolean> = {
 };
 
 // NotificationTypes added to the enum AFTER existing users' preference rows
-// were seeded: the 11 booking types (Phase 5 Task 2) plus vendor_new_order.
+// were seeded: the 11 booking types (Phase 5 Task 2).
 // These are exactly the set for which an absent row means "never asked", not
 // "opted out". Everything else in NotificationType predates that seeding and
 // keeps the pre-fix `false`.
@@ -57,7 +57,6 @@ const POST_SEED_DEFAULT_IN_APP_TYPES: ReadonlySet<NotificationType> = new Set([
   NotificationType.vendor_new_booking,
   NotificationType.vendor_booking_cancelled,
   NotificationType.vendor_booking_conflict,
-  NotificationType.vendor_new_order,
 ]);
 
 /** Default for an absent {type, channel} preference row. */

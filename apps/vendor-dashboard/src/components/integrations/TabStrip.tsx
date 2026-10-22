@@ -17,7 +17,7 @@ export function TabStrip({ id }: TabStripProps) {
   ];
 
   return (
-    <nav className="border-b border-pearl/14 mb-8">
+    <nav className="border-b border-pearl mb-8">
       {tabs.map((tab) => {
         const isActive =
           pathname === tab.href || (pathname.startsWith(`${tab.href}/`) && tab.label !== "Setup");

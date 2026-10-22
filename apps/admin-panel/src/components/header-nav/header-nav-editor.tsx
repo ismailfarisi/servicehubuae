@@ -86,16 +86,16 @@ export function HeaderNavEditor() {
 	if (isLoading) {
 		return (
 			<div className="flex items-center justify-center py-20">
-				<Loader2 className="h-5 w-5 animate-spin text-nl-russet" />
+				<Loader2 className="h-5 w-5 animate-spin text-taupe" />
 			</div>
 		);
 	}
 
 	return (
 		<div className="grid grid-cols-[280px_1fr] gap-6 h-[calc(100vh-200px)]">
-			<aside className="border border-nl-cacao/10 overflow-y-auto">
-				<div className="px-3 py-2 border-b border-nl-cacao/10 flex items-center">
-					<span className="text-xs uppercase tracking-[0.18em] text-nl-russet">
+			<aside className="border border-cacao/10 overflow-y-auto">
+				<div className="px-3 py-2 border-b border-cacao/10 flex items-center">
+					<span className="text-xs uppercase tracking-[0.18em] text-taupe">
 						Tabs
 					</span>
 				</div>
@@ -106,7 +106,7 @@ export function HeaderNavEditor() {
 					onToggleEnabled={toggleEnabled}
 					onReorder={(tabs) => setConfig({ ...config, tabs })}
 				/>
-				<div className="px-3 py-2 border-t border-nl-cacao/10">
+				<div className="px-3 py-2 border-t border-cacao/10">
 					<AddTabDropdown
 						onAdd={(tab) => {
 							const newTab = { ...tab, position: config.tabs.length };
@@ -118,10 +118,10 @@ export function HeaderNavEditor() {
 				</div>
 			</aside>
 
-			<main className="border border-nl-cacao/10 overflow-y-auto">
-				<div className="px-3 py-2 border-b border-nl-cacao/10 flex items-center justify-between gap-3">
+			<main className="border border-cacao/10 overflow-y-auto">
+				<div className="px-3 py-2 border-b border-cacao/10 flex items-center justify-between gap-3">
 					<span
-						className="text-sm font-semibold text-nl-cacao"
+						className="text-sm font-semibold text-cacao"
 						aria-label="selected-tab-header"
 					>
 						{selectedTab
@@ -134,7 +134,7 @@ export function HeaderNavEditor() {
 							type="button"
 							onClick={handlePublish}
 							disabled={publishing || saving || config.tabs.length === 0}
-							className="bg-nl-cacao text-nl-linen px-4 py-1.5 text-xs uppercase tracking-[0.22em] disabled:opacity-50"
+							className="bg-cacao text-linen px-4 py-1.5 text-xs uppercase tracking-[0.22em] disabled:opacity-50"
 						>
 							{publishing ? "Publishing…" : "Publish"}
 						</button>
@@ -176,7 +176,7 @@ function SaveStatus({
 
 	if (saving) {
 		return (
-			<span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-nl-russet">
+			<span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-taupe">
 				<Loader2 className="h-3.5 w-3.5 animate-spin" strokeWidth={2} />
 				Saving…
 			</span>
@@ -184,14 +184,14 @@ function SaveStatus({
 	}
 	if (recentlySaved) {
 		return (
-			<span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-nl-amber">
+			<span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-amber">
 				<Check className="h-3.5 w-3.5" strokeWidth={2.5} />
 				Saved
 			</span>
 		);
 	}
 	return (
-		<span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-nl-russet/60">
+		<span className="inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.18em] text-taupe/60">
 			<Check className="h-3.5 w-3.5" strokeWidth={2} />
 			All changes saved
 		</span>

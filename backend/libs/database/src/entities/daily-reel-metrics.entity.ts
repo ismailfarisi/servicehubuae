@@ -1,6 +1,20 @@
-import { Column, CreateDateColumn, Entity, PrimaryColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ForeignKey,
+  Index,
+  PrimaryColumn,
+  UpdateDateColumn,
+} from "typeorm";
 
 @Entity("daily_reel_metrics")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("Reel", ["reel_id"], ["id"], {
+  name: "daily_reel_metrics_reel_id_fkey",
+  onDelete: "CASCADE",
+})
+@Index("idx_drm_bucket_date", ["bucket_date"])
 export class DailyReelMetrics {
   @PrimaryColumn({ type: "uuid" })
   reel_id!: string;

@@ -12,6 +12,8 @@ import {
 } from "typeorm";
 
 @Entity("categories")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_categories_path_prefix", { synchronize: false })
 export class Category {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -19,7 +21,7 @@ export class Category {
   @Column({ type: "uuid", nullable: true })
   parent_id!: string | null;
 
-  @ManyToOne("Category", { nullable: true })
+  @ManyToOne("Category", { nullable: true, onDelete: "SET NULL" })
   @JoinColumn({ name: "parent_id" })
   parent!: Category | null;
 

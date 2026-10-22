@@ -1,7 +1,23 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ForeignKey,
+  Index,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 @Entity("vendor_integration_pending_writes")
 @Index("vipw_status_idx", ["integration_id", "status"])
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("VendorIntegrationDelivery", ["delivery_id"], ["id"], {
+  name: "vendor_integration_pending_writes_delivery_id_fkey",
+  onDelete: "CASCADE",
+})
+@ForeignKey("VendorIntegration", ["integration_id"], ["id"], {
+  name: "vendor_integration_pending_writes_integration_id_fkey",
+  onDelete: "CASCADE",
+})
 export class VendorIntegrationPendingWrite {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

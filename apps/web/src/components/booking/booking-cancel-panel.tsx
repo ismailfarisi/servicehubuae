@@ -6,7 +6,7 @@ import { useCancelBooking } from "@/lib/queries/booking";
 import { computeCancelEstimate } from "@/lib/booking/cancel-estimate";
 import type { Booking, CancelBookingResponse } from "@/lib/booking/types";
 import { formatPrice } from "@/lib/utils";
-import { Eyebrow, MAISON_SANS } from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 
 /**
  * Cancel flow (confirmed bookings only) — task-3-brief.md's cancel addendum:
@@ -47,8 +47,7 @@ export function BookingCancelPanel({
       <button
         type="button"
         onClick={() => setExpanded(true)}
-        className="uppercase hover:underline"
-        style={{ fontFamily: MAISON_SANS, fontSize: 10, letterSpacing: "0.16em", color: "hsl(var(--nl-amber))" }}
+        className="text-sm font-semibold text-red-700 hover:underline"
       >
         {t("trigger")}
       </button>
@@ -93,21 +92,15 @@ export function BookingCancelPanel({
   }
 
   return (
-    <div className="mt-4 p-4" style={{ border: "1px solid rgba(140,55,45,0.25)", background: "rgba(140,55,45,0.03)" }}>
-      <Eyebrow amber={false}>{t("confirmTitle")}</Eyebrow>
+    <div className="mt-4 rounded-2xl border border-red-200 bg-red-50/60 p-4 sm:p-5">
+      <Eyebrow amber={false} className="text-sm">
+        {t("confirmTitle")}
+      </Eyebrow>
 
-      <p className="mt-2" style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-cacao))" }}>
-        {estimateCopy}
-      </p>
-      <p className="mt-1" style={{ fontFamily: MAISON_SANS, fontSize: 11, fontStyle: "italic", color: "hsl(var(--nl-russet))" }}>
-        {t("estimateNote")}
-      </p>
+      <p className="mt-2 text-sm text-nl-cacao">{estimateCopy}</p>
+      <p className="mt-1 text-xs text-nl-russet">{t("estimateNote")}</p>
 
-      <label
-        htmlFor="cancel-reason"
-        className="block uppercase mt-3 mb-1.5"
-        style={{ fontFamily: MAISON_SANS, fontSize: 10, letterSpacing: "0.18em", color: "hsl(var(--nl-russet))" }}
-      >
+      <label htmlFor="cancel-reason" className="mb-1.5 mt-4 block text-xs font-medium text-nl-russet">
         {t("reasonLabel")}
       </label>
       <textarea
@@ -116,38 +109,17 @@ export function BookingCancelPanel({
         onChange={(e) => setReason(e.target.value)}
         placeholder={t("reasonPlaceholder")}
         rows={2}
-        className="w-full outline-none"
-        style={{
-          fontFamily: MAISON_SANS,
-          fontSize: 13,
-          color: "hsl(var(--nl-cacao))",
-          border: "1px solid rgba(44,24,16,0.16)",
-          background: "rgba(255,255,255,0.7)",
-          padding: "10px 14px",
-        }}
+        className="w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3.5 py-2.5 text-sm text-nl-cacao outline-none transition placeholder:text-nl-russet/70 focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
       />
 
-      {errorMessage && (
-        <p className="mt-2" style={{ fontFamily: MAISON_SANS, fontSize: 12, color: "hsl(var(--destructive))" }}>
-          {errorMessage}
-        </p>
-      )}
+      {errorMessage && <p className="mt-2 text-xs text-destructive">{errorMessage}</p>}
 
-      <div className="flex flex-wrap gap-2 mt-3">
+      <div className="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
           onClick={handleConfirm}
           disabled={cancelMutation.isPending}
-          className="uppercase disabled:opacity-50"
-          style={{
-            background: "rgb(140,55,45)",
-            color: "hsl(var(--nl-linen))",
-            fontFamily: MAISON_SANS,
-            fontSize: 11,
-            letterSpacing: "0.2em",
-            padding: "11px 22px",
-            border: "none",
-          }}
+          className="inline-flex min-h-[44px] items-center justify-center rounded-lg bg-red-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
         >
           {cancelMutation.isPending ? tCommon("loading") : t("confirmButton")}
         </button>
@@ -155,16 +127,7 @@ export function BookingCancelPanel({
           type="button"
           onClick={() => setExpanded(false)}
           disabled={cancelMutation.isPending}
-          className="uppercase"
-          style={{
-            background: "transparent",
-            border: "1px solid rgba(44,24,16,0.3)",
-            color: "hsl(var(--nl-cacao))",
-            fontFamily: MAISON_SANS,
-            fontSize: 11,
-            letterSpacing: "0.2em",
-            padding: "11px 22px",
-          }}
+          className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-nl-cacao/15 bg-nl-linen px-5 py-2.5 text-sm font-semibold text-nl-cacao transition-colors hover:bg-nl-pearl disabled:opacity-50"
         >
           {t("dismissButton")}
         </button>

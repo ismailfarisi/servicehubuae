@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -28,6 +29,14 @@ import {
 // next successful sync.
 @Entity("staff_calendar_subscriptions")
 @Index(["staff_member_id"], { unique: true, where: "deleted_at IS NULL" })
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("StaffMember", ["staff_member_id"], ["id"], {
+  name: "fk_calendar_sub_staff",
+  onDelete: "CASCADE",
+})
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_calendar_sub_vendor" })
+@Index("idx_calendar_sub_active", ["is_active"], { where: "deleted_at IS NULL" })
+@Index("idx_calendar_sub_vendor", ["vendor_id"], { where: "deleted_at IS NULL" })
 export class StaffCalendarSubscription {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -12,6 +13,8 @@ import type { LayoutVersion } from "./layout-version.entity.ts";
 import type { SectionType } from "./section-type.entity.ts";
 
 @Entity("layout_sections")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Index("idx_layout_sections_version", ["version_id", "position"])
 export class LayoutSection {
   @PrimaryGeneratedColumn("uuid") id!: string;
   @Column({ type: "uuid" }) version_id!: string;

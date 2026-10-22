@@ -3,12 +3,9 @@ import { jwt as jwtPlugin } from "@elysiajs/jwt";
 import { config } from "@mypickuae/config";
 import {
   AppDataSource,
-  Category,
   Commission,
   CommissionStatus,
   CommissionType,
-  Product,
-  ProductStatus,
   Reel,
   ReelBrief,
   ReelBriefBid,
@@ -16,7 +13,6 @@ import {
   ReelBriefEvent,
   ReelBriefEventType,
   ReelBriefStatus,
-  ReelFeaturePlacement,
   ReelLicenseEscrowHold,
   ReelLicenseFundingSource,
   ReelLicenseHoldStatus,
@@ -36,7 +32,6 @@ import {
 import { permissionMatrix, signAccessToken } from "@mypickuae/guards";
 import { Elysia } from "elysia";
 import { app } from "../../src/app.ts";
-import { CreatorWalletService } from "../../src/domain/commerce/creator-wallet.service.ts";
 import { BriefService } from "../../src/domain/licensing/brief.service.ts";
 import { FakeDownloadProvider } from "../../src/domain/licensing/download-provider.ts";
 import { EscrowEngine } from "../../src/domain/licensing/escrow-engine.ts";
@@ -46,6 +41,7 @@ import {
   FakeChargeGateway,
   StripeChargeRail,
 } from "../../src/domain/licensing/stripe-charge-rail.ts";
+import { CreatorWalletService } from "../../src/domain/wallet/creator-wallet.service.ts";
 
 const LIVE_DB = process.env.REELS_LIVE_DB === "1";
 const describeLive = LIVE_DB ? describe : describe.skip;
@@ -62,12 +58,7 @@ let otherVendorUserId = "";
 let otherVendorId = "";
 let reelId = "";
 let reel2Id = "";
-let orderId = "";
-let vendorOrderId = "";
-let orderItemId = "";
 let commissionId = "";
-let categoryId = "";
-let productId = "";
 
 // Accumulated brief IDs for FK-safe teardown.
 const createdBriefIds: string[] = [];
@@ -121,8 +112,6 @@ async function seed() {
   const vendorRepo = AppDataSource.getRepository(Vendor);
   const vendorMemberRepo = AppDataSource.getRepository(VendorMember);
   const reelRepo = AppDataSource.getRepository(Reel);
-  const categoryRepo = AppDataSource.getRepository(Category);
-  const productRepo = AppDataSource.getRepository(Product);
   const commissionRepo = AppDataSource.getRepository(Commission);
 
   const mkUser = (fn: string) =>
@@ -220,51 +209,11 @@ async function seed() {
   const reel2 = await mkReel(creator2Id, "r2");
   reel2Id = reel2.id;
 
-  const cat = await categoryRepo.save(
-    categoryRepo.create({ name: `Brf Cat ${unique}`, slug: `brf-cat-${unique}`, is_active: true }),
-  );
-  categoryId = cat.id;
-  const product = await productRepo.save(
-    productRepo.create({
-      vendor_id: vendorId,
-      category_id: cat.id,
-      name: `Brf Product ${unique}`,
-      slug: `brf-p-${unique}`,
-      status: ProductStatus.approved,
-      price: 100000,
-      currency: "AED",
-    }),
-  );
-  productId = product.id;
-
-  // FK chain for the commissions row that grants the vendor payout balance.
-  const o = await AppDataSource.query(
-    `INSERT INTO orders (order_number, user_id, status, subtotal, grand_total, currency, shipping_address, surcharge_total)
-     VALUES ($1,$2,'confirmed',100000,100000,'AED','{"line1":"T","city":"Dubai","country":"AE"}', 0) RETURNING id`,
-    [`BRF-${unique}-1`, creatorId],
-  );
-  orderId = o[0].id;
-  const vo = await AppDataSource.query(
-    `INSERT INTO vendor_orders (order_id, vendor_id, vendor_order_number, status, subtotal, vendor_total, currency)
-     VALUES ($1,$2,$3,'confirmed',100000,100000,'AED') RETURNING id`,
-    [orderId, vendorId, `BRFV-${unique}-1`],
-  );
-  vendorOrderId = vo[0].id;
-  const it = await AppDataSource.query(
-    `INSERT INTO order_items (order_id, vendor_order_id, vendor_id, product_id, product_name, quantity, unit_price, line_total, status)
-     VALUES ($1,$2,$3,$4,'P',1,100000,100000,'confirmed') RETURNING id`,
-    [orderId, vendorOrderId, vendorId, productId],
-  );
-  orderItemId = it[0].id;
-
   // Vendor payout balance = SUM(vendor_earning WHERE status='pending') = 1000000 (generous,
   // covers every payout-balance hold this suite places).
   const commission = await commissionRepo.save(
     commissionRepo.create({
       vendor_id: vendorId,
-      order_id: orderId,
-      vendor_order_id: vendorOrderId,
-      order_item_id: orderItemId,
       commission_type: CommissionType.percentage,
       commission_rate: 20,
       item_total: 100000,
@@ -303,11 +252,6 @@ async function cleanup() {
   await q("DELETE FROM wallet_transactions WHERE user_id = ANY($1::uuid[])", [
     [creatorId, creator2Id, otherUserId, vendorUserId, otherVendorUserId],
   ]);
-  await q("DELETE FROM order_items WHERE id = $1", [orderItemId]);
-  await q("DELETE FROM vendor_orders WHERE id = $1", [vendorOrderId]);
-  await q("DELETE FROM orders WHERE id = $1", [orderId]);
-  await q("DELETE FROM products WHERE id = $1", [productId]);
-  await q("DELETE FROM categories WHERE id = $1", [categoryId]);
   await q("DELETE FROM reels WHERE id = ANY($1::uuid[])", [[reelId, reel2Id]]);
   await q("DELETE FROM vendor_members WHERE vendor_id = ANY($1::uuid[])", [
     [vendorId, otherVendorId],
@@ -463,9 +407,7 @@ describeLive("licensing briefs (brief/bid)", () => {
     const grant = await service.approveDelivery(vendorId, briefId, bid.id);
 
     const rights = new RightsService(new FakeDownloadProvider());
-    const feature = await rights.pinFeature(vendorId, grant.id, {
-      placement: ReelFeaturePlacement.storefront,
-    });
+    const feature = await rights.pinFeature(vendorId, grant.id, {});
     expect(feature.id).toBeDefined();
 
     const featured = await rights.listFeaturedReels({ vendorId });

@@ -1,6 +1,5 @@
 import {
   AppDataSource,
-  Category,
   type Reel,
   Reel as ReelEntity,
   ReelStatus,
@@ -9,6 +8,7 @@ import {
   UserFollow,
 } from "@mypickuae/database";
 import type { Repository } from "typeorm";
+import { reelLinkedToVendorSql } from "../shared/reel-vendor-link.ts";
 import type { FeedCacheClient } from "./feed-cache.client.ts";
 
 export interface HomeFeedQuery {
@@ -42,71 +42,6 @@ export class FeedService {
     if (!this.viewRepo) this.viewRepo = AppDataSource.getRepository(ReelViewEntity);
     if (!this.reelRepo) this.reelRepo = AppDataSource.getRepository(ReelEntity);
     return { viewRepo: this.viewRepo, reelRepo: this.reelRepo };
-  }
-
-  // In-process cache for category metadata. The RedisLike interface used by
-  // FeedCacheClient only exposes ZSET ops, not GET/SET, so a real cross-worker
-  // cache would need a separate client. An in-process Map keyed by both
-  // `id:<uuid>` and `slug:<slug>` is sufficient: category count is bounded by
-  // the real taxonomy (low hundreds) and the TTL keeps entries fresh enough.
-  private categoryMeta = new Map<
-    string,
-    { value: { id: string; path: string }; expiresAt: number }
-  >();
-  private static readonly META_TTL_MS = 5 * 60 * 1000;
-  private static readonly META_CACHE_MAX_ENTRIES = 1000;
-
-  // Exposed for tests; default implementation queries Postgres.
-  protected categoryLookup: (ref: { id?: string; slug?: string }) => Promise<{
-    id: string;
-    slug: string;
-    path: string;
-  } | null> = async (ref) => {
-    const repo = AppDataSource.getRepository(Category);
-    const qb = repo
-      .createQueryBuilder("c")
-      .select(["c.id", "c.slug", "c.path"])
-      .where("c.deleted_at IS NULL")
-      .limit(1);
-    if (ref.id) qb.andWhere("c.id = :id", { id: ref.id });
-    else if (ref.slug) qb.andWhere("c.slug = :slug", { slug: ref.slug });
-    const row = await qb.getOne();
-    if (!row || !row.path) return null;
-    return { id: row.id, slug: row.slug, path: row.path };
-  };
-
-  protected async resolveCategory(ref: {
-    id?: string;
-    slug?: string;
-  }): Promise<{ id: string; path: string }> {
-    const hasId = !!ref.id;
-    const hasSlug = !!ref.slug;
-    if (hasId && hasSlug) throw new Error("category_ref_exclusive");
-    if (!hasId && !hasSlug) throw new Error("category_ref_required");
-
-    const cacheKey = hasId ? `id:${ref.id}` : `slug:${ref.slug}`;
-    const now = Date.now();
-    const cached = this.categoryMeta.get(cacheKey);
-    if (cached && cached.expiresAt > now) return cached.value;
-
-    const row = await this.categoryLookup(ref);
-    if (!row) throw new Error("unknown_category");
-    const value = { id: row.id, path: row.path };
-    const entry = { value, expiresAt: now + FeedService.META_TTL_MS };
-    this.setMetaEntry(`id:${row.id}`, entry);
-    this.setMetaEntry(`slug:${row.slug}`, entry);
-    return value;
-  }
-
-  private setMetaEntry(
-    key: string,
-    entry: { value: { id: string; path: string }; expiresAt: number },
-  ): void {
-    if (this.categoryMeta.size >= FeedService.META_CACHE_MAX_ENTRIES) {
-      const oldest = this.categoryMeta.keys().next().value;
-      if (oldest !== undefined) this.categoryMeta.delete(oldest);
-    }
-    this.categoryMeta.set(key, entry);
   }
 
   async getHomeFeed(q: HomeFeedQuery): Promise<FeedResult> {
@@ -204,30 +139,22 @@ export class FeedService {
     return { reels: items, nextCursor };
   }
 
-  async getProductFeed(
-    productId: string,
-    q: {
-      userId: string | null;
-      cursor?: string;
-      limit: number;
-      authorKind?: "creator" | "customer" | "house";
-    },
+  /** Reels linked to a vendor (licence grant, delivered collab or team
+   *  upload — see reelLinkedToVendorSql). Served from the precomputed
+   *  `vendor:<id>` cohort when warm, else a live query. */
+  async getVendorFeed(
+    vendorId: string,
+    q: { userId: string | null; cursor?: string; limit: number },
   ): Promise<FeedResult> {
     this.getRepos();
-    const cohortKey = `product:${productId}${q.authorKind ? `:${q.authorKind}` : ""}`;
+    const cohortKey = `vendor:${vendorId}`;
     const offset = q.cursor ? Number.parseInt(q.cursor, 10) : 0;
-
-    // When a filter is applied, skip the precomputed cohort cache (which is
-    // keyed on the unfiltered cohort) and go straight to the DB. The
-    // idx_reels_author_kind_status_published partial index added in PR #138
-    // makes this query cheap.
-    if (q.authorKind) {
+    const candidateIds = await this.cache.getCohort(cohortKey, offset, offset + q.limit * 3);
+    if (candidateIds.length === 0) {
       const rows = await this.reelRepo
         .createQueryBuilder("r")
-        .innerJoin("reel_product_tags", "t", "t.reel_id = r.id")
-        .where("t.product_id = :pid", { pid: productId })
+        .where(reelLinkedToVendorSql("r", ":vendorId"), { vendorId })
         .andWhere("r.status = :status", { status: ReelStatus.approved })
-        .andWhere("r.author_kind = :ak", { ak: q.authorKind })
         .andWhere("r.deleted_at IS NULL")
         .orderBy("r.ranking_score", "DESC")
         .offset(offset)
@@ -237,66 +164,6 @@ export class FeedService {
       return {
         reels: items,
         nextCursor: rows.length > q.limit ? String(offset + items.length) : null,
-      };
-    }
-
-    const candidateIds = await this.cache.getCohort(cohortKey, offset, offset + q.limit * 3);
-    if (candidateIds.length === 0) {
-      const rows = await this.reelRepo
-        .createQueryBuilder("r")
-        .innerJoin("reel_product_tags", "t", "t.reel_id = r.id")
-        .where("t.product_id = :pid", { pid: productId })
-        .andWhere("r.status = :status", { status: ReelStatus.approved })
-        .orderBy("r.ranking_score", "DESC")
-        .limit(q.limit + 1)
-        .getMany();
-      const items = rows.slice(0, q.limit);
-      return {
-        reels: items,
-        nextCursor: rows.length > q.limit ? String(items.length) : null,
-      };
-    }
-    return this.dedupAndFetch(candidateIds, q.userId, q.limit, offset, candidateIds.length);
-  }
-
-  async getBrandFeed(
-    brandId: string,
-    q: { userId: string | null; cursor?: string; limit: number },
-  ): Promise<FeedResult> {
-    return this.scopedFeed("brand", brandId, q);
-  }
-
-  async getVendorFeed(
-    vendorId: string,
-    q: { userId: string | null; cursor?: string; limit: number },
-  ): Promise<FeedResult> {
-    return this.scopedFeed("vendor", vendorId, q);
-  }
-
-  private async scopedFeed(
-    scope: "brand" | "vendor",
-    targetId: string,
-    q: { userId: string | null; cursor?: string; limit: number },
-  ): Promise<FeedResult> {
-    this.getRepos();
-    const cohortKey = `${scope}:${targetId}`;
-    const offset = q.cursor ? Number.parseInt(q.cursor, 10) : 0;
-    const candidateIds = await this.cache.getCohort(cohortKey, offset, offset + q.limit * 3);
-    if (candidateIds.length === 0) {
-      const joinCol = scope === "brand" ? "p.brand_id" : "p.vendor_id";
-      const rows = await this.reelRepo
-        .createQueryBuilder("r")
-        .innerJoin("reel_product_tags", "t", "t.reel_id = r.id")
-        .innerJoin("products", "p", "p.id = t.product_id")
-        .where(`${joinCol} = :tid`, { tid: targetId })
-        .andWhere("r.status = :status", { status: ReelStatus.approved })
-        .orderBy("r.ranking_score", "DESC")
-        .limit(q.limit + 1)
-        .getMany();
-      const items = rows.slice(0, q.limit);
-      return {
-        reels: items,
-        nextCursor: rows.length > q.limit ? String(items.length) : null,
       };
     }
     return this.dedupAndFetch(candidateIds, q.userId, q.limit, offset, candidateIds.length);
@@ -316,59 +183,6 @@ export class FeedService {
     const items = rows.slice(0, q.limit);
     const nextCursor =
       rows.length > q.limit ? items[items.length - 1]!.published_at!.toISOString() : null;
-    return { reels: items, nextCursor };
-  }
-
-  async getCategoryFeed(
-    categoryRef: { id?: string; slug?: string },
-    q: {
-      userId: string | null;
-      cursor?: string;
-      limit: number;
-      language: string;
-      country: string;
-    },
-  ): Promise<FeedResult> {
-    this.getRepos();
-    const { id, path } = await this.resolveCategory(categoryRef);
-    const cohortKey = `category:${id}:${q.language}:${q.country}`;
-    const offset = q.cursor ? Number.parseInt(q.cursor, 10) : 0;
-    const candidateIds = await this.cache.getCohort(cohortKey, offset, offset + q.limit * 3);
-
-    if (candidateIds.length === 0) {
-      return this.liveCategoryQuery(path, q);
-    }
-    return this.dedupAndFetch(candidateIds, q.userId, q.limit, offset, candidateIds.length);
-  }
-
-  protected async liveCategoryQuery(
-    path: string,
-    q: {
-      userId: string | null;
-      limit: number;
-      language: string;
-      country: string;
-      cursor?: string;
-    },
-  ): Promise<FeedResult> {
-    this.getRepos();
-    const offset = q.cursor ? Number.parseInt(q.cursor, 10) : 0;
-    const qb = this.reelRepo
-      .createQueryBuilder("r")
-      .innerJoin("reel_product_tags", "t", "t.reel_id = r.id")
-      .innerJoin("products", "p", "p.id = t.product_id AND p.deleted_at IS NULL")
-      .innerJoin("categories", "c", "c.id = p.category_id AND c.deleted_at IS NULL")
-      .where("r.status = :status", { status: ReelStatus.approved })
-      .andWhere("r.deleted_at IS NULL")
-      .andWhere("r.language_code = :lang", { lang: q.language })
-      .andWhere("c.path LIKE :path", { path: `${path}%` })
-      .groupBy("r.id")
-      .orderBy("MAX(r.ranking_score)", "DESC")
-      .limit(q.limit + 1);
-    if (q.cursor) qb.offset(offset);
-    const rows = await qb.getMany();
-    const items = rows.slice(0, q.limit);
-    const nextCursor = rows.length > q.limit ? String(offset + items.length) : null;
     return { reels: items, nextCursor };
   }
 

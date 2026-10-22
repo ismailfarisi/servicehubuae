@@ -6,7 +6,7 @@ import {
   ServicePaymentMode,
 } from "@mypickuae/database";
 import { LessThan, type Repository } from "typeorm";
-import type { BookingPaymentClient } from "./booking-payment.client.ts";
+import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";
 import type { BookingStatusService } from "./booking-status.service.ts";
 
 // Reaper always acts as the system actor (spec §5.3: "reaper/timeout" edge) —
@@ -42,13 +42,13 @@ export interface ReapSummary {
  * call already releases the `staff_engagement` and invalidates the
  * availability cache internally; this service never touches the engagement
  * directly). After the booking is durably `expired`, it makes a
- * BEST-EFFORT attempt to void any outstanding Stripe hold via
- * `BookingPaymentClient` (money stays in order-service — this never talks
- * to Stripe directly): a deposit booking's uncaptured PaymentIntent gets
- * voided; a prepay booking's SetupIntent holds no money at all (it's a
- * saved-card verification, not a charge) and `BookingPaymentClient` has no
- * setup-intent-cancel method, so that leg is cleanup-only and is skipped
- * with a log line rather than attempted.
+ * BEST-EFFORT attempt to void any outstanding hold via the
+ * `BookingPaymentGateway` (this never talks to a payment provider
+ * directly): a deposit booking's uncaptured payment gets voided; a prepay
+ * booking's card setup holds no money at all (it's a saved-card
+ * verification, not a charge) and the gateway has no setup-cancel method,
+ * so that leg is cleanup-only and is skipped with a log line rather than
+ * attempted.
  *
  * Order matters, mirrored from the Task 7 brief: the slot is freed
  * UNCONDITIONALLY (the transition happens first); the payment void is
@@ -62,7 +62,7 @@ export class BookingReaperService {
     private readonly bookingRepo: Repository<Booking>,
     private readonly paymentRepo: Repository<Payment>,
     private readonly statusService: BookingStatusService,
-    private readonly paymentClient: BookingPaymentClient,
+    private readonly paymentClient: Pick<BookingPaymentGateway, "void">,
     private readonly windowMinutes: number,
   ) {}
 
@@ -75,7 +75,7 @@ export class BookingReaperService {
    *
    * The ceiling is deliberate, not unbounded: a cron-driven sweep that could
    * run for an unbounded number of pages would overlap its own next tick and
-   * hammer order-service. MAX_BATCHES * PAGE_SIZE (10 * 100 = 1000) is the
+   * hammer the payment gateway. MAX_BATCHES * PAGE_SIZE (10 * 100 = 1000) is the
    * per-run cap; whatever is left is picked up by the next tick.
    *
    * Paging uses a running `skip` offset advanced by the number of candidates
@@ -150,7 +150,7 @@ export class BookingReaperService {
    *      cancelling-and-refunding a booking they wanted.
    *   2. Otherwise VOID FIRST, expire second. A void that SUCCEEDS proves the
    *      PI was uncaptured and is now cancelled — only then is it safe to free
-   *      the slot. A void that THROWS (the succeeded-PI case, or order-service
+   *      the slot. A void that THROWS (the succeeded-PI case, or the payment gateway
    *      being down) leaves the booking `pending_payment` and counts as
    *      `errored` with a loud reconciliation-required log — the next sweep
    *      retries, and a late webhook can still confirm it. The failure is no
@@ -267,12 +267,12 @@ export class BookingReaperService {
       // prepay's payment_id points at a SetupIntent — a saved-card
       // verification, not a charge. No money is held, so an abandoned
       // SetupIntent is cleanup, not a money-safety hole (Task 7 brief).
-      // BookingPaymentClient has no setup-intent-cancel method (only
-      // setup/authorize/intent/capture/void/refund — void wraps
-      // paymentIntents.cancel, which does not accept a SetupIntent id), so
-      // this leg is intentionally skipped rather than misapplied.
+      // The gateway has no setup-cancel method (only
+      // setup/authorize/intent/capture/void/refund — void cancels a payment
+      // authorization, not a card setup), so this leg is intentionally
+      // skipped rather than misapplied.
       console.log(
-        `[booking-reaper] booking ${bookingId} is prepay — SetupIntent ${paymentId} left as-is (no money held, no cancel path on BookingPaymentClient)`,
+        `[booking-reaper] booking ${bookingId} is prepay — SetupIntent ${paymentId} left as-is (no money held, no setup-cancel path on the payment gateway)`,
       );
     }
   }

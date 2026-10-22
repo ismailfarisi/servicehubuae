@@ -45,13 +45,12 @@ export function CreatorSummaryCard() {
       {STATUS_CARDS.map(({ key, label }) => {
         const row = summary[key] ?? { count: 0, totalFils: 0 };
         return (
-          <div key={key} className="p-3.5" style={BOX}>
+          <div key={key} className="p-4" style={BOX}>
             <div
-              className="uppercase"
               style={{
                 fontFamily: MAISON_SANS,
-                fontSize: 10,
-                letterSpacing: "0.2em",
+                fontSize: 12,
+                fontWeight: 500,
                 color: "hsl(var(--nl-russet))",
               }}
             >
@@ -62,7 +61,9 @@ export function CreatorSummaryCard() {
               style={{
                 fontFamily: MAISON_SERIF,
                 fontSize: 22,
-                lineHeight: 1.15,
+                fontWeight: 700,
+                lineHeight: 1.2,
+                letterSpacing: "-0.01em",
                 color: "hsl(var(--nl-cacao))",
               }}
             >
@@ -72,7 +73,7 @@ export function CreatorSummaryCard() {
               className="mt-1"
               style={{
                 fontFamily: MAISON_SANS,
-                fontSize: 11,
+                fontSize: 12,
                 color: "hsl(var(--nl-russet))",
               }}
             >

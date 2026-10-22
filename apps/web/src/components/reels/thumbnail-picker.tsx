@@ -14,7 +14,7 @@ export function ThumbnailPicker({ candidates, initialUrl, onChange }: Props) {
 
   return (
     <div>
-      <label className="block text-sm font-semibold mb-2">Thumbnail</label>
+      <p className="block text-sm font-medium text-nl-cacao mb-2">Thumbnail</p>
       <div className="flex gap-2">
         {uniqueCandidates.map((url) => (
           <button
@@ -24,8 +24,8 @@ export function ThumbnailPicker({ candidates, initialUrl, onChange }: Props) {
               setSelected(url);
               onChange(url);
             }}
-            className={`border-2 rounded ${
-              selected === url ? "border-black" : "border-transparent"
+            className={`overflow-hidden rounded-xl border-2 transition-colors ${
+              selected === url ? "border-nl-amber ring-2 ring-nl-amber/20" : "border-transparent hover:border-nl-cacao/15"
             }`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}

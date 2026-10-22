@@ -1,6 +1,14 @@
 import { api } from "../api";
 
+/**
+ * `product_seeding` collabs can no longer be created (reels-service answers
+ * 422 product_seeding_unavailable); the value stays in the union only so legacy
+ * rows still render.
+ */
 export type CollabType = "product_seeding" | "paid_campaign" | "event_appearance";
+
+/** Collab types a creator can still filter for / a vendor can still create. */
+export const ACTIVE_COLLAB_TYPES = ["paid_campaign", "event_appearance"] as const satisfies readonly CollabType[];
 export type CollabApplicationStatus =
   | "invited"
   | "applied"
@@ -38,8 +46,6 @@ export interface CollabOpportunity {
   created_at: string;
   vendor_name: string | null;
   vendor_logo_url: string | null;
-  seeded_product_name: string | null;
-  seeded_product_image_url: string | null;
 }
 
 export interface BoardRow {

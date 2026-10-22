@@ -32,7 +32,7 @@ export function ReelAnalyticsTimeseries({
   return (
     <Card>
       <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold">Impressions + GMV over time</CardTitle>
+        <CardTitle className="text-base font-semibold">Engagement over time</CardTitle>
       </CardHeader>
       <CardContent className="p-4 pt-0 h-72">
         <ResponsiveContainer width="100%" height="100%">
@@ -54,10 +54,18 @@ export function ReelAnalyticsTimeseries({
             <Line
               yAxisId="R"
               type="monotone"
-              dataKey="attributedGmvFils"
+              dataKey="likes"
               stroke="#10b981"
               dot={false}
-              name="Attributed GMV (fils)"
+              name="Likes"
+            />
+            <Line
+              yAxisId="R"
+              type="monotone"
+              dataKey="saves"
+              stroke="#f59e0b"
+              dot={false}
+              name="Saves"
             />
           </ComposedChart>
         </ResponsiveContainer>

@@ -9,13 +9,7 @@ import {
   useMyCreatorApplication,
 } from "@/lib/queries/account";
 import { finalizeAvatarUpload, presignAvatarUpload } from "@/lib/api/creator-profile";
-import {
-  Eyebrow,
-  MaisonCheck,
-  SerifTitle,
-  MAISON_SERIF,
-  MAISON_SANS,
-} from "@/components/ui/maison-primitives";
+import { Eyebrow, MaisonCheck } from "@/components/ui/maison-primitives";
 
 // Same caps as the post-approval media kit's photo upload
 // (account/creator/_sections/media-kit.tsx) — one avatar-processing pipeline,
@@ -61,34 +55,13 @@ const INITIAL_FORM: FormState = {
   agreed_to_terms: false,
 };
 
-const FIELD_STYLE = {
-  border: "1px solid rgba(44,24,16,0.2)",
-  background: "rgba(255,255,255,0.55)",
-  fontFamily: MAISON_SANS,
-  fontSize: 13,
-  color: "hsl(var(--nl-cacao))",
-  borderRadius: 0,
-} as const;
+const FIELD_CLASS =
+  "mt-1 w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3.5 py-2.5 text-sm text-nl-cacao outline-none transition-colors focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20";
 
-const PRIMARY_BUTTON = {
-  background: "hsl(var(--nl-amber))",
-  color: "hsl(var(--nl-espresso))",
-  fontFamily: MAISON_SANS,
-  fontSize: 11,
-  letterSpacing: "0.22em",
-  textTransform: "uppercase" as const,
-  padding: "13px 30px",
-  border: "none",
-  borderRadius: 0,
-};
+const PRIMARY_BUTTON =
+  "inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors disabled:opacity-50";
 
-const FIELD_LABEL = {
-  fontFamily: MAISON_SANS,
-  fontSize: 11,
-  letterSpacing: "0.12em",
-  textTransform: "uppercase" as const,
-  color: "hsl(var(--nl-russet))",
-};
+const FIELD_LABEL = "text-sm font-medium text-nl-cacao";
 
 export default function CreatorApplyPage() {
   const t = useTranslations("account");
@@ -190,13 +163,12 @@ export default function CreatorApplyPage() {
   if (isCreator) {
     return (
       <div className="space-y-4">
-        <Eyebrow>CREATOR</Eyebrow>
-        <SerifTitle size={24}>{t("creatorApplyAlreadyTitle")}</SerifTitle>
+        <Eyebrow>Creator</Eyebrow>
+        <h1 className="font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">{t("creatorApplyAlreadyTitle")}</h1>
         <button
           type="button"
           onClick={() => router.replace(`/${locale}/account/creator`)}
-          style={{ fontFamily: MAISON_SANS, fontSize: 12, color: "hsl(var(--nl-amber))" }}
-          className="uppercase"
+          className="text-sm font-semibold text-nl-amber-text hover:underline"
         >
           {t("creatorApplyGoDashboard")} →
         </button>
@@ -206,15 +178,7 @@ export default function CreatorApplyPage() {
 
   if (loading) {
     return (
-      <div
-        className="min-h-[40vh] flex items-center justify-center"
-        style={{
-          fontFamily: MAISON_SERIF,
-          fontStyle: "italic",
-          fontSize: 16,
-          color: "hsl(var(--nl-russet))",
-        }}
-      >
+      <div className="min-h-[40vh] flex items-center justify-center text-sm text-nl-russet">
         {tCommon("loading")}
       </div>
     );
@@ -233,19 +197,19 @@ export default function CreatorApplyPage() {
     // reviewer's notes) instead of the submittable form.
     const isNeedsInfo = !applyMutation.isSuccess && existing?.status === "needs_info";
     return (
-      <div className="space-y-3">
-        <Eyebrow>CREATOR</Eyebrow>
-        <SerifTitle size={24}>
+      <div className="space-y-3 rounded-2xl border border-nl-cacao/10 bg-nl-linen p-6 shadow-sm">
+        <Eyebrow>Creator</Eyebrow>
+        <h1 className="font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
           {isNeedsInfo ? t("creatorApplyNeedsInfo") : t("creatorApplyPendingTitle")}
-        </SerifTitle>
+        </h1>
         {isNeedsInfo ? (
           existing?.review_notes && (
-            <p style={{ fontFamily: MAISON_SANS, fontSize: 14, color: "hsl(var(--nl-russet))" }}>
+            <p className="text-sm text-nl-russet">
               {existing.review_notes}
             </p>
           )
         ) : (
-          <p style={{ fontFamily: MAISON_SANS, fontSize: 14, color: "hsl(var(--nl-russet))" }}>
+          <p className="text-sm text-nl-russet">
             {t("creatorApplyPendingBody")}
           </p>
         )}
@@ -257,67 +221,55 @@ export default function CreatorApplyPage() {
   return (
     <div className="space-y-6">
       <div>
-        <Eyebrow>CREATOR</Eyebrow>
-        <SerifTitle size={26} className="mt-1.5">
+        <Eyebrow>Creator</Eyebrow>
+        <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
           {t("creatorApplyTitle")}
-        </SerifTitle>
-        <p
-          className="mt-2"
-          style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-russet))" }}
-        >
+        </h1>
+        <p className="mt-2 text-sm text-nl-russet">
           {t("creatorApplyIntro")}
         </p>
       </div>
 
       {existing?.status === "rejected" && (
-        <div
-          className="p-3"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 12.5,
-            border: "1px solid rgba(140,55,45,0.35)",
-            background: "rgba(140,55,45,0.07)",
-            color: "rgb(140,55,45)",
-          }}
-        >
+        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">
           {t("creatorApplyRejected")}
           {existing.review_notes ? `: ${existing.review_notes}` : ""}
         </div>
       )}
 
-      <form onSubmit={onSubmit} className="space-y-4">
+      <form
+        onSubmit={onSubmit}
+        className="space-y-4 rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 md:p-6 shadow-sm"
+      >
         <label className="block text-sm space-y-1">
-          <span style={FIELD_LABEL}>{t("creatorApplyDisplayName")}</span>
+          <span className={FIELD_LABEL}>{t("creatorApplyDisplayName")}</span>
           <input
-            className="mt-1 w-full px-3 py-2 outline-none transition-colors focus:border-nl-amber"
-            style={FIELD_STYLE}
+            className={FIELD_CLASS}
             value={form.display_name}
             maxLength={120}
             onChange={(e) => update("display_name", e.target.value)}
           />
           {fieldErrors.display_name && (
-            <span style={{ fontFamily: MAISON_SANS, fontSize: 11.5, color: "hsl(0,55%,42%)" }}>{t("required")}</span>
+            <span className="text-xs text-red-600">{t("required")}</span>
           )}
         </label>
 
         <label className="block text-sm space-y-1">
-          <span style={FIELD_LABEL}>{t("creatorApplyBio")}</span>
+          <span className={FIELD_LABEL}>{t("creatorApplyBio")}</span>
           <textarea
-            className="mt-1 w-full px-3 py-2 outline-none transition-colors focus:border-nl-amber"
-            style={FIELD_STYLE}
+            className={FIELD_CLASS}
             rows={4}
             maxLength={2000}
             value={form.bio}
             onChange={(e) => update("bio", e.target.value)}
           />
-          {fieldErrors.bio && <span style={{ fontFamily: MAISON_SANS, fontSize: 11.5, color: "hsl(0,55%,42%)" }}>{t("required")}</span>}
+          {fieldErrors.bio && <span className="text-xs text-red-600">{t("required")}</span>}
         </label>
 
         <label className="block text-sm space-y-1">
-          <span style={FIELD_LABEL}>{t("creatorApplyCategory")}</span>
+          <span className={FIELD_LABEL}>{t("creatorApplyCategory")}</span>
           <select
-            className="mt-1 w-full px-3 py-2 outline-none transition-colors focus:border-nl-amber"
-            style={FIELD_STYLE}
+            className={FIELD_CLASS}
             value={form.primary_category}
             onChange={(e) => update("primary_category", e.target.value)}
           >
@@ -330,11 +282,10 @@ export default function CreatorApplyPage() {
         </label>
 
         <div className="block text-sm space-y-1.5">
-          <span style={FIELD_LABEL}>{t("creatorApplyPhoto")}</span>
+          <span className={FIELD_LABEL}>{t("creatorApplyPhoto")}</span>
           <div className="flex items-center gap-3">
             <div
-              className="h-16 w-16 shrink-0 overflow-hidden rounded-full"
-              style={{ background: "rgba(44,24,16,0.06)" }}
+              className="h-16 w-16 shrink-0 overflow-hidden rounded-full bg-nl-pearl"
             >
               {user?.avatar_url && (
                 // eslint-disable-next-line @next/next/no-img-element
@@ -345,13 +296,7 @@ export default function CreatorApplyPage() {
               type="button"
               disabled={avatarBusy}
               onClick={() => avatarInputRef.current?.click()}
-              className="disabled:opacity-50"
-              style={{
-                ...FIELD_LABEL,
-                background: "transparent",
-                border: "1px solid rgba(44,24,16,0.2)",
-                padding: "9px 16px",
-              }}
+              className="rounded-lg border border-nl-cacao/15 bg-nl-linen px-4 py-2 text-sm font-semibold text-nl-cacao hover:bg-nl-pearl transition-colors disabled:opacity-50"
             >
               {avatarBusy ? tCommon("loading") : t("creatorApplyAddPhoto")}
             </button>
@@ -364,7 +309,7 @@ export default function CreatorApplyPage() {
             />
           </div>
           {avatarError && (
-            <span style={{ fontFamily: MAISON_SANS, fontSize: 11.5, color: "hsl(0,55%,42%)" }}>
+            <span className="text-xs text-red-600">
               {avatarError}
             </span>
           )}
@@ -372,28 +317,25 @@ export default function CreatorApplyPage() {
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <label className="block text-sm space-y-1">
-            <span style={FIELD_LABEL}>Instagram</span>
+            <span className={FIELD_LABEL}>Instagram</span>
             <input
-              className="mt-1 w-full px-3 py-2 outline-none transition-colors focus:border-nl-amber"
-              style={FIELD_STYLE}
+              className={FIELD_CLASS}
               value={form.instagram}
               onChange={(e) => update("instagram", e.target.value)}
             />
           </label>
           <label className="block text-sm space-y-1">
-            <span style={FIELD_LABEL}>TikTok</span>
+            <span className={FIELD_LABEL}>TikTok</span>
             <input
-              className="mt-1 w-full px-3 py-2 outline-none transition-colors focus:border-nl-amber"
-              style={FIELD_STYLE}
+              className={FIELD_CLASS}
               value={form.tiktok}
               onChange={(e) => update("tiktok", e.target.value)}
             />
           </label>
           <label className="block text-sm space-y-1">
-            <span style={FIELD_LABEL}>YouTube</span>
+            <span className={FIELD_LABEL}>YouTube</span>
             <input
-              className="mt-1 w-full px-3 py-2 outline-none transition-colors focus:border-nl-amber"
-              style={FIELD_STYLE}
+              className={FIELD_CLASS}
               value={form.youtube}
               onChange={(e) => update("youtube", e.target.value)}
             />
@@ -401,22 +343,20 @@ export default function CreatorApplyPage() {
         </div>
 
         <label className="block text-sm space-y-1">
-          <span style={FIELD_LABEL}>{t("creatorApplyFollowers")}</span>
+          <span className={FIELD_LABEL}>{t("creatorApplyFollowers")}</span>
           <input
             type="number"
             min={0}
-            className="mt-1 w-full px-3 py-2 outline-none transition-colors focus:border-nl-amber"
-            style={FIELD_STYLE}
+            className={FIELD_CLASS}
             value={form.follower_estimate}
             onChange={(e) => update("follower_estimate", e.target.value)}
           />
         </label>
 
         <label className="block text-sm space-y-1">
-          <span style={FIELD_LABEL}>{t("creatorApplySamples")}</span>
+          <span className={FIELD_LABEL}>{t("creatorApplySamples")}</span>
           <textarea
-            className="mt-1 w-full px-3 py-2 outline-none transition-colors focus:border-nl-amber"
-            style={FIELD_STYLE}
+            className={FIELD_CLASS}
             rows={3}
             placeholder="https://..."
             value={form.sample_urls}
@@ -425,20 +365,16 @@ export default function CreatorApplyPage() {
         </label>
 
         <label className="block text-sm space-y-1">
-          <span style={FIELD_LABEL}>{t("creatorApplyMotivation")}</span>
+          <span className={FIELD_LABEL}>{t("creatorApplyMotivation")}</span>
           <textarea
-            className="mt-1 w-full px-3 py-2 outline-none transition-colors focus:border-nl-amber"
-            style={FIELD_STYLE}
+            className={FIELD_CLASS}
             rows={3}
             value={form.motivation}
             onChange={(e) => update("motivation", e.target.value)}
           />
         </label>
 
-        <label
-          className="flex items-center gap-2 text-sm"
-          style={{ fontFamily: MAISON_SANS, color: "hsl(var(--nl-cacao))" }}
-        >
+        <label className="flex items-center gap-2 text-sm text-nl-cacao">
           <input
             type="checkbox"
             className="sr-only"
@@ -449,11 +385,11 @@ export default function CreatorApplyPage() {
           {t("creatorApplyTerms")}
         </label>
         {fieldErrors.agreed_to_terms && (
-          <span style={{ fontFamily: MAISON_SANS, fontSize: 11.5, color: "hsl(0,55%,42%)" }}>{t("creatorApplyTermsRequired")}</span>
+          <span className="text-xs text-red-600">{t("creatorApplyTermsRequired")}</span>
         )}
 
         {applyMutation.isError && (
-          <div style={{ fontFamily: MAISON_SANS, fontSize: 12.5, color: "hsl(0,55%,42%)" }}>
+          <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
             {t("creatorApplyError")}
           </div>
         )}
@@ -461,8 +397,7 @@ export default function CreatorApplyPage() {
         <button
           type="submit"
           disabled={applyMutation.isPending}
-          className="w-full sm:w-auto disabled:opacity-50"
-          style={PRIMARY_BUTTON}
+          className={`${PRIMARY_BUTTON} w-full sm:w-auto`}
         >
           {applyMutation.isPending ? t("creatorApplySubmitting") : t("creatorApplySubmit")}
         </button>

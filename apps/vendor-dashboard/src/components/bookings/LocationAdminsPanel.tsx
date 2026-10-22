@@ -115,7 +115,7 @@ export function LocationAdminsPanel({ locationId }: { locationId: string }) {
 				distinctions.
 			</p>
 
-			<div className="flex items-end gap-2 rounded-lg border border-pearl/28 p-3">
+			<div className="flex items-end gap-2 rounded-lg border border-input p-3">
 				<div className="flex-1">
 					<Label className="mb-1 block text-xs">Team member</Label>
 					<Select value={selectedUserId} onValueChange={setSelectedUserId}>
@@ -172,7 +172,7 @@ export function LocationAdminsPanel({ locationId }: { locationId: string }) {
 					description="Add a team member above to let them manage this branch without full vendor-wide access."
 				/>
 			) : (
-				<div className="rounded-lg border border-pearl/14 divide-y divide-pearl/14">
+				<div className="rounded-lg border border-pearl divide-y divide-pearl">
 					{members.map((m) => (
 						<div key={m.id} className="flex items-center justify-between px-4 py-3">
 							<div>

@@ -22,7 +22,7 @@ export function TabList({
 	const [draggedId, setDraggedId] = useState<string | null>(null);
 
 	return (
-		<ul className="list-none m-0 p-0 divide-y divide-nl-cacao/10">
+		<ul className="list-none m-0 p-0 divide-y divide-cacao/10">
 			{tabs.map((tab) => (
 				<li
 					key={tab.id}
@@ -40,17 +40,17 @@ export function TabList({
 						setDraggedId(null);
 					}}
 					className={`flex items-center gap-2 px-3 py-2 cursor-pointer ${
-						selectedId === tab.id ? "bg-nl-amber/10" : "hover:bg-nl-cacao/5"
+						selectedId === tab.id ? "bg-amber/10" : "hover:bg-cacao/5"
 					}`}
 					onClick={() => onSelect(tab.id)}
 					onKeyDown={(e) => {
 						if (e.key === "Enter" || e.key === " ") onSelect(tab.id);
 					}}
 				>
-					<GripVertical className="h-4 w-4 text-nl-russet/50 cursor-grab" />
-					<span className="flex-1 text-sm text-nl-cacao">{tab.label.en}</span>
+					<GripVertical className="h-4 w-4 text-taupe/50 cursor-grab" />
+					<span className="flex-1 text-sm text-cacao">{tab.label.en}</span>
 					{tab.kind === "custom" && (
-						<LinkIcon className="h-3.5 w-3.5 text-nl-russet/60" />
+						<LinkIcon className="h-3.5 w-3.5 text-taupe/60" />
 					)}
 					<button
 						type="button"
@@ -59,7 +59,7 @@ export function TabList({
 							e.stopPropagation();
 							onToggleEnabled(tab.id);
 						}}
-						className="text-nl-russet hover:text-nl-cacao"
+						className="text-taupe hover:text-cacao"
 					>
 						{tab.enabled ? (
 							<Eye className="h-4 w-4" />

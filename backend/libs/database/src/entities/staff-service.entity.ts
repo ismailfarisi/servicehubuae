@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +12,15 @@ import {
 // M:N — which offerings a staff member is eligible to perform.
 @Entity("staff_services")
 @Index(["staff_member_id", "service_offering_id"], { unique: true, where: "deleted_at IS NULL" })
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("ServiceOffering", ["service_offering_id"], ["id"], {
+  name: "fk_staff_services_offering",
+  onDelete: "CASCADE",
+})
+@ForeignKey("StaffMember", ["staff_member_id"], ["id"], {
+  name: "fk_staff_services_staff",
+  onDelete: "CASCADE",
+})
 export class StaffService {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

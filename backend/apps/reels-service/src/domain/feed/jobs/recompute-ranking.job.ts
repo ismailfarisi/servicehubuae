@@ -43,16 +43,13 @@ export class RecomputeRankingJob {
         const repo = AppDataSource.getRepository(Reel);
         const reel = await repo.findOne({ where: { id: job.data.reelId } });
         if (!reel || !reel.published_at) return;
-        // Aggregate tap_count from reel_product_tags
-        const tapAgg = await AppDataSource.query(
-          "SELECT COALESCE(SUM(tap_count), 0)::int AS total FROM reel_product_tags WHERE reel_id = $1",
-          [reel.id],
-        );
+        // Product taps came from reel_product_tags, removed in the MyPickUAE
+        // fork; ranking runs on engagement + recency only.
         const score = this.ranker.computeScore({
           likeCount: reel.like_count,
           saveCount: reel.save_count,
           shareCount: reel.share_count,
-          tapCount: tapAgg[0]?.total ?? 0,
+          tapCount: 0,
           attributedPurchaseCount: 0, // M3 will populate this
           publishedAt: reel.published_at,
           now: new Date(),

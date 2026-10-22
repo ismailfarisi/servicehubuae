@@ -1,6 +1,11 @@
 "use client";
 
-import type { SuggestResponse } from "@/lib/queries/search";
+import {
+	categoryHref,
+	searchResultsHref,
+	serviceHref,
+	type SuggestResponse,
+} from "@/lib/queries/search";
 import { formatPrice } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 import { useLocale } from "next-intl";
@@ -27,7 +32,7 @@ export function SearchAutocompleteResults({
 		<div className="bg-background border border-border/60 rounded-2xl shadow-xl shadow-black/5 overflow-hidden">
 			{data.categories.length > 0 && (
 				<div className="p-3 border-b border-border/40">
-					<p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-2">
+					<p className="text-xs font-medium text-nl-russet mb-2">
 						Categories
 					</p>
 					<div className="flex flex-wrap gap-2">
@@ -41,7 +46,7 @@ export function SearchAutocompleteResults({
 										: "border-border/60 hover:bg-muted/60"
 								}`}
 								onMouseDown={() => {
-									router.push(`/${locale}/c/${c.slug}`);
+									router.push(categoryHref(locale, c.slug));
 									onSelect();
 								}}
 							>
@@ -51,56 +56,27 @@ export function SearchAutocompleteResults({
 					</div>
 				</div>
 			)}
-			{data.brands.length > 0 && (
-				<div className="p-3 border-b border-border/40">
-					<p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 mb-2">
-						Brands
-					</p>
-					<div className="flex flex-wrap gap-2">
-						{data.brands.map((b, i) => {
-							const idx = data.categories.length + i;
-							return (
-								<button
-									key={b.id}
-									type="button"
-									className={`text-xs px-3 py-1 rounded-full border transition-colors ${
-										activeIndex === idx
-											? "border-primary bg-primary/5"
-											: "border-border/60 hover:bg-muted/60"
-									}`}
-									onMouseDown={() => {
-										router.push(`/${locale}/brand/${b.slug}`);
-										onSelect();
-									}}
-								>
-									{b.name}
-								</button>
-							);
-						})}
-					</div>
-				</div>
-			)}
-			{data.products.length > 0 && (
+			{data.services.length > 0 && (
 				<div className="p-2">
-					{data.products.map((p, i) => {
-						const idx = data.categories.length + data.brands.length + i;
+					{data.services.map((s, i) => {
+						const idx = data.categories.length + i;
 						return (
 							<button
-								key={p.id}
+								key={s.id}
 								type="button"
 								className={`w-full flex items-center gap-3 px-3 py-2.5 text-sm rounded-xl text-start transition-colors ${
 									idx === activeIndex ? "bg-primary/5" : "hover:bg-muted/60"
 								}`}
 								onMouseDown={() => {
-									router.push(`/${locale}/product/${p.slug}`);
+									router.push(serviceHref(locale, s.slug));
 									onSelect();
 								}}
 							>
-								{p.image_url ? (
+								{s.media_url ? (
 									<div className="w-10 h-10 rounded-lg overflow-hidden bg-muted shrink-0">
 										<Image
-											src={p.image_url}
-											alt={p.name}
+											src={s.media_url}
+											alt={s.name}
 											width={40}
 											height={40}
 											className="w-full h-full object-cover"
@@ -110,11 +86,10 @@ export function SearchAutocompleteResults({
 									<div className="w-10 h-10 rounded-lg bg-muted shrink-0" />
 								)}
 								<div className="flex-1 min-w-0">
-									<p className="truncate font-medium text-sm">{p.name}</p>
-									<p className="text-xs text-muted-foreground">
-										{p.price_min === p.price_max
-											? formatPrice(p.price_min)
-											: `${formatPrice(p.price_min)} – ${formatPrice(p.price_max)}`}
+									<p className="truncate font-medium text-sm">{s.name}</p>
+									<p className="truncate text-xs text-muted-foreground">
+										{formatPrice(s.price_fils, "AED", locale)}
+										{s.vendor_name ? ` · ${s.vendor_name}` : ""}
 									</p>
 								</div>
 								<ArrowRight className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
@@ -128,9 +103,7 @@ export function SearchAutocompleteResults({
 					type="button"
 					className="text-xs text-primary font-medium hover:text-primary/80 transition-colors flex items-center gap-1"
 					onMouseDown={() => {
-						router.push(
-							`/${locale}/search?q=${encodeURIComponent(query.trim())}`,
-						);
+						router.push(searchResultsHref(locale, query.trim()));
 						onSelect();
 					}}
 				>

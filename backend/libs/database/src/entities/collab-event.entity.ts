@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ForeignKey,
+  Index,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { CollabEventType } from "../enums.ts";
 
 /**
@@ -6,6 +13,16 @@ import { CollabEventType } from "../enums.ts";
  * reel_brief_events). No updated_at and no deleted_at — events are immutable.
  */
 @Entity("collab_events")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("CollabApplication", ["application_id"], ["id"], {
+  name: "fk_collab_event_application",
+  onDelete: "CASCADE",
+})
+@ForeignKey("CollabOpportunity", ["opportunity_id"], ["id"], {
+  name: "fk_collab_event_opportunity",
+  onDelete: "CASCADE",
+})
+@Index("idx_collab_events_opp", ["opportunity_id", "created_at"])
 export class CollabEvent {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

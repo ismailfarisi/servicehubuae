@@ -3,6 +3,8 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -16,6 +18,12 @@ import {
 import type { Reel } from "./reel.entity.ts";
 
 @Entity("reel_license_offers")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("User", ["creator_id"], ["id"], { name: "fk_rlo_creator", onDelete: "CASCADE" })
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_rlo_vendor", onDelete: "CASCADE" })
+@Index("idx_rlo_creator_status", ["creator_id", "status"], { where: "deleted_at IS NULL" })
+@Index("idx_rlo_expiry", ["status", "expires_at"], { where: "deleted_at IS NULL" })
+@Index("idx_rlo_vendor_status", ["vendor_id", "status"], { where: "deleted_at IS NULL" })
 export class ReelLicenseOffer {
   @PrimaryGeneratedColumn("uuid") id!: string;
 

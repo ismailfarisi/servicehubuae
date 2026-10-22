@@ -8,6 +8,12 @@ import { buildAlternates } from "@/lib/seo/alternates";
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+interface CategoryNode {
+  slug: string;
+  name: string;
+  children?: CategoryNode[];
+}
+
 // Matches the category listing's posture. Availability is not rendered here,
 // but facet counts move whenever a vendor edits coverage, so a cached shell
 // would go stale in a way that is confusing rather than merely old.
@@ -18,15 +24,22 @@ interface Props {
   searchParams: Promise<Record<string, string>>;
 }
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
   const { locale } = await params;
+  const { category } = await searchParams;
   const t = await getTranslations({ locale, namespace: "service.listing" });
+  // Canonical is the clean path so filter permutations aren't indexed as
+  // duplicates — except the category filter, which is the category landing
+  // page (categories have no route of their own; sitemaps/categories.xml
+  // advertises these URLs).
+  const canonicalPath =
+    typeof category === "string" && category
+      ? `/services?category=${encodeURIComponent(category)}`
+      : "/services";
   return {
     title: t("title"),
     description: t("intro"),
-    // Self-referencing canonical to the clean path so filter permutations
-    // aren't indexed as duplicates.
-    alternates: buildAlternates(locale, "/services"),
+    alternates: buildAlternates(locale, canonicalPath),
   };
 }
 
@@ -38,21 +51,38 @@ export default async function ServicesPage({ params, searchParams }: Props) {
   const t = await getTranslations({ locale, namespace: "service.listing" });
   const server = await apiServer(locale);
 
-  // Facets come back keyed by SLUG. Delivery zones supply the display names,
-  // so the area filter reads "Dubai Marina" rather than "dubai-marina". This
-  // endpoint is already public and unauthenticated, and the booking checkout
-  // already uses it for exactly this slug -> name job.
-  const zones: Array<{ slug: string; name: string }> = await server
-    .get("/shipping/delivery-zones")
-    .then((r) => r.data.data ?? [])
-    // I3b: degrade to an empty zone list (area facet falls back to raw
-    // slugs) rather than 500ing the whole page, but log so a real backend
-    // outage here is distinguishable from "no delivery zones configured".
-    .catch((err) => {
-      console.error("[services page] GET /shipping/delivery-zones failed:", err);
-      return [];
-    });
-  const zoneNameBySlug = new Map(zones.map((z) => [z.slug, z.name]));
+  // Facets come back keyed by SLUG. Areas and the category tree supply the
+  // display names, so the area filter reads "Dubai Marina" rather than
+  // "dubai-marina". Both endpoints are public and unauthenticated; the
+  // booking checkout uses /areas for exactly this slug -> name job.
+  // Each degrades to an empty list (facets fall back to raw slugs) rather
+  // than 500ing the whole page, but logs so a real backend outage is
+  // distinguishable from "nothing configured".
+  const [areas, categoryTree] = await Promise.all([
+    server
+      .get("/areas")
+      .then((r) => (r.data.data ?? []) as Array<{ slug: string; name: string }>)
+      .catch((err) => {
+        console.error("[services page] GET /areas failed:", err);
+        return [] as Array<{ slug: string; name: string }>;
+      }),
+    server
+      .get("/categories/tree")
+      .then((r) => (r.data.data ?? []) as CategoryNode[])
+      .catch((err) => {
+        console.error("[services page] GET /categories/tree failed:", err);
+        return [] as CategoryNode[];
+      }),
+  ]);
+  const areaNameBySlug = new Map(areas.map((a) => [a.slug, a.name]));
+  const categoryNameBySlug = new Map<string, string>();
+  const walk = (nodes: CategoryNode[]) => {
+    for (const n of nodes) {
+      categoryNameBySlug.set(n.slug, n.name);
+      if (n.children?.length) walk(n.children);
+    }
+  };
+  walk(categoryTree);
 
   const res: ServiceSearchResponse = await server
     .get("/services", { params: buildServiceListingParams(filters, 24, locale) })
@@ -92,16 +122,16 @@ export default async function ServicesPage({ params, searchParams }: Props) {
     });
 
   const facetConfig = {
-    // Fall back to the slug if a zone was deleted after indexing — a readable
+    // Fall back to the slug if an area was deleted after indexing — a readable
     // slug beats an empty label.
     areas: res.facets.areas.map((f) => ({
       value: f.value,
-      label: zoneNameBySlug.get(f.value) ?? f.value,
+      label: areaNameBySlug.get(f.value) ?? f.value,
       count: f.count,
     })),
     categories: res.facets.categories.map((f) => ({
       value: f.value,
-      label: f.value,
+      label: categoryNameBySlug.get(f.value) ?? f.value,
       count: f.count,
     })),
     priceRange: { min: 0, max: 100000 },
@@ -113,22 +143,22 @@ export default async function ServicesPage({ params, searchParams }: Props) {
   );
 
   return (
-    <div className="mx-auto max-w-[1400px] py-4 px-4">
-      <h1 className="font-serif text-3xl text-nl-cacao mb-1">{t("title")}</h1>
-      <p className="text-sm text-nl-russet mb-6">{t("intro")}</p>
+    <div className="mx-auto max-w-[1400px] px-4 py-6 md:py-10">
+      <h1 className="mb-1 font-display text-3xl font-bold leading-tight tracking-tight text-nl-cacao md:text-4xl">{t("title")}</h1>
+      <p className="mb-6 text-base text-nl-russet md:mb-8">{t("intro")}</p>
 
-      <div className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-8">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-[260px_1fr] md:items-start lg:gap-8">
         <ServiceFilterSidebar config={facetConfig} />
 
         <div>
-          <p className="text-[11px] uppercase tracking-[0.2em] text-nl-russet mb-4">
+          <p className="mb-4 text-sm font-medium text-nl-russet">
             {t("results", { count: res.total })}
             {activeCount > 0 ? ` · ${activeCount}` : ""}
           </p>
 
           {res.data.length === 0 ? (
-            <div className="py-16 text-center">
-              <p className="font-serif text-xl text-nl-cacao mb-2">{t("emptyTitle")}</p>
+            <div className="rounded-2xl border border-nl-cacao/10 bg-nl-pearl px-6 py-16 text-center">
+              <p className="mb-2 font-display text-xl font-semibold text-nl-cacao">{t("emptyTitle")}</p>
               <p className="text-sm text-nl-russet">{t("emptyHint")}</p>
             </div>
           ) : (

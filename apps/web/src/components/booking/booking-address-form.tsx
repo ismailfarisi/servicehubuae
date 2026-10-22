@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Eyebrow, MAISON_SANS, MAISON_SERIF, MaisonRadio, MaisonTile } from "@/components/ui/maison-primitives";
+import { Eyebrow, MaisonRadio, MaisonTile } from "@/components/ui/maison-primitives";
 
 export interface HomeVisitAddressState {
   full_name: string;
@@ -68,15 +68,8 @@ export function BookingAddressForm({
 
   return (
     <div className="mt-6">
-      <Eyebrow className="mb-2.5">{t("addressTitle")}</Eyebrow>
-      {areaName && (
-        <p
-          className="mb-3"
-          style={{ fontFamily: MAISON_SANS, fontSize: 12, color: "hsl(var(--nl-russet))" }}
-        >
-          {areaName}
-        </p>
-      )}
+      <Eyebrow className="mb-2.5 text-sm">{t("addressTitle")}</Eyebrow>
+      {areaName && <p className="mb-3 text-sm text-nl-russet">{areaName}</p>}
 
       {hasSaved && !useNewAddress && (
         <div className="space-y-2">
@@ -89,9 +82,9 @@ export function BookingAddressForm({
             >
               <div className="flex items-start gap-2.5">
                 <MaisonRadio selected={selectedAddressId === addr.id} />
-                <div style={{ fontFamily: MAISON_SANS, fontSize: 12.5, color: "hsl(var(--nl-cacao))" }}>
-                  <div>{addr.full_name}</div>
-                  <div style={{ color: "hsl(var(--nl-russet))" }}>
+                <div className="text-sm text-nl-cacao">
+                  <div className="font-medium">{addr.full_name}</div>
+                  <div className="text-nl-russet">
                     {[addr.street, addr.area, addr.city, addr.emirate].filter(Boolean).join(", ")}
                   </div>
                 </div>
@@ -105,42 +98,21 @@ export function BookingAddressForm({
         <button
           type="button"
           onClick={onToggleNewAddress}
-          className="mt-3 uppercase"
-          style={{
-            fontFamily: MAISON_SANS,
-            fontSize: 10.5,
-            letterSpacing: "0.18em",
-            color: "hsl(var(--nl-amber))",
-          }}
+          className="mt-3 text-sm font-semibold text-nl-amber-text hover:underline"
         >
           {useNewAddress ? t("addressUseSaved") : t("addressAddNew")}
         </button>
       )}
 
       {showNewForm && (
-        <div className="mt-3 space-y-2.5">
+        <div className="mt-3 space-y-3">
           {ADDRESS_FIELDS.map(({ key, labelKey, required }) => {
             const id = `home-visit-${key}`;
             return (
-              <div
-                key={key}
-                style={{
-                  border: "1px solid rgba(44,24,16,0.16)",
-                  background: "rgba(255,255,255,0.55)",
-                  padding: "10px 14px 8px",
-                }}
-              >
-                <label
-                  htmlFor={id}
-                  className="block uppercase"
-                  style={{ fontSize: 9, letterSpacing: "0.22em", color: "hsl(var(--nl-russet))" }}
-                >
+              <div key={key}>
+                <label htmlFor={id} className="mb-1.5 block text-xs font-medium text-nl-russet">
                   {t(labelKey as any)}
-                  {required && (
-                    <span className="ms-1" style={{ color: "hsl(var(--nl-amber))" }}>
-                      *
-                    </span>
-                  )}
+                  {required && <span className="ms-1 text-nl-amber-text">*</span>}
                 </label>
                 <input
                   id={id}
@@ -148,15 +120,7 @@ export function BookingAddressForm({
                   value={newAddress[key]}
                   onChange={(e) => onChangeNewAddress(key, e.target.value)}
                   required={required}
-                  className="w-full bg-transparent outline-none"
-                  style={{
-                    fontFamily: MAISON_SERIF,
-                    fontSize: 15,
-                    color: "hsl(var(--nl-cacao))",
-                    marginTop: 4,
-                    border: "none",
-                    padding: 0,
-                  }}
+                  className="w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3.5 py-2.5 text-sm text-nl-cacao outline-none transition focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20"
                 />
               </div>
             );

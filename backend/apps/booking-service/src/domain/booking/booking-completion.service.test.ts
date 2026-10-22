@@ -4,7 +4,7 @@
 // booking-auth.service.test.ts / booking-reaper.service.test.ts's shape.
 // Verifies BookingCompletionService.onCompleted resolves the right
 // PaymentIntent id (or none) per payment_mode and forwards the booking's
-// snapshotted commission fields verbatim to BookingPaymentClient.complete.
+// snapshotted commission fields verbatim to BookingPaymentGateway.complete.
 import { describe, expect, it, mock } from "bun:test";
 import { CommissionType, ServicePaymentMode } from "@mypickuae/database";
 import {

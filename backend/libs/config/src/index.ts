@@ -15,8 +15,7 @@ export const config = {
   port: {
     gateway: Number(process.env.GATEWAY_PORT) || 3000,
     auth: Number(process.env.AUTH_PORT) || 3001,
-    product: Number(process.env.PRODUCT_PORT) || 3002,
-    order: Number(process.env.ORDER_PORT) || 3003,
+    catalog: Number(process.env.CATALOG_PORT) || 3002,
     vendor: Number(process.env.VENDOR_PORT) || 3004,
     notification: Number(process.env.NOTIFICATION_PORT) || 3005,
     cms: Number(process.env.CMS_PORT) || 3006,
@@ -26,8 +25,7 @@ export const config = {
   },
   serviceHost: {
     auth: process.env.AUTH_HOST || "localhost",
-    product: process.env.PRODUCT_HOST || "localhost",
-    order: process.env.ORDER_HOST || "localhost",
+    catalog: process.env.CATALOG_HOST || "localhost",
     vendor: process.env.VENDOR_HOST || "localhost",
     notification: process.env.NOTIFICATION_HOST || "localhost",
     cms: process.env.CMS_HOST || "localhost",
@@ -98,68 +96,13 @@ export const config = {
       `http://localhost:${Number(process.env.NOTIFICATION_PORT) || 3005}`,
   },
   stripe: {
-    secretKey:
-      process.env.STRIPE_SECRET_KEY ||
-      "",
-    connectWebhookSecret:
-      process.env.STRIPE_CONNECT_WEBHOOK_SECRET || "",
+    secretKey: process.env.STRIPE_SECRET_KEY || "",
+    connectWebhookSecret: process.env.STRIPE_CONNECT_WEBHOOK_SECRET || "",
   },
-  tamara: {
-    apiToken: process.env.TAMARA_API_TOKEN || "",
-    apiBaseUrl: process.env.TAMARA_API_BASE_URL || "https://api-sandbox.tamara.co",
-    notificationToken: process.env.TAMARA_NOTIFICATION_TOKEN || "",
-    successUrl:
-      process.env.TAMARA_SUCCESS_URL ||
-      process.env.WEB_URL ||
-      "http://localhost:4000/checkout/tamara/success",
-    failureUrl:
-      process.env.TAMARA_FAILURE_URL ||
-      process.env.WEB_URL ||
-      "http://localhost:4000/checkout/tamara/failure",
-    cancelUrl:
-      process.env.TAMARA_CANCEL_URL ||
-      process.env.WEB_URL ||
-      "http://localhost:4000/checkout/tamara/cancel",
-    notificationUrl: process.env.TAMARA_NOTIFICATION_URL || "http://localhost:3003/webhooks/tamara",
-    // Origins that a client may supply merchant redirect URLs for. Anything
-    // else falls back to the configured URL above — a client-controlled
-    // redirect handed to Tamara verbatim is an open redirect, since Tamara
-    // sends the customer there off the back of a genuine payment.
-    // WEB_URL is read directly rather than via config.bookings.appUrl: that
-    // key is booking-scoped, and this is the same env var the *Url fallbacks
-    // two lines above already use.
-    //
-    // WEB_URL/WEB_WWW_URL default to the real storefront hostnames — mirrors
-    // api-gateway/src/app.ts's CORS origin fallback
-    // (`process.env.WEB_URL || "https://mypickuae.com"`) in spirit, because
-    // WEB_URL is never actually set in the production env (verified against
-    // terraform/production/user-data.sh, deploy-prod.yml's SSM PAIRS, and
-    // refresh-env-from-ssm.sh before this fix). Without a fallback here the
-    // allowlist resolved to `[]` in prod, so every client-supplied redirect
-    // URL was silently discarded (resolveMerchantUrl falls back to the
-    // static configured URL, which carries no `?order=`) — the whole
-    // per-request-redirect feature no-op'd with no error anywhere. See C1 in
-    // the Tamara redirect final review.
-    //
-    // The fallback is applied AFTER safeOrigin(), not via `||` before it
-    // (final-review fix N2): a `||` default only covers unset/empty, so a
-    // SET-but-malformed value (e.g. an operator typing "mypickuae.com" with no
-    // scheme into WEB_URL/PROD_WEB_URL) is truthy, reaches safeOrigin(),
-    // returns null, and gets filtered out below — silently re-opening the
-    // exact `[]`-allowlist outage C1 fixed, just via a malformed value
-    // instead of an unset one.
-    allowedRedirectOrigins: [
-      safeOrigin(process.env.WEB_URL) ?? "https://mypickuae.com",
-      safeOrigin(process.env.WEB_WWW_URL) ?? "https://www.mypickuae.com",
-      ...(isProduction ? [] : ["http://localhost:4000", "http://127.0.0.1:4000"]),
-    ].filter((origin): origin is string => Boolean(origin)),
-    // Non-production only, NEVER in prod: lets Vercel preview deploys (which
-    // mint a per-deployment hostname a fixed allowlist can't enumerate) supply
-    // a Tamara redirect URL too. Mirrors previewOriginPatterns() in
-    // api-gateway/src/app.ts — same env var, same fail-closed-on-malformed-
-    // -pattern behavior — deliberately duplicated rather than shared so a typo
-    // in one consumer's regex can't affect the other.
-    allowedRedirectOriginPatterns: previewRedirectOriginPatterns(),
+  payments: {
+    // Card payments (prepay/deposit) need the MyFatoorah module (M2). Until it
+    // ships, only pay_at_venue offerings can be published and booked.
+    onlineEnabled: process.env.ONLINE_PAYMENTS_ENABLED === "true",
   },
   whatsapp: {
     // Meta WhatsApp Cloud API. All optional — blank accessToken/phoneNumberId
@@ -218,9 +161,9 @@ export const config = {
     noShowPlatformStrikeThreshold:
       Number(process.env.BOOKING_NOSHOW_PLATFORM_STRIKE_THRESHOLD) || 8,
     // Base URL for customer-facing deep links in booking notifications (the
-    // no-show dispute/support link, spec §5.3 amended §5.3). Reuses the shared
-    // WEB_URL env the tamara.* URLs already fall back to, so there's one storefront
-    // base across the monorepo; a dev default keeps this usable without env.
+    // no-show dispute/support link, spec §5.3 amended §5.3). Reads the shared
+    // WEB_URL env, so there is one storefront base across the monorepo; a dev
+    // default keeps this usable without env.
     appUrl: process.env.WEB_URL || "http://localhost:4000",
     // Phase 6 Task 5 (outbound signed iCal feed) — HMAC secret for
     // ical-feed-token.ts. The token itself is long-lived (a subscribed
@@ -240,9 +183,9 @@ export const config = {
     // forgeable-dev-key window there either.
     //
     // What changed is WHEN it throws. `config` is a single eagerly-evaluated
-    // module-level object imported by all 10 services, so evaluating
-    // requireEnv() at construction time took down api-gateway, auth, order,
-    // product… on a missing secret, even though booking-service is the only
+    // module-level object imported by every service, so evaluating
+    // requireEnv() at construction time took down api-gateway, auth, catalog,
+    // vendor… on a missing secret, even though booking-service is the only
     // consumer. As a getter the check runs on FIRST ACCESS instead, so the
     // blast radius is exactly the code path that needs the secret
     // (booking-service's container.ts / ical-feed.routes.ts). Call sites are
@@ -268,7 +211,6 @@ export const config = {
     apiKey: isProduction
       ? requireEnv("TYPESENSE_API_KEY")
       : process.env.TYPESENSE_API_KEY || "dev-typesense-key",
-    collectionName: process.env.TYPESENSE_COLLECTION || "products",
     servicesCollectionName: process.env.TYPESENSE_SERVICES_COLLECTION || "service_offerings",
   },
   cloudflareStream: {
@@ -305,35 +247,3 @@ export const config = {
 } as const;
 
 export type Config = typeof config;
-
-function safeOrigin(url: string | undefined): string | null {
-  if (!url) return null;
-  try {
-    return new URL(url).origin;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Optional extra-origin regex for Tamara redirect validation, non-production
- * only. `new RegExp()` throws on a malformed pattern — fails CLOSED (no extra
- * origin allowed) rather than crash-looping every service that imports
- * `config`, same rationale as previewOriginPatterns() in
- * api-gateway/src/app.ts, which this mirrors.
- */
-function previewRedirectOriginPatterns(): RegExp[] {
-  if (isProduction) return [];
-  const raw = process.env.CORS_PREVIEW_ORIGIN_PATTERN;
-  if (!raw) return [];
-  try {
-    return [new RegExp(raw)];
-  } catch (error) {
-    console.error(
-      `[tamara] Ignoring invalid CORS_PREVIEW_ORIGIN_PATTERN (${raw}): ${
-        error instanceof Error ? error.message : String(error)
-      }. No preview origins will be allowed for Tamara redirects.`,
-    );
-    return [];
-  }
-}

@@ -3,34 +3,28 @@ import type { ReelMetricsRow, RollupService } from "./rollup.service.ts";
 import { VendorAnalyticsService, buildVendorTimeseries } from "./vendor-analytics.service.ts";
 
 describe("buildVendorTimeseries", () => {
-  it("groups rows by bucket_date, sums impressions and gmv", () => {
+  it("groups rows by bucket_date and sums impressions, likes and saves", () => {
     const series = buildVendorTimeseries([
-      {
-        bucket_date: "2026-04-18",
-        impressions: 10,
-        attributed_gmv_fils: 1000,
-        product_taps: 2,
-        attributed_orders: 1,
-      },
-      {
-        bucket_date: "2026-04-18",
-        impressions: 5,
-        attributed_gmv_fils: 500,
-        product_taps: 1,
-        attributed_orders: 0,
-      },
-      {
-        bucket_date: "2026-04-19",
-        impressions: 20,
-        attributed_gmv_fils: 2000,
-        product_taps: 3,
-        attributed_orders: 2,
-      },
+      { bucket_date: "2026-04-18", impressions: 10, likes: 2, saves: 1 },
+      { bucket_date: "2026-04-18", impressions: 5, likes: 1, saves: 0 },
+      { bucket_date: "2026-04-19", impressions: 20, likes: 3, saves: 2 },
     ]);
     expect(series).toEqual([
-      { date: "2026-04-18", impressions: 15, attributedGmvFils: 1500 },
-      { date: "2026-04-19", impressions: 20, attributedGmvFils: 2000 },
+      { date: "2026-04-18", impressions: 15, likes: 3, saves: 1 },
+      { date: "2026-04-19", impressions: 20, likes: 3, saves: 2 },
     ]);
+  });
+});
+
+describe("VendorAnalyticsService.overview", () => {
+  it("reports engagement KPIs only (no commerce metrics)", async () => {
+    const svc = new VendorAnalyticsService({} as RollupService);
+    (svc as any).fetchVendorRows = async () => [
+      { bucket_date: "2026-04-18", impressions: 10, likes: 2, saves: 1 },
+    ];
+    const out = await svc.overview("v1", "30d");
+    expect(Object.keys(out.kpis).sort()).toEqual(["impressions", "likes", "saves"]);
+    expect(out.kpis.impressions.value).toBe(10);
   });
 });
 

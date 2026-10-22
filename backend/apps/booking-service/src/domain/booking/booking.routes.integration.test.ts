@@ -7,13 +7,11 @@
 // are all exercised for real, not mocked. Mirrors
 // internal-booking.routes.integration.test.ts's shape (imports `app`
 // directly, ensureDatabase() in beforeAll, jsonwebtoken to sign tokens) and
-// booking.service.integration.test.ts's seeding/cleanup pattern and
-// order-service reachability probe (deposit-mode create() calls order-service
-// over HTTP; pay_at_venue does not).
+// booking.service.integration.test.ts's seeding/cleanup pattern.
 //
-// Requires: `docker compose up -d postgres redis`. order-service is OPTIONAL
-// — only the deposit-mode assertion is gated on it being reachable
-// (config.serviceHost.order:config.port.order, override via ORDER_SERVICE_URL).
+// Requires: `docker compose up -d postgres redis`. The deposit-mode
+// assertion covers the pre-M2 rejection and only runs while
+// config.payments.onlineEnabled is false.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { config } from "@mypickuae/config";
 import {
@@ -50,21 +48,9 @@ import { app } from "../../app.ts";
 const LIVE_DB = process.env.BOOKING_LIVE_DB === "1";
 const describeLive = LIVE_DB ? describe : describe.skip;
 
-// --- order-service reachability probe (mirrors booking.service.integration.test.ts) ---
-const ORDER_SERVICE_BASE_URL =
-  process.env.ORDER_SERVICE_URL ?? `http://${config.serviceHost.order}:${config.port.order}`;
-let orderServiceReachable = false;
-if (LIVE_DB) {
-  try {
-    await fetch(ORDER_SERVICE_BASE_URL, { signal: AbortSignal.timeout(2_000) });
-    orderServiceReachable = true;
-  } catch (err) {
-    console.warn(
-      `[skip] deposit-mode create() requires order-service running on ${ORDER_SERVICE_BASE_URL} (set ORDER_SERVICE_URL) — probe error: ${(err as Error).message}`,
-    );
-  }
-}
-const itOrderService = orderServiceReachable ? it : it.skip;
+// Deposit/prepay booking needs the online payment adapter (M2); until then
+// the deposit scenario asserts the 422 rejection instead.
+const itOffline = config.payments.onlineEnabled ? it.skip : it;
 
 const unique = Date.now();
 // Review Fix 1 — service_areas.area_id has no FK to a real "areas" table
@@ -733,8 +719,10 @@ describeLive(
       expect(res.status).toBe(404);
     });
 
-    itOrderService(
-      "POST /bookings (deposit) with order-service reachable returns pending_payment + client_secret",
+    // Pre-M2: with online payments disabled the deposit offering cannot be
+    // held (or booked) — 422 before any Redis hold or booking row exists.
+    itOffline(
+      "POST /bookings/hold (deposit) with online payments disabled returns 422 online_payment_unavailable",
       async () => {
         const slot = nextSlot();
         const holdRes = await req("POST", "/bookings/hold", customerToken, {
@@ -744,9 +732,10 @@ describeLive(
           starts_at: slot.start.toISOString(),
           ends_at: slot.end.toISOString(),
         });
-        expect(holdRes.status).toBe(200);
+        expect(holdRes.status).toBe(422);
         // biome-ignore lint/suspicious/noExplicitAny: test-only response shape
         const holdJson = (await holdRes.json()) as any;
+        expect(holdJson.message).toBe("online_payment_unavailable");
 
         const createRes = await req("POST", "/bookings", customerToken, {
           offering_id: offeringDepositId,
@@ -754,14 +743,12 @@ describeLive(
           location_id: locationId,
           starts_at: slot.start.toISOString(),
           ends_at: slot.end.toISOString(),
-          hold_token: holdJson.data.hold_token,
+          hold_token: "00000000-0000-4000-8000-000000000000",
         });
-        expect(createRes.status).toBe(201);
+        expect(createRes.status).toBe(422);
         // biome-ignore lint/suspicious/noExplicitAny: test-only response shape
         const createJson = (await createRes.json()) as any;
-        expect(createJson.data.booking.status).toBe(BookingStatus.pending_payment);
-        expect(typeof createJson.data.client_secret).toBe("string");
-        createdBookingIds.push(createJson.data.booking.id);
+        expect(createJson.message).toBe("online_payment_unavailable");
       },
     );
   },

@@ -4,6 +4,7 @@ import { config } from "@mypickuae/config";
 import { jwtAuth } from "@mypickuae/guards";
 import { errorHandler, rateLimiter, requestLogger } from "@mypickuae/plugins";
 import { Elysia } from "elysia";
+import { checkUpstreams } from "./health.ts";
 import { proxyRequest, resolveUpstream } from "./proxy.ts";
 
 /**
@@ -75,40 +76,13 @@ export const app = new Elysia()
     }),
   )
   .use(jwtAuth)
-  // Health check — returns service statuses
-  .get("/health", async () => {
-    const services = ["auth", "product", "order", "vendor", "notification"] as const;
-    const pathMap: Record<(typeof services)[number], string> = {
-      auth: "auth",
-      product: "products",
-      order: "orders",
-      vendor: "vendors",
-      notification: "notifications",
-    };
-    const checks: Record<string, string> = {};
-
-    await Promise.all(
-      services.map(async (service) => {
-        try {
-          const host = config.serviceHost[service];
-          const port = config.port[service];
-          const res = await fetch(`http://${host}:${port}/${pathMap[service]}/health`, {
-            signal: AbortSignal.timeout(2000),
-          });
-          checks[service] = res.ok ? "up" : "down";
-        } catch {
-          checks[service] = "down";
-        }
-      }),
-    );
-
-    return {
-      status: "ok",
-      service: "api-gateway",
-      timestamp: new Date().toISOString(),
-      services: checks,
-    };
-  })
+  // Health check — probes every upstream's root /health
+  .get("/health", async () => ({
+    status: "ok",
+    service: "api-gateway",
+    timestamp: new Date().toISOString(),
+    services: await checkUpstreams(),
+  }))
   // Catch-all proxy to upstream services
   .all("/*", async ({ request, correlationId }) => {
     const url = new URL(request.url);

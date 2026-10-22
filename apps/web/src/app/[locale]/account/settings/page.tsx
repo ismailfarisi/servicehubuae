@@ -4,33 +4,13 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuthStore } from "@/stores/auth";
 import { useUpdateProfile, useChangePassword } from "@/lib/queries/account";
-import {
-  Eyebrow,
-  SerifTitle,
-  MAISON_SERIF,
-  MAISON_SANS,
-} from "@/components/ui/maison-primitives";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 
 const INPUT_CLASS =
-  "w-full px-3.5 py-2.5 text-sm outline-none transition-colors focus:border-nl-amber";
-const INPUT_STYLE = {
-  border: "1px solid rgba(44,24,16,0.2)",
-  background: "rgba(255,255,255,0.55)",
-  color: "hsl(var(--nl-cacao))",
-  borderRadius: 0,
-} as const;
+  "w-full rounded-lg border border-nl-cacao/15 bg-nl-linen px-3.5 py-2.5 text-sm text-nl-cacao placeholder:text-nl-russet/70 outline-none transition-colors focus:border-nl-amber focus:ring-2 focus:ring-nl-amber/20";
 
-const PRIMARY_BUTTON = {
-  background: "hsl(var(--nl-amber))",
-  color: "hsl(var(--nl-espresso))",
-  fontFamily: MAISON_SANS,
-  fontSize: 11,
-  letterSpacing: "0.22em",
-  textTransform: "uppercase",
-  padding: "13px 30px",
-  border: "none",
-  borderRadius: 0,
-} as const;
+const PRIMARY_BUTTON =
+  "inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors disabled:opacity-50";
 
 export default function SettingsPage() {
   const t = useTranslations("account");
@@ -58,17 +38,17 @@ export default function SettingsPage() {
   } | null>(null);
 
   return (
-    <div className="space-y-10">
-      <div className="mb-5">
-        <Eyebrow>SETTINGS</Eyebrow>
-        <SerifTitle size={26} className="mt-1.5">
+    <div className="space-y-6">
+      <div>
+        <Eyebrow>Settings</Eyebrow>
+        <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
           {t("settings")}
-        </SerifTitle>
+        </h1>
       </div>
 
       {/* Profile */}
-      <section>
-        <Eyebrow className="mb-3">{t("profile")}</Eyebrow>
+      <section className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 md:p-6 shadow-sm">
+        <h2 className="mb-4 font-display text-lg font-semibold text-nl-cacao">{t("profile")}</h2>
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -84,7 +64,6 @@ export default function SettingsPage() {
               setProfile({ ...profile, first_name: e.target.value })
             }
             className={INPUT_CLASS}
-            style={INPUT_STYLE}
             placeholder={t("firstName")}
           />
           <input
@@ -94,7 +73,6 @@ export default function SettingsPage() {
               setProfile({ ...profile, last_name: e.target.value })
             }
             className={INPUT_CLASS}
-            style={INPUT_STYLE}
             placeholder={t("lastName")}
           />
           <input
@@ -102,25 +80,17 @@ export default function SettingsPage() {
             value={profile.email}
             onChange={(e) => setProfile({ ...profile, email: e.target.value })}
             className={INPUT_CLASS}
-            style={INPUT_STYLE}
             placeholder={t("emailAddress")}
           />
           {profileMsg && (
-            <p
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 13,
-                color: "hsl(140,30%,32%)",
-              }}
-            >
+            <p className="text-sm text-emerald-700">
               {profileMsg}
             </p>
           )}
           <button
             type="submit"
             disabled={updateProfile.isPending}
-            className="disabled:opacity-50 w-full sm:w-auto"
-            style={PRIMARY_BUTTON}
+            className={`${PRIMARY_BUTTON} w-full sm:w-auto`}
           >
             {tCommon("save")}
           </button>
@@ -128,8 +98,8 @@ export default function SettingsPage() {
       </section>
 
       {/* Password */}
-      <section>
-        <Eyebrow className="mb-3">{t("password")}</Eyebrow>
+      <section className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 md:p-6 shadow-sm">
+        <h2 className="mb-4 font-display text-lg font-semibold text-nl-cacao">{t("password")}</h2>
         <form
           onSubmit={async (e) => {
             e.preventDefault();
@@ -162,7 +132,6 @@ export default function SettingsPage() {
             }
             placeholder={t("currentPassword")}
             className={INPUT_CLASS}
-            style={INPUT_STYLE}
           />
           <input
             type="password"
@@ -172,7 +141,6 @@ export default function SettingsPage() {
             }
             placeholder={t("newPassword")}
             className={INPUT_CLASS}
-            style={INPUT_STYLE}
           />
           <input
             type="password"
@@ -182,17 +150,10 @@ export default function SettingsPage() {
             }
             placeholder={t("confirmNewPassword")}
             className={INPUT_CLASS}
-            style={INPUT_STYLE}
           />
           {passwordMsg && (
             <p
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 13,
-                color: passwordMsg.ok
-                  ? "hsl(140,30%,32%)"
-                  : "hsl(0,55%,42%)",
-              }}
+              className={`text-sm ${passwordMsg.ok ? "text-emerald-700" : "text-red-600"}`}
             >
               {passwordMsg.text}
             </p>
@@ -200,8 +161,7 @@ export default function SettingsPage() {
           <button
             type="submit"
             disabled={changePassword.isPending}
-            className="disabled:opacity-50 w-full sm:w-auto"
-            style={PRIMARY_BUTTON}
+            className={`${PRIMARY_BUTTON} w-full sm:w-auto`}
           >
             {tCommon("save")}
           </button>

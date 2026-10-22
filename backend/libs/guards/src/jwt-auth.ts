@@ -36,38 +36,16 @@ const PUBLIC_ROUTES = new Set([
   "/auth/2fa/login-verify",
   "/auth/2fa/backup-verify",
   "/categories/tree",
-  "/brands",
-  "/cart/health",
-  "/shipping/health",
-  "/shipping/delivery-zones",
-  "/shipping/delivery-zones/lookup",
-  "/webhooks/stripe",
+  // Service areas (catalog-service) — replaces the old /shipping/delivery-zones.
+  "/areas",
 ]);
 
 export function isPublicRoute(path: string, method: string): boolean {
   if (PUBLIC_ROUTES.has(path)) return true;
   if (path.startsWith("/api/docs")) return true;
-  if (path.startsWith("/media/product/")) return true;
-  // Sprint 3 public catalog routes (read-only)
+  // Public catalog routes (read-only)
   if (path.startsWith("/categories/")) return true;
-  if (path === "/brands" || path.startsWith("/brands/")) return true;
-  // Products: public read routes only (list, detail, slug lookup, suggest,
-  // questions, recommendations). Recommendations powers the PDP rails and
-  // must be reachable from the unauthenticated browser.
   const isRead = method === "GET" || method === "HEAD";
-  if (
-    isRead &&
-    (path === "/products" ||
-      path === "/products/suggest" ||
-      path.startsWith("/products/by-slug/") ||
-      /^\/products\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(\/questions|\/recommendations)?$/.test(
-        path,
-      ))
-  )
-    return true;
-  // Collections — public storefront read (GET /collections/:slug). Admin
-  // collection management lives under /admin/collections and stays gated.
-  if (isRead && (path === "/collections" || path.startsWith("/collections/"))) return true;
   // Service offerings — public storefront read (GET /services/:slug). Vendor
   // management lives under /vendor/services and stays gated. This broad,
   // GET-only prefix already covers GET /services/by-id/:id too (Task 3's
@@ -89,12 +67,6 @@ export function isPublicRoute(path: string, method: string): boolean {
   // exact prefix+suffix shape — not a broad /booking/ prefix (vendor booking
   // management lives under /vendor/booking and stays gated).
   if (isRead && path.startsWith("/booking/offerings/") && path.endsWith("/staff")) return true;
-  // Gifting storefront — public read (occasions + predefined boxes).
-  // Admin gift management lives under /admin/gift and stays gated.
-  if (isRead && path.startsWith("/gift/")) return true;
-  // BNPL provider thresholds power the PDP installment strip — published
-  // numbers Tabby/Tamara show on their own marketing pages.
-  if (isRead && path === "/checkout/bnpl-thresholds") return true;
   if (path.startsWith("/vendors/") && path.endsWith("/profile")) return true;
   if (path.startsWith("/vendors/by-slug/")) return true;
   // Section-type registry is public metadata (read-only)
@@ -130,9 +102,6 @@ export function isPublicRoute(path: string, method: string): boolean {
   // stamping) while guests still pass without a 401. Listing it as public would
   // short-circuit with user=null and silently break logged-in attribution.
   if (path === "/newsletter/unsubscribe") return true;
-  // Public affiliate resolve+click: GET /a/:slug (attribution capture at
-  // POST /a/track is optional-auth, NOT public — see isOptionalAuthRoute).
-  if (isRead && /^\/a\/[^/]+$/.test(path)) return true;
   // Slack Events API webhook — authenticated by Slack request signature, not JWT.
   if (path === "/support/slack/events") return true;
   return false;
@@ -143,24 +112,8 @@ export function isPublicRoute(path: string, method: string): boolean {
  * but a missing or invalid token resolves to `user = null` instead of 401.
  * Handlers on these routes are expected to fall back to a guest-session
  * identifier (e.g. via the `x-guest-session` header) to identify the owner.
- *
- * NOTE: `/cart/merge` is intentionally NOT optional — it requires a real user
- * to merge a guest cart into.
  */
 function isOptionalAuthRoute(path: string, method: string): boolean {
-  // Cart (GET /cart, DELETE /cart)
-  if (path === "/cart") return true;
-  // Cart items (POST /cart/items)
-  if (path === "/cart/items") return true;
-  // Cart item by variant (PATCH /cart/items/:variantId)
-  if (/^\/cart\/items\/[^/]+$/.test(path)) return true;
-  // Cart gift box (POST /cart/gift-box)
-  if (path === "/cart/gift-box") return true;
-  // Cart gift box by id (DELETE /cart/gift-box/:id)
-  if (/^\/cart\/gift-box\/[^/]+$/.test(path)) return true;
-  // Cart affiliate-code capture (POST /cart/affiliate) — logged-in stamps the
-  // user cart, guests stamp the guest-session cart; neither must 401.
-  if (path === "/cart/affiliate" && method === "POST") return true;
   // Collab opportunity board (GET /reels/collab-board) — a signed-in creator
   // gets a per-row eligibility block; guests get the listing without one.
   // Deliberately NOT in isPublicRoute: that would short-circuit with user=null
@@ -185,16 +138,6 @@ function isOptionalAuthRoute(path: string, method: string): boolean {
   ) {
     return true;
   }
-  // Reels product-tag taps — anonymous viewers get the drawer payload
-  // without earning attribution (see attribution.routes.ts).
-  if (
-    method === "POST" &&
-    /^\/reels\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/tags\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/taps$/.test(
-      path,
-    )
-  ) {
-    return true;
-  }
   // Public user profile lookup (GET /users/:handle) — a signed-in viewer
   // gets `isSelf` set, anonymous viewers still see the public profile.
   if (isRead && /^\/users\/[^/]+$/.test(path)) return true;
@@ -202,9 +145,6 @@ function isOptionalAuthRoute(path: string, method: string): boolean {
   // the authenticated user's email. Both tolerate anonymous callers.
   if (path === "/newsletter/subscribe" && method === "POST") return true;
   if (path === "/newsletter/status" && (method === "GET" || method === "HEAD")) return true;
-  // Affiliate attribution capture (POST /a/track) — a logged-in buyer is
-  // attributed by user_id; anonymous falls back to x-guest-session. NOT public.
-  if (path === "/a/track" && method === "POST") return true;
   // Customer support — guests chat via the x-guest-session header; logged-in
   // users are attributed via user_id. Admin (/support/admin/*) stays gated.
   if (path === "/support/tickets") return true; // POST create, GET list
@@ -222,11 +162,24 @@ function isOptionalAuthRoute(path: string, method: string): boolean {
  *   - admin  → admin_access_token
  *   - vendor → vendor_access_token
  * Legacy unprefixed `access_token` is still accepted for backwards compat.
+ *
+ * When the request names its app, only that app's cookie (or the legacy one)
+ * counts: on a shared cookie domain a vendor session must not authenticate
+ * the admin panel as that vendor.
  */
-function extractAccessToken(
+export function extractAccessToken(
   bearerToken: string | undefined,
   cookie: Record<string, { value?: string } | undefined> | undefined,
+  clientApp?: string | null,
 ): string | undefined {
+  const app = clientApp?.toLowerCase();
+  if (app === "web" || app === "admin" || app === "vendor") {
+    return (
+      bearerToken ||
+      (cookie?.[`${app}_access_token`]?.value as string | undefined) ||
+      (cookie?.access_token?.value as string | undefined)
+    );
+  }
   return (
     bearerToken ||
     (cookie?.access_token?.value as string | undefined) ||
@@ -322,6 +275,7 @@ export const jwtAuth = new Elysia({ name: "jwt-auth" })
     const token = extractAccessToken(
       bearer,
       cookie as Record<string, { value?: string } | undefined>,
+      request.headers.get("x-client-app"),
     );
 
     if (!token) {

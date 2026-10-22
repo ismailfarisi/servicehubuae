@@ -30,12 +30,12 @@ export function FeedTabSwitcher({ active, onChange }: Props) {
   }
 
   return (
-    <div className="fixed top-0 inset-x-0 z-30 bg-black/30 backdrop-blur flex justify-center gap-6 py-3 text-white">
+    <div className="fixed top-0 inset-x-0 z-30 bg-nl-espresso/40 backdrop-blur flex justify-center items-center gap-2 py-2.5 text-sm text-white">
       <button
         type="button"
         onClick={exitFeed}
         aria-label={tCommon("back")}
-        className="absolute start-1 top-1/2 -translate-y-1/2 p-3 rtl:rotate-180"
+        className="absolute start-1 top-1/2 -translate-y-1/2 rounded-full p-3 transition-colors hover:bg-white/10 rtl:rotate-180"
       >
         <ArrowLeft className="h-5 w-5" />
       </button>
@@ -44,7 +44,9 @@ export function FeedTabSwitcher({ active, onChange }: Props) {
           key={t.id}
           type="button"
           onClick={() => onChange(t.id)}
-          className={active === t.id ? "font-bold underline" : "opacity-70"}
+          className={`rounded-full px-3.5 py-1.5 transition-colors ${
+            active === t.id ? "bg-white/20 font-semibold" : "font-medium opacity-75 hover:opacity-100"
+          }`}
         >
           {t.label}
         </button>

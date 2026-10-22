@@ -1,4 +1,11 @@
-import { Column, CreateDateColumn, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  ForeignKey,
+  Index,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import {
   IntegrationDeliveryStatus,
   IntegrationDirection,
@@ -10,6 +17,11 @@ import {
 @Index("vid_idempotency_uq", ["idempotency_key", "integration_id"], {
   unique: true,
   where: "idempotency_key IS NOT NULL",
+})
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("VendorIntegration", ["integration_id"], ["id"], {
+  name: "vendor_integration_deliveries_integration_id_fkey",
+  onDelete: "CASCADE",
 })
 export class VendorIntegrationDelivery {
   @PrimaryGeneratedColumn("uuid")

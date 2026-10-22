@@ -57,8 +57,6 @@ export default function CreatorContentPage() {
         >
           <option value="recent">Most recent</option>
           <option value="most_viewed">Most viewed</option>
-          <option value="most_gmv">Most attributed sales</option>
-          <option value="most_taps">Most product taps</option>
         </select>
       )}
 

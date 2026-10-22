@@ -3,12 +3,15 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 @Entity("vendor_locations")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_vendor_locations_vendor" })
 export class VendorLocation {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

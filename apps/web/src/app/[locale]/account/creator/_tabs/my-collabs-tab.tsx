@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Eyebrow, MAISON_SANS, MAISON_SERIF } from "@/components/ui/maison-primitives";
 import { CollabCard } from "@/components/creator/collab-card";
 import {
   BOX,
@@ -108,7 +107,7 @@ export function MyCollabsTab() {
     // rather than crash if that invariant is ever violated.
     if (!row.opportunity) {
       return (
-        <li key={a.id} className="p-3.5" style={BOX}>
+        <li key={a.id} className="p-4" style={BOX}>
           <Quiet>
             {t(`collabStatus_${a.status}` as never)} — opportunity unavailable
           </Quiet>
@@ -129,33 +128,16 @@ export function MyCollabsTab() {
       >
         <Pill tone={STATUS_TONE[a.status]}>{t(`collabStatus_${a.status}` as never)}</Pill>
 
-        {/* The vendor's note, when they wrote one. Quoted and set in the serif
-            so it reads as someone speaking, not as another status field. */}
+        {/* The vendor's note, when they wrote one. Quoted in a tinted block so
+            it reads as someone speaking, not as another status field. */}
         {a.invite_note && (
-          <blockquote
-            className="mt-2.5 ps-3 normal-case tracking-normal"
-            style={{
-              borderInlineStart: "2px solid rgba(184,115,51,0.4)",
-              fontFamily: MAISON_SERIF,
-              fontStyle: "italic",
-              fontSize: 14,
-              lineHeight: 1.45,
-              color: "hsl(var(--nl-cacao))",
-            }}
-          >
+          <blockquote className="mt-2.5 rounded-lg bg-nl-pearl px-3 py-2 text-sm leading-relaxed normal-case tracking-normal text-nl-russet">
             “{a.invite_note}”
           </blockquote>
         )}
 
         {a.tracking_number && (
-          <p
-            className="mt-2 normal-case tracking-normal"
-            style={{
-              fontFamily: MAISON_SANS,
-              fontSize: 11.5,
-              color: "hsl(var(--nl-russet))",
-            }}
-          >
+          <p className="mt-2 text-xs normal-case tracking-normal text-nl-russet">
             {a.carrier} · {a.tracking_number}
           </p>
         )}
@@ -223,7 +205,7 @@ export function MyCollabsTab() {
               type="button"
               disabled={busyId === a.id}
               onClick={() => run(a.id, () => withdrawCollab(a.id))}
-              className={`${BUTTON_CLASS} hover:bg-[rgba(44,24,16,0.04)]`}
+              className={`${BUTTON_CLASS} hover:!bg-nl-pearl`}
               style={SMALL_QUIET}
             >
               {t("collabWithdraw")}
@@ -246,19 +228,19 @@ export function MyCollabsTab() {
         <div className="space-y-7">
           {invites.length > 0 && (
             <section>
-              <Eyebrow className="mb-3">{t("collabInvites")}</Eyebrow>
+              <h3 className="mb-3 font-display text-base font-semibold text-nl-cacao">{t("collabInvites")}</h3>
               <ul className="space-y-2.5">{invites.map(card)}</ul>
             </section>
           )}
           {active.length > 0 && (
             <section>
-              <Eyebrow className="mb-3">{t("collabActive")}</Eyebrow>
+              <h3 className="mb-3 font-display text-base font-semibold text-nl-cacao">{t("collabActive")}</h3>
               <ul className="space-y-2.5">{active.map(card)}</ul>
             </section>
           )}
           {past.length > 0 && (
             <section>
-              <Eyebrow className="mb-3">{t("collabPast")}</Eyebrow>
+              <h3 className="mb-3 font-display text-base font-semibold text-nl-cacao">{t("collabPast")}</h3>
               <ul className="space-y-2.5">{past.map(card)}</ul>
             </section>
           )}

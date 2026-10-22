@@ -64,11 +64,11 @@ export default function TermsPage() {
 			<StaticSection heading="5. Shipping, returns and refunds">
 				<p>
 					Shipping timelines, charges and zones are described on the{" "}
-					<a href="shipping" className="text-nl-amber hover:underline">
+					<a href="shipping" className="font-medium text-nl-amber-text hover:underline">
 						Shipping
 					</a>{" "}
 					page. Returns and refund eligibility are described on the{" "}
-					<a href="returns" className="text-nl-amber hover:underline">
+					<a href="returns" className="font-medium text-nl-amber-text hover:underline">
 						Returns
 					</a>{" "}
 					page. Both pages form part of these terms.
@@ -151,7 +151,7 @@ export default function TermsPage() {
 					Questions on these terms:{" "}
 					<a
 						href="mailto:info@mypickuae.com"
-						className="text-nl-amber hover:underline"
+						className="font-medium text-nl-amber-text hover:underline"
 					>
 						info@mypickuae.com
 					</a>

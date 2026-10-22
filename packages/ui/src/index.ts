@@ -185,62 +185,6 @@ export type {
 } from "./components/forms/s3-file-field";
 export { RichEditor } from "./components/forms/rich-editor";
 
-// Product editors
-export { EditorialEditor } from "./components/products/editorial-editor";
-export type {
-  EditorialEditorProps,
-  ProductEditorial,
-} from "./components/products/editorial-editor";
-
-export {
-  ProductAttributesEditor,
-  serializeProductAttributes,
-  missingRequiredAttributes,
-  hydrateProductAttributes,
-  splitCategoryAttributes,
-} from "./components/products/product-attributes-editor";
-export type {
-  ProductAttributesEditorProps,
-  ProductAttributeDraft,
-  CategoryAttributeLink,
-  AttributeValueOption,
-} from "./components/products/product-attributes-editor";
-
-export {
-  VariantMatrixEditor,
-  variantCombinations,
-  buildVariantRowsPayload,
-  minVariantPriceFils,
-  rowsMissingPrice,
-  existingVariantKeys,
-  comboKeyOf,
-  slugifyAxisName,
-  EMPTY_VARIANT_MATRIX,
-  MAX_VARIANT_COMBINATIONS,
-} from "./components/products/variant-matrix-editor";
-export type {
-  VariantMatrixEditorProps,
-  VariantMatrixValue,
-  VariantAxisDraft,
-  VariantAxisValue,
-  VariantRowDraft,
-  VariantCombination,
-  ExplicitVariantRow,
-} from "./components/products/variant-matrix-editor";
-
-// Media Manager
-export { MediaManager } from "./components/products/media-manager";
-export type {
-  MediaItem,
-  ImageMediaItem,
-  VideoMediaItem,
-  MediaActions,
-  MediaManagerProps,
-  CropRect,
-  FocalPoint,
-  Capability,
-} from "./components/products/media-manager/types";
-
 // Icons
 export * from "./components/icons/icon-adapter";
 
@@ -257,9 +201,6 @@ export type {
   UploadResult,
 } from "./hooks/use-s3-upload";
 
-// Filters
-export * from "./filters/index";
-
 // CMS Editor (LayoutEditor, SectionConfigEditor)
 export { LayoutEditor, SectionConfigEditor } from "./components/cms";
 export type {
@@ -270,6 +211,3 @@ export type {
   Layout,
 } from "./components/cms";
 
-// Promotions
-export { DealPreviewCard } from "./components/promotions";
-export type { DealPreviewCardProps } from "./components/promotions";

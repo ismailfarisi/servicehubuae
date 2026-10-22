@@ -8,12 +8,6 @@ import { PhoneAuthForm } from "./phone-auth-form";
 const startPhoneAuthMock = vi.fn();
 const verifyPhoneAuthMock = vi.fn();
 const registerPhoneAuthMock = vi.fn();
-const mockFire = vi.fn();
-
-vi.mock("@/lib/channels/use-channel-events", () => ({
-  useChannelEvents: () => ({ fire: mockFire }),
-}));
-
 vi.mock("@/lib/queries/auth", () => ({
   useStartPhoneAuth: () => ({
     mutateAsync: startPhoneAuthMock,
@@ -45,7 +39,6 @@ describe("PhoneAuthForm", () => {
     startPhoneAuthMock.mockReset();
     verifyPhoneAuthMock.mockReset();
     registerPhoneAuthMock.mockReset();
-    mockFire.mockReset();
     startPhoneAuthMock.mockResolvedValue({ phone: "+971501234567" });
   });
 
@@ -57,7 +50,7 @@ describe("PhoneAuthForm", () => {
     expect(screen.getByRole("button", { name: /send code/i })).toBeInTheDocument();
   });
 
-  test("submits UAE phone number with fixed country code and fires SendOTP success", async () => {
+  test("submits UAE phone number with fixed country code ", async () => {
     renderForm();
 
     fireEvent.change(screen.getByLabelText(/phone number/i), {
@@ -66,10 +59,10 @@ describe("PhoneAuthForm", () => {
     fireEvent.click(screen.getByRole("button", { name: /send code/i }));
 
     await waitFor(() => expect(startPhoneAuthMock).toHaveBeenCalledWith("+971501234567"));
-    expect(mockFire).toHaveBeenCalledWith("SendOTP", { status: "success" });
+    expect(await screen.findByLabelText(/verification code/i)).toBeInTheDocument();
   });
 
-  test("fires SendOTP failure on error", async () => {
+  test("shows the error when sending the code fails", async () => {
     startPhoneAuthMock.mockRejectedValue({
       response: { data: { message: "Invalid phone number" } },
     });
@@ -80,14 +73,11 @@ describe("PhoneAuthForm", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: /send code/i }));
 
-    await waitFor(() => expect(startPhoneAuthMock).toHaveBeenCalled());
-    expect(mockFire).toHaveBeenCalledWith("SendOTP", {
-      status: "failure",
-      error: "Invalid phone number",
-    });
+    expect(await screen.findByText("Invalid phone number")).toBeInTheDocument();
+    expect(screen.queryByLabelText(/verification code/i)).not.toBeInTheDocument();
   });
 
-  test("collects email in the registration step and submits it, firing VerifyOTP and RegisterUser events", async () => {
+  test("collects email in the registration step and submits it", async () => {
     verifyPhoneAuthMock.mockResolvedValue({
       requires_registration: true,
       registration_token: "reg-token-1",
@@ -106,13 +96,6 @@ describe("PhoneAuthForm", () => {
     const codeInput = await screen.findByLabelText(/verification code/i);
     fireEvent.change(codeInput, { target: { value: "123456" } });
     fireEvent.click(screen.getByRole("button", { name: /verify code/i }));
-
-    await waitFor(() =>
-      expect(mockFire).toHaveBeenCalledWith("VerifyOTP", {
-        status: "success",
-        requires_registration: true,
-      }),
-    );
 
     // Step 3: registration — name + email
     const emailInput = await screen.findByLabelText(/email/i);
@@ -134,9 +117,6 @@ describe("PhoneAuthForm", () => {
         email: "aisha@example.com",
       }),
     );
-    expect(mockFire).toHaveBeenCalledWith("RegisterUser", {
-      status: "success",
-    });
   });
 
   test("shows the number the code went to, with an edit affordance back to the phone step", async () => {
@@ -182,7 +162,7 @@ describe("PhoneAuthForm", () => {
     expect(screen.getByLabelText(/verification code/i)).toHaveValue("");
   });
 
-  test("fires VerifyOTP failure on code verification error", async () => {
+  test("shows the error when the code is rejected", async () => {
     verifyPhoneAuthMock.mockRejectedValue({
       response: { data: { message: "Invalid code" } },
     });
@@ -199,11 +179,6 @@ describe("PhoneAuthForm", () => {
     fireEvent.change(codeInput, { target: { value: "000000" } });
     fireEvent.click(screen.getByRole("button", { name: /verify code/i }));
 
-    await waitFor(() =>
-      expect(mockFire).toHaveBeenCalledWith("VerifyOTP", {
-        status: "failure",
-        error: "Invalid code",
-      }),
-    );
+    expect(await screen.findByText("Invalid code")).toBeInTheDocument();
   });
 });

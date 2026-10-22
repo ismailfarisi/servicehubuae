@@ -22,12 +22,12 @@ describe("collab vendor auth wiring", () => {
       new Request("http://local/vendor/reels/collabs", {
         method: "POST",
         ...json({
-          type: "product_seeding",
+          type: "paid_campaign",
           visibility: "board",
-          title: "Seed our serum",
+          title: "Feature our salon",
           description: "Post a reel",
-          seededProductId: OPP,
-          seededQty: 1,
+          feeFils: 50000,
+          fundingSource: "payout_balance",
         }),
       }),
     );

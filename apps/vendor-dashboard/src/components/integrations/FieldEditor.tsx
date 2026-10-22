@@ -42,7 +42,7 @@ export function FieldEditor({ field, onChange }: FieldEditorProps) {
             onClick={() => setModeAndClear(m)}
             className={[
               "rounded-xs px-2 py-1 text-[10px] uppercase tracking-wide transition-colors duration-200 ease-out",
-              mode === m ? "bg-amber text-espresso" : "bg-pearl/30 text-taupe hover:text-cacao",
+              mode === m ? "bg-amber text-linen" : "bg-pearl/30 text-taupe hover:text-cacao",
             ].join(" ")}
           >
             {m === "value_map" ? "MAP" : m === "expression" ? "EXPR" : "SRC"}

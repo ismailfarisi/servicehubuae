@@ -3,7 +3,7 @@ import { jwt } from "@elysiajs/jwt";
 import { config } from "@mypickuae/config";
 import { Elysia } from "elysia";
 import { authGuard, requireRole } from "./index.ts";
-import { jwtAuth } from "./jwt-auth.ts";
+import { isPublicRoute, jwtAuth } from "./jwt-auth.ts";
 import {
   __setDataSourceForTests as setTvDS,
   __setRedisForTests as setTvRedis,
@@ -175,58 +175,44 @@ describe("jwtAuth", () => {
     }
   });
 
-  test("allows GET /products/:id/recommendations without token (PDP rails)", async () => {
+  test("allows public catalog reads without token (categories tree, areas)", async () => {
     const app = new Elysia()
       .use(jwtAuth)
-      .get("/products/:id/recommendations", () => ({ ok: true }));
+      .get("/categories/tree", () => ({ data: [] }))
+      .get("/categories/:slug", () => ({ data: {} }))
+      .get("/areas", () => ({ data: [] }));
 
-    const productId = "ef27b3f3-a971-47a8-b5ca-366b7f334819";
-    for (const path of [
-      `/products/${productId}/recommendations`,
-      `/products/${productId}/recommendations?type=more-from-brand`,
-      `/products/${productId}/recommendations?type=pairs-with`,
-      `/products/${productId}/recommendations?type=cross-brand`,
-      `/products/${productId}/recommendations?type=bestsellers`,
-    ]) {
+    for (const path of ["/categories/tree", "/categories/hair", "/areas"]) {
       const res = await app.handle(new Request(`http://localhost${path}`));
       expect(res.status).toBe(200);
     }
   });
 
-  test("allows GET /checkout/bnpl-thresholds without token (PDP installment strip)", async () => {
-    const app = new Elysia().use(jwtAuth).get("/checkout/bnpl-thresholds", () => ({ data: [] }));
-
-    const res = await app.handle(new Request("http://localhost/checkout/bnpl-thresholds"));
-    expect(res.status).toBe(200);
-  });
-
-  test("still requires auth for non-public /checkout subpaths and /products/:id/foo", async () => {
+  test("still requires auth for admin catalog management", async () => {
     const app = new Elysia()
       .use(jwtAuth)
-      .post("/checkout/initiate", () => ({ ok: true }))
-      .get("/products/ef27b3f3-a971-47a8-b5ca-366b7f334819/private", () => ({ ok: true }));
+      .get("/admin/areas", () => ({ ok: true }))
+      .get("/admin/categories", () => ({ ok: true }));
 
-    const res1 = await app.handle(
-      new Request("http://localhost/checkout/initiate", { method: "POST" }),
-    );
-    expect(res1.status).toBe(401);
-
-    const res2 = await app.handle(
-      new Request("http://localhost/products/ef27b3f3-a971-47a8-b5ca-366b7f334819/private"),
-    );
-    expect(res2.status).toBe(401);
+    for (const path of ["/admin/areas", "/admin/categories"]) {
+      const res = await app.handle(new Request(`http://localhost${path}`));
+      expect(res.status).toBe(401);
+    }
   });
 
-  test("allows GET /collections/:slug without token (public storefront)", async () => {
-    const app = new Elysia().use(jwtAuth).get("/collections/:slug", () => ({ ok: true }));
-    const res = await app.handle(new Request("http://localhost/collections/summer-edit"));
-    expect(res.status).toBe(200);
-  });
-
-  test("still requires auth for /admin/collections", async () => {
-    const app = new Elysia().use(jwtAuth).get("/admin/collections", () => ({ ok: true }));
-    const res = await app.handle(new Request("http://localhost/admin/collections"));
-    expect(res.status).toBe(401);
+  test("removed product/order-era routes are no longer public", () => {
+    for (const path of [
+      "/products",
+      "/brands",
+      "/collections/summer-edit",
+      "/gift/boxes",
+      "/checkout/bnpl-thresholds",
+      "/shipping/delivery-zones",
+      "/media/product/ef27b3f3-a971-47a8-b5ca-366b7f334819",
+      "/a/AFF-ABC12345",
+    ]) {
+      expect(isPublicRoute(path, "GET")).toBe(false);
+    }
   });
 });
 

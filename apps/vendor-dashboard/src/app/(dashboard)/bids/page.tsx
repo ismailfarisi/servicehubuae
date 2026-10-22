@@ -6,9 +6,9 @@ import {
 	useMyBids,
 	usePlaceBid,
 	usePreviewBidToken,
-	useProductSearch,
 	useUpdateBid,
 } from "@/lib/queries/bids";
+import { useVendorServices } from "@/lib/queries/offerings";
 import {
 	Badge,
 	Button,
@@ -35,7 +35,6 @@ import {
 	X,
 	XCircle,
 } from "@phosphor-icons/react";
-import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -76,10 +75,12 @@ interface Bid {
 	content?: Record<string, unknown>;
 }
 
-interface Product {
+// A vendor service offering as shown in the sponsored-carousel picker.
+// Carousel bids still send its id in the bid's `product_id` field (column
+// named before the fork; cms-service resolves it as a service offering id).
+interface FeaturedService {
 	id: string;
 	name: string;
-	slug?: string;
 	price?: number;
 	images?: string[];
 }
@@ -99,6 +100,7 @@ function formatDate(iso?: string) {
 
 const sectionIcons: Record<string, typeof Storefront> = {
 	vendor_showcase: Storefront,
+	service_carousel: ShoppingBag,
 	product_carousel: ShoppingBag,
 	promotional_banner: Megaphone,
 };
@@ -112,24 +114,39 @@ const bannerTypes = new Set([
 	"editorial_post",
 	"hero_carousel",
 ]);
-// Product-type sections that need product selection
-const productTypes = new Set(["product_carousel"]);
+// Carousel sections that feature one of the vendor's published services
+const serviceTypes = new Set(["service_carousel", "product_carousel"]);
 
-// ─── Product Autocomplete ───────────────────────────────────────────────────
+// ─── Service Autocomplete ───────────────────────────────────────────────────
 
-function ProductAutocomplete({
+function ServiceAutocomplete({
 	selectedProduct,
 	onSelect,
 	onClear,
 }: {
-	selectedProduct: Product | null;
-	onSelect: (product: Product) => void;
+	selectedProduct: FeaturedService | null;
+	onSelect: (service: FeaturedService) => void;
 	onClear: () => void;
 }) {
 	const [query, setQuery] = useState("");
 	const [open, setOpen] = useState(false);
 	const ref = useRef<HTMLDivElement>(null);
-	const { data: results, isLoading } = useProductSearch(query);
+	// Only published services can appear in a sponsored carousel. The vendor's
+	// offerings list is unpaginated, so filter it client-side.
+	const { data: offerings, isLoading } = useVendorServices();
+	const results = useMemo<FeaturedService[]>(() => {
+		const q = query.trim().toLowerCase();
+		return (offerings ?? [])
+			.filter((o) => o.status === "published")
+			.filter((o) => !q || o.name.toLowerCase().includes(q))
+			.slice(0, 8)
+			.map((o) => ({
+				id: o.id,
+				name: o.name,
+				price: o.price_fils,
+				images: o.media_urls,
+			}));
+	}, [offerings, query]);
 
 	useEffect(() => {
 		function handleClickOutside(e: MouseEvent) {
@@ -144,7 +161,7 @@ function ProductAutocomplete({
 		return (
 			<div className="flex items-center gap-3 rounded-lg border border-stone-200 bg-stone-50 p-2.5">
 				{selectedProduct.images?.[0] && (
-					<Image
+					<img
 						src={selectedProduct.images[0]}
 						alt={selectedProduct.name}
 						width={40}
@@ -186,13 +203,13 @@ function ProductAutocomplete({
 						setQuery(e.target.value);
 						setOpen(true);
 					}}
-					onFocus={() => query.length >= 2 && setOpen(true)}
-					placeholder="Search products by name..."
+					onFocus={() => setOpen(true)}
+					placeholder="Search your published services..."
 					className="pl-9 h-9 text-sm"
 				/>
 			</div>
 
-			{open && query.length >= 2 && (
+			{open && (
 				<div className="absolute z-50 mt-1 w-full rounded-lg border border-stone-200 bg-white shadow-lg max-h-60 overflow-auto">
 					{isLoading ? (
 						<div className="px-3 py-4 text-center text-sm text-stone-400">
@@ -200,10 +217,10 @@ function ProductAutocomplete({
 						</div>
 					) : !results?.length ? (
 						<div className="px-3 py-4 text-center text-sm text-stone-400">
-							No products found
+							No published services found
 						</div>
 					) : (
-						results.map((product: Product) => (
+						results.map((product) => (
 							<button
 								key={product.id}
 								type="button"
@@ -215,7 +232,7 @@ function ProductAutocomplete({
 								className="w-full flex items-center gap-3 px-3 py-2.5 hover:bg-amber-50 transition-colors text-left"
 							>
 								{product.images?.[0] ? (
-									<Image
+									<img
 										src={product.images[0]}
 										alt={product.name}
 										width={32}
@@ -311,7 +328,7 @@ function BannerContentFields({
 				<Input
 					value={(content.cta_link as string) ?? ""}
 					onChange={(e) => onChange({ ...content, cta_link: e.target.value })}
-					placeholder="/your-store or /products/..."
+					placeholder="/your-store or /services/..."
 					className="h-9 text-sm mt-1"
 				/>
 			</div>
@@ -342,7 +359,7 @@ function AvailableSectionCard({
 	const minBid = section.bid_config?.min_bid_fils ?? 0;
 	const Icon = sectionIcons[typeName] || Gavel;
 	const isBanner = bannerTypes.has(typeName);
-	const isProduct = productTypes.has(typeName);
+	const isProduct = serviceTypes.has(typeName);
 
 	const { mutateAsync: requestPreview, isPending: previewLoading } =
 		usePreviewBidToken();
@@ -412,7 +429,7 @@ function AvailableSectionCard({
 								variant="outline"
 								className="text-[10px] px-1.5 py-0 text-amber-700 border-amber-200"
 							>
-								Product
+								Service
 							</Badge>
 						)}
 					</div>
@@ -465,7 +482,7 @@ function AvailableSectionCard({
 				)}
 				{isProduct && (
 					<span className="inline-flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 rounded-md px-2 py-1">
-						Select a product to feature
+						Select a service to feature
 					</span>
 				)}
 			</div>
@@ -491,7 +508,7 @@ function AvailableSectionCard({
 							</span>
 							{bid.product_id && (
 								<span className="text-[10px] text-amber-700 bg-amber-50 rounded px-1.5 py-0.5">
-									Product linked
+									Service linked
 								</span>
 							)}
 							{!!bid.content?.image && (
@@ -538,8 +555,8 @@ interface BidForm {
 	bid_amount_aed: string;
 	starts_at: string;
 	expires_at: string;
-	// Product selection
-	selected_product: Product | null;
+	// Featured service (sent as product_id)
+	selected_product: FeaturedService | null;
 	// Banner content
 	content: Record<string, unknown>;
 }
@@ -581,7 +598,7 @@ export default function VendorBidsPage() {
 	const orphanBids = bids.filter((b) => !sectionIds.has(b.section_id));
 
 	const isBannerBid = bannerTypes.has(form.section_type_name);
-	const isProductBid = productTypes.has(form.section_type_name);
+	const isProductBid = serviceTypes.has(form.section_type_name);
 
 	function openBidForSection(section: AvailableSection) {
 		const typeLabel =
@@ -811,14 +828,14 @@ export default function VendorBidsPage() {
 				<DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
 					<DialogHeader>
 						<DialogTitle>
-							{editingId ? "Pencil Bid" : `Bid on "${form.section_name}"`}
+							{editingId ? "Edit Bid" : `Bid on "${form.section_name}"`}
 						</DialogTitle>
 						{!editingId && (
 							<p className="text-sm text-stone-500 mt-1">
 								{isBannerBid &&
-									"UploadSimple a banner creative for this placement."}
+									"Upload a banner creative for this placement."}
 								{isProductBid &&
-									"Select a product to feature in this placement."}
+									"Select a service to feature in this placement."}
 								{!isBannerBid &&
 									!isProductBid &&
 									"Set your bid amount and schedule."}
@@ -852,14 +869,14 @@ export default function VendorBidsPage() {
 							/>
 						</div>
 
-						{/* Product Selection (for product-type sections) */}
+						{/* Service selection (for carousel sections) */}
 						{isProductBid && !editingId && (
 							<div>
 								<Label className="text-sm font-medium text-stone-700">
-									Featured Product
+									Featured Service
 								</Label>
 								<div className="mt-1">
-									<ProductAutocomplete
+									<ServiceAutocomplete
 										selectedProduct={form.selected_product}
 										onSelect={(product) =>
 											setForm((f) => ({ ...f, selected_product: product }))

@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -11,6 +12,15 @@ import {
 // Recurring weekly availability rule (expanded to concrete UTC windows by the
 // Phase 3 availability engine, DST-correct via the location timezone).
 @Entity("staff_working_hours")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("VendorLocation", ["location_id"], ["id"], {
+  name: "fk_swh_location",
+  onDelete: "CASCADE",
+})
+@ForeignKey("StaffMember", ["staff_member_id"], ["id"], {
+  name: "fk_swh_staff",
+  onDelete: "CASCADE",
+})
 export class StaffWorkingHours {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

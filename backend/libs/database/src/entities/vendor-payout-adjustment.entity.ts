@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -23,6 +24,8 @@ import type { Vendor } from "./vendor.entity.ts";
  * already used for `reel_license_escrow_holds`.
  */
 @Entity("vendor_payout_adjustments")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Check("vendor_payout_adjustments_amount_nonzero", "amount_fils <> 0")
 export class VendorPayoutAdjustment {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -52,7 +55,7 @@ export class VendorPayoutAdjustment {
   @Column({ type: "uuid", nullable: true })
   settled_payout_id!: string | null;
 
-  @ManyToOne("VendorPayout")
+  @ManyToOne("VendorPayout", { onDelete: "SET NULL" })
   @JoinColumn({ name: "settled_payout_id" })
   settledPayout!: VendorPayout | null;
 

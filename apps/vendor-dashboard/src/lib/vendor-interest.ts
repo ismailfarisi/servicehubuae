@@ -7,7 +7,7 @@ export const vendorInterestSchema = z.object({
   brandName: requiredText("Brand name is required"),
   contactName: requiredText("Contact name is required"),
   email: z.string().trim().email("Please enter a valid email"),
-  category: requiredText("Product category is required"),
+  category: requiredText("Service category is required"),
   website: z.string().trim(),
   message: z.string().trim(),
 });

@@ -147,7 +147,7 @@ describe("CreatorWalletService.credit (with manager)", () => {
     ).rejects.toThrow("user_not_found");
   });
 
-  it("passes through description and orderId", async () => {
+  it("passes through description", async () => {
     const { manager, saves } = makeFakeManager({
       user: { id: "u1", wallet_balance: 0 },
     });
@@ -160,12 +160,11 @@ describe("CreatorWalletService.credit (with manager)", () => {
       referenceType: "reel_commission",
       referenceId: "c1",
       description: "hello",
-      orderId: "order-9",
       manager,
     });
 
     expect(saves[0].description).toBe("hello");
-    expect(saves[0].order_id).toBe("order-9");
+    expect(saves[0].order_id).toBeUndefined();
   });
 });
 

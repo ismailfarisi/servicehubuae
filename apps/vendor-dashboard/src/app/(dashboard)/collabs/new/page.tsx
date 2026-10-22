@@ -1,6 +1,5 @@
 "use client";
 
-import { EntityCombobox } from "@/components/ui/entity-combobox";
 import {
 	COLLAB_TYPE_LABEL,
 	type CollabType,
@@ -8,15 +7,12 @@ import {
 	useCreateCollab,
 	usePublishCollab,
 } from "@/lib/queries/collabs";
-import { getVendorProductByIdLookup, searchVendorProductsLookup } from "@/lib/queries/lookups";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+// Product seeding is not offered: it needs a catalogue product, and the
+// product catalogue is gone. Existing seeding collabs still display.
 const TYPES: { type: CollabType; blurb: string }[] = [
-	{
-		type: "product_seeding",
-		blurb: "Send free product in exchange for a post. No payment changes hands.",
-	},
 	{
 		type: "paid_campaign",
 		blurb: "Pay a fixed fee for defined deliverables. Funds are held in escrow on accept.",
@@ -47,8 +43,6 @@ export default function NewCollabPage() {
 		minFollowerCount: "",
 		feeFils: "",
 		fundingSource: "payout_balance" as "payout_balance" | "stripe",
-		seededProductId: null as string | null,
-		seededQty: 1,
 		locationId: "",
 		startsAt: "",
 		endsAt: "",
@@ -78,10 +72,6 @@ export default function NewCollabPage() {
 		if (type === "paid_campaign") {
 			input.feeFils = Math.round(Number(form.feeFils) * 100);
 			input.fundingSource = form.fundingSource;
-		}
-		if (type === "product_seeding") {
-			input.seededProductId = form.seededProductId;
-			input.seededQty = Number(form.seededQty) || 1;
 		}
 		if (type === "event_appearance") {
 			input.locationId = form.locationId || null;
@@ -221,36 +211,6 @@ export default function NewCollabPage() {
 					</div>
 				)}
 
-				{type === "product_seeding" && (
-					<div className="grid grid-cols-2 gap-4">
-						<div>
-							<label className={label} htmlFor="product">
-								Product
-							</label>
-							<EntityCombobox
-								value={form.seededProductId}
-								onChange={(id) => set({ seededProductId: id })}
-								search={searchVendorProductsLookup}
-								getById={getVendorProductByIdLookup}
-								placeholder="Search your products…"
-							/>
-						</div>
-						<div>
-							<label className={label} htmlFor="qty">
-								Units per creator
-							</label>
-							<input
-								id="qty"
-								type="number"
-								min={1}
-								className={field}
-								value={form.seededQty}
-								onChange={(e) => set({ seededQty: Number(e.target.value) })}
-							/>
-						</div>
-					</div>
-				)}
-
 				{type === "event_appearance" && (
 					<>
 						<div>
@@ -346,12 +306,6 @@ export default function NewCollabPage() {
 						value={form.deliverBy}
 						onChange={(e) => set({ deliverBy: e.target.value })}
 					/>
-					{type === "product_seeding" && (
-						<p className="mt-1 text-xs text-neutral-500">
-							The clock starts when the creator confirms the product arrived, not when
-							you accept them — shipping time does not eat into their window.
-						</p>
-					)}
 				</div>
 			</div>
 

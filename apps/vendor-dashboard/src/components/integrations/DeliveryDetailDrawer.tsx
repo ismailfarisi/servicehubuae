@@ -38,7 +38,7 @@ function SectionLabel({ label }: { label: string }) {
 
 function MonoBlock({ content }: { content: string }) {
   return (
-    <pre className="bg-linen border border-pearl/14 rounded-lg p-3 font-mono text-xs text-cacao whitespace-pre-wrap break-words leading-relaxed overflow-auto max-h-48">
+    <pre className="bg-linen border border-pearl rounded-lg p-3 font-mono text-xs text-cacao whitespace-pre-wrap break-words leading-relaxed overflow-auto max-h-48">
       {content}
     </pre>
   );
@@ -88,7 +88,7 @@ export function DeliveryDetailDrawer({ delivery, open, onOpenChange }: DeliveryD
               {delivery.status}
             </span>
             {delivery.status_code !== null && (
-              <span className="text-xs font-mono bg-linen border border-pearl/14 px-2 py-0.5 rounded-sm text-cacao">
+              <span className="text-xs font-mono bg-linen border border-pearl px-2 py-0.5 rounded-sm text-cacao">
                 HTTP {delivery.status_code}
               </span>
             )}
@@ -103,7 +103,7 @@ export function DeliveryDetailDrawer({ delivery, open, onOpenChange }: DeliveryD
           {Object.keys(headers).length === 0 ? (
             <p className="text-xs text-taupe font-mono">—</p>
           ) : (
-            <div className="border border-pearl/14 rounded-lg overflow-hidden">
+            <div className="border border-pearl rounded-lg overflow-hidden">
               <table className="w-full text-xs font-mono">
                 <tbody>
                   {Object.entries(headers).map(([k, v]) => (

@@ -1,6 +1,9 @@
 import type { S3UploadClient } from "@mypickuae/ui";
 import { api } from "./api";
 
+// Presign + process-asset only. Layout video upload (/media/videos/layout/*)
+// was removed with the product catalogue, so the optional layout-video
+// methods are not implemented and the layout editor hides video upload.
 export const s3UploadClient: S3UploadClient = {
 	async presign(input) {
 		const { data } = await api.post("/media/presign", {
@@ -37,28 +40,5 @@ export const s3UploadClient: S3UploadClient = {
 			key: input.key,
 		});
 		return { url: data.url };
-	},
-
-	async presignLayoutVideo(input) {
-		const { data } = await api.post("/media/videos/layout/presign", {
-			filename: input.filename,
-			content_type: input.contentType,
-			size_bytes: input.sizeBytes,
-		});
-		return { uploadUrl: data.url, key: data.key };
-	},
-
-	async processLayoutVideo(input) {
-		const { data } = await api.post("/media/videos/layout/process", { key: input.key });
-		return { id: data.video.id, status: data.video.status };
-	},
-
-	async getLayoutVideo(id) {
-		const { data } = await api.get(`/media/videos/layout/${id}`);
-		return data;
-	},
-
-	async deleteLayoutVideo(id) {
-		await api.delete(`/media/videos/layout/${id}`);
 	},
 };

@@ -2,16 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
 /**
- * A platform delivery zone ("area") — the same area list `user_addresses
- * .area_id` FKs to (db-design/09-logistics-delivery.md) and that the
- * booking backend's `area` query param on
- * `GET /services/:slug/availability` expects an id from (checked against
- * the vendor's `service_areas`). No dedicated "areas" endpoint/component
- * existed anywhere in apps/web (the checkout address form uses a free-text
- * `area` string, not an area_id picker) — this is the first typed
- * consumer, reusing the existing public order-service endpoint.
+ * A platform service area — the list `user_addresses.area_id` FKs to and that
+ * the booking backend's `area` query param on
+ * `GET /services/:slug/availability` expects an id from (checked against the
+ * vendor's `service_areas`). Served by catalog-service from the `areas` table.
  */
-export interface DeliveryZone {
+export interface Area {
   id: string;
   name: string;
   slug: string;
@@ -22,13 +18,13 @@ export interface DeliveryZone {
   sort_order: number;
 }
 
-/** GET /shipping/delivery-zones — public (order-service), active zones only, sorted. */
+/** GET /areas — public (catalog-service), active areas only, sorted by sort_order then name. */
 export function useAreas(enabled = true) {
   return useQuery({
-    queryKey: ["shipping", "delivery-zones"],
+    queryKey: ["areas"],
     queryFn: async () => {
-      const { data } = await api.get("/shipping/delivery-zones");
-      return (data.data ?? []) as DeliveryZone[];
+      const { data } = await api.get("/areas");
+      return (data.data ?? []) as Area[];
     },
     enabled,
     staleTime: 10 * 60 * 1000,

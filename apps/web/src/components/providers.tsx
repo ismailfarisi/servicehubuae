@@ -20,8 +20,8 @@ function AuthHydrator({ children }: { children: ReactNode }) {
 
 /**
  * Ensures a guest session exists as soon as the app mounts, so guests
- * can use auth-optional endpoints (cart, wishlist, etc.) and so a
- * pre-login cart can later be merged on login.
+ * can use auth-optional endpoints (reel views, guest support tickets) and so
+ * the guest session can be linked to the account on login.
  *
  * Safe to call redundantly — it's a no-op when a token is already stored.
  */

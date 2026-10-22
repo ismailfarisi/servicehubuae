@@ -12,7 +12,7 @@ export function PreviewPane({ spec, sampleSource }: PreviewPaneProps) {
   const display = JSON.stringify(output, null, 2);
 
   return (
-    <div className="rounded-lg border border-pearl/14 bg-linen p-4 h-full overflow-auto">
+    <div className="rounded-lg border border-pearl bg-linen p-4 h-full overflow-auto">
       <p className="text-xs uppercase tracking-wide text-taupe mb-3">PREVIEW OUTPUT</p>
       {spec.fields.length === 0 ? (
         <p className="text-xs text-taupe">Drop or add fields to see the transformed output.</p>

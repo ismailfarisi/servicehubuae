@@ -112,7 +112,7 @@ export function CalendarSyncPanel({ staffId, canWrite }: { staffId: string; canW
 
 	return (
 		<div className="space-y-6">
-			<div className="rounded-lg border border-pearl/28 bg-pearl/10 p-4 space-y-1.5">
+			<div className="rounded-lg border border-input bg-pearl/10 p-4 space-y-1.5">
 				<p className="text-sm font-medium text-cacao">Sync is one-way in each direction</p>
 				<p className="text-sm text-taupe">
 					Importing events from another calendar and publishing this feed are two
@@ -143,7 +143,7 @@ export function CalendarSyncPanel({ staffId, canWrite }: { staffId: string; canW
 				{isLoading ? (
 					<p className="text-sm text-taupe">Loading…</p>
 				) : subscription && !editingUrl ? (
-					<div className="rounded-lg border border-pearl/14 p-4 space-y-2">
+					<div className="rounded-lg border border-pearl p-4 space-y-2">
 						<p className="font-mono text-xs text-cacao break-all">{subscription.ical_url}</p>
 						<div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-taupe">
 							<span>{subscription.is_active ? "Active" : "Inactive"}</span>
@@ -174,7 +174,7 @@ export function CalendarSyncPanel({ staffId, canWrite }: { staffId: string; canW
 						)}
 					</div>
 				) : canWrite ? (
-					<div className="flex items-end gap-2 rounded-lg border border-pearl/28 p-3">
+					<div className="flex items-end gap-2 rounded-lg border border-input p-3">
 						<div className="flex-1">
 							<Label className="mb-1 block text-xs">Calendar URL (public link — https recommended)</Label>
 							<Input
@@ -239,7 +239,7 @@ export function CalendarSyncPanel({ staffId, canWrite }: { staffId: string; canW
 						</Button>
 						{feedUrl && (
 							<div className="flex items-center gap-3">
-								<code className="flex-1 rounded-md border border-pearl/14 bg-pearl/30 px-3 py-2 font-mono text-xs text-cacao break-all">
+								<code className="flex-1 rounded-md border border-pearl bg-pearl/30 px-3 py-2 font-mono text-xs text-cacao break-all">
 									{feedUrl}
 								</code>
 								<Button

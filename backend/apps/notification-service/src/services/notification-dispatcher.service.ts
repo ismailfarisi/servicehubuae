@@ -23,21 +23,6 @@ interface RenderedTemplate {
   emailHtmlExtra?: string;
 }
 
-// Types whose email is delivered as a rich, standalone transactional message by
-// OrderEmailService. The generic dispatcher still sends their in-app (and push)
-// copy, but must NOT also send a plain email or the customer gets two.
-//
-// Booking types (Phase 5 Task 8) are DELIBERATELY NOT in this set: unlike
-// order_confirmed, nothing else sends their email — they get their full
-// (conditional) content straight from this generic pipeline via
-// templates.ts's per-type `render` hook (see that file's NotificationTemplate
-// doc comment). Adding a booking type here would silence its only email path.
-// vendor_new_order belongs here for the same reason as order_confirmed:
-// OrderEmailService.sendForConfirmedOrder already mails every vendor member
-// the rich new-order alert unconditionally, so without this entry a member
-// gets that email PLUS this pipeline's plain "New order {order_number}" one.
-const RICH_EMAIL_TYPES = new Set(["order_confirmed", "vendor_new_order"]);
-
 export class NotificationDispatcherService {
   constructor(
     private readonly notificationService: NotificationService,
@@ -80,7 +65,7 @@ export class NotificationDispatcherService {
     const preferences = await this.preferenceService.getPreferences(event.userId);
     const typePrefs = preferences[event.type as keyof typeof preferences];
 
-    const emailEnabled = (typePrefs?.email ?? false) && !RICH_EMAIL_TYPES.has(event.type);
+    const emailEnabled = typePrefs?.email ?? false;
     const pushEnabled = typePrefs?.push ?? false;
     const inAppEnabled = typePrefs?.in_app ?? true; // default enabled
     const whatsappEnabled = typePrefs?.whatsapp ?? false;

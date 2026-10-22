@@ -1,8 +1,8 @@
 import { apiServer } from "@/lib/api-server";
 import type { OfferingStaffMember, ServiceOffering, VendorLocation } from "@/lib/booking/types";
-import type { DeliveryZone } from "@/lib/queries/areas";
+import type { Area } from "@/lib/queries/areas";
 import { BookingCheckout } from "@/components/booking/booking-checkout";
-import { Eyebrow, MAISON_SANS, SerifTitle } from "@/components/ui/maison-primitives";
+import { Eyebrow, SerifTitle } from "@/components/ui/maison-primitives";
 import { isValidTimeZone } from "@/lib/utils";
 import { setRequestLocale, getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -12,7 +12,7 @@ import Link from "next/link";
  * Booking checkout — behind the /book/[slug] handoff contract Task 1 built
  * (see .superpowers/sdd/task-1-report.md's "Handoff contract for Task 2").
  * This server component re-fetches GET /services/:slug + the offering's
- * staff/locations (and delivery-zone name, for home-visit) itself rather
+ * staff/locations (and area name, for home-visit) itself rather
  * than trusting any client-carried offering state, then hands off to the
  * client-side BookingCheckout component for the interactive
  * hold -> terms -> [address] -> create -> pay -> poll -> success flow.
@@ -69,22 +69,11 @@ export default async function BookingCheckoutPage({ params, searchParams }: Prop
           <SerifTitle size={26} className="mt-2">
             {t("checkout.title")}
           </SerifTitle>
-          <div
-            className="mt-6 py-6 px-4 text-center"
-            style={{ border: "1px solid rgba(184,60,40,0.3)" }}
-          >
-            <p style={{ fontFamily: MAISON_SANS, fontSize: 12.5, color: "hsl(var(--nl-russet))" }}>
-              {t("stub.missing")}
-            </p>
+          <div className="mt-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-6 text-center">
+            <p className="text-sm text-nl-russet">{t("stub.missing")}</p>
             <Link
               href={`/${locale}/service/${slug}`}
-              className="mt-3 inline-block uppercase"
-              style={{
-                fontFamily: MAISON_SANS,
-                fontSize: 10.5,
-                letterSpacing: "0.18em",
-                color: "hsl(var(--nl-amber))",
-              }}
+              className="mt-4 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90"
             >
               {t("stub.backToService")}
             </Link>
@@ -105,10 +94,10 @@ export default async function BookingCheckoutPage({ params, searchParams }: Prop
       .catch(() => []),
     customer_area_id
       ? server
-          .get(`/shipping/delivery-zones`)
-          .then((r) => (r.data.data as DeliveryZone[] | undefined) ?? [])
+          .get(`/areas`)
+          .then((r) => (r.data.data as Area[] | undefined) ?? [])
           .catch(() => [])
-      : Promise.resolve([] as DeliveryZone[]),
+      : Promise.resolve([] as Area[]),
   ]);
 
   const customerAreaName =

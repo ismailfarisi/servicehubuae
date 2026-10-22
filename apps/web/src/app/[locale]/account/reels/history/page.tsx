@@ -3,11 +3,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { getWatchHistory } from "@/lib/api/reels";
 import { ReelThumbnail } from "@/components/reels/reel-thumbnail";
-import {
-  Eyebrow,
-  SerifTitle,
-  MAISON_SERIF,
-} from "@/components/ui/maison-primitives";
+import { History } from "lucide-react";
+import { Eyebrow } from "@/components/ui/maison-primitives";
 
 export default function WatchHistoryPage() {
   const params = useParams<{ locale: string }>();
@@ -31,10 +28,10 @@ export default function WatchHistoryPage() {
   return (
     <div>
       <div className="mb-5">
-        <Eyebrow>REELS</Eyebrow>
-        <SerifTitle size={26} className="mt-1.5">
+        <Eyebrow>Reels</Eyebrow>
+        <h1 className="mt-1 font-display text-2xl font-bold tracking-tight leading-tight text-nl-cacao">
           Watch history
-        </SerifTitle>
+        </h1>
       </div>
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
         {items.map((r) => (
@@ -47,16 +44,11 @@ export default function WatchHistoryPage() {
           />
         ))}
         {items.length === 0 && (
-          <div
-            className="col-span-full py-12 text-center"
-            style={{
-              fontFamily: MAISON_SERIF,
-              fontStyle: "italic",
-              fontSize: 16,
-              color: "hsl(var(--nl-russet))",
-            }}
-          >
-            Nothing watched yet.
+          <div className="col-span-full rounded-2xl border border-nl-cacao/10 bg-nl-linen px-6 py-12 text-center shadow-sm">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-nl-pearl text-nl-amber">
+              <History className="h-6 w-6" strokeWidth={1.75} aria-hidden="true" />
+            </div>
+            <p className="text-sm text-nl-russet">Nothing watched yet.</p>
           </div>
         )}
       </div>

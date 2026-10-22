@@ -70,7 +70,6 @@ describe("HeaderNavigationResolverService", () => {
         } as unknown as RepositoryMock;
       }
 
-
       throw new Error(`Unexpected repository: ${String(entity)}`);
     }) as unknown as typeof AppDataSource.getRepository);
   });

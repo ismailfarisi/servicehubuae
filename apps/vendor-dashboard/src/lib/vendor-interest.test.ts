@@ -7,7 +7,7 @@ import {
 describe("vendor interest form", () => {
   test("accepts a complete interest request and trims values", () => {
     const result = vendorInterestSchema.parse({
-      brandName: "  Luna Glow  ",
+      brandName: "  Sparkle Home Services  ",
       contactName: "  Sara Vendor  ",
       email: "sara@example.com",
       category: "  Skincare  ",
@@ -16,7 +16,7 @@ describe("vendor interest form", () => {
     });
 
     expect(result).toEqual({
-      brandName: "Luna Glow",
+      brandName: "Sparkle Home Services",
       contactName: "Sara Vendor",
       email: "sara@example.com",
       category: "Skincare",
@@ -47,7 +47,7 @@ describe("vendor interest form", () => {
 
   test("builds a readable received-state summary", () => {
     const summary = buildVendorInterestSummary({
-      brandName: "Luna Glow",
+      brandName: "Sparkle Home Services",
       contactName: "Sara Vendor",
       email: "sara@example.com",
       category: "Skincare",
@@ -55,6 +55,6 @@ describe("vendor interest form", () => {
       message: "",
     });
 
-    expect(summary).toBe("Luna Glow / Skincare / sara@example.com");
+    expect(summary).toBe("Sparkle Home Services / Skincare / sara@example.com");
   });
 });

@@ -2,7 +2,7 @@
 
 import type { MyReelSummary } from "@/lib/api/reels";
 import { useDeleteReel, useMyReels } from "@/lib/queries/reels-studio";
-import { Badge, Button, DataTable, StatusBadge } from "@mypickuae/ui";
+import { Button, DataTable, StatusBadge } from "@mypickuae/ui";
 import { PencilSimple, Plus, Trash } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useState } from "react";
@@ -63,15 +63,6 @@ export default function ReelsPage() {
 						<div className="text-xs text-red-600">{reel.rejection_reason}</div>
 					)}
 				</div>
-			),
-		},
-		{
-			id: "tags",
-			header: "Tags",
-			cell: ({
-				row: { original: reel },
-			}: { row: { original: MyReelSummary } }) => (
-				<Badge variant="secondary">{reel.tags?.length ?? 0}</Badge>
 			),
 		},
 		{

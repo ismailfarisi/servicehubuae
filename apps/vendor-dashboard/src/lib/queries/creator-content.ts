@@ -13,9 +13,7 @@ export interface DiscoveryCard {
   published_at: string | null;
   created_at: string;
   creator: { id: string; name: string };
-  tagged_products: Array<{ id: string; name: string }>;
   engagement: { views: number; likes: number; saves: number; shares: number };
-  attributed?: { orders: number; gmv_fils: number; product_taps: number };
   is_shortlisted: boolean;
 }
 
@@ -24,14 +22,14 @@ interface CardList {
   asOf: string;
 }
 
-export type MineSort = "recent" | "most_viewed" | "most_gmv" | "most_taps";
+export type MineSort = "recent" | "most_viewed";
 
-export function useMyUgc(params: { sort: MineSort; productId?: string }) {
+export function useMyUgc(params: { sort: MineSort }) {
   return useQuery({
-    queryKey: ["creator-content", "mine", params.sort, params.productId ?? null],
+    queryKey: ["creator-content", "mine", params.sort],
     queryFn: async () => {
       const { data } = await api.get<{ data: CardList }>("/vendor/reels/discovery/mine", {
-        params: { sort: params.sort, product_id: params.productId, limit: 24 },
+        params: { sort: params.sort, limit: 24 },
       });
       return data.data;
     },

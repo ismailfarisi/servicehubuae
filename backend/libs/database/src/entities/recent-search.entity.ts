@@ -6,11 +6,14 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from "typeorm";
 import type { User } from "./user.entity.ts";
 
 @Entity("recent_searches")
 @Index(["user_id", "last_used_at"])
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Unique("recent_searches_user_id_query_key", ["user_id", "query"])
 export class RecentSearch {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

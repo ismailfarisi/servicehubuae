@@ -16,8 +16,6 @@ interface AdminCollab {
 	status: string;
 	vendor_id: string;
 	vendor_name: string | null;
-	seeded_product_id: string | null;
-	seeded_product_name: string | null;
 	slots_total: number;
 	slots_filled: number;
 	created_at: string;
@@ -33,7 +31,6 @@ const STATUS_OPTIONS = [
 ];
 
 const TYPE_OPTIONS = [
-	{ label: "Product Seeding", value: "product_seeding" },
 	{ label: "Paid Campaign", value: "paid_campaign" },
 	{ label: "Event Appearance", value: "event_appearance" },
 ];
@@ -108,12 +105,8 @@ export default function CollabsPage() {
 			accessorKey: "type",
 			header: "Type",
 			cell: ({ row }) =>
-				TYPE_OPTIONS.find((t) => t.value === row.original.type)?.label ?? row.original.type,
-		},
-		{
-			accessorKey: "seeded_product_name",
-			header: "Product",
-			cell: ({ row }) => row.original.seeded_product_name ?? "—",
+				TYPE_OPTIONS.find((t) => t.value === row.original.type)?.label ??
+				(row.original.type === "product_seeding" ? "Product Seeding (legacy)" : row.original.type),
 		},
 		{
 			accessorKey: "status",

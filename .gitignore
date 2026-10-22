@@ -66,3 +66,4 @@ graphify-out/
 .superpowers/
 .playwright-mcp/
 .vercel
+.claude/settings.local.json

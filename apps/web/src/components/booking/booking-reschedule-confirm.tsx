@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useHoldBooking, useRescheduleBooking } from "@/lib/queries/booking";
 import type { Booking, BookingHoldResponse, ServiceOffering, VendorLocation } from "@/lib/booking/types";
 import { formatDateInZone, formatPrice, formatTimeInZone } from "@/lib/utils";
-import { Eyebrow, MAISON_SANS, SerifTitle } from "@/components/ui/maison-primitives";
+import { Eyebrow, SerifTitle } from "@/components/ui/maison-primitives";
 
 /**
  * Reschedule confirm step — mirrors booking-checkout.tsx's hold->confirm
@@ -199,9 +199,7 @@ export function BookingRescheduleConfirm({
   }
 
   if (phase === "holding") {
-    return (
-      <p style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-russet))" }}>{t("holding")}</p>
-    );
+    return <p className="text-sm text-nl-russet">{t("holding")}</p>;
   }
 
   if (phase === "hold-conflict" || phase === "hold-expired" || phase === "confirm-conflict") {
@@ -234,15 +232,12 @@ export function BookingRescheduleConfirm({
 
   if (phase === "success") {
     return (
-      <div>
+      <div className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 shadow-sm sm:p-6">
         <SerifTitle size={22}>{t("successTitle")}</SerifTitle>
-        <p className="mt-2" style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-cacao))" }}>
-          {dateTimeLabel}
-        </p>
+        <p className="mt-2 text-sm text-nl-cacao">{dateTimeLabel}</p>
         <Link
           href={`/${locale}/account/bookings/${booking.id}`}
-          className="mt-4 inline-block uppercase"
-          style={{ fontFamily: MAISON_SANS, fontSize: 10.5, letterSpacing: "0.18em", color: "hsl(var(--nl-amber))" }}
+          className="mt-5 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90"
         >
           {t("backToDetail")}
         </Link>
@@ -254,18 +249,18 @@ export function BookingRescheduleConfirm({
 
   return (
     <div>
-      <Eyebrow>{t("eyebrow")}</Eyebrow>
+      <Eyebrow className="text-sm">{t("eyebrow")}</Eyebrow>
       <SerifTitle size={24} className="mt-1.5">
         {t("formTitle")}
       </SerifTitle>
 
       {secondsLeft !== null && (
-        <p className="mt-2" style={{ fontFamily: MAISON_SANS, fontSize: 12, color: "hsl(var(--nl-amber))" }}>
+        <p className="mt-3 inline-flex items-center rounded-full bg-nl-pearl px-3 py-1 text-xs font-semibold text-nl-amber-text">
           {t("holdCountdown", { time: formatCountdown(secondsLeft) })}
         </p>
       )}
 
-      <div className="mt-5" style={{ border: "1px solid rgba(44,24,16,0.08)", background: "rgba(44,24,16,0.015)", padding: 18 }}>
+      <div className="mt-5 divide-y divide-nl-cacao/10 rounded-2xl border border-nl-cacao/10 bg-nl-linen px-4 py-1 shadow-sm sm:px-5">
         <SummaryRow label={t("summaryService")} value={offering.name} />
         <SummaryRow label={t("summaryDateTime")} value={dateTimeLabel} />
         {locationRecord && <SummaryRow label={t("summaryLocation")} value={locationRecord.name} />}
@@ -273,16 +268,9 @@ export function BookingRescheduleConfirm({
       </div>
 
       {errorMessage && (
-        <div
-          className="mt-4 p-3 text-sm"
-          style={{ background: "rgba(220, 38, 38, 0.06)", border: "1px solid rgba(220, 38, 38, 0.3)", color: "hsl(var(--destructive))" }}
-        >
+        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-destructive">
           <p>{errorMessage}</p>
-          {errorDetail && (
-            <p className="mt-1" style={{ fontSize: 11.5, opacity: 0.75 }}>
-              {errorDetail}
-            </p>
-          )}
+          {errorDetail && <p className="mt-1 text-xs opacity-75">{errorDetail}</p>}
         </div>
       )}
 
@@ -290,15 +278,7 @@ export function BookingRescheduleConfirm({
         type="button"
         onClick={handleConfirm}
         disabled={submitting}
-        className="w-full uppercase mt-6 transition-opacity hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
-        style={{
-          background: "hsl(var(--nl-cacao))",
-          color: "hsl(var(--nl-linen))",
-          padding: "18px 0",
-          fontSize: 11,
-          letterSpacing: "0.28em",
-          border: "none",
-        }}
+        className="mt-6 inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90 disabled:cursor-not-allowed disabled:opacity-40"
       >
         {submitting ? tCommon("loading") : t("confirmButton")}
       </button>
@@ -308,16 +288,9 @@ export function BookingRescheduleConfirm({
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-4 py-1.5">
-      <span
-        className="uppercase shrink-0"
-        style={{ fontFamily: MAISON_SANS, fontSize: 10, letterSpacing: "0.12em", color: "hsl(var(--nl-russet))" }}
-      >
-        {label}
-      </span>
-      <span className="text-end" style={{ fontFamily: MAISON_SANS, fontSize: 13, color: "hsl(var(--nl-cacao))" }}>
-        {value}
-      </span>
+    <div className="flex items-baseline justify-between gap-4 py-3">
+      <span className="shrink-0 text-xs font-medium text-nl-russet">{label}</span>
+      <span className="text-end text-sm font-medium text-nl-cacao">{value}</span>
     </div>
   );
 }
@@ -339,32 +312,26 @@ function RePick({
   const t = useTranslations("booking.myBookings.reschedule");
   const locale = useLocale();
   return (
-    <div>
+    <div className="rounded-2xl border border-nl-cacao/10 bg-nl-linen p-5 shadow-sm sm:p-6">
       <SerifTitle size={22}>{title}</SerifTitle>
-      <p className={detail ? "mt-2" : "mt-2 mb-4"} style={{ fontFamily: MAISON_SANS, fontSize: 12.5, color: "hsl(var(--nl-russet))" }}>
-        {body}
-      </p>
-      {detail && (
-        <p className="mt-1 mb-4" style={{ fontFamily: MAISON_SANS, fontSize: 11, opacity: 0.75, color: "hsl(var(--nl-russet))" }}>
-          {detail}
-        </p>
-      )}
-      {!backToDetailOnly && (
+      <p className={`text-sm text-nl-russet ${detail ? "mt-2" : "mb-5 mt-2"}`}>{body}</p>
+      {detail && <p className="mb-5 mt-1 text-xs text-nl-russet/80">{detail}</p>}
+      <div className="flex flex-wrap items-center gap-3">
+        {!backToDetailOnly && (
+          <Link
+            href={`/${locale}/account/bookings/${bookingId}/reschedule`}
+            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-nl-amber px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-nl-amber/90"
+          >
+            {t("pickAgain")}
+          </Link>
+        )}
         <Link
-          href={`/${locale}/account/bookings/${bookingId}/reschedule`}
-          className="inline-block uppercase me-4"
-          style={{ fontFamily: MAISON_SANS, fontSize: 10.5, letterSpacing: "0.18em", color: "hsl(var(--nl-amber))" }}
+          href={`/${locale}/account/bookings/${bookingId}`}
+          className="inline-flex min-h-[44px] items-center justify-center rounded-lg border border-nl-cacao/15 bg-nl-linen px-5 py-2.5 text-sm font-semibold text-nl-cacao transition-colors hover:bg-nl-pearl"
         >
-          {t("pickAgain")}
+          {t("backToDetail")}
         </Link>
-      )}
-      <Link
-        href={`/${locale}/account/bookings/${bookingId}`}
-        className="inline-block uppercase"
-        style={{ fontFamily: MAISON_SANS, fontSize: 10.5, letterSpacing: "0.18em", color: "hsl(var(--nl-russet))" }}
-      >
-        {t("backToDetail")}
-      </Link>
+      </div>
     </div>
   );
 }

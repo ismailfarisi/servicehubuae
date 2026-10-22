@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -13,6 +14,8 @@ import { TicketPriority, TicketStatus } from "../enums.ts";
 import type { User } from "./user.entity.ts";
 
 @Entity("support_tickets")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Check("support_tickets_owner_present", "user_id IS NOT NULL OR guest_session IS NOT NULL")
 export class SupportTicket {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -24,7 +27,7 @@ export class SupportTicket {
   @Column({ type: "uuid", nullable: true })
   user_id!: string | null;
 
-  @ManyToOne("User", { nullable: true })
+  @ManyToOne("User", { nullable: true, onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
   user!: User | null;
 

@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -18,6 +19,9 @@ import {
 import type { ServiceOfferingTranslation } from "./service-offering-translation.entity.ts";
 
 @Entity("service_offerings")
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_service_offerings_vendor" })
+@Index("idx_service_offerings_status", ["status"], { where: "deleted_at IS NULL" })
 export class ServiceOffering {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

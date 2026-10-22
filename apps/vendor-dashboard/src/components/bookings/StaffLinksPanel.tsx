@@ -83,7 +83,7 @@ export function StaffLinksPanel({
 			{!isLoading && items.length === 0 ? (
 				<EmptyState icon={icon} title={`No ${title.toLowerCase()} yet`} description={emptyDescription} />
 			) : (
-				<div className="rounded-lg border border-pearl/14 divide-y divide-pearl/14">
+				<div className="rounded-lg border border-pearl divide-y divide-pearl">
 					{items.map((item) => {
 						const isLinked = linkedIds.has(item.id);
 						const isBusy = pendingId === item.id;

@@ -72,8 +72,7 @@ TYPESENSE_PORT=8108
 # ─── Service ports ────────────────────────────────────────────
 GATEWAY_PORT=3000
 AUTH_PORT=3001
-PRODUCT_PORT=3002
-ORDER_PORT=3003
+CATALOG_PORT=3002
 VENDOR_PORT=3004
 NOTIFICATION_PORT=3005
 CMS_PORT=3006
@@ -83,8 +82,7 @@ BOOKING_PORT=3009
 
 # ─── Service hosts (docker-compose service names) ────────────
 AUTH_HOST=auth-service
-PRODUCT_HOST=product-service
-ORDER_HOST=order-service
+CATALOG_HOST=catalog-service
 VENDOR_HOST=vendor-service
 NOTIFICATION_HOST=notification-service
 CMS_HOST=cms-service
@@ -104,10 +102,9 @@ CLOUDFRONT_DOMAIN=${cloudfront_domain}
 VENDOR_DASHBOARD_URL=${vendor_dashboard_url}
 ADMIN_PANEL_URL=${admin_panel_url}
 
-# ─── Storefront URLs (CORS allowlist / Tamara redirect allowlist) ─────
+# ─── Storefront URLs (CORS allowlist) ─────────────────────────
 # Same literal fallback api-gateway/src/app.ts already hardcodes for prod
-# CORS and libs/config/src/index.ts now hardcodes for the Tamara
-# merchant-redirect allowlist — seeded here too (rather than left
+# CORS — seeded here too (rather than left
 # code-default-only) so it's explicit in the deployed env, same as
 # APP_URL/PUBLIC_API_URL below. CI's SSM sync (deploy-prod.yml) overrides
 # this on every deploy; this is only the first-boot value.
@@ -272,24 +269,15 @@ services:
     mem_limit: 384m
     env_file: .env
 
-  product-service:
-    image: $${ECR_REGISTRY}/mypickuae-product-service:production
+  catalog-service:
+    image: $${ECR_REGISTRY}/mypickuae-catalog-service:production
     restart: always
-    # 1g (not 384m): product-service runs the Typesense reindex + incremental
-    # search-sync workers, which load batches of products with all relations.
-    # At 384m the reindex OOM-killed the bun process after the first batch,
-    # leaving the search index permanently stale (only the oldest ~100
-    # products visible on the storefront). The box has ample headroom.
+    # 1g (not 384m): catalog-service runs the Typesense service reindex and
+    # search-sync workers, which load offerings in batches with relations.
     mem_limit: 1g
     env_file: .env
     depends_on:
       - typesense
-
-  order-service:
-    image: $${ECR_REGISTRY}/mypickuae-order-service:production
-    restart: always
-    mem_limit: 384m
-    env_file: .env
 
   vendor-service:
     image: $${ECR_REGISTRY}/mypickuae-vendor-service:production

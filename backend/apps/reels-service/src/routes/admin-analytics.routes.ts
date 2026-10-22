@@ -1,6 +1,7 @@
 import { jwtAuth, requireRole } from "@mypickuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
+import type { AdminLeaderboardType } from "../domain/analytics/admin-analytics.service.ts";
 import { leaderboardToCsv } from "../domain/analytics/csv.ts";
 import type { Period } from "../domain/analytics/rollup.service.ts";
 
@@ -9,19 +10,8 @@ function parsePeriod(raw: unknown): Period {
   return typeof raw === "string" && (PERIODS as string[]).includes(raw) ? (raw as Period) : "30d";
 }
 
-type LeaderboardType =
-  | "creators_commission"
-  | "creators_gmv"
-  | "reels_orders"
-  | "products_gmv"
-  | "vendors_gmv";
-const LB_TYPES: LeaderboardType[] = [
-  "creators_commission",
-  "creators_gmv",
-  "reels_orders",
-  "products_gmv",
-  "vendors_gmv",
-];
+type LeaderboardType = AdminLeaderboardType;
+const LB_TYPES: LeaderboardType[] = ["top_reels", "top_creators"];
 
 export const adminAnalyticsRoutes = new Elysia({ prefix: "/admin/reels/analytics" })
   .use(container)
@@ -45,9 +35,7 @@ export const adminAnalyticsRoutes = new Elysia({ prefix: "/admin/reels/analytics
   .get(
     "/leaderboard",
     async ({ query, adminAnalyticsService }: any) => {
-      const type = LB_TYPES.includes(query.type)
-        ? (query.type as LeaderboardType)
-        : "creators_commission";
+      const type = LB_TYPES.includes(query.type) ? (query.type as LeaderboardType) : "top_reels";
       const period = parsePeriod(query.period);
       const vendorId = typeof query.vendor_id === "string" ? query.vendor_id : undefined;
       const limit = Math.min(Number(query.limit ?? 20), 100);
@@ -68,32 +56,17 @@ export const adminAnalyticsRoutes = new Elysia({ prefix: "/admin/reels/analytics
   .get(
     "/leaderboard.csv",
     async ({ query, adminAnalyticsService, set }: any) => {
-      const type = LB_TYPES.includes(query.type)
-        ? (query.type as LeaderboardType)
-        : "creators_commission";
+      const type = LB_TYPES.includes(query.type) ? (query.type as LeaderboardType) : "top_reels";
       const period = parsePeriod(query.period);
       const vendorId = typeof query.vendor_id === "string" ? query.vendor_id : undefined;
       const limit = Math.min(Number(query.limit ?? 100), 500);
       const { rows } = await adminAnalyticsService.leaderboard(type, period, limit, { vendorId });
 
       const columnsByType: Record<LeaderboardType, string[]> = {
-        creators_commission: ["id", "label", "sub_label", "reels", "orders", "gmv_fils", "value"],
-        creators_gmv: ["id", "label", "sub_label", "reels", "orders", "value"],
-        reels_orders: ["id", "label", "sub_label", "impressions", "value", "gmv_fils"],
-        products_gmv: ["id", "label", "sub_label", "reels", "orders", "value"],
-        vendors_gmv: ["id", "label", "sub_label", "reels", "orders", "value"],
+        top_reels: ["id", "label", "sub_label", "impressions", "likes", "saves"],
+        top_creators: ["id", "label", "sub_label", "reels", "impressions", "likes", "saves"],
       };
-      const currencyByType: Record<LeaderboardType, Set<string>> = {
-        creators_commission: new Set(["value", "gmv_fils"]),
-        creators_gmv: new Set(["value"]),
-        reels_orders: new Set(["gmv_fils"]),
-        products_gmv: new Set(["value"]),
-        vendors_gmv: new Set(["value"]),
-      };
-
-      const csv = leaderboardToCsv(columnsByType[type], rows, {
-        currencyColumns: currencyByType[type],
-      });
+      const csv = leaderboardToCsv(columnsByType[type], rows);
       set.headers["content-type"] = "text/csv; charset=utf-8";
       set.headers["content-disposition"] =
         `attachment; filename="reel-analytics-${type}-${period}.csv"`;

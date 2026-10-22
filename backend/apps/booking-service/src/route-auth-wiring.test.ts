@@ -73,6 +73,7 @@ interface Case {
 // One representative vendor-membership-gated route per fixed route file.
 const cases: Case[] = [
   { file: "location.routes.ts", method: "GET", path: "/vendor/booking/locations" },
+  { file: "booking-dashboard.routes.ts", method: "GET", path: "/vendor/booking/dashboard" },
   { file: "staff.routes.ts", method: "GET", path: "/vendor/booking/staff" },
   {
     file: "availability-rule.routes.ts",

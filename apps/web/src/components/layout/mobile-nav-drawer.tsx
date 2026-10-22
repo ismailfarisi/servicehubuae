@@ -3,7 +3,8 @@
 import type { NavTab } from "@/lib/api/navigation";
 import { useAuthModalStore } from "@/stores/auth-modal";
 import { useAuthStore } from "@/stores/auth";
-import { ChevronDown, Clapperboard, Gift, Heart, Package, Store, Tags, User, X } from "lucide-react";
+import { VENDOR_REGISTER_URL } from "@/lib/vendor-dashboard";
+import { CalendarCheck, ChevronDown, Clapperboard, LayoutGrid, Store, User, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -38,12 +39,11 @@ export function MobileNavDrawer({ open, onClose, tabs }: Props) {
 	if (!open) return null;
 
 	const quickLinks = [
+		{ href: `/${locale}/services`, label: t("services"), Icon: LayoutGrid },
 		{ href: `/${locale}/reels`, label: t("reels"), Icon: Clapperboard },
-		{ href: `/${locale}/brands`, label: t("brands"), Icon: Tags },
-		{ href: `/${locale}/gifts`, label: t("gifts"), Icon: Gift },
-		{ href: `/${locale}/account/wishlist`, label: t("wishlist"), Icon: Heart },
-		{ href: `/${locale}/account/orders`, label: t("trackOrder"), Icon: Package },
-		{ href: `/${locale}/sell`, label: tFooter("sell"), Icon: Store },
+		{ href: `/${locale}/account/bookings`, label: t("myBookings"), Icon: CalendarCheck },
+		// Vendor dashboard is a separate app, so this is a plain cross-origin link.
+		{ href: VENDOR_REGISTER_URL, label: tFooter("sell"), Icon: Store },
 	];
 
 	return (
@@ -53,16 +53,16 @@ export function MobileNavDrawer({ open, onClose, tabs }: Props) {
 			className="fixed inset-0 z-50 m-0 w-full max-w-none h-full bg-nl-linen lg:hidden flex flex-col"
 		>
 			<div className="flex items-center justify-between px-4 h-14 border-b border-nl-cacao/10">
-				<span className="text-[11px] tracking-[0.22em] uppercase text-nl-cacao">
+				<span className="font-display text-base font-semibold text-nl-cacao">
 					{t("browse")}
 				</span>
 				<button
 					type="button"
 					aria-label="Close"
 					onClick={onClose}
-					className="text-nl-cacao p-3 -me-3"
+					className="text-nl-cacao p-3 -me-3 rounded-lg hover:bg-nl-pearl transition-colors"
 				>
-					<X className="h-5 w-5" strokeWidth={1.25} />
+					<X className="h-5 w-5" strokeWidth={1.75} />
 				</button>
 			</div>
 
@@ -76,12 +76,12 @@ export function MobileNavDrawer({ open, onClose, tabs }: Props) {
 									type="button"
 									onClick={() => setOpenTabId(expanded ? null : tab.id)}
 									aria-expanded={expanded}
-									className="w-full flex items-center justify-between px-4 py-4 text-[13px] tracking-[0.16em] uppercase text-nl-cacao"
+									className="w-full flex items-center justify-between px-4 py-4 text-base font-medium text-nl-cacao"
 								>
 									<span>{tab.label}</span>
 									<ChevronDown
 										className={`h-4 w-4 transition-transform ${expanded ? "rotate-180" : ""}`}
-										strokeWidth={1.25}
+										strokeWidth={1.75}
 									/>
 								</button>
 								{expanded && (
@@ -91,14 +91,14 @@ export function MobileNavDrawer({ open, onClose, tabs }: Props) {
 												<Link
 													href={s.href}
 													onClick={onClose}
-													className="block px-7 py-3 text-[13px] text-nl-russet"
+													className="block px-7 py-3 text-sm text-nl-russet hover:text-nl-cacao hover:bg-nl-pearl transition-colors"
 												>
 													{s.label}
 												</Link>
 											</li>
 										))}
 										{tab.brand_list.brands.length > 0 && (
-											<li className="px-7 pt-3 pb-1 text-[10px] tracking-[0.22em] uppercase text-nl-russet/70">
+											<li className="px-7 pt-3 pb-1 text-xs font-semibold text-nl-russet">
 												{tab.brand_list.title}
 											</li>
 										)}
@@ -107,7 +107,7 @@ export function MobileNavDrawer({ open, onClose, tabs }: Props) {
 												<Link
 													href={b.href}
 													onClick={onClose}
-													className="block px-7 py-3 text-[13px] text-nl-russet"
+													className="block px-7 py-3 text-sm text-nl-russet hover:text-nl-cacao hover:bg-nl-pearl transition-colors"
 												>
 													{b.name}
 												</Link>
@@ -127,9 +127,9 @@ export function MobileNavDrawer({ open, onClose, tabs }: Props) {
 							<Link
 								href={href}
 								onClick={onClose}
-								className="flex items-center gap-3 px-4 py-3.5 text-[13px] tracking-[0.16em] uppercase text-nl-cacao"
+								className="flex items-center gap-3 px-4 py-3.5 text-base font-medium text-nl-cacao hover:bg-nl-pearl transition-colors"
 							>
-								<Icon className="h-4 w-4 text-nl-russet" strokeWidth={1.25} />
+								<Icon className="h-4 w-4 text-nl-russet" strokeWidth={1.75} />
 								{label}
 							</Link>
 						</li>
@@ -139,9 +139,9 @@ export function MobileNavDrawer({ open, onClose, tabs }: Props) {
 							<Link
 								href={`/${locale}/account`}
 								onClick={onClose}
-								className="flex items-center gap-3 px-4 py-3.5 text-[13px] tracking-[0.16em] uppercase text-nl-cacao"
+								className="flex items-center gap-3 px-4 py-3.5 text-base font-medium text-nl-cacao hover:bg-nl-pearl transition-colors"
 							>
-								<User className="h-4 w-4 text-nl-russet" strokeWidth={1.25} />
+								<User className="h-4 w-4 text-nl-russet" strokeWidth={1.75} />
 								{t("account")}
 							</Link>
 						) : (
@@ -151,9 +151,9 @@ export function MobileNavDrawer({ open, onClose, tabs }: Props) {
 									onClose();
 									openAuthModal("login");
 								}}
-								className="w-full flex items-center gap-3 px-4 py-3.5 text-[13px] tracking-[0.16em] uppercase text-nl-cacao"
+								className="w-full flex items-center gap-3 px-4 py-3.5 text-base font-medium text-nl-cacao hover:bg-nl-pearl transition-colors"
 							>
-								<User className="h-4 w-4 text-nl-russet" strokeWidth={1.25} />
+								<User className="h-4 w-4 text-nl-russet" strokeWidth={1.75} />
 								{t("login")}
 							</button>
 						)}

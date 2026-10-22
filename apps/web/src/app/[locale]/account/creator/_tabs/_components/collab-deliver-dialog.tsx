@@ -83,14 +83,11 @@ export function CollabDeliverDialog({
           {reels.map((r) => (
             <label
               key={r.id}
-              className="flex cursor-pointer items-center gap-3 p-2 transition-colors"
-              style={{
-                border: `1px solid ${
-                  selected === r.id ? "hsl(var(--nl-amber))" : "rgba(44,24,16,0.16)"
-                }`,
-                background:
-                  selected === r.id ? "rgba(184,115,51,0.06)" : "rgba(255,255,255,0.55)",
-              }}
+              className={`flex cursor-pointer items-center gap-3 rounded-xl border p-2 transition-colors ${
+                selected === r.id
+                  ? "border-nl-amber bg-nl-pearl"
+                  : "border-nl-cacao/15 bg-nl-linen hover:bg-nl-pearl"
+              }`}
             >
               <input
                 type="radio"
@@ -102,12 +99,9 @@ export function CollabDeliverDialog({
               <MaisonRadio selected={selected === r.id} />
               {r.thumbnail_url && (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={r.thumbnail_url} alt="" className="h-14 w-10 object-cover" />
+                <img src={r.thumbnail_url} alt="" className="h-14 w-10 rounded-lg object-cover" />
               )}
-              <span
-                className="truncate"
-                style={{ fontSize: 13, color: "hsl(var(--nl-cacao))" }}
-              >
+              <span className="truncate text-sm text-nl-cacao">
                 {r.caption ?? r.id.slice(0, 8)}
               </span>
             </label>

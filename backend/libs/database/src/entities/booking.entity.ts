@@ -3,6 +3,7 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ForeignKey,
   Index,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -29,6 +30,14 @@ import {
 @Index("idx_bookings_staff_starts", ["staff_member_id", "starts_at"], {
   where: "deleted_at IS NULL",
 })
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@ForeignKey("User", ["customer_user_id"], ["id"], { name: "fk_bookings_customer" })
+@ForeignKey("StaffEngagement", ["engagement_id"], ["id"], { name: "fk_bookings_engagement" })
+@ForeignKey("VendorLocation", ["location_id"], ["id"], { name: "fk_bookings_location" })
+@ForeignKey("Payment", ["payment_id"], ["id"], { name: "fk_bookings_payment" })
+@ForeignKey("ServiceOffering", ["service_offering_id"], ["id"], { name: "fk_bookings_offering" })
+@ForeignKey("StaffMember", ["staff_member_id"], ["id"], { name: "fk_bookings_staff" })
+@ForeignKey("Vendor", ["vendor_id"], ["id"], { name: "fk_bookings_vendor" })
 export class Booking {
   @PrimaryGeneratedColumn("uuid")
   id!: string;

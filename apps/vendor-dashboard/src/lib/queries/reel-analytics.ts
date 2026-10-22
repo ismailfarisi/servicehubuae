@@ -3,19 +3,21 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "../api";
 
 export type Period = "7d" | "30d" | "90d" | "all";
-export type LeaderboardType = "my_products" | "reels_tagging_me" | "creators_promoting_me";
+export type LeaderboardType = "top_reels" | "top_creators";
 
+// Engagement-only analytics for reels linked to the vendor (product taps and
+// attributed orders/GMV went away with the product catalogue).
 export interface VendorOverview {
   kpis: {
     impressions: { value: number; deltaPct: number | null };
-    productTaps: { value: number; deltaPct: number | null };
-    attributedOrders: { value: number; deltaPct: number | null };
-    attributedGmvFils: { value: number; deltaPct: number | null };
+    likes: { value: number; deltaPct: number | null };
+    saves: { value: number; deltaPct: number | null };
   };
   timeseries: Array<{
     date: string;
     impressions: number;
-    attributedGmvFils: number;
+    likes: number;
+    saves: number;
   }>;
   asOf: string;
 }
@@ -42,16 +44,17 @@ export async function fetchVendorReelOverviewFresh(period: Period): Promise<Vend
   return data.data;
 }
 
+/** top_reels rows carry thumbnail_url; top_creators rows carry avatar_url + reels. */
 export interface VendorLeaderboardRow {
   id: string;
-  label: string;
-  sub_label?: string;
-  thumbnail_url?: string;
-  avatar_url?: string;
-  value: number;
-  orders?: number;
+  label: string | null;
+  sub_label?: string | null;
+  thumbnail_url?: string | null;
+  avatar_url?: string | null;
   reels?: number;
-  impressions?: number;
+  impressions: number;
+  likes: number;
+  saves: number;
 }
 
 export function useVendorReelLeaderboard(type: LeaderboardType, period: Period, limit = 20) {
@@ -72,11 +75,6 @@ export function useVendorReelLeaderboard(type: LeaderboardType, period: Period, 
 export function vendorLeaderboardCsvUrl(type: LeaderboardType, period: Period): string {
   const params = new URLSearchParams({ type, period });
   return `/vendor/reels/analytics/leaderboard.csv?${params.toString()}`;
-}
-
-export function formatAED(fils: number | null | undefined): string {
-  if (fils == null) return "—";
-  return `AED ${(fils / 100).toLocaleString("en-AE", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
 export function formatCount(n: number | null | undefined): string {

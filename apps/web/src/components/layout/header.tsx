@@ -3,10 +3,10 @@
 import type { NavTab } from "@/lib/api/navigation";
 import { useAuthModalStore } from "@/stores/auth-modal";
 import { useAuthStore } from "@/stores/auth";
-import { useCartStore } from "@/stores/cart";
 import { useCollapseOnScroll } from "@/hooks/use-collapse-on-scroll";
 import { useMobileNavStore } from "@/stores/mobile-nav";
-import { Gift, Heart, MapPin, Menu, Search, ShoppingBag, Store, User } from "lucide-react";
+import { VENDOR_REGISTER_URL } from "@/lib/vendor-dashboard";
+import { CalendarCheck, LayoutGrid, MapPin, Menu, Search, Store, User } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,7 +29,6 @@ export function Header({ tabs }: HeaderProps) {
 	const t = useTranslations("common");
 	const locale = useLocale();
 	const { isAuthenticated, user } = useAuthStore();
-	const { itemCount, toggleSlideOver } = useCartStore();
 	const openAuthModal = useAuthModalStore((s) => s.open);
 	const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 	const mobileNavOpen = useMobileNavStore((s) => s.drawerOpen);
@@ -43,25 +42,25 @@ export function Header({ tabs }: HeaderProps) {
 				collapsed ? "-top-9" : "top-0"
 			}`}
 		>
-			{/* Utility bar — delivery, perks, locale, currency.
+			{/* Utility bar — coverage, perks, locale, currency.
 			    Scrolls up out of the viewport when `collapsed` shifts the sticky
 			    offset by its own height, leaving the main row pinned at the top. */}
-			<div className="bg-nl-cacao text-nl-pearl">
-				<div className="max-w-[1400px] mx-auto px-4 md:px-12 h-9 flex items-center justify-between text-[10.5px] tracking-[0.2em] uppercase">
+			<div className="bg-nl-cacao text-white/80">
+				<div className="max-w-[1400px] mx-auto px-4 md:px-12 h-9 flex items-center justify-between text-xs">
 					<div className="flex items-center gap-2">
-						<MapPin className="h-3.5 w-3.5 text-nl-amber" strokeWidth={1.25} />
+						<MapPin className="h-3.5 w-3.5 text-white/70" strokeWidth={1.75} />
 						<span className="hidden sm:inline">
-							Deliver to{" "}
-							<span className="text-nl-linen">United Arab Emirates</span>
+							Services across the{" "}
+							<span className="font-medium text-white">United Arab Emirates</span>
 						</span>
-						<span className="sm:hidden text-nl-linen">UAE</span>
+						<span className="sm:hidden font-medium text-white">UAE</span>
 					</div>
-					<div className="flex items-center gap-3 md:gap-[18px] opacity-90">
+					<div className="flex items-center gap-3 md:gap-[18px]">
 						<span className="hidden md:inline">
-							Free shipping over{" "}
-							<span className="text-nl-amber">AED 150</span>
+							Compare up to{" "}
+							<span className="font-medium text-white">3 vendors</span>
 						</span>
-						<span className="hidden md:block w-px h-3 bg-nl-pearl/20" />
+						<span className="hidden md:block w-px h-3 bg-white/20" />
 						<LocaleSwitcher />
 						<CurrencySelector />
 					</div>
@@ -70,7 +69,7 @@ export function Header({ tabs }: HeaderProps) {
 
 			{/* Main header — logo + search + actions */}
 			<div className="bg-nl-linen/95 backdrop-blur-md border-b border-nl-cacao/10">
-				<div className="max-w-[1400px] mx-auto px-4 md:px-12 grid grid-cols-[auto_1fr_auto] items-center gap-4 md:gap-9 py-4 md:py-5">
+				<div className="max-w-[1400px] mx-auto px-4 md:px-12 grid grid-cols-[auto_1fr_auto] items-center gap-4 md:gap-9 py-3 md:py-4">
 					{/* Logo */}
 					<Link
 						href={`/${locale}`}
@@ -83,15 +82,15 @@ export function Header({ tabs }: HeaderProps) {
 							width={216}
 							height={120}
 							priority
-							className="h-12 md:h-16 w-auto"
+							className="h-11 md:h-14 w-auto"
 						/>
 					</Link>
 
 					{/* Search — desktop */}
-					<div className="hidden md:flex relative justify-self-center w-full max-w-[760px] items-center gap-3 px-5 py-3 bg-white/60 border border-nl-cacao/10">
+					<div className="hidden md:flex relative justify-self-center w-full max-w-[760px] items-center gap-3 px-5 py-2.5 rounded-full bg-nl-pearl border border-nl-cacao/10 transition-colors focus-within:border-nl-amber focus-within:bg-nl-linen focus-within:ring-2 focus-within:ring-nl-amber/20">
 						<Search
 							className="h-4 w-4 text-nl-russet shrink-0"
-							strokeWidth={1.25}
+							strokeWidth={1.75}
 						/>
 						<div className="flex-1 min-w-0">
 							{/* Boundary is required: SearchAutocomplete reads useSearchParams,
@@ -101,84 +100,69 @@ export function Header({ tabs }: HeaderProps) {
 								<SearchAutocomplete />
 							</Suspense>
 						</div>
-						<span className="text-[9px] tracking-[0.22em] uppercase text-nl-russet/60 shrink-0">
+						<span className="rounded-md border border-nl-cacao/10 bg-nl-linen px-1.5 py-0.5 text-xs font-medium text-nl-russet shrink-0">
 							⌘K
 						</span>
 					</div>
 
 					{/* Actions */}
-					<div className="flex items-center justify-self-end gap-1 md:gap-[22px] text-[10px] tracking-[0.22em] uppercase text-nl-russet shrink-0">
+					<div className="flex items-center justify-self-end gap-1 md:gap-5 text-sm font-medium text-nl-russet shrink-0">
 						{/* Mobile hamburger */}
 						<button
 							type="button"
 							onClick={openMobileNav}
 							aria-label="Menu"
-							className="lg:hidden text-nl-cacao p-3"
+							className="lg:hidden text-nl-cacao p-3 rounded-lg hover:bg-nl-pearl transition-colors"
 						>
-							<Menu className="h-5 w-5" strokeWidth={1.25} />
+							<Menu className="h-5 w-5" strokeWidth={1.75} />
 						</button>
 
 						{/* Mobile search toggle */}
 						<button
 							type="button"
 							onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-							className="md:hidden text-nl-cacao p-3"
+							className="md:hidden text-nl-cacao p-3 rounded-lg hover:bg-nl-pearl transition-colors"
 							aria-label="Search"
 						>
-							<Search className="h-5 w-5" strokeWidth={1.25} />
+							<Search className="h-5 w-5" strokeWidth={1.75} />
 						</button>
 
-						{/* Gifts — desktop only */}
+						{/* Services — desktop only */}
 						<Link
-							href={`/${locale}/gifts`}
-							className="hidden lg:inline-flex items-center gap-1.5 hover:text-nl-amber transition-colors"
+							href={`/${locale}/services`}
+							className="hidden lg:inline-flex items-center gap-1.5 hover:text-nl-cacao transition-colors"
 						>
-							<Gift className="h-4 w-4" strokeWidth={1.25} />
-							Gifts
+							<LayoutGrid className="h-4 w-4" strokeWidth={1.75} />
+							{t("services")}
 						</Link>
 
-						{/* Sell — desktop only */}
-						<Link
-							href={`/${locale}/sell`}
-							className="hidden lg:inline-flex items-center gap-1.5 hover:text-nl-amber transition-colors"
+						{/* Become a vendor — desktop only (vendor dashboard is a separate app) */}
+						<a
+							href={VENDOR_REGISTER_URL}
+							className="hidden lg:inline-flex items-center gap-1.5 hover:text-nl-cacao transition-colors"
 						>
-							<Store className="h-4 w-4" strokeWidth={1.25} />
+							<Store className="h-4 w-4" strokeWidth={1.75} />
 							Sell
-						</Link>
+						</a>
 
-						{/* Wishlist */}
-						<Link
-							href={`/${locale}/account/wishlist`}
-							aria-label="Wishlist"
-							className="hidden sm:inline-flex p-3 text-nl-cacao hover:text-nl-amber transition-colors"
-						>
-							<Heart className="h-[19px] w-[19px]" strokeWidth={1.25} />
-						</Link>
-
-						{/* Cart */}
-						<button
-							type="button"
-							onClick={toggleSlideOver}
-							aria-label={t("cart")}
-							className="p-3 text-nl-cacao hover:text-nl-amber transition-colors"
-						>
-							<span className="relative inline-flex">
-								<ShoppingBag className="h-[19px] w-[19px]" strokeWidth={1.25} />
-								{itemCount > 0 && (
-									<span className="absolute -top-1 -right-2 min-w-[16px] h-4 px-1 rounded-full bg-nl-amber text-nl-espresso text-[9px] tracking-normal font-medium flex items-center justify-center">
-										{itemCount > 99 ? "99+" : itemCount}
-									</span>
-								)}
-							</span>
-						</button>
+						{/* My bookings */}
+						{isAuthenticated && (
+							<Link
+								href={`/${locale}/account/bookings`}
+								aria-label={t("myBookings")}
+								className="hidden sm:inline-flex p-3 rounded-lg text-nl-cacao hover:bg-nl-pearl hover:text-nl-amber-text transition-colors"
+							>
+								<CalendarCheck className="h-[19px] w-[19px]" strokeWidth={1.75} />
+							</Link>
+						)}
 
 						{/* Account / Login */}
 						{isAuthenticated ? (
 							<Link
 								href={`/${locale}/account`}
-								className="inline-flex items-center gap-1.5 px-3 py-2 border border-nl-cacao/15 text-nl-cacao hover:border-nl-amber hover:text-nl-amber transition-colors"
+								className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 border border-nl-cacao/15 bg-nl-linen font-semibold text-nl-cacao hover:bg-nl-pearl transition-colors"
 							>
-								<User className="h-3.5 w-3.5" strokeWidth={1.25} />
+								<User className="h-4 w-4" strokeWidth={1.75} />
 								<span className="hidden lg:inline max-w-[80px] truncate">
 									{user?.first_name || t("account")}
 								</span>
@@ -187,9 +171,9 @@ export function Header({ tabs }: HeaderProps) {
 							<button
 								type="button"
 								onClick={() => openAuthModal("login")}
-								className="inline-flex items-center gap-1.5 bg-nl-cacao text-nl-linen px-4 py-2.5 hover:bg-nl-espresso transition-colors cursor-pointer"
+								className="inline-flex items-center justify-center gap-2 rounded-lg bg-nl-amber px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-nl-amber/90 transition-colors cursor-pointer"
 							>
-								<User className="h-3.5 w-3.5" strokeWidth={1.25} />
+								<User className="h-4 w-4" strokeWidth={1.75} />
 								<span className="hidden sm:inline">{t("login")}</span>
 							</button>
 						)}

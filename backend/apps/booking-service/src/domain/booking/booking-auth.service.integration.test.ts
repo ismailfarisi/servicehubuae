@@ -1,25 +1,17 @@
 // booking-auth.service.integration.test.ts
 //
-// Live Postgres + Redis + real order-service HTTP + real Stripe TEST mode
-// (BOOKING_LIVE_DB=1). Mirrors booking.service.integration.test.ts's /
-// booking-status.service.integration.test.ts's live-gate + reachability-skip
-// + cleanup patterns.
+// Live Postgres + Redis (BOOKING_LIVE_DB=1). Mirrors
+// booking.service.integration.test.ts's / booking-status.service
+// .integration.test.ts's live-gate + cleanup patterns.
 //
 // Seeds a `confirmed` prepay booking directly (bypassing BookingService
 // .create's hold->availability->pay flow, same shortcut
-// booking-status.service.integration.test.ts takes) and a Payment row shaped
-// exactly like what order-service's `setup_intent.succeeded` webhook handler
-// produces (gateway_response.{stripe_customer_id,payment_method_id}) — using
-// a REAL Stripe customer + a payment_method attached directly (standing in
-// for "the customer completed the SetupIntent's 3DS challenge in the
-// browser", the same technique internal-booking-payment.integration.test.ts
-// uses; a real browser-driven 3DS challenge is out of a backend test's
-// reach).
-//
-// SAFETY: refuses to run against a live Stripe key — only ever exercises
-// `sk_test_...`.
+// booking-status.service.integration.test.ts takes) and a saved-card Payment
+// row (gateway_response.{stripe_customer_id,payment_method_id}). The payment
+// gateway is the pre-M2 LocalBookingPaymentGateway, whose authorize() answers
+// 503 online_payment_unavailable — so these tests cover the job scheduling,
+// the sync-failure -> follow-up-cancel path and the cleanup hooks.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
 import {
   AppDataSource,
   Booking,
@@ -43,49 +35,19 @@ import {
   VendorStatus,
   ensureDatabase,
 } from "@mypickuae/database";
-import Stripe from "stripe";
 import { EngagementService } from "../engagement/engagement.service.ts";
 import { getBookingAuthQueue } from "./booking-auth.job.ts";
 import { AUTO_COMPLETE_DELAY_HOURS, BookingAuthService } from "./booking-auth.service.ts";
-import { BookingPaymentClient } from "./booking-payment.client.ts";
 import type { BookingAuthHook } from "./booking-status.service.ts";
 import { BookingStatusService } from "./booking-status.service.ts";
+import { LocalBookingPaymentGateway } from "./local-booking-payment.gateway.ts";
 
 const LIVE_DB = process.env.BOOKING_LIVE_DB === "1";
 const describeLive = LIVE_DB ? describe : describe.skip;
 
-if (LIVE_DB && !config.stripe.secretKey.startsWith("sk_test_")) {
-  throw new Error(
-    "BOOKING_LIVE_DB=1 requires a Stripe TEST secret key (sk_test_...) — refusing to run against a live key.",
-  );
-}
-
-// --- order-service reachability probe (mirrors booking.service.integration.test.ts) ---
-const ORDER_SERVICE_BASE_URL =
-  process.env.ORDER_SERVICE_URL ?? `http://${config.serviceHost.order}:${config.port.order}`;
-let orderServiceReachable = false;
-if (LIVE_DB) {
-  try {
-    await fetch(ORDER_SERVICE_BASE_URL, { signal: AbortSignal.timeout(2_000) });
-    orderServiceReachable = true;
-  } catch (err) {
-    console.warn(
-      `[skip] booking-auth authorize/capture tests require order-service running on ${ORDER_SERVICE_BASE_URL}; start it with: bun --env-file=.env apps/order-service/src/index.ts — probe error: ${(err as Error).message}`,
-    );
-  }
-}
-const itOrderService = orderServiceReachable ? it : it.skip;
-
-const stripe = LIVE_DB
-  ? new Stripe(config.stripe.secretKey, { apiVersion: "2026-03-25.dahlia" })
-  : null;
 const unique = Date.now();
-const COMPLIANT_CUSTOMER_FIELDS = {
-  name: "Booking Auth Test Customer",
-  address: { line1: "Marina Walk", city: "Dubai", country: "AE" },
-};
 
-describeLive("BookingAuthService (live DB + Redis + order-service HTTP + Stripe test mode)", () => {
+describeLive("BookingAuthService (live DB + Redis + local payment gateway)", () => {
   let vendorId: string;
   let customerId: string;
   let staffId: string;
@@ -118,19 +80,13 @@ describeLive("BookingAuthService (live DB + Redis + order-service HTTP + Stripe 
     return d;
   }
 
-  // Real Stripe customer + a directly-attached payment_method — see file
-  // header. `declining` selects a test PaymentMethod token that fails
-  // off-session authorization (per the Task 7b brief).
-  async function seedSavedCard(declining = false): Promise<{ customerId: string; pmId: string }> {
-    const cust = await stripe!.customers.create({
-      email: `booking-auth-${unique}-${slotCursor}@test.local`,
-      ...COMPLIANT_CUSTOMER_FIELDS,
-    });
-    const pm = await stripe!.paymentMethods.attach(
-      declining ? "pm_card_chargeCustomerFail" : "pm_card_visa",
-      { customer: cust.id },
-    );
-    return { customerId: cust.id, pmId: pm.id };
+  // Placeholder saved-card ids — the local gateway never reads them; the
+  // booking-auth job only needs them present to attempt an authorization.
+  function seedSavedCard(): { customerId: string; pmId: string } {
+    return {
+      customerId: `cus_local_${unique}_${slotCursor}`,
+      pmId: `pm_local_${unique}_${slotCursor}`,
+    };
   }
 
   async function seedPrepayBooking(opts: {
@@ -157,7 +113,7 @@ describeLive("BookingAuthService (live DB + Redis + order-service HTTP + Stripe 
     // booking_id to be set (num_nonnulls = 1) — so the Payment row can only
     // be inserted AFTER the booking row exists (booking.payment_id is
     // nullable and set in a follow-up update, same two-step order
-    // BookingService.create()/BookingPaymentClient.setup() itself uses).
+    // BookingService.create()/BookingPaymentGateway.setup() itself uses).
     const booking = await bookingRepo().save(
       bookingRepo().create({
         booking_number: `BAU${unique}${slotCursor}`,
@@ -275,7 +231,9 @@ describeLive("BookingAuthService (live DB + Redis + order-service HTTP + Stripe 
     offeringPrepayId = offeringPrepay.id;
 
     engagementService = new EngagementService(engagementRepo());
-    const bookingPaymentClient = new BookingPaymentClient();
+    const bookingPaymentClient = new LocalBookingPaymentGateway(
+      AppDataSource.query.bind(AppDataSource),
+    );
 
     // Same late-binding hook technique as container.ts (see that file's
     // comment) — the closures below reference `bookingAuthService` (assigned
@@ -457,169 +415,133 @@ describeLive("BookingAuthService (live DB + Redis + order-service HTTP + Stripe 
     expect(168 - spanHours).toBeGreaterThanOrEqual(24 - 1); // -1h float/round slack
   });
 
-  itOrderService(
-    "job runs -> authorize succeeds -> the PaymentIntent's Payment-row id is recorded on the booking",
-    async () => {
-      const card = await seedSavedCard(false);
-      const booking = await seedPrepayBooking({ daysOut: 15, savedCard: card });
+  it("authorize fails (online payments unavailable): a follow-up-cancel job is scheduled, and running it cancels + frees the slot", async () => {
+    const card = seedSavedCard();
+    const booking = await seedPrepayBooking({ daysOut: 15, savedCard: card });
+    jobIdsToClean.push(`auth-followup_${booking.id}`);
 
-      await bookingAuthService.runAuthorizeJob(booking.id);
+    await bookingAuthService.runAuthorizeJob(booking.id);
 
-      const updated = await bookingRepo().findOne({ where: { id: booking.id } });
-      expect(updated?.escrow_hold_id).toBeTruthy();
+    const afterAuthorize = await bookingRepo().findOne({ where: { id: booking.id } });
+    expect(afterAuthorize?.escrow_hold_id).toBeNull();
+    expect(afterAuthorize?.status).toBe(BookingStatus.confirmed); // not transitioned yet
 
-      const authPayment = await paymentRepo().findOne({
-        where: { id: updated!.escrow_hold_id as string },
-      });
-      expect(authPayment?.status).toBe(PaymentStatus.authorized);
-      expect(authPayment?.gateway_payment_id).toMatch(/^pi_/);
-      if (authPayment?.id) createdPaymentIds.push(authPayment.id);
+    const followUpJob = await authQueue.getJob(`auth-followup_${booking.id}`);
+    expect(followUpJob).toBeTruthy();
+    expect(followUpJob?.name).toBe("follow-up-cancel");
 
-      const pi = await stripe!.paymentIntents.retrieve(authPayment!.gateway_payment_id as string);
-      expect(pi.status).toBe("requires_capture");
-    },
-    20_000,
-  );
+    // Run the follow-up job directly rather than waiting on its real delay.
+    await bookingAuthService.runFollowUpCancelJob(booking.id);
 
-  itOrderService(
-    "failing card: authorize fails, a follow-up-cancel job is scheduled, and running it cancels + frees the slot",
-    async () => {
-      const card = await seedSavedCard(true);
-      const booking = await seedPrepayBooking({ daysOut: 15, savedCard: card });
-      jobIdsToClean.push(`auth-followup_${booking.id}`);
+    const cancelled = await bookingRepo().findOne({ where: { id: booking.id } });
+    expect(cancelled?.status).toBe(BookingStatus.cancelled);
 
-      await bookingAuthService.runAuthorizeJob(booking.id);
+    const engagement = await engagementRepo().findOne({ where: { id: booking.engagement_id } });
+    expect(engagement?.status).toBe(EngagementStatus.released);
+  }, 20_000);
 
-      const afterAuthorize = await bookingRepo().findOne({ where: { id: booking.id } });
-      expect(afterAuthorize?.escrow_hold_id).toBeNull();
-      expect(afterAuthorize?.status).toBe(BookingStatus.confirmed); // not transitioned yet
+  it("async webhook path: handlePaymentFailed on a confirmed prepay booking schedules the same follow-up-cancel job", async () => {
+    const booking = await seedPrepayBooking({ daysOut: 15, savedCard: null });
+    jobIdsToClean.push(`auth-followup_${booking.id}`);
 
-      const followUpJob = await authQueue.getJob(`auth-followup_${booking.id}`);
-      expect(followUpJob).toBeTruthy();
-      expect(followUpJob?.name).toBe("follow-up-cancel");
+    await bookingStatusService.handlePaymentFailed(booking.id, "card_declined via webhook");
 
-      // Run the follow-up job directly rather than waiting on its real delay.
-      await bookingAuthService.runFollowUpCancelJob(booking.id);
+    const followUpJob = await authQueue.getJob(`auth-followup_${booking.id}`);
+    expect(followUpJob).toBeTruthy();
 
-      const cancelled = await bookingRepo().findOne({ where: { id: booking.id } });
-      expect(cancelled?.status).toBe(BookingStatus.cancelled);
+    // Booking itself is NOT transitioned by handlePaymentFailed — only the
+    // follow-up job (run later, or directly below) does that.
+    const stillConfirmed = await bookingRepo().findOne({ where: { id: booking.id } });
+    expect(stillConfirmed?.status).toBe(BookingStatus.confirmed);
+  }, 20_000);
 
-      const engagement = await engagementRepo().findOne({ where: { id: booking.engagement_id } });
-      expect(engagement?.status).toBe(EngagementStatus.released);
-    },
-    20_000,
-  );
+  it("near-term booking (inside the window): confirm() attempts the authorization INLINE — no delayed auth:{id} job; the failure schedules the follow-up cancel", async () => {
+    const card = seedSavedCard();
+    // cancellation_window_hours=24 -> lead=48h; booked only 2h before starts_at.
+    const startsAt = new Date(Date.now() + 2 * 3_600_000);
+    const endsAt = new Date(startsAt.getTime() + 30 * 60_000);
 
-  itOrderService(
-    "async webhook path: handlePaymentFailed on a confirmed prepay booking schedules the same follow-up-cancel job",
-    async () => {
-      const booking = await seedPrepayBooking({ daysOut: 15, savedCard: null });
-      jobIdsToClean.push(`auth-followup_${booking.id}`);
+    const engagement = await engagementService.reserve({
+      staffMemberId: staffId,
+      vendorId,
+      startsAt,
+      endsAt,
+      kind: EngagementKind.marketplace_booking,
+      status: EngagementStatus.held,
+      createdBy: customerId,
+    });
+    createdEngagementIds.push(engagement.id);
 
-      await bookingStatusService.handlePaymentFailed(booking.id, "card_declined via webhook");
+    // Same booking-before-payment ordering as seedPrepayBooking (
+    // chk_payments_order_or_booking requires exactly one of order_id/
+    // booking_id set, so the Payment row can't be inserted until the
+    // booking row it points at already exists).
+    const booking = await bookingRepo().save(
+      bookingRepo().create({
+        booking_number: `BAUI${unique}`,
+        customer_user_id: customerId,
+        vendor_id: vendorId,
+        location_id: null,
+        staff_member_id: staffId,
+        engagement_id: engagement.id,
+        service_offering_id: offeringPrepayId,
+        service_name: "Inline Auth Test Service",
+        duration_minutes: 30,
+        price_fils: 20_000,
+        vat_fils: 952,
+        deposit_fils: 0,
+        deposit_type: DepositType.none,
+        cancellation_window_hours: 24,
+        reschedule_window_hours: 24,
+        commission_rate: 10,
+        commission_fils: 1900,
+        starts_at: startsAt,
+        ends_at: endsAt,
+        status: BookingStatus.pending_payment,
+        source: "marketplace",
+        payment_mode: ServicePaymentMode.prepay,
+        payment_id: null,
+      }),
+    );
+    createdBookingIds.push(booking.id);
 
-      const followUpJob = await authQueue.getJob(`auth-followup_${booking.id}`);
-      expect(followUpJob).toBeTruthy();
+    const payment = await paymentRepo().save(
+      paymentRepo().create({
+        booking_id: booking.id,
+        user_id: customerId,
+        status: PaymentStatus.authorized,
+        payment_method: PaymentMethod.stripe,
+        amount: 0,
+        currency: "AED",
+        gateway: "stripe",
+        gateway_payment_id: `seti_inline_${unique}`,
+        gateway_response: {
+          kind: "setup_intent",
+          stripe_customer_id: card.customerId,
+          payment_method_id: card.pmId,
+        },
+      }),
+    );
+    createdPaymentIds.push(payment.id);
+    await bookingRepo().update({ id: booking.id }, { payment_id: payment.id });
 
-      // Booking itself is NOT transitioned by handlePaymentFailed — only the
-      // follow-up job (run later, or directly below) does that.
-      const stillConfirmed = await bookingRepo().findOne({ where: { id: booking.id } });
-      expect(stillConfirmed?.status).toBe(BookingStatus.confirmed);
-    },
-    20_000,
-  );
+    const confirmed = await bookingStatusService.confirm(booking.id);
+    expect(confirmed.status).toBe(BookingStatus.confirmed);
 
-  itOrderService(
-    "near-term booking (inside the window): confirm() authorizes INLINE — no delayed auth:{id} job",
-    async () => {
-      const card = await seedSavedCard(false);
-      // cancellation_window_hours=24 -> lead=48h; booked only 2h before starts_at.
-      const startsAt = new Date(Date.now() + 2 * 3_600_000);
-      const endsAt = new Date(startsAt.getTime() + 30 * 60_000);
+    jobIdsToClean.push(`auth-followup_${booking.id}`);
 
-      const engagement = await engagementService.reserve({
-        staffMemberId: staffId,
-        vendorId,
-        startsAt,
-        endsAt,
-        kind: EngagementKind.marketplace_booking,
-        status: EngagementStatus.held,
-        createdBy: customerId,
-      });
-      createdEngagementIds.push(engagement.id);
+    // The inline authorize runs a step AFTER confirm()'s snapshot is
+    // captured, so assert on a fresh re-read. The local gateway refuses the
+    // authorization (503), so nothing is held and the follow-up cancel is
+    // scheduled — the same path a declined card takes.
+    const reloaded = await bookingRepo().findOne({ where: { id: booking.id } });
+    expect(reloaded?.escrow_hold_id).toBeNull();
 
-      // Same booking-before-payment ordering as seedPrepayBooking (
-      // chk_payments_order_or_booking requires exactly one of order_id/
-      // booking_id set, so the Payment row can't be inserted until the
-      // booking row it points at already exists).
-      const booking = await bookingRepo().save(
-        bookingRepo().create({
-          booking_number: `BAUI${unique}`,
-          customer_user_id: customerId,
-          vendor_id: vendorId,
-          location_id: null,
-          staff_member_id: staffId,
-          engagement_id: engagement.id,
-          service_offering_id: offeringPrepayId,
-          service_name: "Inline Auth Test Service",
-          duration_minutes: 30,
-          price_fils: 20_000,
-          vat_fils: 952,
-          deposit_fils: 0,
-          deposit_type: DepositType.none,
-          cancellation_window_hours: 24,
-          reschedule_window_hours: 24,
-          commission_rate: 10,
-          commission_fils: 1900,
-          starts_at: startsAt,
-          ends_at: endsAt,
-          status: BookingStatus.pending_payment,
-          source: "marketplace",
-          payment_mode: ServicePaymentMode.prepay,
-          payment_id: null,
-        }),
-      );
-      createdBookingIds.push(booking.id);
-
-      const payment = await paymentRepo().save(
-        paymentRepo().create({
-          booking_id: booking.id,
-          user_id: customerId,
-          status: PaymentStatus.authorized,
-          payment_method: PaymentMethod.stripe,
-          amount: 0,
-          currency: "AED",
-          gateway: "stripe",
-          gateway_payment_id: `seti_inline_${unique}`,
-          gateway_response: {
-            kind: "setup_intent",
-            stripe_customer_id: card.customerId,
-            payment_method_id: card.pmId,
-          },
-        }),
-      );
-      createdPaymentIds.push(payment.id);
-      await bookingRepo().update({ id: booking.id }, { payment_id: payment.id });
-
-      const confirmed = await bookingStatusService.confirm(booking.id);
-      expect(confirmed.status).toBe(BookingStatus.confirmed);
-
-      // confirm() returns the booking snapshot taken right after the
-      // pending_payment -> confirmed transaction commits — the inline
-      // authorize itself runs (and durably persists escrow_hold_id) a step
-      // AFTER that snapshot is captured, so assert on a fresh re-read rather
-      // than the returned object (matches the pattern the other scenarios in
-      // this file use: re-fetch from bookingRepo() rather than trust a
-      // possibly-stale in-memory return value).
-      const reloaded = await bookingRepo().findOne({ where: { id: booking.id } });
-      expect(reloaded?.escrow_hold_id).toBeTruthy();
-      if (reloaded?.escrow_hold_id) createdPaymentIds.push(reloaded.escrow_hold_id);
-
-      const job = await authQueue.getJob(`auth_${booking.id}`);
-      expect(job).toBeFalsy();
-    },
-    20_000,
-  );
+    const job = await authQueue.getJob(`auth_${booking.id}`);
+    expect(job).toBeFalsy();
+    const followUpJob = await authQueue.getJob(`auth-followup_${booking.id}`);
+    expect(followUpJob).toBeTruthy();
+  }, 20_000);
 
   it("cancel transition removes both the auth and auth-followup jobs (defensive cleanup)", async () => {
     const booking = await seedPrepayBooking({

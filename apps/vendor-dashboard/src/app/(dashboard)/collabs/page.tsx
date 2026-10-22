@@ -21,7 +21,9 @@ const STATUSES: CollabStatus[] = [
 	"cancelled",
 	"expired",
 ];
-const TYPES: CollabType[] = ["product_seeding", "paid_campaign", "event_appearance"];
+// Type filter options. product_seeding is no longer creatable (the backend
+// answers 422 product_seeding_unavailable); legacy rows still show under "All".
+const TYPES: CollabType[] = ["paid_campaign", "event_appearance"];
 
 function closesIn(iso: string | null): string {
 	if (!iso) return "no closing date";
@@ -37,8 +39,7 @@ function considerationLabel(c: CollabOpportunity): string {
 	if (c.type === "paid_campaign" || c.type === "event_appearance") {
 		return c.fee_fils ? formatAED(Number(c.fee_fils)) : "no fee set";
 	}
-	const qty = c.seeded_qty ?? 0;
-	return `${qty} unit${qty === 1 ? "" : "s"}`;
+	return "product seeding (legacy)";
 }
 
 export default function CollabsPage() {
@@ -73,7 +74,7 @@ export default function CollabsPage() {
 				<div>
 					<h1 className="text-2xl font-semibold">Collaborations</h1>
 					<p className="text-sm text-neutral-500">
-						Seed product, run a paid campaign, or book a creator for an event.
+						Run a paid campaign or book a creator for an event.
 					</p>
 				</div>
 				<Link

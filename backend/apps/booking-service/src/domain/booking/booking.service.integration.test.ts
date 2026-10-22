@@ -1,23 +1,12 @@
 // booking.service.integration.test.ts
 //
-// Live Postgres + Redis + real order-service HTTP (BOOKING_LIVE_DB=1).
-// Mirrors the live-gate pattern used across the codebase (REELS_LIVE_DB,
-// order-service's internal-booking-payment.integration.test.ts,
-// booking-hold.service.live.test.ts): boots real clients against
-// docker-compose's postgres/redis and a REAL running order-service process
-// (BookingPaymentClient talks HTTP, not in-process — see booking-payment
-// .client.ts's header comment on why: booking-service and order-service are
-// separate Elysia apps, the same boundary a production deploy would cross).
+// Live Postgres + Redis (BOOKING_LIVE_DB=1). Mirrors the live-gate pattern
+// used across the codebase (REELS_LIVE_DB, booking-hold.service.live.test.ts):
+// boots real clients against docker-compose's postgres/redis.
 //
-// Requires: `docker compose up -d postgres redis` AND order-service running
-// (`bun run --cwd apps/order-service dev`, or docker-compose's order-service
-// container) on config.serviceHost.order:config.port.order (localhost:3003
-// by default) with the SAME INTERNAL_SERVICE_SECRET this process loads via
-// --env-file=.env.
-//
-// SAFETY: refuses to run against a live Stripe key — only ever exercises
-// `sk_test_...` (deposit/prepay scenarios hit real Stripe TEST mode via
-// order-service, same as internal-booking-payment.integration.test.ts).
+// Requires: `docker compose up -d postgres redis`. Money goes through the
+// pre-M2 LocalBookingPaymentGateway; deposit/prepay offerings are covered by
+// the online-payments-disabled 422 scenarios.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { config } from "@mypickuae/config";
 import {
@@ -56,46 +45,15 @@ import { type RedisClientType, createClient } from "redis";
 import { AvailabilityCache } from "../availability/availability-cache.ts";
 import { AvailabilityService } from "../availability/availability.service.ts";
 import { BookingHoldService, type RedisLike } from "./booking-hold.service.ts";
-import { BookingPaymentClient } from "./booking-payment.client.ts";
-import { BookingService, PayAtVenueUnavailableError } from "./booking.service.ts";
+import {
+  BookingService,
+  OnlinePaymentUnavailableError,
+  PayAtVenueUnavailableError,
+} from "./booking.service.ts";
+import { LocalBookingPaymentGateway } from "./local-booking-payment.gateway.ts";
 
 const LIVE_DB = process.env.BOOKING_LIVE_DB === "1";
 const describeLive = LIVE_DB ? describe : describe.skip;
-
-if (LIVE_DB && !config.stripe.secretKey.startsWith("sk_test_")) {
-  throw new Error(
-    "BOOKING_LIVE_DB=1 requires a Stripe TEST secret key (sk_test_...) — refusing to run against a live key.",
-  );
-}
-
-// --- order-service reachability probe --------------------------------------
-// Only the deposit/prepay `create()` calls make a REAL HTTP call to
-// order-service's `/internal/booking-payments/*` routes via
-// BookingPaymentClient (see that file's header comment). If order-service
-// isn't running, `create()` throws `ServiceUnavailableError` AFTER the
-// booking transaction has already committed, leaving a stranded `booking`
-// row that (before this fix) got left untracked and later blew up `afterAll`
-// with a confusing FK "cleanup failed" error that masked the real
-// "order-service unreachable" cause. Probe once, synchronously, before test
-// registration (bun:test registers `it(...)` bodies at file-load time, so
-// this can't happen inside `beforeAll`), and skip ONLY the two tests that
-// actually need order-service — the other 5 tests have no dependency on it.
-const ORDER_SERVICE_BASE_URL =
-  process.env.ORDER_SERVICE_URL ?? `http://${config.serviceHost.order}:${config.port.order}`;
-let orderServiceReachable = false;
-if (LIVE_DB) {
-  try {
-    await fetch(ORDER_SERVICE_BASE_URL, { signal: AbortSignal.timeout(2_000) });
-    orderServiceReachable = true;
-  } catch (err) {
-    console.warn(
-      `[skip] deposit/prepay require order-service running on ${ORDER_SERVICE_BASE_URL} (set ORDER_SERVICE_URL); start it with: bun --env-file=.env apps/order-service/src/index.ts — probe error: ${(err as Error).message}`,
-    );
-  }
-}
-// bun:test's `it.skipIf` renders as a distinct SKIP status (not a silent
-// pass) when order-service isn't reachable.
-const itOrderService = orderServiceReachable ? it : it.skip;
 
 const unique = Date.now();
 const COMPLIANT_ADDRESS = { line1: "Marina Walk", city: "Dubai", country: "AE" };
@@ -124,7 +82,7 @@ function slotAt(offsetMinutes: number): { start: Date; end: Date } {
   return { start, end: new Date(start.getTime() + 30 * 60_000) };
 }
 
-describeLive("BookingService.create (live DB + Redis + order-service HTTP)", () => {
+describeLive("BookingService.create (live DB + Redis)", () => {
   let redis: RedisClientType;
   let holdService: BookingHoldService;
   let availabilityService: AvailabilityService;
@@ -319,7 +277,7 @@ describeLive("BookingService.create (live DB + Redis + order-service HTTP)", () 
       AppDataSource.getRepository(SiteSetting),
       availabilityService,
       holdService,
-      new BookingPaymentClient(),
+      new LocalBookingPaymentGateway(AppDataSource.query.bind(AppDataSource)),
     );
   }, 30_000);
 
@@ -535,7 +493,7 @@ describeLive("BookingService.create (live DB + Redis + order-service HTTP)", () 
       AppDataSource.getRepository(SiteSetting),
       availabilityService,
       holdService,
-      new BookingPaymentClient(),
+      new LocalBookingPaymentGateway(AppDataSource.query.bind(AppDataSource)),
     );
     // Override the seam to simulate Phase 5's strike gate blocking.
     (blockedService as any).checkPayAtVenueAllowed = async () => ({ allowed: false });
@@ -695,69 +653,88 @@ describeLive("BookingService.create (live DB + Redis + order-service HTTP)", () 
     });
   });
 
-  itOrderService(
-    "deposit: stays pending_payment and returns a capture-now intent client_secret",
-    async () => {
-      const slot = slotAt(60);
-      const staffId = staff.deposit as string;
-      const token = await holdService.hold(staffId, slot);
-      expect(token).not.toBeNull();
-      holdKeysToClean.push(holdService.key(staffId, slot), `holdrev:${token}`);
+  describe("online payments disabled (pre-M2): deposit/prepay rejected with 422 before any hold or row", () => {
+    function offlineService(): BookingService {
+      return new BookingService(
+        AppDataSource.getRepository(ServiceOffering),
+        AppDataSource.getRepository(Booking),
+        AppDataSource.getRepository(ServiceArea),
+        AppDataSource.getRepository(User),
+        AppDataSource.getRepository(Vendor),
+        AppDataSource.getRepository(Category),
+        AppDataSource.getRepository(SiteSetting),
+        availabilityService,
+        holdService,
+        new LocalBookingPaymentGateway(AppDataSource.query.bind(AppDataSource)),
+        undefined,
+        undefined,
+        undefined,
+        { onlineEnabled: false },
+      );
+    }
 
-      const result = await bookingService.create(customerId, {
-        offeringId: offerings.deposit as string,
-        staffMemberId: staffId,
-        locationId,
-        customerAddress: COMPLIANT_ADDRESS,
-        startsAt: slot.start,
-        endsAt: slot.end,
-        holdToken: token as string,
+    for (const mode of ["deposit", "prepay"] as const) {
+      it(`${mode}: hold() throws 422 online_payment_unavailable and takes no Redis hold`, async () => {
+        const slot = slotAt(mode === "deposit" ? 60 : 120);
+        const staffId = staff[mode] as string;
+
+        let caught: unknown;
+        try {
+          await offlineService().hold(customerId, {
+            offeringId: offerings[mode] as string,
+            staffMemberId: staffId,
+            locationId,
+            startsAt: slot.start,
+            endsAt: slot.end,
+          });
+        } catch (err) {
+          caught = err;
+        }
+        expect(caught).toBeInstanceOf(OnlinePaymentUnavailableError);
+        expect((caught as OnlinePaymentUnavailableError).statusCode).toBe(422);
+        expect((caught as Error).message).toBe("online_payment_unavailable");
+        expect(await redis.get(holdService.key(staffId, slot))).toBeNull();
       });
-      createdBookingIds.push(result.booking.id);
-      createdEngagementIds.push(result.engagement.id);
 
-      expect(result.booking.status).toBe(BookingStatus.pending_payment);
-      expect(result.clientSecret).toMatch(/^pi_.*_secret_/);
-      expect(result.paymentIntentId).toMatch(/^pi_/);
-      expect(result.booking.deposit_fils).toBe(4_000); // 20% of 20000
-      expect(result.booking.payment_id).toBeTruthy();
+      it(`${mode}: create() throws 422 online_payment_unavailable and writes no booking or engagement`, async () => {
+        const slot = slotAt(mode === "deposit" ? 60 : 120);
+        const staffId = staff[mode] as string;
+        const token = await holdService.hold(staffId, slot);
+        expect(token).not.toBeNull();
+        holdKeysToClean.push(holdService.key(staffId, slot), `holdrev:${token}`);
 
-      const payment = await AppDataSource.getRepository(Payment).findOne({
-        where: { id: result.booking.payment_id as string } as any,
+        const before = await AppDataSource.getRepository(Booking).count({
+          where: { service_offering_id: offerings[mode] as string },
+        });
+
+        let caught: unknown;
+        try {
+          await offlineService().create(customerId, {
+            offeringId: offerings[mode] as string,
+            staffMemberId: staffId,
+            locationId,
+            customerAddress: COMPLIANT_ADDRESS,
+            startsAt: slot.start,
+            endsAt: slot.end,
+            holdToken: token as string,
+          });
+        } catch (err) {
+          caught = err;
+        }
+        expect(caught).toBeInstanceOf(OnlinePaymentUnavailableError);
+        expect((caught as Error).message).toBe("online_payment_unavailable");
+
+        const after = await AppDataSource.getRepository(Booking).count({
+          where: { service_offering_id: offerings[mode] as string },
+        });
+        expect(after).toBe(before);
+        const engagements = await AppDataSource.getRepository(StaffEngagement).count({
+          where: { staff_member_id: staffId },
+        });
+        expect(engagements).toBe(0);
       });
-      expect((payment as any)?.booking_id).toBe(result.booking.id);
-    },
-    20_000,
-  );
-
-  itOrderService(
-    "prepay: stays pending_payment and returns a SetupIntent client_secret",
-    async () => {
-      const slot = slotAt(120);
-      const staffId = staff.prepay as string;
-      const token = await holdService.hold(staffId, slot);
-      expect(token).not.toBeNull();
-      holdKeysToClean.push(holdService.key(staffId, slot), `holdrev:${token}`);
-
-      const result = await bookingService.create(customerId, {
-        offeringId: offerings.prepay as string,
-        staffMemberId: staffId,
-        locationId,
-        customerAddress: COMPLIANT_ADDRESS,
-        startsAt: slot.start,
-        endsAt: slot.end,
-        holdToken: token as string,
-      });
-      createdBookingIds.push(result.booking.id);
-      createdEngagementIds.push(result.engagement.id);
-
-      expect(result.booking.status).toBe(BookingStatus.pending_payment);
-      expect(result.clientSecret).toMatch(/^seti_.*_secret_/);
-      expect(result.setupIntentId).toMatch(/^seti_/);
-      expect(result.booking.payment_id).toBeTruthy();
-    },
-    20_000,
-  );
+    }
+  });
 
   it("concurrent create on overlapping slots for the same staff: exactly one succeeds, the other 409s", async () => {
     const staffId = staff.conflict as string;
@@ -873,23 +850,45 @@ describeLive("BookingService.create (live DB + Redis + order-service HTTP)", () 
     expect(result.booking.staff_member_id).toBe(staffA);
   });
 
-  it("a non-conflict transaction failure (FK violation on customer_user_id) still releases the hold", async () => {
+  it("a non-conflict transaction failure (DB error inside the booking transaction) still releases the hold", async () => {
     const slot = slotAt(270); // 14:00 + 270min = 18:30 Dubai — inside the 08:00-20:00 window
     const staffId = staff.venue as string;
     const token = await holdService.hold(staffId, slot);
     expect(token).not.toBeNull();
     holdKeysToClean.push(holdService.key(staffId, slot), `holdrev:${token}`);
 
-    // A syntactically-valid UUID that doesn't exist in `users` — pay_at_venue
-    // skips the pre-transaction customer lookup (only deposit/prepay fetch
-    // the user), so this reaches `bookingRepoTx.save` inside the transaction
-    // and trips `fk_bookings_customer`, a real Postgres error that is NOT a
-    // ConflictError. Fix 2 requires the hold to be released on this path too.
-    const bogusCustomerId = "00000000-0000-4000-8000-000000000000";
+    // The booking transaction fails with a plain DB error that is NOT a
+    // ConflictError (the engagement INSERT succeeds, then a raw statement
+    // inside the same transaction errors and rolls everything back). Fix 2
+    // requires the hold to be released on this path too.
+    const realRepo = AppDataSource.getRepository(Booking);
+    const failingBookingRepo = Object.create(realRepo, {
+      manager: {
+        value: {
+          transaction: (work: (m: unknown) => Promise<unknown>) =>
+            realRepo.manager.transaction(async (m) => {
+              await work(m);
+              await m.query("SELECT 1 / 0");
+            }),
+        },
+      },
+    });
+    const failingService = new BookingService(
+      AppDataSource.getRepository(ServiceOffering),
+      failingBookingRepo,
+      AppDataSource.getRepository(ServiceArea),
+      AppDataSource.getRepository(User),
+      AppDataSource.getRepository(Vendor),
+      AppDataSource.getRepository(Category),
+      AppDataSource.getRepository(SiteSetting),
+      availabilityService,
+      holdService,
+      new LocalBookingPaymentGateway(AppDataSource.query.bind(AppDataSource)),
+    );
 
     let threw: unknown;
     try {
-      await bookingService.create(bogusCustomerId, {
+      await failingService.create(customerId, {
         offeringId: offerings.venue as string,
         staffMemberId: staffId,
         locationId,
@@ -905,7 +904,7 @@ describeLive("BookingService.create (live DB + Redis + order-service HTTP)", () 
     expect((threw as { statusCode?: number }).statusCode).not.toBe(409);
 
     // No stray booking/engagement should have been left behind (the whole
-    // transaction rolled back on the FK violation).
+    // transaction rolled back).
     const strayCount = await AppDataSource.getRepository(Booking)
       .createQueryBuilder("b")
       .where("b.staff_member_id = :staffId", { staffId })

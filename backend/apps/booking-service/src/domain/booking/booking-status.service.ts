@@ -741,10 +741,9 @@ export class BookingStatusService {
    * caller to retry a failed capture/accrual through that path. This method
    * IS that retry path: completing an already-completed booking re-fires the
    * completion hook (capture + commission accrual) instead of throwing,
-   * which is safe because BookingPaymentClient.complete's order-service
-   * endpoint is idempotent (skips the Stripe capture if already captured,
-   * skips the commission insert if a row already exists for this
-   * booking_id) — satisfying the Task 9 brief's "completing an
+   * which is safe because BookingPaymentGateway.complete is idempotent
+   * (skips the capture if already captured, skips the commission insert if
+   * a row already exists for this booking_id) — satisfying the Task 9 brief's "completing an
    * already-completed booking (or a retried call) must NOT double-capture
    * or double-accrue".
    *

@@ -22,17 +22,8 @@ function makePreferences(
 
   // Use the same event types that exist in templates
   const types = [
-    "order_confirmed",
-    "order_shipped",
-    "order_delivered",
-    "payment_received",
     "payout_sent",
-    "new_review",
-    "low_stock",
     "vendor_approved",
-    "return_requested",
-    "dispute_opened",
-    "dispute_resolved",
     "booking_confirmed",
     "booking_reminder",
     "booking_rescheduled",
@@ -54,20 +45,26 @@ function makePreferences(
 }
 
 const USER_ID = "user-001";
-const ORDER_EVENT: DispatchEvent = {
-  type: "order_confirmed",
+// booking_confirmed uses plain {key} interpolation (no render hook), so it
+// exercises the generic template path.
+const BASIC_EVENT: DispatchEvent = {
+  type: "booking_confirmed",
   userId: USER_ID,
-  variables: { order_number: "ORD-123" },
-  data: { orderId: "order-001" },
+  variables: {
+    bookingId: "bk-001",
+    service_name: "Deep Tissue Massage",
+    starts_at: "2026-08-10 10:00",
+    booking_number: "BK-123",
+  },
+  data: { bookingId: "bk-001" },
 };
-// order_confirmed's email is a rich, standalone message sent by OrderEmailService,
-// so the generic dispatcher suppresses its email channel. Use a type that still
-// goes through the generic email path to exercise that channel.
+const BASIC_TITLE = "Booking Confirmed";
+const BASIC_BODY =
+  "Your booking for Deep Tissue Massage on 2026-08-10 10:00 is confirmed. Booking #BK-123.";
 const EMAIL_EVENT: DispatchEvent = {
-  type: "order_shipped",
+  type: "vendor_approved",
   userId: USER_ID,
-  variables: { order_number: "ORD-123", tracking_url: "https://track/abc" },
-  data: { orderId: "order-001" },
+  variables: {},
 };
 
 function buildMocks() {
@@ -135,14 +132,14 @@ describe("NotificationDispatcherService", () => {
   });
 
   it("maps event to template correctly (uses getTemplate + renderTemplate)", async () => {
-    await ctx.service.dispatch(ORDER_EVENT);
+    await ctx.service.dispatch(BASIC_EVENT);
 
     // notificationService.send should have been called with rendered title/body
     expect(ctx.notificationService.send).toHaveBeenCalledTimes(1);
     const sendArg = ctx.notificationService.send.mock.calls[0]![0] as any;
-    expect(sendArg.title).toBe("Order Confirmed");
-    expect(sendArg.body).toBe("Your order ORD-123 has been confirmed");
-    expect(sendArg.action_url).toBe("/orders/{orderId}");
+    expect(sendArg.title).toBe(BASIC_TITLE);
+    expect(sendArg.body).toBe(BASIC_BODY);
+    expect(sendArg.action_url).toBe("/bookings/bk-001");
   });
 
   it("returns silently if no template found for event type", async () => {
@@ -157,19 +154,19 @@ describe("NotificationDispatcherService", () => {
   });
 
   it("dispatches to in-app channel (calls notificationService.send + redis publish)", async () => {
-    await ctx.service.dispatch(ORDER_EVENT);
+    await ctx.service.dispatch(BASIC_EVENT);
 
     expect(ctx.notificationService.send).toHaveBeenCalledTimes(1);
     const sendArg = ctx.notificationService.send.mock.calls[0]![0] as any;
     expect(sendArg.user_id).toBe(USER_ID);
     expect(sendArg.channel).toBe("in_app");
-    expect(sendArg.type).toBe("order_confirmed");
+    expect(sendArg.type).toBe("booking_confirmed");
 
     expect(ctx.redisClient.publish).toHaveBeenCalledTimes(1);
     const [channel, payload] = ctx.redisClient.publish.mock.calls[0]! as any;
     expect(channel).toBe(`notifications:${USER_ID}`);
     const parsed = JSON.parse(payload);
-    expect(parsed.title).toBe("Order Confirmed");
+    expect(parsed.title).toBe(BASIC_TITLE);
   });
 
   it("dispatches to email when enabled (calls emailDispatcher.send with rendered HTML)", async () => {
@@ -182,45 +179,14 @@ describe("NotificationDispatcherService", () => {
     expect(ctx.emailDispatcher.send).toHaveBeenCalledTimes(1);
     const [to, subject, html] = ctx.emailDispatcher.send.mock.calls[0]! as any;
     expect(to).toBe("user@test.com");
-    expect(subject).toBe("Order Shipped");
-    expect(html).toContain("Your order has shipped");
+    expect(subject).toBe("Vendor Approved");
+    expect(html).toContain("Your vendor account has been approved");
     expect(html).toContain("<!DOCTYPE html>");
-  });
-
-  it("suppresses the generic email for order_confirmed (rich email sent separately)", async () => {
-    // Even with email preference on, order_confirmed must not send a plain
-    // email — OrderEmailService owns that message. In-app still fires.
-    ctx.preferenceService.getPreferences.mockImplementation(() =>
-      Promise.resolve(makePreferences({ email: true })),
-    );
-
-    await ctx.service.dispatch(ORDER_EVENT);
-
-    expect(ctx.emailDispatcher.send).not.toHaveBeenCalled();
-    expect(ctx.notificationService.send).toHaveBeenCalledTimes(1);
-  });
-
-  it("suppresses the generic email for vendor_new_order too", async () => {
-    // OrderEmailService.sendForConfirmedOrder already mails every vendor
-    // member the rich new-order alert unconditionally, so a plain email here
-    // is a duplicate for anyone whose rows were seeded with email enabled.
-    ctx.preferenceService.getPreferences.mockImplementation(() =>
-      Promise.resolve(makePreferences({ email: true })),
-    );
-
-    await ctx.service.dispatch({
-      type: "vendor_new_order",
-      userId: USER_ID,
-      variables: { order_number: "ORD-123", amount: "250.00" },
-    });
-
-    expect(ctx.emailDispatcher.send).not.toHaveBeenCalled();
-    expect(ctx.notificationService.send).toHaveBeenCalledTimes(1);
   });
 
   it("skips email when disabled in preferences", async () => {
     // Default preferences have email disabled
-    await ctx.service.dispatch(ORDER_EVENT);
+    await ctx.service.dispatch(BASIC_EVENT);
 
     expect(ctx.emailDispatcher.send).not.toHaveBeenCalled();
   });
@@ -230,14 +196,14 @@ describe("NotificationDispatcherService", () => {
       Promise.resolve(makePreferences({ push: true })),
     );
 
-    await ctx.service.dispatch(ORDER_EVENT);
+    await ctx.service.dispatch(BASIC_EVENT);
 
     expect(ctx.pushDispatcher.send).toHaveBeenCalledTimes(1);
     const [token, title, body, data] = ctx.pushDispatcher.send.mock.calls[0]! as any;
     expect(token).toBe("fcm-token-abc");
-    expect(title).toBe("Order Confirmed");
-    expect(body).toBe("Your order ORD-123 has been confirmed");
-    expect(data).toEqual({ orderId: "order-001" });
+    expect(title).toBe(BASIC_TITLE);
+    expect(body).toBe(BASIC_BODY);
+    expect(data).toEqual({ bookingId: "bk-001" });
   });
 
   // ─── Phase 5 Task 8: booking notification types ───────────────────────────
@@ -769,7 +735,7 @@ describe("NotificationDispatcherService", () => {
       }),
     );
 
-    await ctx.service.dispatch(ORDER_EVENT);
+    await ctx.service.dispatch(BASIC_EVENT);
 
     expect(ctx.pushDispatcher.send).not.toHaveBeenCalled();
   });
@@ -780,17 +746,17 @@ describe("NotificationDispatcherService", () => {
     );
 
     // Should not throw
-    await ctx.service.dispatch(ORDER_EVENT);
+    await ctx.service.dispatch(BASIC_EVENT);
 
     expect(ctx.notificationService.send).toHaveBeenCalledTimes(1);
   });
 
   it("loads user only when email or push is enabled", async () => {
     // Default: email=false, push=false — should NOT load user
-    await ctx.service.dispatch(ORDER_EVENT);
+    await ctx.service.dispatch(BASIC_EVENT);
     expect(ctx.userRepo.findOneBy).not.toHaveBeenCalled();
 
-    // Enable email — should load user (use a type whose email isn't suppressed)
+    // Enable email — should load user
     ctx.preferenceService.getPreferences.mockImplementation(() =>
       Promise.resolve(makePreferences({ email: true })),
     );
@@ -808,17 +774,17 @@ describe("NotificationDispatcherService", () => {
 
     it("sends via whatsapp dispatcher when pref enabled and phone is verified", async () => {
       enableWhatsApp();
-      await ctx.service.dispatch(ORDER_EVENT);
+      await ctx.service.dispatch(BASIC_EVENT);
 
       expect(ctx.whatsAppDispatcher.send).toHaveBeenCalledTimes(1);
       const [to, type, variables] = ctx.whatsAppDispatcher.send.mock.calls[0]! as any[];
       expect(to).toBe("+971501234567");
-      expect(type).toBe("order_confirmed");
-      expect(variables).toEqual(ORDER_EVENT.variables);
+      expect(type).toBe("booking_confirmed");
+      expect(variables).toEqual(BASIC_EVENT.variables);
     });
 
     it("is off by default (pref false)", async () => {
-      await ctx.service.dispatch(ORDER_EVENT);
+      await ctx.service.dispatch(BASIC_EVENT);
       expect(ctx.whatsAppDispatcher.send).not.toHaveBeenCalled();
     });
 
@@ -833,7 +799,7 @@ describe("NotificationDispatcherService", () => {
         Promise.reject(new Error("WhatsApp send failed: 500")),
       );
 
-      await expect(ctx.service.dispatch(ORDER_EVENT)).resolves.toBeUndefined();
+      await expect(ctx.service.dispatch(BASIC_EVENT)).resolves.toBeUndefined();
       expect(ctx.notificationService.send).toHaveBeenCalledTimes(1);
     });
 
@@ -842,7 +808,7 @@ describe("NotificationDispatcherService", () => {
       ctx.userRepo.findOneBy.mockImplementation(() =>
         Promise.resolve({ id: USER_ID, email: "user@test.com", phone: null }),
       );
-      await ctx.service.dispatch(ORDER_EVENT);
+      await ctx.service.dispatch(BASIC_EVENT);
       expect(ctx.whatsAppDispatcher.send).not.toHaveBeenCalled();
     });
 
@@ -856,7 +822,7 @@ describe("NotificationDispatcherService", () => {
           phone_verified_at: null,
         }),
       );
-      await ctx.service.dispatch(ORDER_EVENT);
+      await ctx.service.dispatch(BASIC_EVENT);
       expect(ctx.whatsAppDispatcher.send).not.toHaveBeenCalled();
     });
 
@@ -870,7 +836,7 @@ describe("NotificationDispatcherService", () => {
           phone_verified_at: new Date(),
         }),
       );
-      await ctx.service.dispatch(ORDER_EVENT);
+      await ctx.service.dispatch(BASIC_EVENT);
       expect(ctx.whatsAppDispatcher.send).not.toHaveBeenCalled();
       // In-app still went out — a bad phone must not break the dispatch.
       expect(ctx.notificationService.send).toHaveBeenCalledTimes(1);
@@ -886,14 +852,14 @@ describe("NotificationDispatcherService", () => {
           phone_verified_at: new Date(),
         }),
       );
-      await ctx.service.dispatch(ORDER_EVENT);
+      await ctx.service.dispatch(BASIC_EVENT);
       expect(ctx.whatsAppDispatcher.send).toHaveBeenCalledTimes(1);
       expect((ctx.whatsAppDispatcher.send.mock.calls[0]! as any[])[0]).toBe("+971501234567");
     });
 
     it("loads user when only whatsapp is enabled", async () => {
       enableWhatsApp();
-      await ctx.service.dispatch(ORDER_EVENT);
+      await ctx.service.dispatch(BASIC_EVENT);
       expect(ctx.userRepo.findOneBy).toHaveBeenCalledTimes(1);
     });
   });

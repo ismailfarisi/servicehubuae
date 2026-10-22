@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -41,6 +42,11 @@ export interface CreatorMediaKitSegment {
  */
 @Entity("creator_media_kits")
 @Index("uq_media_kit_per_user", ["user_id"], { unique: true, where: "deleted_at IS NULL" })
+// Restored NoorLuna hand-written constraints (1792700000200-RestoreForkConstraints).
+@Check("ck_media_kit_audience_len", "jsonb_array_length(audience) <= 6")
+@Check("ck_media_kit_content_types_len", "jsonb_array_length(content_types) <= 8")
+@Check("ck_media_kit_locations_len", "jsonb_array_length(top_locations) <= 6")
+@Check("ck_media_kit_stats_len", "jsonb_array_length(stats) <= 4")
 export class CreatorMediaKit {
   @PrimaryGeneratedColumn("uuid")
   id!: string;
@@ -48,7 +54,7 @@ export class CreatorMediaKit {
   @Column({ type: "uuid" })
   user_id!: string;
 
-  @ManyToOne("User")
+  @ManyToOne("User", { onDelete: "CASCADE" })
   @JoinColumn({ name: "user_id" })
   user!: User;
 

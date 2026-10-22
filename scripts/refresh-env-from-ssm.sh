@@ -46,23 +46,6 @@ path_to_env() {
     "${PREFIX}/google/drive-api-key")         echo "GOOGLE_DRIVE_API_KEY" ;;
     "${PREFIX}/google/gemini-api-key")        echo "GOOGLE_GEMINI_API_KEY" ;;
     "${PREFIX}/typesense/api-key")            echo "TYPESENSE_API_KEY" ;;
-    "${PREFIX}/tamara/api-token")             echo "TAMARA_API_TOKEN" ;;
-    "${PREFIX}/tamara/api-base-url")          echo "TAMARA_API_BASE_URL" ;;
-    "${PREFIX}/tamara/notification-token")    echo "TAMARA_NOTIFICATION_TOKEN" ;;
-    "${PREFIX}/tamara/success-url")           echo "TAMARA_SUCCESS_URL" ;;
-    "${PREFIX}/tamara/failure-url")           echo "TAMARA_FAILURE_URL" ;;
-    "${PREFIX}/tamara/cancel-url")            echo "TAMARA_CANCEL_URL" ;;
-    "${PREFIX}/tamara/notification-url")      echo "TAMARA_NOTIFICATION_URL" ;;
-    "${PREFIX}/postaplus/partner-key")        echo "POSTAPLUS_PARTNER_KEY" ;;
-    "${PREFIX}/postaplus/tenant")             echo "POSTAPLUS_TENANT" ;;
-    "${PREFIX}/postaplus/customer")           echo "POSTAPLUS_CUSTOMER" ;;
-    "${PREFIX}/postaplus/created-by")         echo "POSTAPLUS_CREATED_BY" ;;
-    "${PREFIX}/postaplus/base-url")           echo "POSTAPLUS_BASE_URL" ;;
-    "${PREFIX}/postaplus/shipment-type")      echo "POSTAPLUS_SHIPMENT_TYPE" ;;
-    "${PREFIX}/postaplus/package-type")       echo "POSTAPLUS_PACKAGE_TYPE" ;;
-    "${PREFIX}/postaplus/service")            echo "POSTAPLUS_SERVICE" ;;
-    "${PREFIX}/postaplus/vehicle")            echo "POSTAPLUS_VEHICLE" ;;
-    "${PREFIX}/postaplus/pickup-type")        echo "POSTAPLUS_PICKUP_TYPE" ;;
     "${PREFIX}/grafana/cloud-loki-url")        echo "GRAFANA_CLOUD_LOKI_URL" ;;
     "${PREFIX}/grafana/cloud-prometheus-url")  echo "GRAFANA_CLOUD_PROMETHEUS_REMOTE_WRITE_URL" ;;
     "${PREFIX}/grafana/cloud-username")        echo "GRAFANA_CLOUD_USERNAME" ;;
@@ -79,8 +62,7 @@ path_to_env() {
     # mapping it here makes CI the source of truth on every deploy.
     "${PREFIX}/urls/public-api-url")          echo "PUBLIC_API_URL" ;;
     # Storefront apex/www hostnames. Backs api-gateway's prod CORS allowlist
-    # and libs/config/src/index.ts's Tamara merchant-redirect allowlist —
-    # both already hardcode the same values as their own in-code fallback, so
+    # (which already hardcodes the same values as its in-code fallback), so
     # this SSM mapping keeps CI as the source of truth on every deploy
     # (mirrors PUBLIC_API_URL's comment above) rather than relying solely on
     # the code default.
@@ -89,8 +71,6 @@ path_to_env() {
     "${PREFIX}/integration/host")             echo "INTEGRATION_HOST" ;;
     "${PREFIX}/integration/port")             echo "INTEGRATION_PORT" ;;
     "${PREFIX}/integration/service-url")      echo "INTEGRATION_SERVICE_URL" ;;
-    "${PREFIX}/integration/feed-bucket")      echo "INTEGRATION_FEED_BUCKET" ;;
-    "${PREFIX}/integration/feed-base-url")    echo "INTEGRATION_FEED_BASE_URL" ;;
     *) echo "" ;;
   esac
 }

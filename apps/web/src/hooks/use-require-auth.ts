@@ -17,7 +17,7 @@ import { useAuthStore } from "@/stores/auth";
  * null) while `isReady` is false to avoid a flash of protected UI before
  * the redirect fires.
  *
- * NOTE: this replaces the old Next.js middleware-based guard, which read
+ * NOTE: this replaces the old Next.js middleware (now proxy) guard, which read
  * `web_access_token` from `request.cookies` — that cookie lives on the API
  * origin and is never sent to the web origin, so the middleware check was a
  * no-op at best and an infinite redirect at worst in the cross-origin setup.
