@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { jwt } from "@elysiajs/jwt";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Elysia } from "elysia";
 import { app } from "../app.ts";
 

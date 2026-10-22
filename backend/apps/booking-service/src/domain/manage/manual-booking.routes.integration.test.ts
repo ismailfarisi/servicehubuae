@@ -20,7 +20,7 @@
 //      as an explicit second call rather than a separate slot-probe).
 //   3. non-manager of that location -> 403.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   Booking,
@@ -39,8 +39,8 @@ import {
   VendorMemberStatus,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
-import { permissionMatrix } from "@mypickuae/guards";
+} from "@servicehubuae/database";
+import { permissionMatrix } from "@servicehubuae/guards";
 import jwt from "jsonwebtoken";
 import { app } from "../../app.ts";
 
@@ -322,7 +322,7 @@ describeLive("POST /manage/bookings (live DB) — manual walk-in/phone booking",
     }
   }, 30_000);
 
-  it("manager creates a walk-in: 201, engagement confirmed, booking row confirmed with no MyPickUAE customer", async () => {
+  it("manager creates a walk-in: 201, engagement confirmed, booking row confirmed with no ServiceHubUAE customer", async () => {
     const slot = nextSlot();
     const res = await req("POST", "/manage/bookings", managerToken, {
       staff_member_id: staffId,

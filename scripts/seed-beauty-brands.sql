@@ -1,5 +1,5 @@
 -- ============================================================
--- MyPickUAE Beauty & Fragrance - Brands
+-- ServiceHubUAE Beauty & Fragrance - Brands
 -- ============================================================
 
 BEGIN;

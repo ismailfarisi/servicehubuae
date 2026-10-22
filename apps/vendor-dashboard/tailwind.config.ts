@@ -29,7 +29,7 @@ const config: Config = {
         sidebar: { DEFAULT: "hsl(var(--sidebar))", foreground: "hsl(var(--sidebar-foreground))", accent: "hsl(var(--sidebar-accent))" },
         success: { DEFAULT: "hsl(var(--success))", foreground: "hsl(var(--success-foreground))" },
         warning: { DEFAULT: "hsl(var(--warning))", foreground: "hsl(var(--warning-foreground))" },
-        // MyPickUAE brand palette (consumed directly by @mypickuae/ui components)
+        // ServiceHubUAE brand palette (consumed directly by @servicehubuae/ui components)
         espresso: "hsl(var(--nl-espresso))",
         cacao: "hsl(var(--nl-cacao))",
         russet: "hsl(var(--nl-russet))",

@@ -91,7 +91,7 @@ export const NoShowBookingBody = Type.Object({
 });
 export type NoShowBookingBody = Static<typeof NoShowBookingBody>;
 
-// Mirrors BookingStatus (@mypickuae/database, booking.enums.ts) — kept as a
+// Mirrors BookingStatus (@servicehubuae/database, booking.enums.ts) — kept as a
 // literal union here (not an import) to match this DTO file's existing
 // dependency-free style (see e.g. CreateBookingBody's Jsonb helper); an
 // invalid value now 400s at the schema boundary instead of silently

@@ -18,7 +18,7 @@ import {
   ServiceReviewStatus,
   UserRole,
   VendorStatus,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 
 export const DASHBOARD_TIME_ZONE = "Asia/Dubai";
 

@@ -56,7 +56,7 @@ describe("consent-cookie", () => {
   });
 
   it("readConsentCookie returns null when cookie holds an unknown value", () => {
-    cookieStore.mypickuae_consent = "maybe";
+    cookieStore.servicehubuae_consent = "maybe";
     expect(readConsentCookie()).toBeNull();
   });
 });
@@ -71,7 +71,7 @@ describe("hasConsent", () => {
 
 describe("ConsentProvider + useConsent", () => {
   it("initialises decision from the cookie on mount", async () => {
-    cookieStore.mypickuae_consent = "accepted";
+    cookieStore.servicehubuae_consent = "accepted";
     const { result } = renderHook(() => useConsent(), { wrapper });
     // useEffect-driven read; flush microtasks.
     await act(async () => {});
@@ -90,11 +90,11 @@ describe("ConsentProvider + useConsent", () => {
 
     act(() => result.current.setDecision("accepted"));
     expect(result.current.decision).toBe("accepted");
-    expect(cookieStore.mypickuae_consent).toBe("accepted");
+    expect(cookieStore.servicehubuae_consent).toBe("accepted");
 
     act(() => result.current.setDecision("rejected"));
     expect(result.current.decision).toBe("rejected");
-    expect(cookieStore.mypickuae_consent).toBe("rejected");
+    expect(cookieStore.servicehubuae_consent).toBe("rejected");
   });
 
   it("throws when useConsent is called outside the provider", () => {
@@ -109,7 +109,7 @@ describe("ConsentProvider + useConsent", () => {
   });
 
   it("exposes the decision to consuming children", async () => {
-    cookieStore.mypickuae_consent = "rejected";
+    cookieStore.servicehubuae_consent = "rejected";
     function Probe() {
       const { decision } = useConsent();
       return <span data-testid="d">{decision ?? "none"}</span>;

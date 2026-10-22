@@ -22,7 +22,7 @@ import {
 	Switch,
 	Textarea,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";

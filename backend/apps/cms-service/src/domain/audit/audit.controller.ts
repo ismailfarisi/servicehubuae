@@ -1,4 +1,4 @@
-import type { AuditLogQuery } from "@mypickuae/dto";
+import type { AuditLogQuery } from "@servicehubuae/dto";
 import type { AuditService } from "./audit.service.ts";
 
 export class AuditController {

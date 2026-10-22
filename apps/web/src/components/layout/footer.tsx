@@ -69,29 +69,27 @@ const COLUMNS: Array<{
 const SOCIALS = [
 	{
 		Icon: Instagram,
-		href: "https://www.instagram.com/mypickuae.uaeofficial",
+		href: "https://www.instagram.com/servicehubuae",
 		label: "Instagram",
 	},
 	{
 		Icon: TikTokIcon,
-		href: "https://www.tiktok.com/@mypickuae_uae_official",
+		href: "https://www.tiktok.com/@servicehubuae",
 		label: "TikTok",
 	},
 	{
 		Icon: Youtube,
-		// @MyPickUAEuae is NOT ours — it resolves to an unrelated personal
-		// channel. The official MyPickUAE channel is @MYPICKUAE-UAE.
-		href: "https://www.youtube.com/@MYPICKUAE-UAE",
+		href: "https://www.youtube.com/@servicehubuae",
 		label: "YouTube",
 	},
 	{
 		Icon: XIcon,
-		href: "https://x.com/MyPickUAEUae",
+		href: "https://x.com/servicehubuae",
 		label: "X (formerly Twitter)",
 	},
 	{
 		Icon: Linkedin,
-		href: "https://www.linkedin.com/company/mypickuae-uae/",
+		href: "https://www.linkedin.com/company/servicehubuae/",
 		label: "LinkedIn",
 	},
 ];
@@ -117,11 +115,11 @@ export async function Footer() {
 							// The logo artwork has dark lettering, so it sits on a white chip
 							// against the navy footer.
 							className="inline-flex items-center mb-5 rounded-xl bg-white px-3 py-1.5"
-							aria-label="MyPickUAE"
+							aria-label="ServiceHubUAE"
 						>
 							<Image
-								src="/mypickuae-logo.png"
-								alt="MyPickUAE"
+								src="/servicehubuae-logo.png"
+								alt="ServiceHubUAE"
 								width={216}
 								height={120}
 								className="h-12 w-auto"

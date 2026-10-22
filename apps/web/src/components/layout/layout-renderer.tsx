@@ -647,7 +647,7 @@ async function NewsletterSignupAdapter({ settings }: SectionProps) {
   const eyebrow =
     (settings.eyebrow as any)?.[locale] ||
     (settings.eyebrow as any)?.en ||
-    "MyPickUAE updates";
+    "ServiceHubUAE updates";
   const subtitle =
     (settings.subtitle as any)?.[locale] ||
     (settings.subtitle as any)?.en ||

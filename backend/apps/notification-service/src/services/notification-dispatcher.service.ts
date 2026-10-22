@@ -1,4 +1,4 @@
-import { normalizePhoneE164 } from "@mypickuae/utils";
+import { normalizePhoneE164 } from "@servicehubuae/utils";
 import { getTemplate, renderHtmlEmail, renderTemplate } from "../domain/templates.ts";
 import type { EmailDispatcher } from "./email-dispatcher.ts";
 import type { NotificationPreferenceService } from "./notification-preference.service.ts";

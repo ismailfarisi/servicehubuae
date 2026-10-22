@@ -1,10 +1,10 @@
-# @mypickuae/ui
+# @servicehubuae/ui
 
-The official component library for the MyPickUAE ecommerce platform. Built with React, Tailwind CSS, and TypeScript following the MyPickUAE design system with warm earth tones and elegant typography.
+The official component library for the ServiceHubUAE ecommerce platform. Built with React, Tailwind CSS, and TypeScript following the ServiceHubUAE design system with warm earth tones and elegant typography.
 
 ## Design Philosophy
 
-MyPickUAE embraces warmth, elegance, and cultural resonance through:
+ServiceHubUAE embraces warmth, elegance, and cultural resonance through:
 
 - **Warm Earth Tones**: Rich ambers, terracottas, and warm stones instead of cool grays
 - **Elegant Typography**: GF Alada Arabic font for authentic Middle Eastern typography
@@ -14,7 +14,7 @@ MyPickUAE embraces warmth, elegance, and cultural resonance through:
 ## Installation
 
 ```bash
-bun add @mypickuae/ui
+bun add @servicehubuae/ui
 ```
 
 ### Peer Dependencies
@@ -30,7 +30,7 @@ bun add @mypickuae/ui
 
 ## Tailwind Configuration
 
-Add the MyPickUAE color palette to your `tailwind.config.js`:
+Add the ServiceHubUAE color palette to your `tailwind.config.js`:
 
 ```js
 import { fontFamily } from "tailwindcss/defaultTheme";
@@ -82,7 +82,7 @@ module.exports = {
 Responsive data tables with sorting, filtering, and pagination.
 
 ```tsx
-import { DataTable } from "@mypickuae/ui";
+import { DataTable } from "@servicehubuae/ui";
 
 const columns = [
   {
@@ -132,7 +132,7 @@ Consistent empty states with optional actions.
 ### Form Components
 
 #### Input
-Enhanced input with focus states using MyPickUAE primary color.
+Enhanced input with focus states using ServiceHubUAE primary color.
 
 ```tsx
 <Input
@@ -309,7 +309,7 @@ All components follow WCAG 2.1 AA standards:
 Full TypeScript support with exported types:
 
 ```tsx
-import type { DataTableColumn, FilterOption, UploadedImage } from "@mypickuae/ui";
+import type { DataTableColumn, FilterOption, UploadedImage } from "@servicehubuae/ui";
 ```
 
 ## Storybook
@@ -324,7 +324,7 @@ bun run storybook
 
 When adding new components:
 
-1. Follow the MyPickUAE color palette
+1. Follow the ServiceHubUAE color palette
 2. Use stone colors for neutrals
 3. Add warm tones for interactive states
 4. Include TypeScript types
@@ -333,4 +333,4 @@ When adding new components:
 
 ## License
 
-MIT © mypickuae
+MIT © servicehubuae

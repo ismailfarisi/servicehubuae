@@ -23,7 +23,7 @@ import {
 import { dayClippedEndMinutes, minutesSinceMidnightInZone } from "@/lib/booking/tz";
 import { EngagementBlock } from "./EngagementBlock";
 import { EngagementDetailPopover } from "./EngagementDetailPopover";
-import { Popover, PopoverAnchor, cn } from "@mypickuae/ui";
+import { Popover, PopoverAnchor, cn } from "@servicehubuae/ui";
 import { Plus } from "@phosphor-icons/react";
 
 export interface CalendarColumnDef {

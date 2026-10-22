@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it } from "bun:test";
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 import { HeaderNavigationService } from "./header-navigation.service.ts";
 
 const ADMIN_ID = "00000000-0000-0000-0000-000000000001";
@@ -9,7 +9,7 @@ const ADMIN_ID = "00000000-0000-0000-0000-000000000001";
 // getRepository/transaction with a fake backed by a plain array — the same
 // mocked-repo pattern the rest of the cms-service suite uses. Previously these
 // tests hit a real DB and only "passed" because turbo cached them; any change
-// to @mypickuae/database busts that cache and surfaced the ECONNREFUSED.
+// to @servicehubuae/database busts that cache and surfaced the ECONNREFUSED.
 function makeFakeRepo() {
   const rows: any[] = [];
   let seq = 0;

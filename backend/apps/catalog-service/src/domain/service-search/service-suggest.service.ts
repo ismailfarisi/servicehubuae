@@ -25,7 +25,7 @@ export async function findCategoriesByName(
   query: string,
   limit: number,
 ): Promise<CategorySuggestion[]> {
-  const { AppDataSource } = await import("@mypickuae/database");
+  const { AppDataSource } = await import("@servicehubuae/database");
   const q = escapeLike(query.toLowerCase());
   return AppDataSource.query(
     `SELECT id, name, slug FROM categories

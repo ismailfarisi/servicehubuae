@@ -7,8 +7,8 @@
  */
 import { afterAll, beforeAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import { createHmac } from "node:crypto";
-import { config } from "@mypickuae/config";
-import { AppDataSource } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import { AppDataSource } from "@servicehubuae/database";
 import { Elysia } from "elysia";
 
 // ─── Stubs (declared before any module imports that consume them) ──
@@ -22,7 +22,7 @@ const originalTransaction = AppDataSource.transaction.bind(AppDataSource);
 
 // Stub bumpMatrixVersion by mocking the permission-matrix module at its
 // absolute path. This avoids a circular reference that occurs when
-// mock.module("@mypickuae/guards") tries to re-import itself to spread exports.
+// mock.module("@servicehubuae/guards") tries to re-import itself to spread exports.
 const permissionMatrixAbsPath = `${import.meta.dir}/../../../../libs/guards/src/permission-matrix.ts`;
 
 mock.module(permissionMatrixAbsPath, () => {

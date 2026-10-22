@@ -17,9 +17,9 @@ import {
 } from "../enums.ts";
 
 // The rich booking row — 1:1 with a `staff_engagement` (kind=marketplace_booking),
-// only for engagements that involve a MyPickUAE customer/money (spec §4.3). Pure
+// only for engagements that involve a ServiceHubUAE customer/money (spec §4.3). Pure
 // blocks (external_import, manual_block, break, and Phase 6 walk_in/phone without
-// a MyPickUAE customer) stay engagement-only.
+// a ServiceHubUAE customer) stay engagement-only.
 //
 // price/vat/deposit/policy fields are SNAPSHOTTED from `service_offering` at
 // booking time so a later vendor policy edit can't change a customer's existing
@@ -47,7 +47,7 @@ export class Booking {
   booking_number!: string;
 
   // Nullable since Phase 6 Task 1 (1782390000000) — a manual walk-in/phone
-  // booking has no MyPickUAE customer account. NULL <=> source !== 'marketplace'
+  // booking has no ServiceHubUAE customer account. NULL <=> source !== 'marketplace'
   // in practice (every marketplace booking still requires a real customer).
   @Index("idx_bookings_customer", { where: "deleted_at IS NULL" })
   @Column({ type: "uuid", nullable: true })
@@ -65,7 +65,7 @@ export class Booking {
   @Column({ type: "jsonb", nullable: true })
   customer_address!: Record<string, unknown> | null;
 
-  // Free-text customer capture for a walk-in/phone booking with no MyPickUAE
+  // Free-text customer capture for a walk-in/phone booking with no ServiceHubUAE
   // account (Phase 6 Task 1, 1782390000000) — set only when customer_user_id
   // is null; unused (null) for marketplace bookings.
   @Column({ type: "varchar", length: 255, nullable: true })

@@ -1,5 +1,5 @@
-import { HttpError } from "@mypickuae/plugins";
-import { normalizePhoneE164 } from "@mypickuae/utils";
+import { HttpError } from "@servicehubuae/plugins";
+import { normalizePhoneE164 } from "@servicehubuae/utils";
 
 export function normalizePhoneForOtp(input: string): string {
   const normalized = normalizePhoneE164(input);

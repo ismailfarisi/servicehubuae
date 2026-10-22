@@ -6,7 +6,7 @@ import {
 	useIssueCalendarFeedUrl,
 	useUpsertCalendarSubscription,
 } from "@/lib/queries/calendar-sync";
-import { Button, ConfirmDialog, Input, Label, toast } from "@mypickuae/ui";
+import { Button, ConfirmDialog, Input, Label, toast } from "@servicehubuae/ui";
 import { CalendarBlank, Copy, WarningCircle } from "@phosphor-icons/react";
 import { useState } from "react";
 
@@ -32,8 +32,8 @@ function errorMessage(err: unknown, fallback: string): string {
 }
 
 // Per-staff calendar sync: inbound iCal subscription (import blocks from the
-// vendor's other platform into this staff member's MyPickUAE calendar) +
-// outbound feed URL (publish this staff member's MyPickUAE calendar for the
+// vendor's other platform into this staff member's ServiceHubUAE calendar) +
+// outbound feed URL (publish this staff member's ServiceHubUAE calendar for the
 // vendor's other platform to subscribe to). Writes are gated by
 // useCanManageBookings() (same owner|manager gate as the rest of this staff
 // detail page) — the backend enforces this independently via
@@ -117,7 +117,7 @@ export function CalendarSyncPanel({ staffId, canWrite }: { staffId: string; canW
 				<p className="text-sm text-taupe">
 					Importing events from another calendar and publishing this feed are two
 					separate, independent flows — neither one edits the other's source, and
-					MyPickUAE never pushes changes back to an imported feed. Both directions
+					ServiceHubUAE never pushes changes back to an imported feed. Both directions
 					are eventually consistent, not instant: an imported event blocks this
 					staff member's slots within ~15 minutes of being added to the source
 					calendar, and the vendor's other platform only avoids double-booking this
@@ -135,7 +135,7 @@ export function CalendarSyncPanel({ staffId, canWrite }: { staffId: string; canW
 					</h3>
 					<p className="text-xs text-taupe">
 						Paste a public iCal (.ics) link — Google Calendar, Outlook, or another
-						booking platform's export URL. MyPickUAE checks it every ~15 minutes and
+						booking platform's export URL. ServiceHubUAE checks it every ~15 minutes and
 						blocks this staff member's slots for anything it finds.
 					</p>
 				</div>
@@ -218,7 +218,7 @@ export function CalendarSyncPanel({ staffId, canWrite }: { staffId: string; canW
 						that can "subscribe to a URL from the internet") on the vendor's other
 						platform. It only prevents double-booking there if that platform
 						actually subscribes to this link and refreshes it on its own schedule —
-						MyPickUAE cannot push updates to it directly. This link stays valid
+						ServiceHubUAE cannot push updates to it directly. This link stays valid
 						until the platform rotates its signing secret — asking for it again
 						below returns the SAME link, it doesn't invalidate a previous copy. If
 						this link leaks, contact support.

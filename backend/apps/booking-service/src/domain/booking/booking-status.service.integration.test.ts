@@ -26,8 +26,8 @@ import {
   Vendor,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
-import type { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import type { HttpError } from "@servicehubuae/plugins";
 import { EngagementService } from "../engagement/engagement.service.ts";
 import { BookingStatusService, InvalidBookingTransitionError } from "./booking-status.service.ts";
 

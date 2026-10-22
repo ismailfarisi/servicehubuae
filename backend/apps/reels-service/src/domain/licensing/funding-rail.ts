@@ -1,4 +1,4 @@
-import type { ReelLicenseFundingSource } from "@mypickuae/database";
+import type { ReelLicenseFundingSource } from "@servicehubuae/database";
 import type { EntityManager } from "typeorm";
 
 /** Result of placing a hold — persisted onto the escrow-hold row by LicensingService. */

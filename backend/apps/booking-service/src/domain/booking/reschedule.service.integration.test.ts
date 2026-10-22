@@ -16,7 +16,7 @@
 //
 // Requires: `docker compose up -d postgres redis`.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   Booking,
@@ -46,8 +46,8 @@ import {
   VendorLocation,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
-import type { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import type { HttpError } from "@servicehubuae/plugins";
 import { type RedisClientType, createClient } from "redis";
 import { AvailabilityCache } from "../availability/availability-cache.ts";
 import { AvailabilityService } from "../availability/availability.service.ts";

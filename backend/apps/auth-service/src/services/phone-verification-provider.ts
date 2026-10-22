@@ -1,5 +1,5 @@
-import { HttpError } from "@mypickuae/plugins";
-import { WhatsAppService } from "@mypickuae/utils";
+import { HttpError } from "@servicehubuae/plugins";
+import { WhatsAppService } from "@servicehubuae/utils";
 import twilio from "twilio";
 import { type WhatsAppOtpStore, createWhatsAppOtpStore, redisOtpKv } from "./whatsapp-otp-store.ts";
 

@@ -9,7 +9,7 @@
 // subscription (precedent: order-service postaplus-tracking-poll.job.ts).
 //
 // NOTE: underscore job/scheduler ids (BullMQ rejects `:` in job ids).
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue, Worker } from "bullmq";
 import type { IcalImportService } from "./ical-import.service.ts";
 

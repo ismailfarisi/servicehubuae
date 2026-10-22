@@ -5,7 +5,7 @@ import {
 	publishReel,
 	updateReelMetadata,
 } from "@/lib/api/reels";
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import { PaperPlaneTilt } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

@@ -16,7 +16,7 @@ import {
   BookingStatusHistory,
   ServicePaymentMode,
   StaffEngagement,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { BookingCompletionService } from "./booking-completion.service.ts";
 import { ALLOWED_TRANSITIONS, BookingStatusService } from "./booking-status.service.ts";
 

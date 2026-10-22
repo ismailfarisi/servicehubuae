@@ -20,6 +20,6 @@ export const useChatStore = create<ChatState>()(
       toggle: () => set((s) => ({ isOpen: !s.isOpen })),
       setActiveTicket: (id) => set({ activeTicketId: id }),
     }),
-    { name: "mypickuae-chat", partialize: (s) => ({ activeTicketId: s.activeTicketId }) },
+    { name: "servicehubuae-chat", partialize: (s) => ({ activeTicketId: s.activeTicketId }) },
   ),
 );

@@ -1,4 +1,4 @@
-import { errorHandler, requestLogger } from "@mypickuae/plugins";
+import { errorHandler, requestLogger } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 import { adminServiceOfferingRoutes } from "./routes/admin-service-offering.routes.ts";
 import { areaAdminRoutes, areaRoutes } from "./routes/area.routes.ts";

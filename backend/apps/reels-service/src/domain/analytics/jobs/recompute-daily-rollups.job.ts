@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { AppDataSource } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import { AppDataSource } from "@servicehubuae/database";
 import { type Job, Queue, Worker } from "bullmq";
 
 const QUEUE_NAME = "reels-scheduled";
@@ -75,7 +75,7 @@ export class RecomputeDailyRollupsJob {
       // Shares column: always 0 (no reel_shares event table in v1; tracked as running counter elsewhere).
       // product_taps / attributed_* / earned_commission_fils are written as 0: the
       // reel commerce tables (reel_attributions, reel_commissions) were removed
-      // in the MyPickUAE fork.
+      // in the ServiceHubUAE fork.
       await m.query(
         `
         WITH v AS (
@@ -124,7 +124,7 @@ export class RecomputeDailyRollupsJob {
       );
 
       // 3) daily_vendor_reel_metrics is not populated: it mapped reels to vendors
-      // through reel_product_tags -> products, both removed in the MyPickUAE fork.
+      // through reel_product_tags -> products, both removed in the ServiceHubUAE fork.
       // TODO(reels): repopulate once reels can be tagged with service offerings.
     });
 

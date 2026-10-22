@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, test } from "bun:test";
 import { jwt } from "@elysiajs/jwt";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Elysia } from "elysia";
 import { jwtAuth, signAccessToken, vendorMembership } from "./index.ts";
 import { permissionMatrix, __setRedisForTests as setMatrixRedis } from "./permission-matrix.ts";

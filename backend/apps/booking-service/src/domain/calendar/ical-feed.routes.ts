@@ -21,8 +21,8 @@
 // dot inside a static segment is not a router concern, only a literal
 // string). Functionally identical from the calendar-app's point of view: any
 // `.ics`-suffixed URL is accepted as a calendar subscription.
-import { config } from "@mypickuae/config";
-import { UnauthorizedError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { UnauthorizedError } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 import { verifyIcalFeedToken } from "./ical-feed-token.ts";

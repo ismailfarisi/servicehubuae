@@ -13,8 +13,8 @@ import {
   ReelLicenseHoldStatus,
   type ReelLicenseRightsScope,
   SiteSetting,
-} from "@mypickuae/database";
-import { BadRequestError, ForbiddenError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError, ForbiddenError, NotFoundError } from "@servicehubuae/plugins";
 import { type EntityManager, In, IsNull, LessThanOrEqual } from "typeorm";
 import type { EscrowEngine } from "./escrow-engine.ts";
 

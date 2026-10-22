@@ -1,5 +1,5 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { AppDataSource, Reel, ReelStatus, ReelView, User } from "@mypickuae/database";
+import { AppDataSource, Reel, ReelStatus, ReelView, User } from "@servicehubuae/database";
 import { FeedCacheClient } from "../../src/domain/feed/feed-cache.client.ts";
 import { FeedService } from "../../src/domain/feed/feed.service.ts";
 
@@ -28,7 +28,7 @@ describe.skipIf(!STACK_UP)("Feed cohort + dedup integration", () => {
 
   beforeAll(async () => {
     const { default: Redis } = await import("ioredis");
-    const { config } = await import("@mypickuae/config");
+    const { config } = await import("@servicehubuae/config");
     if (!AppDataSource.isInitialized) await AppDataSource.initialize();
     redis = new Redis(config.bullmq.redisUrl);
     cache = new FeedCacheClient(redis);

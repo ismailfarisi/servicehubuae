@@ -28,7 +28,7 @@ import {
   Vendor,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import jwt from "jsonwebtoken";
 import { app } from "../../app.ts";
 

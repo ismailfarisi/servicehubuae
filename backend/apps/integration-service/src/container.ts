@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   AuditLog,
@@ -10,9 +10,9 @@ import {
   VendorIntegrationMapping,
   VendorIntegrationPendingWrite,
   ensureDatabase,
-} from "@mypickuae/database";
-import { getIntegrationEventsQueue } from "@mypickuae/integration-events";
-import { EncryptionService } from "@mypickuae/utils";
+} from "@servicehubuae/database";
+import { getIntegrationEventsQueue } from "@servicehubuae/integration-events";
+import { EncryptionService } from "@servicehubuae/utils";
 import { Elysia } from "elysia";
 import { type RedisClientType, createClient } from "redis";
 import { DispatcherService } from "./domain/dispatcher/dispatcher.service.ts";

@@ -13,7 +13,7 @@
 // assertion covers the pre-M2 rejection and only runs while
 // config.payments.onlineEnabled is false.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   Booking,
@@ -41,7 +41,7 @@ import {
   VendorLocation,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import jwt from "jsonwebtoken";
 import { app } from "../../app.ts";
 

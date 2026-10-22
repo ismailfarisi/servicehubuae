@@ -14,7 +14,7 @@
 // Wired into BookingService.checkPayAtVenueAllowed (the seam Phase 4 Task 5
 // left), which drives BOTH create()'s hard 422 `pay_at_venue_unavailable` and
 // hold()'s informational `allowed_payment_modes`.
-import { type Booking, BookingStatus } from "@mypickuae/database";
+import { type Booking, BookingStatus } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 export interface PayAtVenueGateResult {

@@ -8,7 +8,7 @@ import {
   FiltersBar,
   Input,
   Skeleton,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useAuditLog } from "@/lib/queries/audit";
 import { Search, ChevronDown, ChevronRight, ArrowRight } from "lucide-react";
 

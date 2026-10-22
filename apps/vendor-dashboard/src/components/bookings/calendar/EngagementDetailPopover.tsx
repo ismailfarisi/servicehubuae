@@ -17,7 +17,7 @@ import {
 	StatusBadge,
 	Textarea,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 
 const STATUS_COLORS: Record<string, string> = {
 	held: "bg-taupe/10 text-taupe border border-taupe/30",

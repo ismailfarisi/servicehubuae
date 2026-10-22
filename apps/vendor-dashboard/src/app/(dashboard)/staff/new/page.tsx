@@ -2,7 +2,7 @@
 
 import { StaffProfileForm } from "@/components/bookings/StaffProfileForm";
 import { useCanManageBookings } from "@/hooks/use-vendor-role";
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import Link from "next/link";
 
 export default function NewStaffPage() {

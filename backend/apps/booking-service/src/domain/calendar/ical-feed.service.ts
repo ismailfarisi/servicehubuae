@@ -3,8 +3,8 @@
 // Phase 6 Task 5 (docs/superpowers/plans/2026-07-08-booking-phase-6-offplatform.md,
 // "Outbound iCal feed") — the reverse direction of Task 4's inbound import
 // (ical-import.service.ts): a vendor's OTHER platform (Google Calendar,
-// Fresha, Outlook, ...) subscribes to a MyPickUAE `.ics` URL for one staff
-// member, so MyPickUAE capacity blocks THAT calendar too.
+// Fresha, Outlook, ...) subscribes to a ServiceHubUAE `.ics` URL for one staff
+// member, so ServiceHubUAE capacity blocks THAT calendar too.
 // `IcalFeedService.forStaff(staffId, now?)` loads that staff member's
 // engagements and renders them via Task 3's pure `generateICal`
 // (ical-feed.ts). Route-level auth (the signed token) lives in
@@ -18,10 +18,10 @@
 // still has to sort out) are all excluded.
 //
 // Excluding `external_import` is the loop-avoidance rule: those rows were
-// pulled INTO MyPickUAE from a vendor's external calendar by Task 4's poller
+// pulled INTO ServiceHubUAE from a vendor's external calendar by Task 4's poller
 // in the first place. Echoing them back out on this feed would let the same
 // external platform (or a second one also subscribed to this feed) re-import
-// its own events through MyPickUAE — an echo/sync loop. The filtering happens
+// its own events through ServiceHubUAE — an echo/sync loop. The filtering happens
 // in application code (not solely in the DB query) so it's exercised
 // directly by the mocked unit tests below.
 //
@@ -35,13 +35,13 @@
 //
 // ── Privacy: NO customer PII ─────────────────────────────────────────────────
 // This `.ics` is fetched by a vendor's OTHER platform / calendar app, outside
-// MyPickUAE's own access control — SUMMARY is a generic, kind-derived string
-// ('MyPickUAE booking' for marketplace_booking/walk_in/phone, 'Blocked' for
+// ServiceHubUAE's own access control — SUMMARY is a generic, kind-derived string
+// ('ServiceHubUAE booking' for marketplace_booking/walk_in/phone, 'Blocked' for
 // manual_block/break), never a customer name, phone number, or service name.
 // LOCATION/DESCRIPTION (both optional on Task 3's `generateICal`) are never
-// populated. UID is `engagement-{id}@mypickuae.com` — an opaque internal id,
+// populated. UID is `engagement-{id}@servicehubuae.com` — an opaque internal id,
 // not the booking id or any customer-identifying value.
-import { EngagementKind, EngagementStatus, type StaffEngagement } from "@mypickuae/database";
+import { EngagementKind, EngagementStatus, type StaffEngagement } from "@servicehubuae/database";
 import { LessThan, MoreThan, type Repository } from "typeorm";
 import { generateICal } from "./ical-feed.ts";
 
@@ -62,7 +62,7 @@ export function genericSummaryForKind(kind: EngagementKind): string {
     case EngagementKind.marketplace_booking:
     case EngagementKind.walk_in:
     case EngagementKind.phone:
-      return "MyPickUAE booking";
+      return "ServiceHubUAE booking";
     case EngagementKind.manual_block:
     case EngagementKind.break:
       return "Blocked";
@@ -102,12 +102,12 @@ export class IcalFeedService {
         (e) => e.status === EngagementStatus.confirmed && e.kind !== EngagementKind.external_import,
       )
       .map((e) => ({
-        uid: `engagement-${e.id}@mypickuae.com`,
+        uid: `engagement-${e.id}@servicehubuae.com`,
         summary: genericSummaryForKind(e.kind),
         startsAt: e.starts_at,
         endsAt: e.ends_at,
       }));
 
-    return generateICal(events, { now, calName: "MyPickUAE Bookings" });
+    return generateICal(events, { now, calName: "ServiceHubUAE Bookings" });
   }
 }

@@ -1,5 +1,5 @@
-import { AppDataSource, SiteSetting } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, SiteSetting } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 
 const PUBLIC_SETTING_KEYS = new Set([
   "platform_currency",

@@ -1,5 +1,5 @@
 {
-  "name": "mypickuae-backend",
+  "name": "servicehubuae-backend",
   "private": true,
   "packageManager": "bun@1.4.3",
   "type": "module",

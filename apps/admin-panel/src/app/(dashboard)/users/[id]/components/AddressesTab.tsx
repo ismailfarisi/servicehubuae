@@ -27,7 +27,7 @@ import {
   Skeleton,
   Textarea,
   toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { MapPin, Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 

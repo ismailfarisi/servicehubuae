@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
-import { type MediaService, buildAssetKey } from "@mypickuae/utils";
+import { type MediaService, buildAssetKey } from "@servicehubuae/utils";
 import { CreatorPortfolioService } from "./creator-portfolio.service.ts";
 
 function makeService(seed: { rows?: any[] } = {}, media?: Partial<MediaService>) {

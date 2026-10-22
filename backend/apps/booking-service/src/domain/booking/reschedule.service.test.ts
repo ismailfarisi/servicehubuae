@@ -12,8 +12,8 @@ import {
   NotificationType,
   ServiceLocationMode,
   ServiceOfferingStatus,
-} from "@mypickuae/database";
-import type { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import type { HttpError } from "@servicehubuae/plugins";
 import { InvalidBookingTransitionError } from "./booking-status.service.ts";
 import { RescheduleService, RescheduleWindowExpiredError } from "./reschedule.service.ts";
 

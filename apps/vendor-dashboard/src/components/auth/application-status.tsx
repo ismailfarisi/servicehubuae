@@ -1,7 +1,7 @@
 "use client";
 
 import { CheckCircle, Hourglass, WarningCircle } from "@phosphor-icons/react";
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import type { VendorApplication } from "@/lib/vendor-application";
 
 function formatDate(iso: string) {
@@ -81,13 +81,13 @@ export function ApplicationStatus({
         <StatusBlock
           icon={<WarningCircle className="h-6 w-6 text-destructive" weight="bold" />}
           title="Vendor account unavailable"
-          body="This vendor account is not active. Contact MyPickUAE support for help."
+          body="This vendor account is not active. Contact ServiceHubUAE support for help."
         />
       ) : (
         <StatusBlock
           icon={<WarningCircle className="h-6 w-6 text-amber" weight="bold" />}
           title="No vendor account yet"
-          body="This account is not linked to a vendor. Fill in the application to start selling your services on MyPickUAE, or ask your store owner for a team invite."
+          body="This account is not linked to a vendor. Fill in the application to start selling your services on ServiceHubUAE, or ask your store owner for a team invite."
         />
       )}
 

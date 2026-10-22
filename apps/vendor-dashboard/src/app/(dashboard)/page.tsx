@@ -3,7 +3,7 @@
 import { getMembershipsFromToken } from "@/lib/auth";
 import { formatAED } from "@/lib/queries/creator-content";
 import { useVendorBookingDashboard } from "@/lib/queries/dashboard";
-import { Card, CardContent, Skeleton, StatCard } from "@mypickuae/ui";
+import { Card, CardContent, Skeleton, StatCard } from "@servicehubuae/ui";
 import {
   CalendarBlank,
   CalendarCheck,

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import {
   PERMISSION_DESCRIPTIONS,
   PERMISSION_GROUPS,

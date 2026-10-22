@@ -1,5 +1,5 @@
-import { AppDataSource, Vendor, VendorHoliday, VendorTranslation } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, Vendor, VendorHoliday, VendorTranslation } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 
 export class VendorSettingsService {
   private get vendorRepo() {

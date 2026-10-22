@@ -23,14 +23,14 @@ import {
   UserAddress,
   Vendor,
   VendorLocation,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import {
   BadRequestError,
   ConflictError,
   ForbiddenError,
   NotFoundError,
   UnprocessableEntityError,
-} from "@mypickuae/plugins";
+} from "@servicehubuae/plugins";
 import { Between, type EntityManager, In, IsNull, LessThanOrEqual } from "typeorm";
 import type { DealLink, EscrowEngine } from "../licensing/escrow-engine.ts";
 import {

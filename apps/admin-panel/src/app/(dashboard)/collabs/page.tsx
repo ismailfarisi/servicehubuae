@@ -3,7 +3,7 @@
 import { QueryError } from "@/components/query-error";
 import { useAdminCollabs } from "@/lib/queries/collabs";
 import { useVendors } from "@/lib/queries/vendors";
-import { DataTable, FiltersBar, StatusBadge } from "@mypickuae/ui";
+import { DataTable, FiltersBar, StatusBadge } from "@servicehubuae/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";

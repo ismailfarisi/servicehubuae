@@ -1,5 +1,5 @@
-import type { ServiceArea, VendorLocation } from "@mypickuae/database";
-import { ConflictError, NotFoundError, UnprocessableEntityError } from "@mypickuae/plugins";
+import type { ServiceArea, VendorLocation } from "@servicehubuae/database";
+import { ConflictError, NotFoundError, UnprocessableEntityError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { notifyVendorAreasChanged } from "./service-search-notify.ts";
 

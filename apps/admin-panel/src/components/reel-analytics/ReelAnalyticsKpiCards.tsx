@@ -5,7 +5,7 @@ import {
   formatDeltaPct,
   formatDeltaPp,
 } from "@/lib/queries/reel-analytics";
-import { Card, CardContent, Skeleton } from "@mypickuae/ui";
+import { Card, CardContent, Skeleton } from "@servicehubuae/ui";
 
 function DeltaBadge({
   tone,

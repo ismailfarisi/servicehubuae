@@ -15,7 +15,7 @@
 //   that the issued URL actually round-trips through the real GET
 //   /calendar/staff/:id/feed.ics route (ical-feed.routes.ts).
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   StaffMember,
@@ -28,8 +28,8 @@ import {
   VendorMemberStatus,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
-import { permissionMatrix } from "@mypickuae/guards";
+} from "@servicehubuae/database";
+import { permissionMatrix } from "@servicehubuae/guards";
 import jwt from "jsonwebtoken";
 import { app } from "../../app.ts";
 import { verifyIcalFeedToken } from "../calendar/ical-feed-token.ts";

@@ -4,7 +4,7 @@ import type { Mapping } from "@/lib/integrations/api";
 import { useSourceSchema, useUpsertMapping } from "@/lib/integrations/hooks";
 import type { Direction, EventType, MappingSpec } from "@/lib/integrations/spec-types";
 import { DndContext, type DragEndEvent } from "@dnd-kit/core";
-import { Button, Switch, toast } from "@mypickuae/ui";
+import { Button, Switch, toast } from "@servicehubuae/ui";
 import { ArrowLeft } from "@phosphor-icons/react";
 import { useReducer } from "react";
 import { PreviewPane } from "./PreviewPane";

@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/guards",
+  "name": "@servicehubuae/guards",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,8 +12,8 @@
   "dependencies": {
     "@elysiajs/bearer": "^1.2.0",
     "@elysiajs/jwt": "^1.2.0",
-    "@mypickuae/config": "workspace:*",
-    "@mypickuae/database": "workspace:*",
+    "@servicehubuae/config": "workspace:*",
+    "@servicehubuae/database": "workspace:*",
     "elysia": "^1.2.0",
     "jsonwebtoken": "^9.0.3",
     "redis": "^5.11.0"

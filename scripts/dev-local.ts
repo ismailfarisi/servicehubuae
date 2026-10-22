@@ -36,9 +36,9 @@ const BUN = process.execPath;
 const args = new Set(process.argv.slice(2));
 const PROD = args.has("--prod");
 const WEB_APPS = [
-	{ name: "web", pkg: "@mypickuae/web", port: 4000 },
-	{ name: "vendor-dashboard", pkg: "@mypickuae/vendor-dashboard", port: 4001 },
-	{ name: "admin-panel", pkg: "@mypickuae/admin-panel", port: 4002 },
+	{ name: "web", pkg: "@servicehubuae/web", port: 4000 },
+	{ name: "vendor-dashboard", pkg: "@servicehubuae/vendor-dashboard", port: 4001 },
+	{ name: "admin-panel", pkg: "@servicehubuae/admin-panel", port: 4002 },
 ];
 const INFRA = [
 	"postgres",
@@ -190,7 +190,7 @@ await waitFor(
 					"postgres",
 					"pg_isready",
 					"-U",
-					env.DB_USERNAME ?? "mypickuae",
+					env.DB_USERNAME ?? "servicehubuae",
 				],
 				{ cwd: BACKEND, quiet: true },
 			)
@@ -250,7 +250,7 @@ if (seed.code !== 0)
 		"seed failed",
 		(seed.err || seed.out).trim().split("\n").slice(-8).join("\n    "),
 	);
-ok("seed checked (admin@mypickuae.com / customer@mypickuae.com)");
+ok("seed checked (admin@servicehubuae.com / customer@servicehubuae.com)");
 
 // ── 4. Search index ───────────────────────────────────────────────────────
 step("Search index");
@@ -310,7 +310,7 @@ async function announce() {
 		}
 	}
 	const mode = PROD ? " (production build)" : "";
-	console.log(`\n${c.green}${c.bold}✓ MyPickUAE is running${mode}${c.off}`);
+	console.log(`\n${c.green}${c.bold}✓ ServiceHubUAE is running${mode}${c.off}`);
 	for (const [name, url] of targets)
 		console.log(`  ${name.padEnd(17)} ${url.replace(/\/health$/, "")}`);
 	console.log(

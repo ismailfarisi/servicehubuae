@@ -1,7 +1,7 @@
 /**
  * The single commission ceiling, shared by every path that produces a
  * commission amount (booking commission snapshotting in booking-service today;
- * quotation payments in M4). It lives in `@mypickuae/utils` so a second caller
+ * quotation payments in M4). It lives in `@servicehubuae/utils` so a second caller
  * can never drift back to an uncapped formula.
  *
  * The invariant it enforces is that a vendor's earning on a line can never go

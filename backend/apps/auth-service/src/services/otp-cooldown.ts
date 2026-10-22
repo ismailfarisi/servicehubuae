@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { HttpError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { HttpError } from "@servicehubuae/plugins";
 import { type RedisClientType, createClient } from "redis";
 
 const COOLDOWN_SECONDS = 60;

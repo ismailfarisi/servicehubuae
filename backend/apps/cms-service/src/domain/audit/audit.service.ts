@@ -1,5 +1,5 @@
-import { AppDataSource, AuditLog } from "@mypickuae/database";
-import type { AuditLogQuery } from "@mypickuae/dto";
+import { AppDataSource, AuditLog } from "@servicehubuae/database";
+import type { AuditLogQuery } from "@servicehubuae/dto";
 
 export class AuditService {
   private get repo() {

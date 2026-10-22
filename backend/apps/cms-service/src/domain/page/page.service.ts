@@ -1,6 +1,6 @@
-import { AppDataSource, Page, PageStatus } from "@mypickuae/database";
-import type { CreatePageBody, PageListQuery, UpdatePageBody } from "@mypickuae/dto";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, Page, PageStatus } from "@servicehubuae/database";
+import type { CreatePageBody, PageListQuery, UpdatePageBody } from "@servicehubuae/dto";
+import { HttpError } from "@servicehubuae/plugins";
 import type { FindOptionsWhere } from "typeorm";
 
 export class PageService {

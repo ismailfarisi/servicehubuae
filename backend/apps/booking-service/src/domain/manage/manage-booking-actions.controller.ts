@@ -23,9 +23,9 @@
 // actor: the customer self-serve windows (reschedule window) do not gate the
 // vendor, but the services' own state-machine + no-show-window + manual-source
 // rules still stand (they're actor-independent).
-import type { Booking } from "@mypickuae/database";
-import type { NoShowBookingBody } from "@mypickuae/dto";
-import { ForbiddenError, HttpError, NotFoundError } from "@mypickuae/plugins";
+import type { Booking } from "@servicehubuae/database";
+import type { NoShowBookingBody } from "@servicehubuae/dto";
+import { ForbiddenError, HttpError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import {
   type LocationScopeRepos,

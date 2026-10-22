@@ -3,8 +3,8 @@
 // Platform-staff cross-vendor collab oversight. Read-only for now — no
 // cancel/moderate actions, matching the scope of the admin-panel list view
 // this backs.
-import { CollabOpportunityStatus, CollabOpportunityType } from "@mypickuae/database";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
+import { CollabOpportunityStatus, CollabOpportunityType } from "@servicehubuae/database";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

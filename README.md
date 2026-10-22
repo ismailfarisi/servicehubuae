@@ -1,6 +1,6 @@
-# MyPickUAE
+# ServiceHubUAE
 
-MyPickUAE is a services marketplace for the UAE. Customers browse 440 services, compare vendors, book instantly or request quotations, and pay online through MyFatoorah. Vendors manage listings, availability, bookings and quotations from the vendor dashboard and app; the platform is run from the admin dashboard.
+ServiceHubUAE is a services marketplace for the UAE. Customers browse 440 services, compare vendors, book instantly or request quotations, and pay online through MyFatoorah. Vendors manage listings, availability, bookings and quotations from the vendor dashboard and app; the platform is run from the admin dashboard.
 
 ## Repository
 

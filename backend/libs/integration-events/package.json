@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/integration-events",
+  "name": "@servicehubuae/integration-events",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "typescript": "^5.7.0"
   },
   "peerDependencies": {
-    "@mypickuae/database": "workspace:*",
-    "@mypickuae/config": "workspace:*"
+    "@servicehubuae/database": "workspace:*",
+    "@servicehubuae/config": "workspace:*"
   }
 }

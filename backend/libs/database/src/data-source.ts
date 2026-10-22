@@ -1,5 +1,5 @@
 import "reflect-metadata";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { DataSource } from "typeorm";
 import {
   Area,

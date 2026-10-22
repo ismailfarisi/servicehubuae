@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import { useTeamMembers, useTransferOwnership } from "@/lib/queries/vendor-members";
 
 const FLAG_ENABLED = process.env.NEXT_PUBLIC_TEAM_MANAGEMENT_ENABLED !== "false";

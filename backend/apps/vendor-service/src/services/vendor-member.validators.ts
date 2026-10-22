@@ -1,4 +1,4 @@
-import { HttpError } from "@mypickuae/plugins";
+import { HttpError } from "@servicehubuae/plugins";
 
 export function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();

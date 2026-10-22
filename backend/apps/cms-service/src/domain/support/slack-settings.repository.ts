@@ -1,6 +1,6 @@
-import { config } from "@mypickuae/config";
-import { AppDataSource, SiteSetting } from "@mypickuae/database";
-import { EncryptionService } from "@mypickuae/utils";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, SiteSetting } from "@servicehubuae/database";
+import { EncryptionService } from "@servicehubuae/utils";
 
 export type SlackConfig = {
   enabled: boolean;

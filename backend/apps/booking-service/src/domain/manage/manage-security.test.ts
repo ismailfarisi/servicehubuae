@@ -4,8 +4,8 @@
 // 7 (ANY-branch authority on write paths) and 8 (raw ical_url disclosure).
 // Mocked repos only — no live DB, so this runs in CI unconditionally.
 import { describe, expect, it, mock } from "bun:test";
-import { EngagementKind } from "@mypickuae/database";
-import { BadRequestError } from "@mypickuae/plugins";
+import { EngagementKind } from "@servicehubuae/database";
+import { BadRequestError } from "@servicehubuae/plugins";
 import { isLocationManagerOfAll } from "../../guards/location-scope.ts";
 import { MAX_BLOCK_DAYS, assertSaneEngagementSpan } from "./block-time.service.ts";
 import { maskIcalUrl } from "./calendar-subscription.service.ts";

@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/notification-service",
+  "name": "@servicehubuae/notification-service",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -16,12 +16,12 @@
     "bullmq": "^5.0.0",
     "@elysiajs/jwt": "^1.2.0",
     "@elysiajs/bearer": "^1.2.0",
-    "@mypickuae/config": "workspace:*",
-    "@mypickuae/database": "workspace:*",
-    "@mypickuae/dto": "workspace:*",
-    "@mypickuae/guards": "workspace:*",
-    "@mypickuae/plugins": "workspace:*",
-    "@mypickuae/utils": "workspace:*"
+    "@servicehubuae/config": "workspace:*",
+    "@servicehubuae/database": "workspace:*",
+    "@servicehubuae/dto": "workspace:*",
+    "@servicehubuae/guards": "workspace:*",
+    "@servicehubuae/plugins": "workspace:*",
+    "@servicehubuae/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "^1.4.3",

@@ -11,7 +11,7 @@ import {
   SiteSetting,
   User,
   Vendor,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { CollabService } from "./collab.service.ts";
 
 /** Phase 1/2 collab types move no money; any escrow call here is a bug. */

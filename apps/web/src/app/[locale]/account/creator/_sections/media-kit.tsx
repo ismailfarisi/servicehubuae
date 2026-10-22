@@ -759,7 +759,7 @@ export function MediaKitSection() {
           <div className="space-y-3 md:max-w-xl">
             <Body size={12}>
               Up to {STAT_LIMIT} figures, written however you like — "68K+", "5.6%". Brands see
-              these as your own numbers, labelled self-reported; MyPickUAE does not verify them.
+              these as your own numbers, labelled self-reported; ServiceHubUAE does not verify them.
             </Body>
             {form.stats.map((stat, i) => (
               // biome-ignore lint/suspicious/noArrayIndexKey: rows are positional and freely reordered by add/remove

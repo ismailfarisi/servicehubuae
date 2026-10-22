@@ -1,4 +1,4 @@
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 import { leaderboardToCsv } from "../domain/analytics/csv.ts";

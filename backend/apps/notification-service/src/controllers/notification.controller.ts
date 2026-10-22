@@ -1,4 +1,4 @@
-import type { AuthUser } from "@mypickuae/guards";
+import type { AuthUser } from "@servicehubuae/guards";
 import type { NotificationService } from "../services/notification.service.ts";
 
 export class NotificationController {

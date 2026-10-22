@@ -1,4 +1,4 @@
-import { AppDataSource, Notification } from "@mypickuae/database";
+import { AppDataSource, Notification } from "@servicehubuae/database";
 import type { INotificationRepository } from "../domain/types.ts";
 
 export class NotificationRepository implements INotificationRepository {

@@ -10,7 +10,7 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 
 export interface PendingReschedule {
 	engagement: CalendarEngagement;

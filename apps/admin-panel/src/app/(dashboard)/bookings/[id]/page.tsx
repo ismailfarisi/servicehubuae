@@ -3,7 +3,7 @@
 import { QueryError } from "@/components/query-error";
 import { formatDateTime, formatFils } from "@/lib/booking-format";
 import { useAdminBooking } from "@/lib/queries/bookings";
-import { Button, Separator, Skeleton, StatusBadge } from "@mypickuae/ui";
+import { Button, Separator, Skeleton, StatusBadge } from "@servicehubuae/ui";
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { BookingActions } from "./components/BookingActions";

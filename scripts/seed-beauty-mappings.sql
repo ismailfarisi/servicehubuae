@@ -1,5 +1,5 @@
 -- ============================================================
--- MyPickUAE Beauty & Fragrance - Category-Attribute Mappings
+-- ServiceHubUAE Beauty & Fragrance - Category-Attribute Mappings
 -- ============================================================
 
 BEGIN;

@@ -8,7 +8,7 @@ import {
 	FiltersBar,
 	Skeleton,
 	StatusBadge,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import { LayoutDashboard, Pencil, Plus, Trash2 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";

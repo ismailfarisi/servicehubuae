@@ -1,8 +1,8 @@
 import { cors } from "@elysiajs/cors";
 import { swagger } from "@elysiajs/swagger";
-import { config } from "@mypickuae/config";
-import { jwtAuth } from "@mypickuae/guards";
-import { errorHandler, rateLimiter, requestLogger } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { jwtAuth } from "@servicehubuae/guards";
+import { errorHandler, rateLimiter, requestLogger } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 import { checkUpstreams } from "./health.ts";
 import { proxyRequest, resolveUpstream } from "./proxy.ts";
@@ -37,10 +37,10 @@ export const app = new Elysia()
     cors({
       origin: config.isProduction
         ? [
-            process.env.ADMIN_PANEL_URL || "https://admin.mypickuae.com",
-            process.env.VENDOR_DASHBOARD_URL || "https://sellers.mypickuae.com",
-            process.env.WEB_URL || "https://mypickuae.com",
-            process.env.WEB_WWW_URL || "https://www.mypickuae.com",
+            process.env.ADMIN_PANEL_URL || "https://admin.servicehubuae.com",
+            process.env.VENDOR_DASHBOARD_URL || "https://sellers.servicehubuae.com",
+            process.env.WEB_URL || "https://servicehubuae.com",
+            process.env.WEB_WWW_URL || "https://www.servicehubuae.com",
             // Optional extra-origin pattern (STAGING ONLY — never set in the
             // prod workflow): lets branch preview deploys (Vercel) call the
             // staging API from the browser. Anchored, team-scoped regex set
@@ -59,9 +59,9 @@ export const app = new Elysia()
       path: "/api/docs",
       documentation: {
         info: {
-          title: "MyPickUAE API",
+          title: "ServiceHubUAE API",
           version: "0.1.0",
-          description: "MyPickUAE Multi-Vendor Marketplace API",
+          description: "ServiceHubUAE Multi-Vendor Marketplace API",
         },
         components: {
           securitySchemes: {

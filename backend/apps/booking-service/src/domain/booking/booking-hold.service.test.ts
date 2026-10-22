@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { ConflictError, ServiceUnavailableError } from "@mypickuae/plugins";
+import { ConflictError, ServiceUnavailableError } from "@servicehubuae/plugins";
 import {
   ASSERT_FOR_SCRIPT,
   ASSERT_SCRIPT,

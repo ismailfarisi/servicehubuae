@@ -1,4 +1,4 @@
-import type { CollabApplication } from "@mypickuae/database";
+import type { CollabApplication } from "@servicehubuae/database";
 
 /**
  * The vendor-facing shape of an application.

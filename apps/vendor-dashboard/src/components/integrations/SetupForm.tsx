@@ -6,7 +6,7 @@ import {
 	useIntegration,
 	useUpdateIntegration,
 } from "@/lib/integrations/hooks";
-import { Button, Input, Label, Skeleton, Switch, toast } from "@mypickuae/ui";
+import { Button, Input, Label, Skeleton, Switch, toast } from "@servicehubuae/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowsClockwise, Copy } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
@@ -312,7 +312,7 @@ function InnerForm({ id, integration }: InnerFormProps) {
 						</Label>
 						<Input
 							id="setup-outbound-url"
-							placeholder="https://partner.example.com/webhooks/mypickuae"
+							placeholder="https://partner.example.com/webhooks/servicehubuae"
 							{...register("outbound_url")}
 						/>
 						{errors.outbound_url ? (

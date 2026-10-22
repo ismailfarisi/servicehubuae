@@ -6,7 +6,7 @@ import {
   useVendorReelLeaderboard,
   vendorLeaderboardCsvUrl,
 } from "@/lib/queries/reel-analytics";
-import { Card, CardContent, CardHeader, Skeleton } from "@mypickuae/ui";
+import { Card, CardContent, CardHeader, Skeleton } from "@servicehubuae/ui";
 import { useState } from "react";
 
 const TABS: { key: LeaderboardType; label: string }[] = [

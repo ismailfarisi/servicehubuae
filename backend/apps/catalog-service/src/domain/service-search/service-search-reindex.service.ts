@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue, Worker } from "bullmq";
 import { hydrateOfferingRefs } from "./hydrate-offering-refs.ts";
 import { resolveVendorAreas } from "./resolve-vendor-areas.ts";
@@ -25,7 +25,7 @@ export interface ReindexDeps {
 // batched pair of queries per page, not per row.
 export const defaultDeps: ReindexDeps = {
   loadPublishedBatch: async (offset: number, limit: number) => {
-    const { AppDataSource, ServiceOffering } = await import("@mypickuae/database");
+    const { AppDataSource, ServiceOffering } = await import("@servicehubuae/database");
     const rows = await AppDataSource.getRepository(ServiceOffering).find({
       where: { status: "published" as any },
       // `id` is a tiebreaker: rows sharing a `created_at` timestamp have no
@@ -43,7 +43,7 @@ export const defaultDeps: ReindexDeps = {
   // Shared with the incremental sync path — see service-ratings.ts (Task 4).
   loadRatings,
   filterStillPublished: async (offeringIds: string[]) => {
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     const rows: Array<{ id: string }> = await AppDataSource.query(
       `SELECT id FROM service_offerings
         WHERE id = ANY($1) AND status = 'published' AND deleted_at IS NULL`,

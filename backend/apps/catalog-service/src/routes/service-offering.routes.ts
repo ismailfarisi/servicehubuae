@@ -1,5 +1,5 @@
-import { CreateServiceOfferingBody, UpdateServiceOfferingBody } from "@mypickuae/dto";
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+import { CreateServiceOfferingBody, UpdateServiceOfferingBody } from "@servicehubuae/dto";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia } from "elysia";
 import { container } from "../container.ts";
 

@@ -1,7 +1,7 @@
 # ─── ECR Repositories (shared across environments) ───────────
 # Both staging and production builds push to these repos (see
 # .github/workflows/build-service.yml — images are tagged :<sha> and
-# :<environment> in the same mypickuae-<service> repo). They were originally
+# :<environment> in the same servicehubuae-<service> repo). They were originally
 # declared in terraform/staging; moved here when staging migrated to Netcup so
 # production image pulls keep working. Managed in state via `terraform state mv`
 # from terraform/staging — do NOT recreate.

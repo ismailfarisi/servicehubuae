@@ -13,7 +13,7 @@ import {
 	usePublishCollab,
 } from "@/lib/queries/collabs";
 import { formatAED } from "@/lib/queries/creator-content";
-import { Avatar, AvatarFallback, AvatarImage } from "@mypickuae/ui";
+import { Avatar, AvatarFallback, AvatarImage } from "@servicehubuae/ui";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";

@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/database",
+  "name": "@servicehubuae/database",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -17,7 +17,7 @@
     "typeorm": "^0.3.20",
     "pg": "^8.13.0",
     "reflect-metadata": "^0.2.2",
-    "@mypickuae/config": "workspace:*"
+    "@servicehubuae/config": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "^1.4.3",

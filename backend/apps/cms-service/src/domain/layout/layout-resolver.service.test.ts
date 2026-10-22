@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { BidStatus, SourceMode } from "@mypickuae/database";
+import { BidStatus, SourceMode } from "@servicehubuae/database";
 import { LayoutResolverService } from "./layout-resolver.service.ts";
 
 describe("LayoutResolverService.resolveBidded with previewBidId", () => {

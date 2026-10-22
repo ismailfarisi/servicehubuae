@@ -9,7 +9,7 @@ import {
   UserRole,
   UserStatus,
   ensureDatabase,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { CreatorDirectoryService } from "../../src/domain/creator-tier/creator-directory.service.ts";
 
 /**

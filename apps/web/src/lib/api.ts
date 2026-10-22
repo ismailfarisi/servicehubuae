@@ -11,8 +11,8 @@ export function getCookie(name: string): string | undefined {
 }
 
 export const COOKIE_ACCESS_TOKEN = "web_access_token";
-export const GUEST_SESSION_STORAGE_KEY = "mypickuae-guest-session";
-const AUTH_HINT_STORAGE_KEY = "mypickuae-auth-hint";
+export const GUEST_SESSION_STORAGE_KEY = "servicehubuae-guest-session";
+const AUTH_HINT_STORAGE_KEY = "servicehubuae-auth-hint";
 
 /**
  * Whether this browser has a session worth probing with /auth/me.
@@ -101,7 +101,7 @@ export const api = axios.create({
 // Attach access token as Bearer header + guest session + Accept-Language
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
-    const locale = localStorage.getItem("mypickuae-locale") || "en";
+    const locale = localStorage.getItem("servicehubuae-locale") || "en";
     config.headers["Accept-Language"] = locale;
   }
   const token = getCookie(COOKIE_ACCESS_TOKEN);

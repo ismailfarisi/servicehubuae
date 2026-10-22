@@ -4,7 +4,7 @@ import {
   ReelModerationAction,
   ReelModerationLog,
   ReelStatus,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 export class ModerationService {

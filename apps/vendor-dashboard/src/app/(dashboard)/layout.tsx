@@ -10,7 +10,7 @@ import {
 	DashboardHeader,
 	Sidebar,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import {
 	CalendarBlank,
 	CalendarCheck,
@@ -286,7 +286,7 @@ export default function DashboardLayout({
 				currentPath={pathname}
 				collapsed={collapsed}
 				onToggle={() => setCollapsed((c) => !c)}
-				appName="MyPickUAE"
+				appName="ServiceHubUAE"
 				roleBadge="Vendor"
 				mobileOpen={mobileOpen}
 				onMobileClose={() => setMobileOpen(false)}

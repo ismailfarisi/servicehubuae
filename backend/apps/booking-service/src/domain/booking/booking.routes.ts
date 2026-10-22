@@ -18,9 +18,9 @@ import {
   CreateBookingBody,
   MyBookingsQuery,
   RescheduleBookingBody,
-} from "@mypickuae/dto";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
-import { NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/dto";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
+import { NotFoundError } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 import type { BookingActorRole } from "./booking-status.service.ts";

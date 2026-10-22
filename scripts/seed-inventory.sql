@@ -4,7 +4,7 @@ BEGIN;
 INSERT INTO warehouses (id, name, code, address_line_1, city, emirate, country_code, is_active, is_default)
 VALUES (
   'a0000000-0000-0000-0000-000000000001',
-  'MyPickUAE Dubai Warehouse',
+  'ServiceHubUAE Dubai Warehouse',
   'DXB-MAIN',
   'Dubai Investment Park, Warehouse 42',
   'Dubai',

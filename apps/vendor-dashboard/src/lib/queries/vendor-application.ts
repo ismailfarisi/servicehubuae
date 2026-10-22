@@ -56,7 +56,7 @@ async function signUpOrSignIn(values: VendorApplicationFormValues) {
     return data.data.user;
   } catch {
     throw new ApplicationError(
-      "This email already has a MyPickUAE account. Enter that account's password to apply with it, or sign in first.",
+      "This email already has a ServiceHubUAE account. Enter that account's password to apply with it, or sign in first.",
     );
   }
 }

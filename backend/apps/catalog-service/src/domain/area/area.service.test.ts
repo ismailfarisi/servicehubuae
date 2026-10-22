@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import type { Area } from "@mypickuae/database";
+import type { Area } from "@servicehubuae/database";
 import { AreaService } from "./area.service.ts";
 
 function makeArea(over: Partial<Area> = {}): Area {

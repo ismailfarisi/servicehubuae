@@ -19,7 +19,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { Trash, UsersThree } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
 

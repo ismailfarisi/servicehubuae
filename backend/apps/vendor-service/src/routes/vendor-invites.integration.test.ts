@@ -10,8 +10,8 @@
  */
 import { afterEach, beforeAll, describe, expect, mock, test } from "bun:test";
 import { createHmac } from "node:crypto";
-import { config } from "@mypickuae/config";
-import { HttpError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { HttpError } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 
 // ─── Stub state ───────────────────────────────────────────────────────────────
@@ -74,7 +74,7 @@ mock.module(containerAbsPath, () => ({
 // ─── Patch AppDataSource.getRepository for User email_verified_at lookup ─────
 // The accept route calls AppDataSource.getRepository(User).findOne(...)
 // to determine emailVerified. We intercept only the User entity.
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 
 const originalGetRepo = AppDataSource.getRepository.bind(AppDataSource);
 

@@ -59,8 +59,8 @@ import {
   type StaffEngagement,
   type StaffLocation,
   type StaffMember,
-} from "@mypickuae/database";
-import { BadRequestError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import {
   type LocationScopeRepos,

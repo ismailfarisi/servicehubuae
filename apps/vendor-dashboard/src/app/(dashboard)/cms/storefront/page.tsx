@@ -8,7 +8,7 @@ import {
 	useStorefrontPreviewToken,
 } from "@/lib/queries/storefront";
 import { s3UploadClient } from "@/lib/s3-upload-client";
-import { LayoutEditor } from "@mypickuae/ui";
+import { LayoutEditor } from "@servicehubuae/ui";
 import { useEffect, useState } from "react";
 
 const WEB_BASE = process.env.NEXT_PUBLIC_WEB_URL || "http://localhost:3000";

@@ -23,7 +23,7 @@ import {
 	SelectValue,
 	Textarea,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 
 export interface WalkInDialogPrefill {
 	staffId?: string;

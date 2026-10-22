@@ -1,7 +1,7 @@
 "use client";
 
 import { useMe } from "@/lib/queries/auth";
-import { Toaster } from "@mypickuae/ui";
+import { Toaster } from "@servicehubuae/ui";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { usePathname } from "next/navigation";
 import { type ReactNode, useState } from "react";

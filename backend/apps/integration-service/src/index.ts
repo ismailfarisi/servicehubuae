@@ -1,6 +1,6 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import "./container.ts";
-import { permissionMatrix } from "@mypickuae/guards";
+import { permissionMatrix } from "@servicehubuae/guards";
 import { app } from "./app.ts";
 import {
   createRetentionDeleteWorker,

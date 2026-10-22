@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { cors } from "@elysiajs/cors";
-import { errorHandler, requestLogger } from "@mypickuae/plugins";
+import { errorHandler, requestLogger } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 
 /**

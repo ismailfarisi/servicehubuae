@@ -4,7 +4,7 @@
 // delayed job. Mirrors booking-auth.job.ts's Queue-singleton + thin-Worker
 // shape: per-booking DELAYED jobs keyed by a stable jobId
 // (`autocomplete_{bookingId}`), not a repeatable cron schedule.
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue, Worker } from "bullmq";
 import type { BookingAutoCompleteService } from "./booking-autocomplete.service.ts";
 

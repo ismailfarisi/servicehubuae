@@ -4,7 +4,7 @@ import {
   NotificationType,
   type Payment,
   ServicePaymentMode,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";
 import type { BookingCompletionHook } from "./booking-status.service.ts";
@@ -62,7 +62,7 @@ export class BookingCompletionUnpaidError extends Error {
  *
  * PI resolution mirrors BookingReaperService.settleDepositBeforeExpiry /
  * BookingAuthService's own lookups: booking-service reads the shared
- * `payments` table directly (same Postgres via `@mypickuae/database`,
+ * `payments` table directly (same Postgres via `@servicehubuae/database`,
  * read-only). Task 7b's `BookingAuthService.runAuthorizeJob` stores the
  * authorization PaymentIntent's Payment-ROW id on `booking.escrow_hold_id`
  * (NOT `booking.payment_id`, which for prepay points at the SetupIntent
@@ -86,7 +86,7 @@ export class BookingCompletionService implements BookingCompletionHook {
     // C1 (Task 0B review): a MANUAL walk-in/phone booking completes
     // CAPACITY-ONLY. The status/history/engagement transition already committed
     // in BookingStatusService.completeBooking BEFORE this hook fires; this
-    // money-and-notification hook must be a no-op for it. MyPickUAE never
+    // money-and-notification hook must be a no-op for it. ServiceHubUAE never
     // collected money for a walk-in (no marketplace customer, no PaymentIntent,
     // pay_at_venue cash paid in person, commission_fils 0), so calling
     // paymentClient.complete would post a zero-commission accrual row crediting

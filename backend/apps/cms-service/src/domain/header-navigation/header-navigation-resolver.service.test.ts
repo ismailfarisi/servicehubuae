@@ -4,7 +4,7 @@ import {
   Category,
   type HeaderNavConfig,
   HeaderNavigationConfig,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import type { FindOperator } from "typeorm";
 import { HeaderNavigationResolverService } from "./header-navigation-resolver.service.ts";
 

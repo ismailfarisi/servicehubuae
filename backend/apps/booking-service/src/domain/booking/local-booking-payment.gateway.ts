@@ -1,6 +1,6 @@
 // local-booking-payment.gateway.ts
-import { ServiceUnavailableError } from "@mypickuae/plugins";
-import { maxCommissionForNet } from "@mypickuae/utils";
+import { ServiceUnavailableError } from "@servicehubuae/plugins";
+import { maxCommissionForNet } from "@servicehubuae/utils";
 import type {
   BookingPaymentAuthorizeResult,
   BookingPaymentCaptureResult,

@@ -3,8 +3,8 @@ import {
   LinkStaffLocationBody,
   LinkStaffServiceBody,
   UpdateStaffMemberBody,
-} from "@mypickuae/dto";
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+} from "@servicehubuae/dto";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 

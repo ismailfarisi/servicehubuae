@@ -61,8 +61,8 @@ export async function generateMetadata({
 	if (!vendor) return { title: "Vendor not found" };
 	const resolvedSlug = vendor.slug ?? slug;
 	return {
-		title: `${vendor.name} — MyPickUAE`,
-		description: vendor.description ?? `Shop ${vendor.name} on MyPickUAE`,
+		title: `${vendor.name} — ServiceHubUAE`,
+		description: vendor.description ?? `Shop ${vendor.name} on ServiceHubUAE`,
 		alternates: buildAlternates(locale, `/vendor/${resolvedSlug}`),
 		openGraph: {
 			title: vendor.name,

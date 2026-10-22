@@ -10,7 +10,7 @@ import {
   Input,
   Textarea,
   Skeleton,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useSiteSettings, useUpdateSiteSetting } from "@/lib/queries/cms";
 import { useAuthStore } from "@/stores/auth";
 import { Lock, Save } from "lucide-react";

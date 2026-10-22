@@ -6,7 +6,7 @@
 // queue/repo/client, matching the "prefer asserting on the QUEUE state ...
 // rather than waiting on real delays" guidance in the Task 7b brief.
 import { describe, expect, it, mock, spyOn } from "bun:test";
-import { BookingStatus, ServicePaymentMode } from "@mypickuae/database";
+import { BookingStatus, ServicePaymentMode } from "@servicehubuae/database";
 import {
   AUTH_SAFETY_MARGIN_HOURS,
   AUTO_COMPLETE_DELAY_HOURS,
@@ -258,7 +258,7 @@ function makeService(opts: {
     statusService as any,
     queue as any,
     notificationQueue as any,
-    "https://app.mypickuae.com",
+    "https://app.servicehubuae.com",
   );
   return {
     service,
@@ -584,10 +584,10 @@ describe("BookingAuthService failure-notify dedupe (Fix 2)", () => {
     const call = notificationQueue.add.mock.calls[0] as any[];
     expect(call[1].userId).toBe(booking.customer_user_id);
     expect(call[1].notificationType).toBe("booking_payment_failed");
-    expect(call[1].variables.pay_now_url).toBe("https://app.mypickuae.com/bookings/booking-1");
+    expect(call[1].variables.pay_now_url).toBe("https://app.servicehubuae.com/bookings/booking-1");
     expect(call[1].variables.reason).toBe("card_declined");
     expect(call[1].data.bookingId).toBe("booking-1");
-    expect(call[1].data.payNowUrl).toBe("https://app.mypickuae.com/bookings/booking-1");
+    expect(call[1].data.payNowUrl).toBe("https://app.servicehubuae.com/bookings/booking-1");
   });
 
   it("queue.getJob failing fails OPEN (still notifies) rather than silently swallowing a legitimate failure notification", async () => {

@@ -1,6 +1,6 @@
-import { config } from "@mypickuae/config";
-import { ensureDatabase } from "@mypickuae/database";
-import { permissionMatrix } from "@mypickuae/guards";
+import { config } from "@servicehubuae/config";
+import { ensureDatabase } from "@servicehubuae/database";
+import { permissionMatrix } from "@servicehubuae/guards";
 import { app } from "./app.ts";
 
 await ensureDatabase();

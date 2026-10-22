@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue, Worker } from "bullmq";
 
 export const NOTIFICATION_EVENTS_QUEUE = "notification-events";

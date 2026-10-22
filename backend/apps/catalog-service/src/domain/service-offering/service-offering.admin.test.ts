@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { ServiceOfferingStatus } from "@mypickuae/database";
+import { ServiceOfferingStatus } from "@servicehubuae/database";
 import { ServiceOfferingService } from "./service-offering.service.ts";
 
 function makeAdminService(offering: Record<string, unknown> | null) {

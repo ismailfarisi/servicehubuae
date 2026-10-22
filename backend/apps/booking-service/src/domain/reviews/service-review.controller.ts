@@ -1,12 +1,12 @@
 // service-review.controller.ts
 //
 // Thin controller for the booking-gated review APIs (Phase 5 Task 7).
-// Translates the snake_case wire DTOs (@mypickuae/dto's CreateServiceReviewBody
+// Translates the snake_case wire DTOs (@servicehubuae/dto's CreateServiceReviewBody
 // / VendorReplyServiceReviewBody) into the camelCase inputs
 // ServiceReviewService expects. customerId/vendorId are ALWAYS caller-derived
 // (verified JWT / vendorMembership's member.vid) — never trusted from a body
 // field.
-import type { CreateServiceReviewBody, VendorReplyServiceReviewBody } from "@mypickuae/dto";
+import type { CreateServiceReviewBody, VendorReplyServiceReviewBody } from "@servicehubuae/dto";
 import type { ServiceReviewService } from "./service-review.service.ts";
 
 export class ServiceReviewController {

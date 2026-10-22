@@ -15,7 +15,7 @@ import {
 	TabsContent,
 	TabsList,
 	TabsTrigger,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { MapPin, PencilSimple, Plus } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

@@ -15,9 +15,9 @@
 // deposit's payment id. That is a read of already-stored, non-money data, not
 // a write and not a provider call. Until online payments ship (M2) no prepay
 // booking can be created, so this job has nothing to authorize.
-import { config } from "@mypickuae/config";
-import type { Booking } from "@mypickuae/database";
-import { BookingStatus, NotificationType, ServicePaymentMode } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import type { Booking } from "@servicehubuae/database";
+import { BookingStatus, NotificationType, ServicePaymentMode } from "@servicehubuae/database";
 import type {
   BookingPaymentAuthorizeResult,
   BookingPaymentGateway,

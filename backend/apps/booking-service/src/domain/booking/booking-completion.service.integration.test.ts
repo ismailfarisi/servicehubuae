@@ -28,7 +28,7 @@ import {
   Vendor,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { EngagementService } from "../engagement/engagement.service.ts";
 import { BookingCompletionService } from "./booking-completion.service.ts";
 import { BookingStatusService } from "./booking-status.service.ts";

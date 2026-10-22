@@ -2,7 +2,7 @@
 
 import type { Integration } from "@/lib/integrations/api";
 import { useIntegration } from "@/lib/integrations/hooks";
-import { Skeleton } from "@mypickuae/ui";
+import { Skeleton } from "@servicehubuae/ui";
 import { ArrowLeft } from "@phosphor-icons/react";
 import axios from "axios";
 import Link from "next/link";

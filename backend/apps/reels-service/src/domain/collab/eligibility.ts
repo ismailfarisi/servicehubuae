@@ -1,4 +1,4 @@
-import type { SocialPlatform } from "@mypickuae/database";
+import type { SocialPlatform } from "@servicehubuae/database";
 
 /** What we know about a creator, gathered by `CollabService.resolveCreatorProfile`. */
 export interface CreatorProfile {

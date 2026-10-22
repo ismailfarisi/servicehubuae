@@ -5,8 +5,8 @@ import {
   ServiceOffering,
   ServiceOfferingTranslation,
   Vendor,
-} from "@mypickuae/database";
-import { MediaService } from "@mypickuae/utils";
+} from "@servicehubuae/database";
+import { MediaService } from "@servicehubuae/utils";
 import { Elysia } from "elysia";
 import { AreaService } from "./domain/area/area.service.ts";
 import { CategoryCacheService } from "./domain/category/category-cache.service.ts";

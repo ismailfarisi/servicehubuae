@@ -21,7 +21,7 @@ import {
   FormLabel,
   FormMessage,
   Input,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { ApplicationStatus } from "@/components/auth/application-status";
 import { VendorApplicationForm } from "@/components/auth/vendor-application-form";
 import { api } from "@/lib/api";
@@ -139,7 +139,7 @@ function LoginForm() {
                 </div>
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.22em] text-caramel">
-                    MyPickUAE partners
+                    ServiceHubUAE partners
                   </p>
                   <p className="text-sm text-pearl/75">Vendor dashboard access</p>
                 </div>
@@ -159,7 +159,7 @@ function LoginForm() {
               </h1>
               <p className="max-w-2xl text-base leading-7 text-pearl/82 sm:text-lg">
                 Apply with your business details and trade licence. The
-                MyPickUAE team reviews every application before your services go
+                ServiceHubUAE team reviews every application before your services go
                 live.
               </p>
             </div>
@@ -192,7 +192,7 @@ function LoginForm() {
                   New vendor
                 </p>
                 <h2 className="mt-1 text-2xl font-semibold text-linen">
-                  Apply to sell on MyPickUAE
+                  Apply to sell on ServiceHubUAE
                 </h2>
               </div>
               <p className="max-w-xs text-sm leading-6 text-pearl/70">
@@ -245,7 +245,7 @@ function LoginForm() {
             </h2>
             {!isApplicant && (
               <p className="mt-3 text-sm leading-6 text-taupe">
-                Sign in to manage your MyPickUAE store. Redirected vendors return
+                Sign in to manage your ServiceHubUAE store. Redirected vendors return
                 to the requested dashboard page after authentication.
               </p>
             )}

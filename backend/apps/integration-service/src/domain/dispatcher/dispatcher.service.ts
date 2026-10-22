@@ -1,5 +1,5 @@
-import type { IntegrationEventType } from "@mypickuae/database";
-import { transform } from "@mypickuae/integration-mapper";
+import type { IntegrationEventType } from "@servicehubuae/database";
+import { transform } from "@servicehubuae/integration-mapper";
 import { sign } from "./signer.ts";
 
 export interface DispatchInput {

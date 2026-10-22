@@ -15,7 +15,7 @@ describe("parseICal — line unfolding", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:fold-crlf@mypickuae.com",
+        "UID:fold-crlf@servicehubuae.com",
         "SUMMARY:Deep Tissue Mas",
         " sage",
         "DTSTART:20260810T100000Z",
@@ -34,7 +34,7 @@ describe("parseICal — line unfolding", () => {
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
       "BEGIN:VEVENT",
-      "UID:fold-lf@mypickuae.com",
+      "UID:fold-lf@servicehubuae.com",
       "SUMMARY:Deep Tissue Mas",
       "\tsage",
       "DTSTART:20260810T100000Z",
@@ -54,7 +54,7 @@ describe("parseICal — DTSTART/DTEND forms", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:utc-1@mypickuae.com",
+        "UID:utc-1@servicehubuae.com",
         "DTSTART:20260810T100000Z",
         "DTEND:20260810T103000Z",
         "SUMMARY:Haircut",
@@ -71,7 +71,7 @@ describe("parseICal — DTSTART/DTEND forms", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:floating-1@mypickuae.com",
+        "UID:floating-1@servicehubuae.com",
         "DTSTART:20260810T100000",
         "DTEND:20260810T103000",
         "SUMMARY:Haircut",
@@ -89,7 +89,7 @@ describe("parseICal — DTSTART/DTEND forms", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:tzid-1@mypickuae.com",
+        "UID:tzid-1@servicehubuae.com",
         "DTSTART;TZID=America/New_York:20260715T090000",
         "DTEND;TZID=America/New_York:20260715T100000",
         "SUMMARY:Consult call",
@@ -108,7 +108,7 @@ describe("parseICal — all-day events", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:allday-1@mypickuae.com",
+        "UID:allday-1@servicehubuae.com",
         "DTSTART;VALUE=DATE:20260715",
         "SUMMARY:Vendor closed",
         "END:VEVENT",
@@ -124,7 +124,7 @@ describe("parseICal — all-day events", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:allday-2@mypickuae.com",
+        "UID:allday-2@servicehubuae.com",
         "DTSTART;VALUE=DATE:20260715",
         "DTEND;VALUE=DATE:20260718",
         "SUMMARY:Vendor on leave",
@@ -142,7 +142,7 @@ describe("parseICal — all-day events", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:allday-lowercase@mypickuae.com",
+        "UID:allday-lowercase@servicehubuae.com",
         "DTSTART;VALUE=date:20260715",
         "SUMMARY:Case insensitive",
         "END:VEVENT",
@@ -160,7 +160,7 @@ describe("parseICal — missing DTEND", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:dur-1@mypickuae.com",
+        "UID:dur-1@servicehubuae.com",
         "DTSTART:20260810T100000Z",
         "DURATION:PT1H30M",
         "SUMMARY:Long appointment",
@@ -177,7 +177,7 @@ describe("parseICal — missing DTEND", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:noend-1@mypickuae.com",
+        "UID:noend-1@servicehubuae.com",
         "DTSTART:20260810T100000Z",
         "SUMMARY:Ambiguous",
         "END:VEVENT",
@@ -214,13 +214,13 @@ describe("parseICal — UID / malformed / CANCELLED handling", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:bad-1@mypickuae.com",
+        "UID:bad-1@servicehubuae.com",
         "DTSTART:not-a-date",
         "DTEND:20260810T103000Z",
         "SUMMARY:Broken",
         "END:VEVENT",
         "BEGIN:VEVENT",
-        "UID:good-1@mypickuae.com",
+        "UID:good-1@servicehubuae.com",
         "DTSTART:20260810T100000Z",
         "DTEND:20260810T103000Z",
         "SUMMARY:Fine",
@@ -230,14 +230,14 @@ describe("parseICal — UID / malformed / CANCELLED handling", () => {
 
     const events = parseICal(ics);
     expect(events).toHaveLength(1);
-    expect(events[0]?.uid).toBe("good-1@mypickuae.com");
+    expect(events[0]?.uid).toBe("good-1@servicehubuae.com");
   });
 
   it("excludes STATUS:CANCELLED events", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:cancelled-1@mypickuae.com",
+        "UID:cancelled-1@servicehubuae.com",
         "DTSTART:20260810T100000Z",
         "DTEND:20260810T103000Z",
         "STATUS:CANCELLED",
@@ -256,7 +256,7 @@ describe("parseICal — UID / malformed / CANCELLED handling", () => {
       "VERSION:2.0",
       "PRODID:-//Test//EN",
       "BEGIN:VEVENT",
-      "UID:incomplete-1@mypickuae.com",
+      "UID:incomplete-1@servicehubuae.com",
       "DTSTART:20260810T100000Z",
       "DTEND:20260810T103000Z",
       "SUMMARY:Unterminated event",
@@ -274,7 +274,7 @@ describe("parseICal — TEXT unescaping", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:esc-1@mypickuae.com",
+        "UID:esc-1@servicehubuae.com",
         "DTSTART:20260810T100000Z",
         "DTEND:20260810T103000Z",
         "SUMMARY:Wax\\; Trim\\, Style\\\\Extra\\nLine",
@@ -290,7 +290,7 @@ describe("parseICal — TEXT unescaping", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:booking\\,with\\;special\\\\chars@mypickuae.com",
+        "UID:booking\\,with\\;special\\\\chars@servicehubuae.com",
         "DTSTART:20260810T100000Z",
         "DTEND:20260810T103000Z",
         "SUMMARY:Test",
@@ -299,7 +299,7 @@ describe("parseICal — TEXT unescaping", () => {
     );
 
     const [event] = parseICal(ics);
-    expect(event?.uid).toBe("booking,with;special\\chars@mypickuae.com");
+    expect(event?.uid).toBe("booking,with;special\\chars@servicehubuae.com");
   });
 });
 
@@ -308,7 +308,7 @@ describe("parseICal — monotonicity guard (endsAt > startsAt)", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:reversed-1@mypickuae.com",
+        "UID:reversed-1@servicehubuae.com",
         "DTSTART:20260810T110000Z",
         "DTEND:20260810T100000Z",
         "SUMMARY:Reversed",
@@ -323,7 +323,7 @@ describe("parseICal — monotonicity guard (endsAt > startsAt)", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:negdur-1@mypickuae.com",
+        "UID:negdur-1@servicehubuae.com",
         "DTSTART:20260810T110000Z",
         "DURATION:-PT1H",
         "SUMMARY:Negative duration",
@@ -338,7 +338,7 @@ describe("parseICal — monotonicity guard (endsAt > startsAt)", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:zerolen-1@mypickuae.com",
+        "UID:zerolen-1@servicehubuae.com",
         "DTSTART:20260810T110000Z",
         "DTEND:20260810T110000Z",
         "SUMMARY:Zero length",
@@ -353,13 +353,13 @@ describe("parseICal — monotonicity guard (endsAt > startsAt)", () => {
     const ics = vcalendar(
       [
         "BEGIN:VEVENT",
-        "UID:bad-reversed@mypickuae.com",
+        "UID:bad-reversed@servicehubuae.com",
         "DTSTART:20260810T110000Z",
         "DTEND:20260810T100000Z",
         "SUMMARY:Bad",
         "END:VEVENT",
         "BEGIN:VEVENT",
-        "UID:good-valid@mypickuae.com",
+        "UID:good-valid@servicehubuae.com",
         "DTSTART:20260810T100000Z",
         "DTEND:20260810T103000Z",
         "SUMMARY:Good",
@@ -369,7 +369,7 @@ describe("parseICal — monotonicity guard (endsAt > startsAt)", () => {
 
     const events = parseICal(ics);
     expect(events).toHaveLength(1);
-    expect(events[0]?.uid).toBe("good-valid@mypickuae.com");
+    expect(events[0]?.uid).toBe("good-valid@servicehubuae.com");
   });
 });
 

@@ -3,7 +3,7 @@
 import { api } from "@/lib/api";
 import { useLayoutPreviewToken } from "@/lib/queries/layouts";
 import { s3UploadClient } from "@/lib/s3-upload-client";
-import { LayoutEditor, type LayoutEditorMode } from "@mypickuae/ui";
+import { LayoutEditor, type LayoutEditorMode } from "@servicehubuae/ui";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 

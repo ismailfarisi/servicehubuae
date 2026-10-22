@@ -4,7 +4,7 @@ import { OfferingForm } from "@/components/bookings/OfferingForm";
 import { useCanManageBookings } from "@/hooks/use-vendor-role";
 import { getOfferingStatusActions, type OfferingStatusAction } from "@/lib/offering-status";
 import { useUpdateService, useVendorService } from "@/lib/queries/offerings";
-import { Button, ConfirmDialog, StatusBadge, toast } from "@mypickuae/ui";
+import { Button, ConfirmDialog, StatusBadge, toast } from "@servicehubuae/ui";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 
@@ -67,7 +67,7 @@ export default function EditServicePage() {
 					<p className="text-sm text-taupe">Edit this service's details.</p>
 					{offering.status === "pending_review" && (
 						<div className="rounded-lg border border-caramel/30 bg-caramel/10 px-4 py-3 text-sm text-cacao">
-							This service is awaiting review by the MyPickUAE team. It is not bookable yet.
+							This service is awaiting review by the ServiceHubUAE team. It is not bookable yet.
 							You will be able to publish future services without review once this one is
 							approved.
 						</div>

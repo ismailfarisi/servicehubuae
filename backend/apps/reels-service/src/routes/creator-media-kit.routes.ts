@@ -1,5 +1,5 @@
-import { CreatorMediaKitBody } from "@mypickuae/dto";
-import { jwtAuth } from "@mypickuae/guards";
+import { CreatorMediaKitBody } from "@servicehubuae/dto";
+import { jwtAuth } from "@servicehubuae/guards";
 import { Elysia } from "elysia";
 import { creatorMediaKitService } from "../container.ts";
 

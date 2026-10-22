@@ -1,10 +1,10 @@
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 import {
   type AccessJwtSigner,
   type UserRole,
   loadActiveMemberships,
   signAccessToken,
-} from "@mypickuae/guards";
+} from "@servicehubuae/guards";
 
 interface UserLite {
   id: string;

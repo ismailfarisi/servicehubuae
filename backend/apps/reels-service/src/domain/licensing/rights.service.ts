@@ -7,8 +7,8 @@ import {
   ReelLicenseGrant,
   ReelLicenseRightsScope,
   SiteSetting,
-} from "@mypickuae/database";
-import { BadRequestError, ForbiddenError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError, ForbiddenError, NotFoundError } from "@servicehubuae/plugins";
 import { IsNull } from "typeorm";
 import type { DownloadProvider } from "./download-provider.ts";
 

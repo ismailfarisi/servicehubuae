@@ -43,15 +43,15 @@ jobs:
       - name: Typecheck
         run: >-
           bunx turbo run typecheck
-          --filter='@mypickuae/api-gateway'
-          --filter='@mypickuae/auth-service'
-          --filter='@mypickuae/catalog-service'
-          --filter='@mypickuae/vendor-service'
-          --filter='@mypickuae/notification-service'
-          --filter='@mypickuae/cms-service'
-          --filter='@mypickuae/integration-service'
-          --filter='@mypickuae/reels-service'
-          --filter='@mypickuae/booking-service'
+          --filter='@servicehubuae/api-gateway'
+          --filter='@servicehubuae/auth-service'
+          --filter='@servicehubuae/catalog-service'
+          --filter='@servicehubuae/vendor-service'
+          --filter='@servicehubuae/notification-service'
+          --filter='@servicehubuae/cms-service'
+          --filter='@servicehubuae/integration-service'
+          --filter='@servicehubuae/reels-service'
+          --filter='@servicehubuae/booking-service'
 
       # Unit tests only. Integration tests (*.integration.test.ts,
       # tests/integration/**) need live Postgres/Redis not present in CI and are
@@ -62,12 +62,12 @@ jobs:
       - name: Build
         run: >-
           bunx turbo run build
-          --filter='@mypickuae/api-gateway'
-          --filter='@mypickuae/auth-service'
-          --filter='@mypickuae/catalog-service'
-          --filter='@mypickuae/vendor-service'
-          --filter='@mypickuae/notification-service'
-          --filter='@mypickuae/cms-service'
-          --filter='@mypickuae/integration-service'
-          --filter='@mypickuae/reels-service'
-          --filter='@mypickuae/booking-service'
+          --filter='@servicehubuae/api-gateway'
+          --filter='@servicehubuae/auth-service'
+          --filter='@servicehubuae/catalog-service'
+          --filter='@servicehubuae/vendor-service'
+          --filter='@servicehubuae/notification-service'
+          --filter='@servicehubuae/cms-service'
+          --filter='@servicehubuae/integration-service'
+          --filter='@servicehubuae/reels-service'
+          --filter='@servicehubuae/booking-service'

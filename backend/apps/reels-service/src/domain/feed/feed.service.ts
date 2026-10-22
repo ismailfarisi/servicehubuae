@@ -6,7 +6,7 @@ import {
   type ReelView,
   ReelView as ReelViewEntity,
   UserFollow,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 import { reelLinkedToVendorSql } from "../shared/reel-vendor-link.ts";
 import type { FeedCacheClient } from "./feed-cache.client.ts";

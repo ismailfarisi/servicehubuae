@@ -5,9 +5,9 @@ import {
 } from "@/components/layout/static-page-layout";
 
 export const metadata: Metadata = {
-	title: "Terms of Service — MyPickUAE",
+	title: "Terms of Service — ServiceHubUAE",
 	description:
-		"The terms that govern your use of MyPickUAE — bookings, quotations, payment, cancellations, vendor responsibilities, reviews and dispute resolution.",
+		"The terms that govern your use of ServiceHubUAE — bookings, quotations, payment, cancellations, vendor responsibilities, reviews and dispute resolution.",
 };
 
 const LAST_UPDATED = "22 October 2026";
@@ -17,15 +17,15 @@ export default function TermsPage() {
 		<StaticPageLayout
 			eyebrow="Legal"
 			title="Terms of Service"
-			intro={`The rules that govern your use of MyPickUAE. Please read them — opening an account means you accept these terms. Last updated ${LAST_UPDATED}.`}
+			intro={`The rules that govern your use of ServiceHubUAE. Please read them — opening an account means you accept these terms. Last updated ${LAST_UPDATED}.`}
 		>
 			<StaticSection heading="1. Who you contract with">
 				<p>
-					MyPickUAE is operated by MyPickUAE FZ-LLC, registered in Dubai,
-					United Arab Emirates. MyPickUAE is a marketplace that connects
+					ServiceHubUAE is operated by ServiceHubUAE FZ-LLC, registered in Dubai,
+					United Arab Emirates. ServiceHubUAE is a marketplace that connects
 					customers with independent service vendors. When you book a
 					service or accept a quotation, your contract for that service
-					is with the <em>vendor</em> who provides it; MyPickUAE
+					is with the <em>vendor</em> who provides it; ServiceHubUAE
 					operates the platform, facilitates booking and payment, and
 					provides customer support and dispute assistance.
 				</p>
@@ -81,7 +81,7 @@ export default function TermsPage() {
 					available, you can pay by card or Apple Pay through our
 					payment processor&rsquo;s secure page when you book; card
 					details are held by the payment processor and are never
-					stored by MyPickUAE.
+					stored by ServiceHubUAE.
 				</p>
 			</StaticSection>
 
@@ -110,18 +110,18 @@ export default function TermsPage() {
 					confirmed bookings, and ensure their staff are qualified and
 					behave professionally and safely in customers&rsquo; homes
 					and premises. Vendors that breach these standards or their
-					MyPickUAE vendor agreement may have listings removed or be
+					ServiceHubUAE vendor agreement may have listings removed or be
 					offboarded.
 				</p>
 			</StaticSection>
 
 			<StaticSection heading="8. Reviews and user content">
 				<p>
-					Reviews, photos, messages and reels you publish on MyPickUAE
+					Reviews, photos, messages and reels you publish on ServiceHubUAE
 					must be your own, truthful, based on a genuine experience, and
 					free of unlawful or offensive content. Vendors may not offer
 					incentives for reviews or post reviews of their own services.
-					You grant MyPickUAE a non-exclusive, royalty-free, worldwide
+					You grant ServiceHubUAE a non-exclusive, royalty-free, worldwide
 					licence to display, reproduce and promote your content in
 					connection with the marketplace.
 				</p>
@@ -135,7 +135,7 @@ export default function TermsPage() {
 				<p>
 					You may not misuse the platform: no fraudulent or fake
 					bookings, no harassment of vendors, their staff or our support
-					team, no arranging to take a booking found on MyPickUAE
+					team, no arranging to take a booking found on ServiceHubUAE
 					off-platform to avoid our terms, and no scraping, reverse
 					engineering or interfering with the service. We may suspend or
 					close accounts that do, and cancel pending bookings.
@@ -144,8 +144,8 @@ export default function TermsPage() {
 
 			<StaticSection heading="10. Intellectual property">
 				<p>
-					MyPickUAE, the MyPickUAE logo, and the platform design are
-					owned by MyPickUAE FZ-LLC. Vendor names, logos and listing
+					ServiceHubUAE, the ServiceHubUAE logo, and the platform design are
+					owned by ServiceHubUAE FZ-LLC. Vendor names, logos and listing
 					photography belong to the respective vendors and rights
 					holders. You may not scrape, mirror, or reuse any of this
 					content without written permission.
@@ -155,7 +155,7 @@ export default function TermsPage() {
 			<StaticSection heading="11. Liability">
 				<p>
 					Vendors are responsible for the services they provide. Where
-					permitted by UAE law, MyPickUAE&rsquo;s aggregate liability
+					permitted by UAE law, ServiceHubUAE&rsquo;s aggregate liability
 					for any claim relating to a booking is capped at the value of
 					that booking. We are not liable for indirect or consequential
 					losses, or for vendor performance beyond what is expressly
@@ -185,10 +185,10 @@ export default function TermsPage() {
 				<p>
 					Questions on these terms:{" "}
 					<a
-						href="mailto:info@mypickuae.com"
+						href="mailto:info@servicehubuae.com"
 						className="font-medium text-nl-amber-text hover:underline"
 					>
-						info@mypickuae.com
+						info@servicehubuae.com
 					</a>
 					.
 				</p>

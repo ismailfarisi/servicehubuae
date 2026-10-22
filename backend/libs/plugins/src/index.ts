@@ -62,10 +62,10 @@ export class ServiceUnavailableError extends HttpError {
   }
 }
 
-// These plugin re-exports pull heavier deps (redis, @mypickuae/database). Keep them
+// These plugin re-exports pull heavier deps (redis, @servicehubuae/database). Keep them
 // AFTER the dependency-free error classes above so the class bindings are fully
 // initialized before any heavy submodule loads — avoids a "cannot access X before
-// initialization" TDZ race when many files import @mypickuae/plugins concurrently.
+// initialization" TDZ race when many files import @servicehubuae/plugins concurrently.
 export { rateLimiter } from "./rate-limiter.ts";
 export { auditPlugin } from "./audit.ts";
 

@@ -14,8 +14,8 @@ import {
   BookingStatusHistory,
   EngagementKind,
   StaffEngagement,
-} from "@mypickuae/database";
-import { BadRequestError, ConflictError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError, ConflictError, NotFoundError } from "@servicehubuae/plugins";
 import { ManualBookingService } from "./manual-booking.service.ts";
 
 const ACTOR = { userId: "user-1", vendorId: "vendor-1", role: "manager" };

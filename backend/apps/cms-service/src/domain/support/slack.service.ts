@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import type { SupportTicket } from "@mypickuae/database";
+import type { SupportTicket } from "@servicehubuae/database";
 import type { SlackSettingsRepository } from "./slack-settings.repository.ts";
 
 const MAX_SIGNATURE_AGE_SECONDS = 300;

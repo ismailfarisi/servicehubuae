@@ -6,7 +6,7 @@
 // PaymentIntent id (or none) per payment_mode and forwards the booking's
 // snapshotted commission fields verbatim to BookingPaymentGateway.complete.
 import { describe, expect, it, mock } from "bun:test";
-import { CommissionType, ServicePaymentMode } from "@mypickuae/database";
+import { CommissionType, ServicePaymentMode } from "@servicehubuae/database";
 import {
   BookingCompletionService,
   BookingCompletionUnpaidError,
@@ -341,7 +341,7 @@ describe("BookingCompletionService.onCompleted — notifications", () => {
     });
     await expect(service.onCompleted(booking)).resolves.toBeUndefined();
 
-    // No money moved for money MyPickUAE never collected, and no PI lookup.
+    // No money moved for money ServiceHubUAE never collected, and no PI lookup.
     expect(client.complete).not.toHaveBeenCalled();
     expect(paymentRepo.findOne).not.toHaveBeenCalled();
     // No customer-facing completion/review notifications (userId would be null).

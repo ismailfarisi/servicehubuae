@@ -1,6 +1,6 @@
-import { AppDataSource } from "@mypickuae/database";
-import { NotFoundError } from "@mypickuae/plugins";
-import type { EmailService } from "@mypickuae/utils";
+import { AppDataSource } from "@servicehubuae/database";
+import { NotFoundError } from "@servicehubuae/plugins";
+import type { EmailService } from "@servicehubuae/utils";
 import type { PasswordService } from "../services/password.service.ts";
 
 /**

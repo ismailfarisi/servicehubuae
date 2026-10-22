@@ -1,8 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
-import { config } from "@mypickuae/config";
-import { NotificationListQuery, SendNotificationBody } from "@mypickuae/dto";
-import { jwtAuth } from "@mypickuae/guards";
-import { ForbiddenError, HttpError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { NotificationListQuery, SendNotificationBody } from "@servicehubuae/dto";
+import { jwtAuth } from "@servicehubuae/guards";
+import { ForbiddenError, HttpError } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 import { container } from "../container.ts";
 

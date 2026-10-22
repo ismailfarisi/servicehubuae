@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 
 /** Every live upstream the gateway proxies to. Each answers `GET /health`. */
 export const UPSTREAM_SERVICES = [

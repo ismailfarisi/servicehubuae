@@ -11,7 +11,7 @@ async function main() {
   const loginRes = await fetch(`${API}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: "admin@mypickuae.com", password: "Admin@123" }),
+    body: JSON.stringify({ email: "admin@servicehubuae.com", password: "Admin@123" }),
   });
   const token = (await loginRes.json()).data.tokens.accessToken;
 
@@ -38,7 +38,7 @@ async function main() {
       category_id: p.category_id || "",
       brand_name: p.brand?.name || p.brand_name || "",
       brand_id: p.brand_id || "",
-      vendor_name: p.vendor?.store_name || p.vendor_name || "MyPickUAE",
+      vendor_name: p.vendor?.store_name || p.vendor_name || "ServiceHubUAE",
       vendor_id: p.vendor_id || "",
       price_min: p.price || 0,
       price_max: p.price || 0,

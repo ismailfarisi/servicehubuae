@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/utils",
+  "name": "@servicehubuae/utils",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -14,7 +14,7 @@
     "@aws-sdk/client-s3": "^3.600.0",
     "@aws-sdk/client-ses": "^3.600.0",
     "@aws-sdk/s3-request-presigner": "^3.600.0",
-    "@mypickuae/config": "workspace:*",
+    "@servicehubuae/config": "workspace:*",
     "sharp": "^0.33.0",
     "transliteration": "^2.6.1"
   },

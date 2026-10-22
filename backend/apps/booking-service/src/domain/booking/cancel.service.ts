@@ -47,8 +47,8 @@ import {
   NotificationType,
   type Payment,
   ServicePaymentMode,
-} from "@mypickuae/database";
-import { BadRequestError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { deriveRecoverableAmount, resolveAuthPi } from "./booking-money.ts";
 import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";

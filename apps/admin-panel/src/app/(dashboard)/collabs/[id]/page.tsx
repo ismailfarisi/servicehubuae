@@ -2,7 +2,7 @@
 
 import { QueryError } from "@/components/query-error";
 import { useAdminCollab } from "@/lib/queries/collabs";
-import { Button, Separator, Skeleton, StatusBadge } from "@mypickuae/ui";
+import { Button, Separator, Skeleton, StatusBadge } from "@servicehubuae/ui";
 import { ArrowLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 

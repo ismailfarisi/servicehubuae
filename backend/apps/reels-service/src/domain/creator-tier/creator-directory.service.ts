@@ -1,4 +1,4 @@
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 
 /** One approved creator as the vendor directory shows them. `id` is the user
  *  id — the field `InviteToCollabModal` needs as `creator.id`. */

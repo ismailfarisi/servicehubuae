@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useInviteMember } from "@/lib/queries/vendor-members";
 
 export function InviteModal({ open, onClose }: { open: boolean; onClose: () => void }) {

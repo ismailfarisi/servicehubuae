@@ -69,7 +69,7 @@ describe("auth-service", () => {
   test("email normalization lowercases and trims", () => {
     const normalize = (email: string) => email.toLowerCase().trim();
     expect(normalize("  User@Example.COM  ")).toBe("user@example.com");
-    expect(normalize("ADMIN@mypickuae.COM")).toBe("admin@mypickuae.com");
+    expect(normalize("ADMIN@servicehubuae.COM")).toBe("admin@servicehubuae.com");
   });
 
   // ─── Device info extraction ───
@@ -227,7 +227,7 @@ describe("auth-service", () => {
 
   test("changePassword shape: rejects when current password wrong", async () => {
     // Pure-logic check on the verification step. Mock userRepo.
-    const { HttpError } = await import("@mypickuae/plugins");
+    const { HttpError } = await import("@servicehubuae/plugins");
     const verify = async (supplied: string, _hash: string) => supplied === "correct";
     const stored = "$2bcorrect";
     const supplied = "wrong";

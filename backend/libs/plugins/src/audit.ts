@@ -1,4 +1,4 @@
-import { AppDataSource, AuditLog } from "@mypickuae/database";
+import { AppDataSource, AuditLog } from "@servicehubuae/database";
 import { Elysia } from "elysia";
 
 interface AuditContext {

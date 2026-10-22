@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthModalStore } from "@/stores/auth-modal";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@mypickuae/ui";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@servicehubuae/ui";
 import { useLocale } from "next-intl";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -31,10 +31,10 @@ export function AuthModal() {
     mode === "login"
       ? {
           title: "Continue with your phone",
-          description: "Enter your mobile number and verify the SMS code to access MyPickUAE.",
+          description: "Enter your mobile number and verify the SMS code to access ServiceHubUAE.",
         }
       : {
-          title: "Create your MyPickUAE account",
+          title: "Create your ServiceHubUAE account",
           description: "Verify your phone, add your name, and start shopping.",
         };
 
@@ -53,7 +53,7 @@ export function AuthModal() {
           <div className="px-6 py-8 sm:px-10 md:px-12 md:py-12">
             <DialogHeader className="space-y-3 text-left sm:text-left">
               <div className="text-sm font-semibold text-nl-amber-text">
-                MyPickUAE account
+                ServiceHubUAE account
               </div>
               <DialogTitle className="font-display text-2xl font-bold leading-tight tracking-tight text-nl-cacao md:text-3xl">
                 {copy.title}

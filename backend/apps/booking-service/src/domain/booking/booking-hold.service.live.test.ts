@@ -7,8 +7,8 @@
 // behavior, which an in-memory fake (booking-hold.service.test.ts) can only
 // approximate. Cleans up every key it creates.
 import { afterAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
-import { ConflictError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { ConflictError } from "@servicehubuae/plugins";
 import { type RedisClientType, createClient } from "redis";
 import { BookingHoldService, type RedisLike, type SlotRange } from "./booking-hold.service.ts";
 

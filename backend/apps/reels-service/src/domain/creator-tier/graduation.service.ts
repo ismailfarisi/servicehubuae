@@ -1,4 +1,4 @@
-import { AppDataSource, CreatorTier, User } from "@mypickuae/database";
+import { AppDataSource, CreatorTier, User } from "@servicehubuae/database";
 import { type EntityManager, MoreThan, Not, type Repository } from "typeorm";
 
 export class GraduationService {

@@ -1,5 +1,5 @@
-import { IntegrationDeliveryStatus, IntegrationDirection } from "@mypickuae/database";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
+import { IntegrationDeliveryStatus, IntegrationDirection } from "@servicehubuae/database";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

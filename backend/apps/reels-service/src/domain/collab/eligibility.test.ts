@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { SocialPlatform } from "@mypickuae/database";
+import { SocialPlatform } from "@servicehubuae/database";
 import { type CreatorProfile, evaluateEligibility } from "./eligibility.ts";
 
 const creator = (over: Partial<CreatorProfile> = {}): CreatorProfile => ({

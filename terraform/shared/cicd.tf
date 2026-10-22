@@ -45,7 +45,7 @@ resource "aws_iam_role" "github_actions" {
 # and production builds. Environment-specific permissions (prod SSM/KMS/deploy)
 # are attached separately in terraform/production/cicd.tf.
 #
-# NOTE: the staging-specific SSM (PutParameter on /mypickuae/staging/*) and KMS
+# NOTE: the staging-specific SSM (PutParameter on /servicehubuae/staging/*) and KMS
 # statements that used to live here were dropped when staging moved off AWS —
 # the legacy AWS staging deploy and its SSM params no longer exist.
 resource "aws_iam_role_policy" "github_actions" {

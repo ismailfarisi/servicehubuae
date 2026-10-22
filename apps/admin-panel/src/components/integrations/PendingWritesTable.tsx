@@ -5,7 +5,7 @@ import {
   useApprovePendingWrite,
   useRejectPendingWrite,
 } from "@/lib/queries/integrations";
-import { Button, StatusBadge } from "@mypickuae/ui";
+import { Button, StatusBadge } from "@servicehubuae/ui";
 import { Check, X } from "lucide-react";
 import { useState } from "react";
 import { PendingWriteDetailDialog } from "./PendingWriteDetailDialog";

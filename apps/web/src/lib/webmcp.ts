@@ -27,13 +27,13 @@ declare global {
 	}
 }
 
-export function registerMyPickUAEWebMcpTools({ locale = "en" } = {}) {
+export function registerServiceHubUAEWebMcpTools({ locale = "en" } = {}) {
 	if (typeof document === "undefined" || !document.modelContext) {
 		return undefined;
 	}
 
 	const controller = new AbortController();
-	const tools = createMyPickUAEWebMcpTools(locale);
+	const tools = createServiceHubUAEWebMcpTools(locale);
 
 	for (const tool of tools) {
 		document.modelContext.registerTool(tool, { signal: controller.signal });
@@ -42,7 +42,7 @@ export function registerMyPickUAEWebMcpTools({ locale = "en" } = {}) {
 	return () => controller.abort();
 }
 
-export async function registerMyPickUAEWebMcpServiceWorker({
+export async function registerServiceHubUAEWebMcpServiceWorker({
 	scriptUrl = "/webmcp-service-worker.js",
 	scope = "/",
 } = {}) {
@@ -61,13 +61,13 @@ export async function registerMyPickUAEWebMcpServiceWorker({
 	}
 }
 
-function createMyPickUAEWebMcpTools(locale: string): WebMcpTool[] {
+function createServiceHubUAEWebMcpTools(locale: string): WebMcpTool[] {
 	return [
 		{
-			name: "mypickuae.searchServices",
-			title: "Search MyPickUAE services",
+			name: "servicehubuae.searchServices",
+			title: "Search ServiceHubUAE services",
 			description:
-				"Navigate the MyPickUAE storefront to service search results for a concise customer-provided query.",
+				"Navigate the ServiceHubUAE storefront to service search results for a concise customer-provided query.",
 			inputSchema: {
 				type: "object",
 				properties: {
@@ -99,15 +99,15 @@ function createMyPickUAEWebMcpTools(locale: string): WebMcpTool[] {
 
 				return {
 					content: [
-						{ type: "text", text: `Searching MyPickUAE for "${query}".` },
+						{ type: "text", text: `Searching ServiceHubUAE for "${query}".` },
 					],
 					structuredContent: { navigated: true, path, query },
 				};
 			},
 		},
 		{
-			name: "mypickuae.openMyBookings",
-			title: "Open my MyPickUAE bookings",
+			name: "servicehubuae.openMyBookings",
+			title: "Open my ServiceHubUAE bookings",
 			description:
 				"Navigate to the customer's bookings page so they can review upcoming and past appointments.",
 			inputSchema: {

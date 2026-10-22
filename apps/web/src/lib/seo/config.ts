@@ -1,7 +1,7 @@
 import { routing } from "../../../i18n/routing";
 
 export const SITE_URL =
-	process.env.NEXT_PUBLIC_SITE_URL || "https://www.mypickuae.com";
+	process.env.NEXT_PUBLIC_SITE_URL || "https://www.servicehubuae.com";
 
 export const API_URL =
 	process.env.API_URL ||

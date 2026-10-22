@@ -1,11 +1,11 @@
-import { NewsletterSubscribeBody } from "@mypickuae/dto";
-import { jwtAuth } from "@mypickuae/guards";
+import { NewsletterSubscribeBody } from "@servicehubuae/dto";
+import { jwtAuth } from "@servicehubuae/guards";
 import { Elysia } from "elysia";
 import { container } from "../container.ts";
 
 function unsubscribePage(message: string): Response {
   return new Response(
-    `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MyPickUAE</title></head><body style="font-family:system-ui,sans-serif;max-width:480px;margin:80px auto;padding:0 24px;text-align:center;color:#3a2a23"><h1 style="font-weight:500">${message}</h1><p><a href="https://mypickuae.com" style="color:#7a5c4a">Return to MyPickUAE</a></p></body></html>`,
+    `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ServiceHubUAE</title></head><body style="font-family:system-ui,sans-serif;max-width:480px;margin:80px auto;padding:0 24px;text-align:center;color:#3a2a23"><h1 style="font-weight:500">${message}</h1><p><a href="https://servicehubuae.com" style="color:#7a5c4a">Return to ServiceHubUAE</a></p></body></html>`,
     { headers: { "Content-Type": "text/html; charset=utf-8" } },
   );
 }

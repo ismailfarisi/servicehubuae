@@ -1,4 +1,4 @@
-import { AppDataSource, GuestSession } from "@mypickuae/database";
+import { AppDataSource, GuestSession } from "@servicehubuae/database";
 import { Elysia } from "elysia";
 
 export function hashGuestSessionToken(token: string): string {

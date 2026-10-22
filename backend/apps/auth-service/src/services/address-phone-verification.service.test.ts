@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import type { User, UserVerifiedPhone } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import type { User, UserVerifiedPhone } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { AddressPhoneVerificationService } from "./address-phone-verification.service.ts";
 

@@ -24,9 +24,9 @@ import {
   SelectValue,
   Skeleton,
   StatusBadge,
-} from "@mypickuae/ui";
-import { toast } from "@mypickuae/ui";
-import { useDebounce } from "@mypickuae/ui";
+} from "@servicehubuae/ui";
+import { toast } from "@servicehubuae/ui";
+import { useDebounce } from "@servicehubuae/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import Link from "next/link";

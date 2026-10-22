@@ -7,8 +7,8 @@
 // eligibility source, don't re-derive it). These tests cover: published-only
 // visibility, location-filter pass-through, and the PII-free response shape.
 import { describe, expect, it, mock } from "bun:test";
-import type { ServiceOffering } from "@mypickuae/database";
-import { NotFoundError } from "@mypickuae/plugins";
+import type { ServiceOffering } from "@servicehubuae/database";
+import { NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { OfferingStaffController } from "./offering-staff.controller.ts";
 import type { StaffService } from "./staff.service.ts";

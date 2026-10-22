@@ -1,14 +1,14 @@
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { registerMyPickUAEWebMcpTools } from "./webmcp";
+import { registerServiceHubUAEWebMcpTools } from "./webmcp";
 
-describe("registerMyPickUAEWebMcpTools", () => {
+describe("registerServiceHubUAEWebMcpTools", () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
 		Reflect.deleteProperty(document, "modelContext");
 	});
 
 	test("does nothing when WebMCP is unavailable", () => {
-		expect(registerMyPickUAEWebMcpTools()).toBeUndefined();
+		expect(registerServiceHubUAEWebMcpTools()).toBeUndefined();
 	});
 
 	test("registers storefront tools and aborts them during cleanup", () => {
@@ -18,12 +18,12 @@ describe("registerMyPickUAEWebMcpTools", () => {
 			value: { registerTool },
 		});
 
-		const cleanup = registerMyPickUAEWebMcpTools({ locale: "en" });
+		const cleanup = registerServiceHubUAEWebMcpTools({ locale: "en" });
 
 		expect(registerTool).toHaveBeenCalledTimes(2);
 		expect(registerTool.mock.calls.map(([tool]) => tool.name)).toEqual([
-			"mypickuae.searchServices",
-			"mypickuae.openMyBookings",
+			"servicehubuae.searchServices",
+			"servicehubuae.openMyBookings",
 		]);
 
 		const signals = registerTool.mock.calls.map(
@@ -44,7 +44,7 @@ describe("registerMyPickUAEWebMcpTools", () => {
 			value: { registerTool },
 		});
 
-		registerMyPickUAEWebMcpTools({ locale: "en" });
+		registerServiceHubUAEWebMcpTools({ locale: "en" });
 
 		const searchTool = registerTool.mock.calls[0][0];
 		await expect(searchTool.execute({ query: "   " })).resolves.toEqual({

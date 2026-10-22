@@ -4,7 +4,7 @@
 # The PR/prod pipelines have no Postgres or Redis, so integration tests
 # (*.integration.test.ts and tests/integration/**) cannot run here. Loading a
 # whole service's suite in one bun process also surfaces a load-order
-# circular-import in @mypickuae/guards that only bites when the integration
+# circular-import in @servicehubuae/guards that only bites when the integration
 # files are present. Both problems are avoided by running unit tests only.
 #
 # Integration tests should be run separately against a live stack (tracked as

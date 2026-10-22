@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
-import { AppDataSource, CreatorTier } from "@mypickuae/database";
+import { AppDataSource, CreatorTier } from "@servicehubuae/database";
 import type { FindOperator } from "typeorm";
 import { GraduationService } from "./graduation.service.ts";
 

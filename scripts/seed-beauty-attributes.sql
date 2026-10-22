@@ -1,5 +1,5 @@
 -- ============================================================
--- MyPickUAE Beauty & Fragrance - Attributes, Values, Brands
+-- ServiceHubUAE Beauty & Fragrance - Attributes, Values, Brands
 -- ============================================================
 
 BEGIN;

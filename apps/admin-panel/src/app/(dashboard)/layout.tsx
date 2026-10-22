@@ -7,7 +7,7 @@ import {
 	DashboardHeader,
 	Sidebar,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useQueryClient } from "@tanstack/react-query";
 import {
 	BarChart3,
@@ -299,7 +299,7 @@ export default function DashboardLayout({
 				currentPath={pathname}
 				collapsed={collapsed}
 				onToggle={() => setCollapsed((c) => !c)}
-				appName="MyPickUAE"
+				appName="ServiceHubUAE"
 				roleBadge={roleBadge}
 				mobileOpen={mobileOpen}
 				onMobileClose={() => setMobileOpen(false)}

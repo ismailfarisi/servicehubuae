@@ -1,4 +1,4 @@
-# api.mypickuae.com → Elastic IP (Caddy terminates TLS here)
+# api.servicehubuae.com → Elastic IP (Caddy terminates TLS here)
 resource "aws_route53_record" "api" {
   zone_id = data.aws_route53_zone.main.zone_id
   name    = var.api_subdomain
@@ -7,7 +7,7 @@ resource "aws_route53_record" "api" {
   records = [aws_eip.app.public_ip]
 }
 
-# cdn.mypickuae.com → CloudFront distribution
+# cdn.servicehubuae.com → CloudFront distribution
 resource "aws_route53_record" "cdn" {
   zone_id = data.aws_route53_zone.main.zone_id
   name    = var.cdn_subdomain
@@ -20,7 +20,7 @@ resource "aws_route53_record" "cdn" {
   }
 }
 
-# feeds.mypickuae.com → CloudFront distribution for sales-channel feed files
+# feeds.servicehubuae.com → CloudFront distribution for sales-channel feed files
 resource "aws_route53_record" "feeds" {
   zone_id = data.aws_route53_zone.main.zone_id
   name    = var.feed_subdomain

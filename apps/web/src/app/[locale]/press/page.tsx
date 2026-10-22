@@ -5,9 +5,9 @@ import {
 } from "@/components/layout/static-page-layout";
 
 export const metadata: Metadata = {
-	title: "Press & Media — MyPickUAE",
+	title: "Press & Media — ServiceHubUAE",
 	description:
-		"Press contacts, brand assets and the MyPickUAE story for journalists, partners and creators covering the UAE services market.",
+		"Press contacts, brand assets and the ServiceHubUAE story for journalists, partners and creators covering the UAE services market.",
 };
 
 const FACTS = [
@@ -26,12 +26,12 @@ export default function PressPage() {
 	return (
 		<StaticPageLayout
 			eyebrow="Press"
-			title="Press, partnerships, and the MyPickUAE story."
+			title="Press, partnerships, and the ServiceHubUAE story."
 			intro="For interviews, brand assets or partnership enquiries, our press team is one email away."
 		>
 			<StaticSection heading="The short version">
 				<p>
-					MyPickUAE is a UAE-based services marketplace. Customers browse
+					ServiceHubUAE is a UAE-based services marketplace. Customers browse
 					a catalogue of everyday and specialist services, compare
 					independent vendors side by side, and either book a time slot
 					straight away or request quotations and chat with vendors before
@@ -61,10 +61,10 @@ export default function PressPage() {
 					Press, interviews and commentary on the UAE services market,
 					plus vendor partnerships and creator collaborations:{" "}
 					<a
-						href="mailto:info@mypickuae.com"
+						href="mailto:info@servicehubuae.com"
 						className="font-medium text-nl-amber-text hover:underline"
 					>
-						info@mypickuae.com
+						info@servicehubuae.com
 					</a>
 				</p>
 			</StaticSection>
@@ -74,10 +74,10 @@ export default function PressPage() {
 					Logo lockups, product screenshots and approved photography are
 					available on request. Please email{" "}
 					<a
-						href="mailto:info@mypickuae.com"
+						href="mailto:info@servicehubuae.com"
 						className="font-medium text-nl-amber-text hover:underline"
 					>
-						info@mypickuae.com
+						info@servicehubuae.com
 					</a>{" "}
 					with your outlet and intended use and we&rsquo;ll send a kit
 					within one business day.

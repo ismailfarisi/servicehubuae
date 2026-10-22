@@ -1,7 +1,7 @@
 "use client";
 
 import { KIND_ORDER, KIND_STYLE, STATUS_LABEL } from "@/lib/booking/calendar-style";
-import { cn } from "@mypickuae/ui";
+import { cn } from "@servicehubuae/ui";
 
 export function CalendarLegend() {
 	return (

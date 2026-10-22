@@ -1,6 +1,6 @@
-import { AppDataSource, Category, CategoryTranslation } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
-import { generateSlug } from "@mypickuae/utils";
+import { AppDataSource, Category, CategoryTranslation } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
+import { generateSlug } from "@servicehubuae/utils";
 import { In, Like } from "typeorm";
 
 export class CategoryService {

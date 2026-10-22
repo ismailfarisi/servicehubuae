@@ -12,7 +12,7 @@ import { Eyebrow } from "@/components/ui/maison-primitives";
  * `components/account/review-form.tsx`'s (order-item review) shape and
  * inline-panel pattern for visual consistency. No media upload: apps/web has
  * no reusable upload component (S3ImageUploadField/ImageUploader live in
- * @mypickuae/ui but are consumed by vendor-dashboard/admin-panel product
+ * @servicehubuae/ui but are consumed by vendor-dashboard/admin-panel product
  * forms, not the storefront) — adding one is out of scope for this task, so
  * `media_urls` is simply never sent.
  *

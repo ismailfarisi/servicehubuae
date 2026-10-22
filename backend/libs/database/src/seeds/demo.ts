@@ -31,8 +31,8 @@ import {
   VendorStatus,
 } from "../enums/vendor.enums.ts";
 
-export const DEMO_VENDOR_EMAIL = "vendor@mypickuae.com";
-export const DEMO_VENDOR_SLUG = "mypickuae-demo-salon";
+export const DEMO_VENDOR_EMAIL = "vendor@servicehubuae.com";
+export const DEMO_VENDOR_SLUG = "servicehubuae-demo-salon";
 
 interface DemoOffering {
   slug: string;
@@ -66,7 +66,7 @@ const { at_premises, home_visit, either } = ServiceLocationMode;
 const DEMO_VENDORS: DemoVendor[] = [
   {
     slug: DEMO_VENDOR_SLUG,
-    name: "MyPickUAE Demo Salon",
+    name: "ServiceHubUAE Demo Salon",
     email: DEMO_VENDOR_EMAIL,
     ownerFirstName: "Demo",
     ownerLastName: "Vendor",
@@ -127,9 +127,9 @@ const DEMO_VENDORS: DemoVendor[] = [
     ],
   },
   {
-    slug: "mypickuae-demo-cleaning",
-    name: "MyPickUAE Demo Cleaning",
-    email: "demo-cleaning@mypickuae.com",
+    slug: "servicehubuae-demo-cleaning",
+    name: "ServiceHubUAE Demo Cleaning",
+    email: "demo-cleaning@servicehubuae.com",
     ownerFirstName: "Leila",
     ownerLastName: "Nasser",
     description:
@@ -208,9 +208,9 @@ const DEMO_VENDORS: DemoVendor[] = [
     ],
   },
   {
-    slug: "mypickuae-demo-ac",
-    name: "MyPickUAE Demo AC & Maintenance",
-    email: "demo-ac@mypickuae.com",
+    slug: "servicehubuae-demo-ac",
+    name: "ServiceHubUAE Demo AC & Maintenance",
+    email: "demo-ac@servicehubuae.com",
     ownerFirstName: "Khalid",
     ownerLastName: "Al Shamsi",
     description:
@@ -287,9 +287,9 @@ const DEMO_VENDORS: DemoVendor[] = [
     ],
   },
   {
-    slug: "mypickuae-demo-spa",
-    name: "MyPickUAE Demo Spa & Beauty",
-    email: "demo-spa@mypickuae.com",
+    slug: "servicehubuae-demo-spa",
+    name: "ServiceHubUAE Demo Spa & Beauty",
+    email: "demo-spa@servicehubuae.com",
     ownerFirstName: "Noura",
     ownerLastName: "Haddad",
     description:
@@ -358,9 +358,9 @@ const DEMO_VENDORS: DemoVendor[] = [
     ],
   },
   {
-    slug: "mypickuae-demo-pest",
-    name: "MyPickUAE Demo Pest Control",
-    email: "demo-pest@mypickuae.com",
+    slug: "servicehubuae-demo-pest",
+    name: "ServiceHubUAE Demo Pest Control",
+    email: "demo-pest@servicehubuae.com",
     ownerFirstName: "Yousef",
     ownerLastName: "Darwish",
     description:
@@ -438,9 +438,9 @@ const DEMO_VENDORS: DemoVendor[] = [
     ],
   },
   {
-    slug: "mypickuae-demo-fitout",
-    name: "MyPickUAE Demo Fit-out",
-    email: "demo-fitout@mypickuae.com",
+    slug: "servicehubuae-demo-fitout",
+    name: "ServiceHubUAE Demo Fit-out",
+    email: "demo-fitout@servicehubuae.com",
     ownerFirstName: "Marco",
     ownerLastName: "Bianchi",
     description:
@@ -507,9 +507,9 @@ const DEMO_VENDORS: DemoVendor[] = [
     ],
   },
   {
-    slug: "mypickuae-demo-it",
-    name: "MyPickUAE Demo IT Services",
-    email: "demo-it@mypickuae.com",
+    slug: "servicehubuae-demo-it",
+    name: "ServiceHubUAE Demo IT Services",
+    email: "demo-it@servicehubuae.com",
     ownerFirstName: "Hassan",
     ownerLastName: "Iqbal",
     description: "Device repair, Wi-Fi, CCTV and on-call IT support for homes and small offices.",
@@ -578,12 +578,12 @@ const DEMO_VENDORS: DemoVendor[] = [
 
 /** Customers who leave the demo reviews. */
 const DEMO_REVIEWERS = [
-  { first: "Fatima", last: "Al Mansoori", email: "demo-reviewer1@mypickuae.com" },
-  { first: "Rahul", last: "Menon", email: "demo-reviewer2@mypickuae.com" },
-  { first: "Sarah", last: "Thompson", email: "demo-reviewer3@mypickuae.com" },
-  { first: "Ahmed", last: "Khalil", email: "demo-reviewer4@mypickuae.com" },
-  { first: "Maria", last: "Santos", email: "demo-reviewer5@mypickuae.com" },
-  { first: "Arjun", last: "Nair", email: "demo-reviewer6@mypickuae.com" },
+  { first: "Fatima", last: "Al Mansoori", email: "demo-reviewer1@servicehubuae.com" },
+  { first: "Rahul", last: "Menon", email: "demo-reviewer2@servicehubuae.com" },
+  { first: "Sarah", last: "Thompson", email: "demo-reviewer3@servicehubuae.com" },
+  { first: "Ahmed", last: "Khalil", email: "demo-reviewer4@servicehubuae.com" },
+  { first: "Maria", last: "Santos", email: "demo-reviewer5@servicehubuae.com" },
+  { first: "Arjun", last: "Nair", email: "demo-reviewer6@servicehubuae.com" },
 ];
 
 const REVIEW_TEXT: Record<string, { title: string; body: string }[]> = {

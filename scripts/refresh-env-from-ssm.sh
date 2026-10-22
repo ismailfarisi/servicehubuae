@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
-# Fetch staging secrets from SSM and write/update /opt/mypickuae/.env.
+# Fetch staging secrets from SSM and write/update /opt/servicehubuae/.env.
 # Idempotent. Safe to run on every deploy and on EC2 first boot.
 #
 # Usage: ./refresh-env-from-ssm.sh <env_file_path> <project> <environment>
-# Defaults: /opt/mypickuae/.env mypickuae staging
+# Defaults: /opt/servicehubuae/.env servicehubuae staging
 set -euo pipefail
 
-ENV_FILE="${1:-/opt/mypickuae/.env}"
-PROJECT="${2:-mypickuae}"
+ENV_FILE="${1:-/opt/servicehubuae/.env}"
+PROJECT="${2:-servicehubuae}"
 ENVIRONMENT="${3:-staging}"
 PREFIX="/${PROJECT}/${ENVIRONMENT}"
 REGION="${AWS_REGION:-ap-south-1}"
@@ -58,7 +58,7 @@ path_to_env() {
     "${PREFIX}/twilio/verify-service-sid")     echo "TWILIO_VERIFY_SERVICE_SID" ;;
     # Public gateway base URL. Backs the newsletter unsubscribe link and the
     # absolute .ics calendar-feed URL booking-service hands to vendors. Also
-    # seeded into /opt/mypickuae/.env by terraform user-data at first boot;
+    # seeded into /opt/servicehubuae/.env by terraform user-data at first boot;
     # mapping it here makes CI the source of truth on every deploy.
     "${PREFIX}/urls/public-api-url")          echo "PUBLIC_API_URL" ;;
     # Storefront apex/www hostnames. Backs api-gateway's prod CORS allowlist

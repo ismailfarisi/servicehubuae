@@ -13,7 +13,7 @@ import {
   Button,
   Skeleton,
   StatusBadge,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useTicket, useUpdateTicket, useAddMessage } from "@/lib/queries/support";
 import { ArrowLeft, CalendarCheck, Send, StickyNote, User } from "lucide-react";
 import { useRouter } from "next/navigation";

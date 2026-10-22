@@ -1,5 +1,5 @@
 import { describe, expect, mock, test } from "bun:test";
-import { VendorMemberRole } from "@mypickuae/database";
+import { VendorMemberRole } from "@servicehubuae/database";
 import { PermissionMatrix, __setRedisForTests as setRedis } from "./permission-matrix.ts";
 
 function fakeRedis(initialVersion: string | null) {

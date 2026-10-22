@@ -1,4 +1,4 @@
-import type { S3UploadClient } from "@mypickuae/ui";
+import type { S3UploadClient } from "@servicehubuae/ui";
 import { api } from "./api";
 
 export const s3UploadClient: S3UploadClient = {

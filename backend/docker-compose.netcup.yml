@@ -1,7 +1,7 @@
-# MyPickUAE backend — Netcup staging
+# ServiceHubUAE backend — Netcup staging
 #
 # Differences from docker-compose.prod.yml:
-#   - Images: ghcr.io/${GHCR_OWNER}/mypickuae-* (was ${ECR_REGISTRY}/...)
+#   - Images: ghcr.io/${GHCR_OWNER}/servicehubuae-* (was ${ECR_REGISTRY}/...)
 #   - No embedded Caddy: host Caddy on the Netcup box owns 80/443 and reverse-proxies localhost:3000
 #   - Only api-gateway publishes to host (bound to 127.0.0.1 — Caddy reaches via loopback)
 #   - Postgres bound to 127.0.0.1:5432 — accessible from host shell for psql/pg_dump, not from internet
@@ -11,7 +11,7 @@
 #   - Typesense healthcheck disabled because the image has no curl/wget; catalog-service
 #     waits on service_started instead. Typesense's own readiness handles app-side retries.
 #
-# Renders via .env that the deploy workflow SCPs to /opt/mypickuae/.env.
+# Renders via .env that the deploy workflow SCPs to /opt/servicehubuae/.env.
 
 services:
   postgres:
@@ -56,7 +56,7 @@ services:
     restart: unless-stopped
 
   api-gateway:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-api-gateway:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-api-gateway:${IMAGE_TAG:-staging}
     env_file: .env
     ports:
       - "127.0.0.1:3000:3000"
@@ -73,7 +73,7 @@ services:
     restart: unless-stopped
 
   auth-service:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-auth-service:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-auth-service:${IMAGE_TAG:-staging}
     env_file: .env
     environment:
       - NODE_ENV=production
@@ -88,7 +88,7 @@ services:
     restart: unless-stopped
 
   catalog-service:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-catalog-service:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-catalog-service:${IMAGE_TAG:-staging}
     env_file: .env
     environment:
       - NODE_ENV=production
@@ -108,7 +108,7 @@ services:
     restart: unless-stopped
 
   booking-service:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-booking-service:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-booking-service:${IMAGE_TAG:-staging}
     env_file: .env
     environment:
       - NODE_ENV=production
@@ -123,7 +123,7 @@ services:
     restart: unless-stopped
 
   vendor-service:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-vendor-service:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-vendor-service:${IMAGE_TAG:-staging}
     env_file: .env
     environment:
       - NODE_ENV=production
@@ -138,7 +138,7 @@ services:
     restart: unless-stopped
 
   notification-service:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-notification-service:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-notification-service:${IMAGE_TAG:-staging}
     env_file: .env
     environment:
       - NODE_ENV=production
@@ -153,7 +153,7 @@ services:
     restart: unless-stopped
 
   cms-service:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-cms-service:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-cms-service:${IMAGE_TAG:-staging}
     env_file: .env
     environment:
       - NODE_ENV=production
@@ -168,7 +168,7 @@ services:
     restart: unless-stopped
 
   reels-service:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-reels-service:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-reels-service:${IMAGE_TAG:-staging}
     env_file: .env
     environment:
       - NODE_ENV=production
@@ -183,7 +183,7 @@ services:
     restart: unless-stopped
 
   integration-service:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-integration-service:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-integration-service:${IMAGE_TAG:-staging}
     env_file: .env
     environment:
       - NODE_ENV=production
@@ -200,9 +200,9 @@ services:
     restart: unless-stopped
 
   migrate:
-    image: ghcr.io/${GHCR_OWNER}/mypickuae-api-gateway:${IMAGE_TAG:-staging}
+    image: ghcr.io/${GHCR_OWNER}/servicehubuae-api-gateway:${IMAGE_TAG:-staging}
     profiles: ["tools"]
-    # @mypickuae/config eagerly requireEnv's JWT_ACCESS_SECRET (and friends)
+    # @servicehubuae/config eagerly requireEnv's JWT_ACCESS_SECRET (and friends)
     # at import time when NODE_ENV=production. data-source.ts pulls config
     # in transitively, so the migration runner needs the same env surface
     # the api-gateway has. env_file is simpler than re-listing every secret.

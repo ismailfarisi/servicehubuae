@@ -4,7 +4,7 @@ import { LocationAdminsPanel } from "@/components/bookings/LocationAdminsPanel";
 import { LocationForm } from "@/components/bookings/LocationForm";
 import { useCanManageBookings } from "@/hooks/use-vendor-role";
 import { useVendorLocation } from "@/lib/queries/locations";
-import { Button, StatusBadge } from "@mypickuae/ui";
+import { Button, StatusBadge } from "@servicehubuae/ui";
 import { useParams } from "next/navigation";
 
 const LOCATION_STATUS_COLORS: Record<string, string> = {

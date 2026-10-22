@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { AppDataSource, SiteSetting } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, SiteSetting } from "@servicehubuae/database";
 import { Queue, Worker } from "bullmq";
 
 export const RETENTION_DELETE_QUEUE = "integration-retention-delete-cron";

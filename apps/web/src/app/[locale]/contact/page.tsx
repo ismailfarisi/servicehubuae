@@ -5,19 +5,19 @@ import {
 } from "@/components/layout/static-page-layout";
 
 export const metadata: Metadata = {
-	title: "Contact MyPickUAE",
+	title: "Contact ServiceHubUAE",
 	description:
-		"Reach MyPickUAE customer care, vendor support, press and partnerships — channels, hours and response times.",
+		"Reach ServiceHubUAE customer care, vendor support, press and partnerships — channels, hours and response times.",
 };
 
 const PHONE = "+971 50 301 9357";
-const EMAILS = ["info@mypickuae.com", "help@mypickuae.com"];
+const EMAILS = ["info@servicehubuae.com", "help@servicehubuae.com"];
 
 export default function ContactPage() {
 	return (
 		<StaticPageLayout
 			eyebrow="Contact"
-			title="Talk to a human at MyPickUAE."
+			title="Talk to a human at ServiceHubUAE."
 			intro="Customer care answers in Arabic and English, seven days a week."
 		>
 			<StaticSection heading="Get in touch">

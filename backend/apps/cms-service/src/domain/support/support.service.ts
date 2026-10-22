@@ -4,14 +4,14 @@ import {
   SupportTicket,
   TicketPriority,
   TicketStatus,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import type {
   CreateMessageBody,
   CreateTicketBody,
   TicketListQuery,
   UpdateTicketBody,
-} from "@mypickuae/dto";
-import { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/dto";
+import { HttpError } from "@servicehubuae/plugins";
 import type { FindOptionsWhere } from "typeorm";
 import { publishTicketMessage } from "../../lib/ticket-events.ts";
 import type { SlackService } from "./slack.service.ts";

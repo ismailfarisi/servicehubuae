@@ -1,5 +1,5 @@
-import { AppDataSource, UserAddress } from "@mypickuae/database";
-import { EmailService } from "@mypickuae/utils";
+import { AppDataSource, UserAddress } from "@servicehubuae/database";
+import { EmailService } from "@servicehubuae/utils";
 import { Elysia } from "elysia";
 import { AdminPasswordController } from "./controllers/admin-password.controller.ts";
 import { AuthController } from "./controllers/auth.controller.ts";

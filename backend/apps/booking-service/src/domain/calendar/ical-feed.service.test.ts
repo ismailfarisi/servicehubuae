@@ -6,7 +6,7 @@
 // EXCLUDE-constraint-backed engagements, real route auth) lives in
 // ical-feed.routes.integration.test.ts.
 import { describe, expect, it, mock } from "bun:test";
-import { EngagementKind, EngagementStatus, type StaffEngagement } from "@mypickuae/database";
+import { EngagementKind, EngagementStatus, type StaffEngagement } from "@servicehubuae/database";
 import { IcalFeedService } from "./ical-feed.service.ts";
 import { generateICal } from "./ical-feed.ts";
 import { parseICal } from "./ical-parse.ts";
@@ -40,7 +40,7 @@ function setup(engagements: StaffEngagement[]) {
 }
 
 describe("IcalFeedService.forStaff", () => {
-  it("includes confirmed marketplace_booking/walk_in/phone with the generic 'MyPickUAE booking' summary", async () => {
+  it("includes confirmed marketplace_booking/walk_in/phone with the generic 'ServiceHubUAE booking' summary", async () => {
     const fixtures = [
       engagement({ id: "eng-1", kind: EngagementKind.marketplace_booking }),
       engagement({ id: "eng-2", kind: EngagementKind.walk_in }),
@@ -50,10 +50,10 @@ describe("IcalFeedService.forStaff", () => {
 
     const ics = await service.forStaff(STAFF_ID, NOW);
 
-    expect(ics).toContain("UID:engagement-eng-1@mypickuae.com");
-    expect(ics).toContain("UID:engagement-eng-2@mypickuae.com");
-    expect(ics).toContain("UID:engagement-eng-3@mypickuae.com");
-    expect((ics.match(/SUMMARY:MyPickUAE booking/g) ?? []).length).toBe(3);
+    expect(ics).toContain("UID:engagement-eng-1@servicehubuae.com");
+    expect(ics).toContain("UID:engagement-eng-2@servicehubuae.com");
+    expect(ics).toContain("UID:engagement-eng-3@servicehubuae.com");
+    expect((ics.match(/SUMMARY:ServiceHubUAE booking/g) ?? []).length).toBe(3);
   });
 
   it("includes confirmed manual_block/break with the generic 'Blocked' summary", async () => {
@@ -81,7 +81,7 @@ describe("IcalFeedService.forStaff", () => {
 
     const ics = await service.forStaff(STAFF_ID, NOW);
 
-    expect(ics).toContain("UID:engagement-eng-keep@mypickuae.com");
+    expect(ics).toContain("UID:engagement-eng-keep@servicehubuae.com");
     expect(ics).not.toContain("eng-imported");
     expect((ics.match(/BEGIN:VEVENT/g) ?? []).length).toBe(1);
   });
@@ -99,7 +99,7 @@ describe("IcalFeedService.forStaff", () => {
     const ics = await service.forStaff(STAFF_ID, NOW);
 
     expect((ics.match(/BEGIN:VEVENT/g) ?? []).length).toBe(1);
-    expect(ics).toContain("UID:engagement-eng-confirmed@mypickuae.com");
+    expect(ics).toContain("UID:engagement-eng-confirmed@servicehubuae.com");
   });
 
   it("never includes LOCATION or DESCRIPTION (no PII fields populated)", async () => {
@@ -125,13 +125,13 @@ describe("IcalFeedService.forStaff", () => {
     const expected = generateICal(
       [
         {
-          uid: "engagement-eng-1@mypickuae.com",
-          summary: "MyPickUAE booking",
+          uid: "engagement-eng-1@servicehubuae.com",
+          summary: "ServiceHubUAE booking",
           startsAt: new Date("2026-08-10T10:00:00Z"),
           endsAt: new Date("2026-08-10T10:30:00Z"),
         },
       ],
-      { now: NOW, calName: "MyPickUAE Bookings" },
+      { now: NOW, calName: "ServiceHubUAE Bookings" },
     );
     expect(ics).toBe(expected);
   });
@@ -151,8 +151,8 @@ describe("IcalFeedService.forStaff", () => {
     const parsed = parseICal(ics);
 
     expect(parsed.length).toBe(1);
-    expect(parsed[0]?.uid).toBe("engagement-eng-rt@mypickuae.com");
-    expect(parsed[0]?.summary).toBe("MyPickUAE booking");
+    expect(parsed[0]?.uid).toBe("engagement-eng-rt@servicehubuae.com");
+    expect(parsed[0]?.summary).toBe("ServiceHubUAE booking");
     expect(parsed[0]?.startsAt.getTime()).toBe(new Date("2026-09-01T08:00:00Z").getTime());
     expect(parsed[0]?.endsAt.getTime()).toBe(new Date("2026-09-01T09:00:00Z").getTime());
   });

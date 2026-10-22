@@ -13,7 +13,7 @@ by — production (which is still on AWS in the same account):
 |---|---|
 | `aws_iam_openid_connect_provider.github` | AWS allows one OIDC provider per URL per account; both envs' CI use it. |
 | `aws_iam_role.github_actions` (+ base policy) | `terraform/production/cicd.tf` looks this role up via `data` and attaches a prod-scoped policy. The base policy here grants ECR auth + push, used by all CI builds. |
-| `aws_ecr_repository.services` (+ lifecycle) | `build-service.yml` pushes both staging and prod images to the same `mypickuae-<service>` repos. |
+| `aws_ecr_repository.services` (+ lifecycle) | `build-service.yml` pushes both staging and prod images to the same `servicehubuae-<service>` repos. |
 
 These resources were transferred from the staging state with
 `terraform state mv` (no recreate). Destroying them would break production

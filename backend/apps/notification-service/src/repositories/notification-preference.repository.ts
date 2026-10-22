@@ -3,7 +3,7 @@ import {
   type NotificationChannel,
   NotificationPreference,
   type NotificationType,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import type { INotificationPreferenceRepository } from "../domain/types.ts";
 
 export class NotificationPreferenceRepository implements INotificationPreferenceRepository {

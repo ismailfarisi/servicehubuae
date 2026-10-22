@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   Booking,
@@ -24,7 +24,7 @@ import {
   VendorMember,
   VendorMemberRole,
   VendorMemberStatus,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { Elysia } from "elysia";
 import { AvailabilityCache } from "./domain/availability/availability-cache.ts";
 import { AvailabilityController } from "./domain/availability/availability.controller.ts";
@@ -578,7 +578,7 @@ const _icalImportWorker = createIcalImportWorker(icalImportService);
 scheduleIcalImport(icalImportQueue);
 
 // ─── Outbound iCal feed + feed-URL issuance (Phase 6 Task 5) — the reverse
-// direction of Task 4: a vendor's OTHER platform subscribes to a MyPickUAE
+// direction of Task 4: a vendor's OTHER platform subscribes to a ServiceHubUAE
 // `.ics` URL for one staff member (ical-feed.routes.ts, public/token-signed,
 // registered in app.ts below), and a location manager (re)issues that URL
 // from the /manage surface (calendar-feed-url.routes.ts). Reuses

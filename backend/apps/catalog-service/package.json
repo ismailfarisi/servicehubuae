@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/catalog-service",
+  "name": "@servicehubuae/catalog-service",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -11,12 +11,12 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@mypickuae/config": "workspace:*",
-    "@mypickuae/database": "workspace:*",
-    "@mypickuae/dto": "workspace:*",
-    "@mypickuae/guards": "workspace:*",
-    "@mypickuae/plugins": "workspace:*",
-    "@mypickuae/utils": "workspace:*",
+    "@servicehubuae/config": "workspace:*",
+    "@servicehubuae/database": "workspace:*",
+    "@servicehubuae/dto": "workspace:*",
+    "@servicehubuae/guards": "workspace:*",
+    "@servicehubuae/plugins": "workspace:*",
+    "@servicehubuae/utils": "workspace:*",
     "bullmq": "^5.0.0",
     "elysia": "^1.2.0",
     "redis": "^5.11.0",

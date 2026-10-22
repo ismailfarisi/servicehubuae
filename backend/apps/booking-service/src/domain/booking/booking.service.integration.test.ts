@@ -8,7 +8,7 @@
 // pre-M2 LocalBookingPaymentGateway; deposit/prepay offerings are covered by
 // the online-payments-disabled 422 scenarios.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   Booking,
@@ -39,8 +39,8 @@ import {
   VendorLocation,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
-import { ConflictError, UnprocessableEntityError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { ConflictError, UnprocessableEntityError } from "@servicehubuae/plugins";
 import { type RedisClientType, createClient } from "redis";
 import { AvailabilityCache } from "../availability/availability-cache.ts";
 import { AvailabilityService } from "../availability/availability.service.ts";

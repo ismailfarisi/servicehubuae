@@ -1,4 +1,4 @@
-import type { NewsletterSubscriber } from "@mypickuae/database";
+import type { NewsletterSubscriber } from "@servicehubuae/database";
 import type { INewsletterSubscriberRepository } from "../repositories/newsletter-subscriber.repository.ts";
 
 export interface WelcomeEmailSender {

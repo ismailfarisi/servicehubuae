@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useRemoveMember } from "@/lib/queries/vendor-members";
 
 export function RemoveConfirmModal({

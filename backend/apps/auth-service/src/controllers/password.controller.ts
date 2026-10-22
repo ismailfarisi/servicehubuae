@@ -1,4 +1,4 @@
-import type { EmailService } from "@mypickuae/utils";
+import type { EmailService } from "@servicehubuae/utils";
 import type { DeviceInfo } from "../domain/types.ts";
 import type { AuthService } from "../services/auth.service.ts";
 import type { PasswordService } from "../services/password.service.ts";

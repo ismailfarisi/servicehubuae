@@ -7,7 +7,7 @@
 // was called — no new money math in this layer). Mirrors
 // block-time.service.test.ts's fake-repo style.
 import { describe, expect, it, mock } from "bun:test";
-import { ForbiddenError, type HttpError, NotFoundError } from "@mypickuae/plugins";
+import { ForbiddenError, type HttpError, NotFoundError } from "@servicehubuae/plugins";
 import {
   CompleteWindowError,
   ManageBookingActionsController,

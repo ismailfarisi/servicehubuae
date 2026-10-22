@@ -26,8 +26,8 @@
 // they DELEGATE to the same completion/no-show/reschedule services this admin
 // route family uses. This route below stays as the PLATFORM-STAFF
 // (admin/super_admin) no-show path — act-on-any, no vendor ownership scoping.
-import { NoShowBookingBody } from "@mypickuae/dto";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
+import { NoShowBookingBody } from "@servicehubuae/dto";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 

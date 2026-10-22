@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { jwt } from "@elysiajs/jwt";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Elysia } from "elysia";
 import { authGuard, requireRole } from "./index.ts";
 import { isPublicRoute, jwtAuth } from "./jwt-auth.ts";

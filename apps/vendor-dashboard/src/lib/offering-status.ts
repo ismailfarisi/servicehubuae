@@ -39,7 +39,7 @@ const PUBLISH_NEEDS_REVIEW: OfferingStatusAction = {
 	// `next` stays "published" — the DTO's OfferingStatus union rejects
 	// pending_review, and the server rewrites the status for us.
 	description:
-		"The MyPickUAE team reviews your first service before it goes live. You'll see the outcome here, with a reason if it isn't approved.",
+		"The ServiceHubUAE team reviews your first service before it goes live. You'll see the outcome here, with a reason if it isn't approved.",
 	done: "has been sent for review",
 };
 
@@ -86,7 +86,7 @@ const OFFERING_STATUS_ACTIONS: Record<OfferingStatus, OfferingStatusAction[]> = 
 			next: "published",
 			label: "Resubmit for review",
 			description:
-				"This sends the service back to the MyPickUAE team for review.",
+				"This sends the service back to the ServiceHubUAE team for review.",
 			done: "has been resubmitted for review",
 		},
 	],

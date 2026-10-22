@@ -43,7 +43,7 @@ services:
 
   # --- Services (production — use built images) ---
   api-gateway:
-    image: ${ECR_REGISTRY}/mypickuae-api-gateway:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-api-gateway:${IMAGE_TAG:-latest}
     ports:
       - "3000:3000"
     environment:
@@ -73,7 +73,7 @@ services:
     restart: unless-stopped
 
   auth-service:
-    image: ${ECR_REGISTRY}/mypickuae-auth-service:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-auth-service:${IMAGE_TAG:-latest}
     ports:
       - "3001:3001"
     environment:
@@ -104,7 +104,7 @@ services:
     restart: unless-stopped
 
   catalog-service:
-    image: ${ECR_REGISTRY}/mypickuae-catalog-service:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-catalog-service:${IMAGE_TAG:-latest}
     ports:
       - "3002:3002"
     environment:
@@ -136,7 +136,7 @@ services:
     restart: unless-stopped
 
   booking-service:
-    image: ${ECR_REGISTRY}/mypickuae-booking-service:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-booking-service:${IMAGE_TAG:-latest}
     ports:
       - "3009:3009"
     environment:
@@ -165,7 +165,7 @@ services:
     restart: unless-stopped
 
   vendor-service:
-    image: ${ECR_REGISTRY}/mypickuae-vendor-service:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-vendor-service:${IMAGE_TAG:-latest}
     ports:
       - "3004:3004"
     environment:
@@ -183,7 +183,7 @@ services:
     restart: unless-stopped
 
   notification-service:
-    image: ${ECR_REGISTRY}/mypickuae-notification-service:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-notification-service:${IMAGE_TAG:-latest}
     ports:
       - "3005:3005"
     environment:
@@ -212,7 +212,7 @@ services:
     restart: unless-stopped
 
   cms-service:
-    image: ${ECR_REGISTRY}/mypickuae-cms-service:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-cms-service:${IMAGE_TAG:-latest}
     ports:
       - "3006:3006"
     environment:
@@ -233,7 +233,7 @@ services:
     restart: unless-stopped
 
   reels-service:
-    image: ${ECR_REGISTRY}/mypickuae-reels-service:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-reels-service:${IMAGE_TAG:-latest}
     ports:
       - "3007:3007"
     environment:
@@ -253,7 +253,7 @@ services:
     restart: unless-stopped
 
   integration-service:
-    image: ${ECR_REGISTRY}/mypickuae-integration-service:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-integration-service:${IMAGE_TAG:-latest}
     mem_limit: 1g
     ports:
       - "3008:3008"
@@ -313,7 +313,7 @@ services:
 
   # --- Tools ---
   migrate:
-    image: ${ECR_REGISTRY}/mypickuae-api-gateway:${IMAGE_TAG:-latest}
+    image: ${ECR_REGISTRY}/servicehubuae-api-gateway:${IMAGE_TAG:-latest}
     profiles: ["tools"]
     environment:
       - NODE_ENV=production

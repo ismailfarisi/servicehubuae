@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import type { User } from "@mypickuae/database";
+import type { User } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 import { UserAdminService } from "./user-admin.service.ts";
 

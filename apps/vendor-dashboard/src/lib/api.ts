@@ -19,7 +19,7 @@ const COOKIE_ACCESS_TOKEN = "vendor_access_token";
 // Set-Cookie doesn't always match the original domain/path, so it can linger
 // and silently re-authenticate the next /auth/me. Expire it for every scope it
 // could have been set on (host-only, current host, and the registrable parent
-// domain — e.g. ".mypickuae.com") so logout actually clears the session.
+// domain — e.g. ".servicehubuae.com") so logout actually clears the session.
 export function clearAccessTokenCookie(): void {
   if (typeof document === "undefined") return;
   const base = `${COOKIE_ACCESS_TOKEN}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;

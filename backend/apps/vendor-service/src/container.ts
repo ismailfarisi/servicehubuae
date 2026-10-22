@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { EmailService, EncryptionService } from "@mypickuae/utils";
+import { config } from "@servicehubuae/config";
+import { EmailService, EncryptionService } from "@servicehubuae/utils";
 import { Elysia } from "elysia";
 import { VendorFollowController } from "./controllers/vendor-follow.controller.ts";
 import { VendorController } from "./controllers/vendor.controller.ts";

@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
-import { IntegrationAuthority, IntegrationDirection } from "@mypickuae/database";
+import { IntegrationAuthority, IntegrationDirection } from "@servicehubuae/database";
 import { Elysia, t } from "elysia";
 import { sign } from "../domain/dispatcher/signer.ts";
 import { InboundService } from "../domain/inbound/inbound.service.ts";

@@ -1,5 +1,5 @@
-import { UserStatus } from "@mypickuae/database";
-import { BadRequestError, HttpError } from "@mypickuae/plugins";
+import { UserStatus } from "@servicehubuae/database";
+import { BadRequestError, HttpError } from "@servicehubuae/plugins";
 import type { DeviceInfo } from "../domain/types.ts";
 import type { AuthService } from "../services/auth.service.ts";
 import type { TwoFactorService } from "../services/two-factor.service.ts";

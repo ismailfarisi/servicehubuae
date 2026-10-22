@@ -1,4 +1,4 @@
-import { type VendorMembershipClaim, loadActiveMemberships } from "@mypickuae/guards";
+import { type VendorMembershipClaim, loadActiveMemberships } from "@servicehubuae/guards";
 
 const ACTIVE_VENDOR_HEADER = "x-active-vendor-id";
 

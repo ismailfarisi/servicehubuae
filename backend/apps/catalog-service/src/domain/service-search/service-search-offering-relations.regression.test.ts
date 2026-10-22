@@ -13,7 +13,7 @@ import { describe, expect, it, mock } from "bun:test";
 let capturedFindOneOptions: any;
 let capturedFindOptions: any;
 
-mock.module("@mypickuae/database", () => ({
+mock.module("@servicehubuae/database", () => ({
   AppDataSource: {
     getRepository: () => ({
       findOne: async (opts: any) => {

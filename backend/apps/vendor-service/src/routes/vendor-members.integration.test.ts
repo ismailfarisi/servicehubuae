@@ -12,9 +12,9 @@
  */
 import { afterAll, beforeAll, describe, expect, mock, test } from "bun:test";
 import { createHmac } from "node:crypto";
-import { config } from "@mypickuae/config";
-import { permissionMatrix } from "@mypickuae/guards";
-import { HttpError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { permissionMatrix } from "@servicehubuae/guards";
+import { HttpError } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 
 // ─── Stub VendorMemberService ─────────────────────────────────────────────────

@@ -14,8 +14,8 @@
 // deterministic jobId, re-time/remove helpers, a narrow StatusTransitioner-
 // shaped seam back into BookingStatusService to avoid a circular import) —
 // see that file's own header comment for the general pattern this follows.
-import type { Booking } from "@mypickuae/database";
-import { BookingStatus } from "@mypickuae/database";
+import type { Booking } from "@servicehubuae/database";
+import { BookingStatus } from "@servicehubuae/database";
 
 const HOUR_MS = 3_600_000;
 

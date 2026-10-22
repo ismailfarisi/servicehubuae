@@ -4,7 +4,7 @@ import {
   type Payment,
   PaymentStatus,
   ServicePaymentMode,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { LessThan, type Repository } from "typeorm";
 import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";
 import type { BookingStatusService } from "./booking-status.service.ts";

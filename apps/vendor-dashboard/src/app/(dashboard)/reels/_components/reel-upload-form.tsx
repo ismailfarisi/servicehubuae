@@ -2,7 +2,7 @@
 
 import { requestReelUpload } from "@/lib/api/reels";
 import { uploadToCloudflareStream } from "@/lib/cloudflare-tus-upload";
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import { UploadSimple } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

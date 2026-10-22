@@ -17,7 +17,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { MapTrifold, Trash } from "@phosphor-icons/react";
 import { useMemo, useState } from "react";
 import { z } from "zod";

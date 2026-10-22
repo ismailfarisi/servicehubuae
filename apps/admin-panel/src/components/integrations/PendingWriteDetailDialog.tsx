@@ -1,8 +1,8 @@
 "use client";
 
 import type { PendingWrite } from "@/lib/queries/integrations";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@mypickuae/ui";
-import { StatusBadge } from "@mypickuae/ui";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@servicehubuae/ui";
+import { StatusBadge } from "@servicehubuae/ui";
 
 interface PendingWriteDetailDialogProps {
   write: PendingWrite | null;

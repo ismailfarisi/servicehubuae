@@ -1,8 +1,8 @@
 import { timingSafeEqual } from "node:crypto";
-import { config } from "@mypickuae/config";
-import { NotificationChannel, NotificationType } from "@mypickuae/database";
-import { jwtAuth } from "@mypickuae/guards";
-import { HttpError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { NotificationChannel, NotificationType } from "@servicehubuae/database";
+import { jwtAuth } from "@servicehubuae/guards";
+import { HttpError } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

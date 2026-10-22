@@ -16,7 +16,7 @@ import {
   SiteSetting,
   User,
   VendorLocation,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { CollabService } from "./collab.service.ts";
 
 /**

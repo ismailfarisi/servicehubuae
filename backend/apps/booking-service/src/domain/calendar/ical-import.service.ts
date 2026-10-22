@@ -3,7 +3,7 @@
 // Phase 6 Task 4 (spec off-platform capacity — inbound iCal import). Pulls a
 // vendor's external calendar (Google / Fresha / etc., a StaffCalendarSubscription
 // row's `ical_url`) into the SAME `staff_engagements` capacity ledger every
-// other engagement source writes to, so an external booking blocks MyPickUAE
+// other engagement source writes to, so an external booking blocks ServiceHubUAE
 // availability like a marketplace booking / walk-in / block does.
 //
 // ── Two entry points ────────────────────────────────────────────────────────
@@ -51,8 +51,8 @@ import {
   type StaffCalendarSubscription,
   type StaffEngagement,
   type StaffMember,
-} from "@mypickuae/database";
-import { ConflictError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { ConflictError } from "@servicehubuae/plugins";
 import { In, type Repository } from "typeorm";
 import type { EngagementService } from "../engagement/engagement.service.ts";
 import { type FetchLike, IcalFetchError, fetchIcalFeedSafely } from "./ical-fetch-guard.ts";
@@ -87,18 +87,18 @@ export interface SyncResult {
   unsupportedRecurrence: number; // recurring events with an unsupported rule (imported master-only)
 }
 
-// MyPickUAE's OWN outbound feed UID shape (ical-feed.service.ts:
-// `engagement-{id}@mypickuae.com`), optionally carrying the `#{occurrenceStart}`
-// suffix a recurrence expansion would add. A vendor who subscribes MyPickUAE to
+// ServiceHubUAE's OWN outbound feed UID shape (ical-feed.service.ts:
+// `engagement-{id}@servicehubuae.com`), optionally carrying the `#{occurrenceStart}`
+// suffix a recurrence expansion would add. A vendor who subscribes ServiceHubUAE to
 // their external calendar AND re-exports/copies those events back into the feed
 // we import would otherwise create a permanent `conflicted` shadow row + a
-// vendor_booking_conflict notification for every single MyPickUAE booking (alarm
+// vendor_booking_conflict notification for every single ServiceHubUAE booking (alarm
 // fatigue), and re-block a freed slot for up to two polling cycles when the
 // original is cancelled. We recognize and skip our own UIDs BEFORE diffing
 // (review I2). Platforms that copy events preserve the UID per RFC 5545, so the
 // direct UID-preserving echo is caught here; the manual-copy-with-fresh-UID
 // variant is inherently uncatchable and covered by Phase 7 UI guidance.
-const OWN_OUTBOUND_UID = /^engagement-[^@]+@mypickuae\.com(#[^@]*)?$/;
+const OWN_OUTBOUND_UID = /^engagement-[^@]+@servicehubuae\.com(#[^@]*)?$/;
 
 const FETCH_TIMEOUT_MS = 15_000;
 // 2 MB cap, enforced incrementally by fetchIcalFeedSafely (byte count of the
@@ -189,7 +189,7 @@ export class IcalImportService {
     // window around the INJECTED `now` (review C1 — no Date.now in the diff
     // path); each occurrence carries its own `{uid}#{start}` external_ref so
     // the diff engine below is unchanged. Dedupe by uid (last-wins) so a feed
-    // that repeats a uid doesn't fight itself. Skip MyPickUAE's own echoed
+    // that repeats a uid doesn't fight itself. Skip ServiceHubUAE's own echoed
     // outbound events (review I2) BEFORE diffing — a debug-only count, never
     // `last_sync_error` noise.
     //
@@ -226,7 +226,7 @@ export class IcalImportService {
     }
     if (skippedEcho > 0) {
       console.debug(
-        `[ical-import] skipped ${skippedEcho} echoed MyPickUAE event(s) for subscription ${subscription.id}`,
+        `[ical-import] skipped ${skippedEcho} echoed ServiceHubUAE event(s) for subscription ${subscription.id}`,
       );
     }
 
@@ -466,7 +466,7 @@ export class IcalImportService {
 function summarizeEngagementKind(kind: EngagementKind): string {
   switch (kind) {
     case EngagementKind.marketplace_booking:
-      return "MyPickUAE booking";
+      return "ServiceHubUAE booking";
     case EngagementKind.walk_in:
       return "Walk-in";
     case EngagementKind.phone:

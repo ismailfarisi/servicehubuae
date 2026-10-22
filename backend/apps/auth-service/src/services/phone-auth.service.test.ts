@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { UserRole, UserStatus } from "@mypickuae/database";
+import { UserRole, UserStatus } from "@servicehubuae/database";
 import { PhoneAuthService } from "./phone-auth.service.ts";
 import type { PhoneVerificationProvider } from "./phone-verification-provider.ts";
 

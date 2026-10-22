@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { HttpError } from "@mypickuae/plugins";
+import { HttpError } from "@servicehubuae/plugins";
 import {
   assertNonOwnerRole,
   assertVendorIdMatches,

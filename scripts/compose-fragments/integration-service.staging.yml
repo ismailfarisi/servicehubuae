@@ -1,6 +1,6 @@
 
   integration-service:
-    image: ${ECR_REGISTRY}/mypickuae-integration-service:staging
+    image: ${ECR_REGISTRY}/servicehubuae-integration-service:staging
     restart: always
     mem_limit: 384m
     env_file: .env

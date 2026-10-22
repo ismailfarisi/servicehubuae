@@ -50,8 +50,8 @@ import {
   BookingStatus,
   type ServiceReview,
   ServiceReviewStatus,
-} from "@mypickuae/database";
-import { ConflictError, ForbiddenError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { ConflictError, ForbiddenError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { isVendorManagerRole } from "../../guards/location-scope.ts";
 

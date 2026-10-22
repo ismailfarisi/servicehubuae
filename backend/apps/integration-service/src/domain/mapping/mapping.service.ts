@@ -3,8 +3,8 @@ import type {
   IntegrationDirection,
   IntegrationEventType,
   VendorIntegrationMapping,
-} from "@mypickuae/database";
-import { transform, validateSpec } from "@mypickuae/integration-mapper";
+} from "@servicehubuae/database";
+import { transform, validateSpec } from "@servicehubuae/integration-mapper";
 import type { Repository } from "typeorm";
 
 export class MappingService {

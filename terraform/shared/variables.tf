@@ -3,7 +3,7 @@ variable "aws_region" {
 }
 
 variable "project_name" {
-  default = "mypickuae"
+  default = "servicehubuae"
 }
 
 variable "github_repo" {
@@ -12,7 +12,7 @@ variable "github_repo" {
 }
 
 # Container images are environment-independent: build-service.yml pushes both
-# staging and production images into the same mypickuae-<service> repository
+# staging and production images into the same servicehubuae-<service> repository
 # (tagged :<sha> and :<environment>). The repos therefore outlive any single
 # environment and live in this shared config.
 variable "services" {

@@ -1,7 +1,7 @@
 "use client";
 
 import { formatDateTime } from "@/lib/booking-format";
-import { StatusBadge } from "@mypickuae/ui";
+import { StatusBadge } from "@servicehubuae/ui";
 
 interface StatusHistoryEntry {
   id: string;

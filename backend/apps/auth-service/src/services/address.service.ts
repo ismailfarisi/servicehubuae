@@ -1,5 +1,5 @@
-import type { UserAddress } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import type { UserAddress } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 // address.service.ts
 import type { Repository } from "typeorm";
 import { normalizePhoneForOtp } from "./phone-normalization.ts";

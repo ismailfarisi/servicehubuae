@@ -20,7 +20,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useLogin } from "@/lib/queries/auth";
 import { useAuthStore } from "@/stores/auth";
 
@@ -76,7 +76,7 @@ function LoginPageInner() {
         </div>
         <CardTitle className="text-2xl text-center">Admin Panel</CardTitle>
         <CardDescription className="text-center">
-          Sign in to manage the MyPickUAE platform
+          Sign in to manage the ServiceHubUAE platform
         </CardDescription>
       </CardHeader>
       <CardContent>

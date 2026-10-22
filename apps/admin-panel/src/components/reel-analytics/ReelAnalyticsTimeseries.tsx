@@ -1,6 +1,6 @@
 "use client";
 import type { Overview } from "@/lib/queries/reel-analytics";
-import { Card, CardContent, CardHeader, CardTitle, Skeleton } from "@mypickuae/ui";
+import { Card, CardContent, CardHeader, CardTitle, Skeleton } from "@servicehubuae/ui";
 import { useState } from "react";
 import {
   CartesianGrid,

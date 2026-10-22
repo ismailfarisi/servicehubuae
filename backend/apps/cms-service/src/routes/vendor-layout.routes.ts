@@ -1,7 +1,7 @@
-import { config } from "@mypickuae/config";
-import { AppDataSource, LayoutSection, PageLayout } from "@mypickuae/database";
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
-import { HttpError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, LayoutSection, PageLayout } from "@servicehubuae/database";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
+import { HttpError } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import jwt from "jsonwebtoken";
 import { container } from "../container.ts";

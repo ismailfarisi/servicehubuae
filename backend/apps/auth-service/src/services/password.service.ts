@@ -5,8 +5,8 @@ import {
   UserSession,
   UserStatus,
   UserToken,
-} from "@mypickuae/database";
-import { BadRequestError, HttpError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError, HttpError, NotFoundError } from "@servicehubuae/plugins";
 import { IsNull, MoreThan } from "typeorm";
 import { generateTemporaryPassword } from "../utils/password-generator.ts";
 

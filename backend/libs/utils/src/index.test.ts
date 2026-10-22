@@ -75,10 +75,10 @@ describe("slugify", () => {
   });
 
   test("produces URL-safe output", () => {
-    const result = slugify("MyPickUAE - UAE's #1 Marketplace!");
+    const result = slugify("ServiceHubUAE - UAE's #1 Marketplace!");
     // BUG: slugify does not collapse consecutive hyphens — "- " becomes "---"
-    // Should ideally be "mypickuae-uaes-1-marketplace"
-    expect(result).toBe("mypickuae---uaes-1-marketplace");
+    // Should ideally be "servicehubuae-uaes-1-marketplace"
+    expect(result).toBe("servicehubuae---uaes-1-marketplace");
     expect(result).toMatch(/^[a-z0-9-]*$/);
   });
 

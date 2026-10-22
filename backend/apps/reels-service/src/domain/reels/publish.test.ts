@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
-import { ReelStatus } from "@mypickuae/database";
+import { ReelStatus } from "@servicehubuae/database";
 import { ReelsService } from "./reels.service.ts";
 
 function makeService(reelFixture: any, trusted: boolean) {

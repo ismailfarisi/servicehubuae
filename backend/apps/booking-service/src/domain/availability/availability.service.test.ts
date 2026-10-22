@@ -4,8 +4,8 @@ import {
   type ServiceOffering,
   type StaffMember,
   type VendorLocation,
-} from "@mypickuae/database";
-import { NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { AvailabilityCache, type RedisLike } from "./availability-cache.ts";
 import { AvailabilityService } from "./availability.service.ts";

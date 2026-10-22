@@ -5,8 +5,8 @@ import {
   NotificationType,
   ServicePaymentMode,
   StaffEngagement,
-} from "@mypickuae/database";
-import { HttpError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { HttpError, NotFoundError } from "@servicehubuae/plugins";
 import { IsNull, type Repository } from "typeorm";
 import type { AvailabilityCache } from "../availability/availability-cache.ts";
 import { EngagementService } from "../engagement/engagement.service.ts";

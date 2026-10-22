@@ -9,8 +9,8 @@
 // from the target engagement's staff member's linked locations) and runs the
 // same location-manager check there; see block-time.service.ts's header
 // comment for the full authorization boundary for those two operations.
-import type { EngagementKind } from "@mypickuae/database";
-import { BadRequestError } from "@mypickuae/plugins";
+import type { EngagementKind } from "@servicehubuae/database";
+import { BadRequestError } from "@servicehubuae/plugins";
 import { type LocationScopeRepos, assertLocationManager } from "../../guards/location-scope.ts";
 import type {
   BlockTimeActor,

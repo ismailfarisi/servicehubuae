@@ -11,7 +11,7 @@
 // gateway ACTION switch (the reference_type + the semantics differ — an
 // out-of-window cancel VOIDs a zero-forfeit prepay hold, a no-show has no window
 // at all). This module only shares the two mechanical, side-effect-light bits.
-import { type Booking, type Payment, ServicePaymentMode } from "@mypickuae/database";
+import { type Booking, type Payment, ServicePaymentMode } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 // The recoverable/held amount per payment_mode, derived from the booking's

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { LocationMembership, VendorLocation } from "@mypickuae/database";
-import { ForbiddenError, NotFoundError } from "@mypickuae/plugins";
+import type { LocationMembership, VendorLocation } from "@servicehubuae/database";
+import { ForbiddenError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { type LocationActor, assertLocationManager } from "./location-scope.ts";
 

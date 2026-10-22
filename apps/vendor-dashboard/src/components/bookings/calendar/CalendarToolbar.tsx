@@ -10,7 +10,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 	cn,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { CalendarPlus, CaretLeft, CaretRight, Prohibit } from "@phosphor-icons/react";
 
 export type CalendarView = "day" | "week";

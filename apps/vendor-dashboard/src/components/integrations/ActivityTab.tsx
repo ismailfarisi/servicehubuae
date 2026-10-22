@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { Flask } from "@phosphor-icons/react";
 import { useState } from "react";
 import { DeliveriesTable } from "./DeliveriesTable";

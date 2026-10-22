@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { ReelLicenseFundingSource } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import { ReelLicenseFundingSource } from "@servicehubuae/database";
 import { Queue } from "bullmq";
 import { Elysia } from "elysia";
 import Stripe from "stripe";

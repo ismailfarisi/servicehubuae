@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/plugins",
+  "name": "@servicehubuae/plugins",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,8 +12,8 @@
   "dependencies": {
     "elysia": "^1.2.0",
     "redis": "^5.11.0",
-    "@mypickuae/config": "workspace:*",
-    "@mypickuae/database": "workspace:*"
+    "@servicehubuae/config": "workspace:*",
+    "@servicehubuae/database": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "^1.4.3",

@@ -14,14 +14,14 @@
 #   scripts/register-cloudflare-stream-webhook.sh \
 #     abc123def456 \
 #     eyJhbGciOi... \
-#     https://api.stage.mypickuae.com/reels/webhooks/cloudflare-stream
+#     https://api.stage.servicehubuae.com/reels/webhooks/cloudflare-stream
 #
 # Requires: curl, jq (for pretty output). If jq isn't installed the raw JSON
 # is printed so you can grep the secret manually.
 #
 # Save the resulting secret to:
 #   - terraform/staging/terraform.tfvars (cloudflare_stream_webhook_secret)
-#   - the running EC2's /opt/mypickuae/.env (CLOUDFLARE_STREAM_WEBHOOK_SECRET)
+#   - the running EC2's /opt/servicehubuae/.env (CLOUDFLARE_STREAM_WEBHOOK_SECRET)
 # and restart reels-service to pick it up.
 
 set -euo pipefail
@@ -31,8 +31,8 @@ if [[ $# -ne 3 ]]; then
   echo "" >&2
   echo "The notification URL must be publicly reachable before you run this —" >&2
   echo "it's where Cloudflare will POST video.ready and video.error events." >&2
-  echo "For MyPickUAE staging this is:" >&2
-  echo "  https://api.stage.mypickuae.com/reels/webhooks/cloudflare-stream" >&2
+  echo "For ServiceHubUAE staging this is:" >&2
+  echo "  https://api.stage.servicehubuae.com/reels/webhooks/cloudflare-stream" >&2
   exit 1
 fi
 

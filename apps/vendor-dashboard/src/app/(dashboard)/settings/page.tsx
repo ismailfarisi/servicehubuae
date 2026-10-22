@@ -31,7 +31,7 @@ import {
   S3ImageUploadField,
   Skeleton,
   Badge,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { s3UploadClient } from "@/lib/s3-upload-client";
 import { Plus, Trash, Pencil, Buildings, Calendar } from "@phosphor-icons/react";
 import {

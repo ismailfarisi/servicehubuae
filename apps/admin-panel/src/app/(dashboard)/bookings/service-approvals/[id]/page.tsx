@@ -20,7 +20,7 @@ import {
   StatusBadge,
   Textarea,
   toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";

@@ -6,8 +6,8 @@ import {
   ReelLicenseGrant,
   ReelLicenseHoldStatus,
   type ReelLicenseRightsScope,
-} from "@mypickuae/database";
-import { BadRequestError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError } from "@servicehubuae/plugins";
 import type { EntityManager } from "typeorm";
 import type { CreatorWalletService } from "../wallet/creator-wallet.service.ts";
 import type { FundingRail } from "./funding-rail.ts";

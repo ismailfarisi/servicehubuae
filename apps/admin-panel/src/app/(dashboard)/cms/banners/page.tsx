@@ -21,7 +21,7 @@ import {
 	SimpleSelect,
 	Skeleton,
 	StatusBadge,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import { Image as ImageIcon, Pencil, Plus, Trash2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";

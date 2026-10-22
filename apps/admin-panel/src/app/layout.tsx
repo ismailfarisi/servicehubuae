@@ -6,8 +6,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "Admin Panel — MyPickUAE", template: "%s | Admin Panel" },
-  description: "MyPickUAE platform administration",
+  title: { default: "Admin Panel — ServiceHubUAE", template: "%s | Admin Panel" },
+  description: "ServiceHubUAE platform administration",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

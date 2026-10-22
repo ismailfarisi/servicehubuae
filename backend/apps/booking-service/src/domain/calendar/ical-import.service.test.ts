@@ -7,8 +7,8 @@
 // failure / removed-while-conflicted released / move-conflict -> release +
 // conflicted.
 import { describe, expect, it, mock } from "bun:test";
-import { EngagementKind, EngagementStatus } from "@mypickuae/database";
-import { ConflictError } from "@mypickuae/plugins";
+import { EngagementKind, EngagementStatus } from "@servicehubuae/database";
+import { ConflictError } from "@servicehubuae/plugins";
 import { IcalImportService } from "./ical-import.service.ts";
 
 // ── Fixture feed builder ────────────────────────────────────────────────────
@@ -202,7 +202,7 @@ describe("IcalImportService.sync — diff matrix", () => {
     expect(payload.userId).toBe("vendor-user-1");
     expect(payload.variables).toEqual({
       staff_name: "Alice",
-      existing_summary: "MyPickUAE booking",
+      existing_summary: "ServiceHubUAE booking",
       existing_starts_at: T0.toISOString(),
       existing_ends_at: T1.toISOString(),
       conflicting_summary: "Fresha appt",
@@ -252,11 +252,16 @@ describe("IcalImportService.sync — diff matrix", () => {
     expect(engagementService.release).toHaveBeenCalledTimes(1);
   });
 
-  it("skips MyPickUAE's own echoed outbound UID (engagement-*@mypickuae.com) — no write, no conflict, others unaffected (review I2)", async () => {
+  it("skips ServiceHubUAE's own echoed outbound UID (engagement-*@servicehubuae.com) — no write, no conflict, others unaffected (review I2)", async () => {
     const { service, engagementService, notificationQueue } = setup();
     const feed = buildFeed([
-      // an echoed MyPickUAE booking (same UID shape the outbound feed emits)
-      { uid: "engagement-abc-123@mypickuae.com", start: T0, end: T1, summary: "Echoed booking" },
+      // an echoed ServiceHubUAE booking (same UID shape the outbound feed emits)
+      {
+        uid: "engagement-abc-123@servicehubuae.com",
+        start: T0,
+        end: T1,
+        summary: "Echoed booking",
+      },
       // a genuine external event alongside it
       { uid: "real-fresha-1", start: T1, end: T2, summary: "Fresha appt" },
     ]);
@@ -274,7 +279,7 @@ describe("IcalImportService.sync — diff matrix", () => {
   it("skips an echoed outbound UID even with an occurrence suffix (review I2 + C1 interplay)", async () => {
     const { service, engagementService } = setup();
     const feed = buildFeed([
-      { uid: "engagement-abc-123@mypickuae.com#20260801T090000Z", start: T0, end: T1 },
+      { uid: "engagement-abc-123@servicehubuae.com#20260801T090000Z", start: T0, end: T1 },
     ]);
 
     const res = await service.sync(SUBSCRIPTION, feed, new Date());

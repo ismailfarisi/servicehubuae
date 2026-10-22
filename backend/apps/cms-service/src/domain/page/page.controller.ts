@@ -1,4 +1,4 @@
-import type { CreatePageBody, PageListQuery, UpdatePageBody } from "@mypickuae/dto";
+import type { CreatePageBody, PageListQuery, UpdatePageBody } from "@servicehubuae/dto";
 import type { PageService } from "./page.service.ts";
 
 export class PageController {

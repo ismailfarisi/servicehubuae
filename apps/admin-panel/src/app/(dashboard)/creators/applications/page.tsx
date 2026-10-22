@@ -14,8 +14,8 @@ import {
   TabsTrigger,
   TabsContent,
   Skeleton,
-} from "@mypickuae/ui";
-import { toast } from "@mypickuae/ui";
+} from "@servicehubuae/ui";
+import { toast } from "@servicehubuae/ui";
 import { Trash2 } from "lucide-react";
 import { useBulkRemoveCreatorStatus, useCreatorApplications } from "@/lib/queries/creators";
 

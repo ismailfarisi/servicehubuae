@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { Copy } from "@phosphor-icons/react";
 import { useState } from "react";
 

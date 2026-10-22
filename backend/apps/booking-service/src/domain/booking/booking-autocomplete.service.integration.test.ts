@@ -13,7 +13,7 @@
 // delay — the same shortcut booking-auth.service.integration.test.ts takes
 // for `runAuthorizeJob`.
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   Booking,
@@ -35,7 +35,7 @@ import {
   Vendor,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { EngagementService } from "../engagement/engagement.service.ts";
 import { getBookingAuthQueue } from "./booking-auth.job.ts";
 import { BookingAuthService } from "./booking-auth.service.ts";

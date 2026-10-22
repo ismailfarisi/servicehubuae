@@ -44,7 +44,7 @@
 //     used for the real Booking metadata error this file was originally
 //     written to route around.)
 import { describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import jwt from "jsonwebtoken";
 import { app } from "../../app.ts";
 

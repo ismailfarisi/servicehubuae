@@ -1,8 +1,6 @@
-# MyPickUAE
+# ServiceHubUAE
 
 Services marketplace for the UAE: customers browse a catalogue of 440 services, compare up to 3 of 10 eligible vendors, book a time slot (Quick Services) or request quotations from 3 vendors with chat (Quotation Services). Vendors run their listings, availability, bookings and quotations; an admin dashboard runs the platform. Payments go through MyFatoorah; vendors are paid out minus the platform commission.
-
-Client: Mr. Surinder Kumar. Delivery plan and milestones: `C:\Users\Keerthana\ismail\projects\mypickuae\milestones.md` (outside this repo).
 
 ## Stack
 
@@ -50,5 +48,4 @@ cd backend/apps/<service> && bun test        # unit tests; integration tests nee
 - Money is stored in fils (integers). Never store card data; MyFatoorah holds it.
 - Double booking is prevented by the `no_double_book` exclusion constraint on `staff_engagements`; keep `slot_range` a generated column.
 - Booking creation, payment confirmation and webhook handling must stay idempotent.
-- Seed data, copy, emails and test fixtures are MyPickUAE-branded; do not introduce other brand names.
-- `FORK-PLAN.md` is internal working notes and is removed before handover.
+- Seed data, copy, emails and test fixtures are ServiceHubUAE-branded; do not introduce other brand names.

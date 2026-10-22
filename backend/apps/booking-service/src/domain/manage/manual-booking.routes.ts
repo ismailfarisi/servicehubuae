@@ -7,9 +7,9 @@
 // management surface, plus the location-scoped `assertLocationManager` check
 // (ManualBookingController.create) so a per-location manager can only record
 // walk-ins for their own branch.
-import type { EngagementKind } from "@mypickuae/database";
-import { CreateManualBookingBody } from "@mypickuae/dto";
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+import type { EngagementKind } from "@servicehubuae/database";
+import { CreateManualBookingBody } from "@servicehubuae/dto";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia } from "elysia";
 import { container } from "../../container.ts";
 

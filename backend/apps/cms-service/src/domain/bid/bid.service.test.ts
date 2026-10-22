@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import jwt from "jsonwebtoken";
 
 import { BidService } from "./bid.service.ts";

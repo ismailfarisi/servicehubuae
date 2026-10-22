@@ -1,5 +1,5 @@
-import type { LocationMembership, VendorLocation } from "@mypickuae/database";
-import { ForbiddenError, NotFoundError } from "@mypickuae/plugins";
+import type { LocationMembership, VendorLocation } from "@servicehubuae/database";
+import { ForbiddenError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 
 // The actor as resolved by the outer vendorMembership guard (member.vid/member.r)

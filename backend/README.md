@@ -1,5 +1,5 @@
 # Name
-### mypickuae-backend
+### servicehubuae-backend
 
 # Synopsis
 
@@ -9,7 +9,7 @@
 # Example
 
 # Install:
-`npm install mypickuae-backend`
+`npm install servicehubuae-backend`
 
 # Test:
 `npm test`

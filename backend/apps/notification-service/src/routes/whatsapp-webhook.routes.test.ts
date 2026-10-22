@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from "bun:test";
 import { createHmac } from "node:crypto";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { whatsappWebhookRoutes } from "./whatsapp-webhook.routes.ts";
 
 // config is a frozen object but the whatsapp block's fields are plain data

@@ -1,7 +1,7 @@
 import { bearer } from "@elysiajs/bearer";
 import { jwt } from "@elysiajs/jwt";
-import { config } from "@mypickuae/config";
-import { auditPlugin } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { auditPlugin } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 import { getDeviceInfo, requireAuth } from "../domain/types.ts";

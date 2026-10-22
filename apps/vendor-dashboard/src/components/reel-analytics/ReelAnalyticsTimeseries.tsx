@@ -1,6 +1,6 @@
 "use client";
 import type { VendorOverview } from "@/lib/queries/reel-analytics";
-import { Card, CardContent, CardHeader, CardTitle, Skeleton } from "@mypickuae/ui";
+import { Card, CardContent, CardHeader, CardTitle, Skeleton } from "@servicehubuae/ui";
 import {
   CartesianGrid,
   ComposedChart,

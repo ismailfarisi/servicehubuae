@@ -1,4 +1,4 @@
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 
 export type Period = "7d" | "30d" | "90d" | "all";
 
@@ -118,7 +118,7 @@ export class RollupService {
  *
  * product_taps / attributed_* / earned_commission_fils stay in the row shape
  * but are always 0: the reel commerce tables (reel_attributions,
- * reel_commissions) were removed in the MyPickUAE fork.
+ * reel_commissions) were removed in the ServiceHubUAE fork.
  */
 export function buildTodayReelSql(): string {
   return `

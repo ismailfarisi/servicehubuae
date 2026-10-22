@@ -89,8 +89,8 @@ jobs:
           platforms: linux/arm64,linux/amd64
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/mypickuae-${{ matrix.service }}:${{ env.IMAGE_TAG }}
-            ghcr.io/${{ github.repository_owner }}/mypickuae-${{ matrix.service }}:staging
+            ghcr.io/${{ github.repository_owner }}/servicehubuae-${{ matrix.service }}:${{ env.IMAGE_TAG }}
+            ghcr.io/${{ github.repository_owner }}/servicehubuae-${{ matrix.service }}:staging
           cache-from: type=gha,scope=${{ matrix.service }}
           cache-to: type=gha,mode=max,scope=${{ matrix.service }}
 
@@ -127,14 +127,14 @@ jobs:
 
           # Database — containerized Postgres on Netcup doesn't speak SSL
           DB_SSL=false
-          POSTGRES_USERNAME=mypickuae
+          POSTGRES_USERNAME=servicehubuae
           POSTGRES_PASSWORD=${{ secrets.STAGING_DB_PASSWORD }}
-          POSTGRES_DB=mypickuae
+          POSTGRES_DB=servicehubuae
           DB_HOST=postgres
           DB_PORT=5432
-          DB_USERNAME=mypickuae
+          DB_USERNAME=servicehubuae
           DB_PASSWORD=${{ secrets.STAGING_DB_PASSWORD }}
-          DB_NAME=mypickuae
+          DB_NAME=servicehubuae
 
           # Redis
           REDIS_HOST=redis
@@ -186,7 +186,7 @@ jobs:
           # AWS (S3 media + SES email — staying on AWS for now per migration plan)
           # Must match the media bucket's actual region. S3 reports it via
           # `curl -sI https://<bucket>.s3.amazonaws.com | grep x-amz-bucket-region`
-          # — mypickuae-media-dev is ap-south-1, same as prod. Signing against the
+          # — servicehubuae-media-dev is ap-south-1, same as prod. Signing against the
           # wrong region makes every presigned URL unusable.
           AWS_REGION=ap-south-1
           AWS_ACCESS_KEY_ID=${{ secrets.STAGING_AWS_ACCESS_KEY_ID }}
@@ -206,20 +206,20 @@ jobs:
           # browser-call the staging API (anchored, team-scoped). Never set
           # the equivalent in the prod deploy.
           CORS_PREVIEW_ORIGIN_PATTERN=^https://ecom-[a-z0-9-]+-ismailfarisis-projects\.vercel\.app$
-          WEB_URL=https://stage.mypickuae.com
-          VENDOR_DASHBOARD_URL=https://sellers.stage.mypickuae.com
-          ADMIN_PANEL_URL=https://admin.stage.mypickuae.com
+          WEB_URL=https://stage.servicehubuae.com
+          VENDOR_DASHBOARD_URL=https://sellers.stage.servicehubuae.com
+          ADMIN_PANEL_URL=https://admin.stage.servicehubuae.com
 
           # Email (AWS SES). EmailService reads APP_URL (NOT WEB_URL) for
           # verify/reset/magic-link links, and PUBLIC_API_URL for the
           # newsletter unsubscribe link. SES is region-scoped via SES_REGION,
           # which happens to match AWS_REGION today (both ap-south-1) but is
-          # kept separate deliberately; mypickuae.com is the verified identity,
+          # kept separate deliberately; servicehubuae.com is the verified identity,
           # with production access, in ap-south-1.
           SES_REGION=ap-south-1
-          SES_FROM_ADDRESS=noreply@mypickuae.com
-          APP_URL=https://stage.mypickuae.com
-          PUBLIC_API_URL=https://api.stage.mypickuae.com
+          SES_FROM_ADDRESS=noreply@servicehubuae.com
+          APP_URL=https://stage.servicehubuae.com
+          PUBLIC_API_URL=https://api.stage.servicehubuae.com
 
           # Cloudflare Stream (reels)
           CLOUDFLARE_STREAM_ACCOUNT_ID=${{ secrets.STAGING_CLOUDFLARE_STREAM_ACCOUNT_ID }}
@@ -240,7 +240,7 @@ jobs:
           username: ${{ secrets.STAGING_NETCUP_USER }}
           key: ${{ secrets.STAGING_NETCUP_SSH_KEY }}
           source: "backend/.env.netcup,backend/docker-compose.netcup.yml"
-          target: "/opt/mypickuae/"
+          target: "/opt/servicehubuae/"
           strip_components: 1
           overwrite: true
 
@@ -252,7 +252,7 @@ jobs:
           key: ${{ secrets.STAGING_NETCUP_SSH_KEY }}
           script: |
             set -e
-            cd /opt/mypickuae
+            cd /opt/servicehubuae
             mv .env.netcup .env
             chmod 600 .env
 

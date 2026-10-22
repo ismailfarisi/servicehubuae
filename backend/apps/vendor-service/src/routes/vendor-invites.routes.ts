@@ -1,6 +1,6 @@
-import { AppDataSource, User } from "@mypickuae/database";
-import { jwtAuth } from "@mypickuae/guards";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, User } from "@servicehubuae/database";
+import { jwtAuth } from "@servicehubuae/guards";
+import { HttpError } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

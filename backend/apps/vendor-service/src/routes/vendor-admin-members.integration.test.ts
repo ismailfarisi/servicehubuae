@@ -14,9 +14,9 @@
  */
 import { afterAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import { createHmac } from "node:crypto";
-import { config } from "@mypickuae/config";
-import { AppDataSource } from "@mypickuae/database";
-import type { HttpError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { AppDataSource } from "@servicehubuae/database";
+import type { HttpError } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 
 // ─── Stub VendorMemberService ─────────────────────────────────────────────────

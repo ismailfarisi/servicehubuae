@@ -1,4 +1,4 @@
-import type { VendorMemberRole } from "@mypickuae/database";
+import type { VendorMemberRole } from "@servicehubuae/database";
 import { Elysia, status } from "elysia";
 import { permissionMatrix } from "./permission-matrix.ts";
 import type { Permission } from "./permissions.ts";

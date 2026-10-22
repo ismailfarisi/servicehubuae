@@ -1,5 +1,5 @@
 import { describe, expect, it, mock, spyOn } from "bun:test";
-import { ReelAuthorKind } from "@mypickuae/database";
+import { ReelAuthorKind } from "@servicehubuae/database";
 import { ReelsService } from "./reels.service.ts";
 
 describe("ReelsService.requestUpload", () => {

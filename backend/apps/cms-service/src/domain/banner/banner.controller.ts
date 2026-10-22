@@ -1,4 +1,4 @@
-import type { BannerListQuery, CreateBannerBody, UpdateBannerBody } from "@mypickuae/dto";
+import type { BannerListQuery, CreateBannerBody, UpdateBannerBody } from "@servicehubuae/dto";
 import type { BannerService } from "./banner.service.ts";
 
 export class BannerController {

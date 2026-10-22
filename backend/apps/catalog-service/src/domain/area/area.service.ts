@@ -1,6 +1,6 @@
-import type { Area } from "@mypickuae/database";
-import type { CreateAreaBody, UpdateAreaBody } from "@mypickuae/dto";
-import { ConflictError, NotFoundError } from "@mypickuae/plugins";
+import type { Area } from "@servicehubuae/database";
+import type { CreateAreaBody, UpdateAreaBody } from "@servicehubuae/dto";
+import { ConflictError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { slugify } from "../../lib/slug.ts";
 

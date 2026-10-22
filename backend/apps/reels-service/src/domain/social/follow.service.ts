@@ -1,4 +1,4 @@
-import { AppDataSource, UserFollow } from "@mypickuae/database";
+import { AppDataSource, UserFollow } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 export class FollowService {

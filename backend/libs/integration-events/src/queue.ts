@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue } from "bullmq";
 
 export const INTEGRATION_EVENTS_QUEUE = "integration-events";

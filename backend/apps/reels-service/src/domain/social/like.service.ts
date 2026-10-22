@@ -1,4 +1,4 @@
-import { AppDataSource, ReelLike } from "@mypickuae/database";
+import { AppDataSource, ReelLike } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 import type { RecomputeRankingJob } from "../feed/jobs/recompute-ranking.job.ts";
 

@@ -9,8 +9,8 @@
 // overlap/restore/403/404 coverage lives in
 // block-time.routes.integration.test.ts.
 import { describe, expect, it, mock } from "bun:test";
-import { EngagementKind, EngagementStatus } from "@mypickuae/database";
-import { BadRequestError, ConflictError, NotFoundError } from "@mypickuae/plugins";
+import { EngagementKind, EngagementStatus } from "@servicehubuae/database";
+import { BadRequestError, ConflictError, NotFoundError } from "@servicehubuae/plugins";
 import { BlockTimeService } from "./block-time.service.ts";
 
 const ACTOR = { userId: "user-1", vendorId: "vendor-1", role: "manager" };

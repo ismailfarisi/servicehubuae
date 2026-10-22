@@ -1,5 +1,5 @@
 import { CloudFrontClient, CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 
 let client: CloudFrontClient | null = null;
 

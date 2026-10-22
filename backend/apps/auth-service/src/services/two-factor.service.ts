@@ -5,9 +5,9 @@ import {
   randomBytes,
   timingSafeEqual,
 } from "node:crypto";
-import { config } from "@mypickuae/config";
-import { AppDataSource, User, UserTwoFactor } from "@mypickuae/database";
-import { BadRequestError, NotFoundError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, User, UserTwoFactor } from "@servicehubuae/database";
+import { BadRequestError, NotFoundError } from "@servicehubuae/plugins";
 
 // ---------------------------------------------------------------------------
 // AES-256-GCM encryption helpers
@@ -167,7 +167,7 @@ export class TwoFactorService {
       await this.twoFactorRepo.save(record);
     }
 
-    const otpauthUri = `otpauth://totp/MyPickUAE:${encodeURIComponent(user.email)}?secret=${base32Secret}&issuer=MyPickUAE`;
+    const otpauthUri = `otpauth://totp/ServiceHubUAE:${encodeURIComponent(user.email)}?secret=${base32Secret}&issuer=ServiceHubUAE`;
 
     return { secret: base32Secret, otpauth_uri: otpauthUri };
   }

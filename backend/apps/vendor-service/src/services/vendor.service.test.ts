@@ -9,7 +9,7 @@ import { describe, expect, mock, test } from "bun:test";
  *   - createByAdmin() flow: creates user with role='customer', inserts vendor_members owner row.
  *
  * Uses the same stub-via-Object.defineProperty pattern as vendor-reels-program.test.ts,
- * plus mock.module for @mypickuae/database and @mypickuae/guards (module-level imports).
+ * plus mock.module for @servicehubuae/database and @servicehubuae/guards (module-level imports).
  */
 
 // ── Constants ──────────────────────────────────────────────────────────────────
@@ -28,7 +28,7 @@ const bumpTokenVersion = mock(async (userId: string) => {
   return 2;
 });
 
-// We mock @mypickuae/database so we can control AppDataSource.query and getRepository.
+// We mock @servicehubuae/database so we can control AppDataSource.query and getRepository.
 // Per-test repo behaviour is set via the `currentRepoOverrides` map.
 const currentRepoOverrides: Map<string, any> = new Map();
 
@@ -37,12 +37,12 @@ const currentRepoOverrides: Map<string, any> = new Map();
 // mock.module applies process-wide, so a partial mock here poisons every test
 // that runs after — and an HttpError stub with a different shape (status vs.
 // statusCode) silently breaks unrelated assertions.
-const realDb = await import("@mypickuae/database");
-const realGuards = await import("@mypickuae/guards");
-const realPlugins = await import("@mypickuae/plugins");
-const realUtils = await import("@mypickuae/utils");
+const realDb = await import("@servicehubuae/database");
+const realGuards = await import("@servicehubuae/guards");
+const realPlugins = await import("@servicehubuae/plugins");
+const realUtils = await import("@servicehubuae/utils");
 
-mock.module("@mypickuae/database", () => ({
+mock.module("@servicehubuae/database", () => ({
   ...realDb,
   AppDataSource: {
     getRepository: (entity: any) => {
@@ -88,16 +88,16 @@ mock.module("@mypickuae/database", () => ({
 // Per-test SQL-pattern → return-rows overrides. Cleared in clearCalls().
 const appDataSourceQueryReturns = new Map<string, any[]>();
 
-mock.module("@mypickuae/guards", () => ({
+mock.module("@servicehubuae/guards", () => ({
   ...realGuards,
   bumpTokenVersion,
 }));
 
-mock.module("@mypickuae/plugins", () => ({
+mock.module("@servicehubuae/plugins", () => ({
   ...realPlugins,
 }));
 
-mock.module("@mypickuae/utils", () => ({
+mock.module("@servicehubuae/utils", () => ({
   ...realUtils,
   generateSlug: (s: string) => s.toLowerCase().replace(/\s+/g, "-"),
 }));
@@ -370,7 +370,7 @@ describe("VendorService.createByAdmin", () => {
     const userCreationArgs: any[] = [];
 
     // Override AppDataSource.transaction on the module-level mock to capture user creation
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     const origTransaction = (AppDataSource as any).transaction;
     (AppDataSource as any).transaction = async (cb: (m: any) => Promise<any>) => {
       const createdObjects: any[] = [];
@@ -416,7 +416,7 @@ describe("VendorService.createByAdmin", () => {
   test("inserts vendor_members owner row for admin-created vendor", async () => {
     clearCalls();
 
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     const origTransaction = (AppDataSource as any).transaction;
 
     let capturedUserId: string | undefined;
@@ -472,7 +472,7 @@ describe("VendorService.createByAdmin", () => {
   test("bumps token_version for admin-created vendor user", async () => {
     clearCalls();
 
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     const origTransaction = (AppDataSource as any).transaction;
 
     (AppDataSource as any).transaction = async (cb: (m: any) => Promise<any>) => {
@@ -583,7 +583,7 @@ describe("VendorService.apply", () => {
       { id: VENDOR_ID, status: "rejected" },
     ]);
 
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     const origTransaction = (AppDataSource as any).transaction;
     const rejected = { id: VENDOR_ID, status: "rejected", rejection_reason: "Licence expired" };
     (AppDataSource as any).transaction = async (cb: (m: any) => Promise<any>) =>

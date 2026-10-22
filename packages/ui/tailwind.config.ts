@@ -54,7 +54,7 @@ const config: Config = {
 					DEFAULT: "hsl(var(--warning))",
 					foreground: "hsl(var(--warning-foreground))",
 				},
-				// MyPickUAE brand palette
+				// ServiceHubUAE brand palette
 				espresso: "hsl(var(--nl-espresso))",
 				cacao: "hsl(var(--nl-cacao))",
 				russet: "hsl(var(--nl-russet))",

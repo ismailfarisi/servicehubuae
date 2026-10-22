@@ -5,7 +5,7 @@
 // unconditionally (no BOOKING_LIVE_DB gate) since everything here is pure
 // math or a fake queue/repo.
 import { describe, expect, it, mock } from "bun:test";
-import { BookingStatus, NotificationType } from "@mypickuae/database";
+import { BookingStatus, NotificationType } from "@servicehubuae/database";
 import {
   REMINDER_OFFSETS,
   ReminderScheduler,
@@ -296,7 +296,7 @@ describe("ReminderScheduler.runReminderJob", () => {
     expect(payload.data.locationId).toBe("location-1");
     expect(payload.data.startsAt).toBe(booking.starts_at.toISOString());
     expect(payload.data.endsAt).toBe(booking.ends_at.toISOString());
-    expect(payload.data.ics.uid).toBe("booking-booking-1@mypickuae.com");
+    expect(payload.data.ics.uid).toBe("booking-booking-1@servicehubuae.com");
     expect(payload.data.ics.text).toContain("BEGIN:VEVENT");
     expect(payload.data.ics.text).toContain("SUMMARY:Deep Tissue Massage");
   });

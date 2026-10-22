@@ -10,7 +10,7 @@ import {
 	statusOpacityClass,
 } from "@/lib/booking/calendar-style";
 import { formatTimeInZone } from "@/lib/booking/tz";
-import { cn } from "@mypickuae/ui";
+import { cn } from "@servicehubuae/ui";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import {

@@ -1,4 +1,4 @@
-import { jwtAuth, requireRole } from "@mypickuae/guards";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
 // address.routes.ts
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";

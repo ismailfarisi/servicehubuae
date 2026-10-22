@@ -4,9 +4,9 @@
 // service-offering.routes.ts because the guard differs: those routes are
 // vendorMembership-scoped vendor CRUD, these are cross-vendor admin actions
 // with no vendor scoping at all (an admin acts on any offering by id).
-import { RejectServiceOfferingBody } from "@mypickuae/dto";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
-import { NotFoundError } from "@mypickuae/plugins";
+import { RejectServiceOfferingBody } from "@servicehubuae/dto";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
+import { NotFoundError } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

@@ -1,6 +1,6 @@
-import { AppDataSource, type CreatorApplicationStatus, SiteSetting } from "@mypickuae/database";
-import { CreatorApplicationListQuery, CreatorApplicationReviewBody } from "@mypickuae/dto";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
+import { AppDataSource, type CreatorApplicationStatus, SiteSetting } from "@servicehubuae/database";
+import { CreatorApplicationListQuery, CreatorApplicationReviewBody } from "@servicehubuae/dto";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

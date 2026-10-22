@@ -1,7 +1,7 @@
 import { describe, expect, it } from "bun:test";
 import { jwt } from "@elysiajs/jwt";
-import { config } from "@mypickuae/config";
-import { AppDataSource, CollabApplication } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, CollabApplication } from "@servicehubuae/database";
 import { Elysia } from "elysia";
 import { collabCreatorRoutes } from "./collab-creator.routes.ts";
 

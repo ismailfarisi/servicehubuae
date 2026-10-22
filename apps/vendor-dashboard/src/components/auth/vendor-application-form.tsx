@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
   Textarea,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { api } from "@/lib/api";
 import {
   applicationErrorMessage,
@@ -284,7 +284,7 @@ export function VendorApplicationForm({
         </Button>
         {!signedIn && (
           <p className="text-xs leading-5 text-pearl/70">
-            Already a MyPickUAE customer? Use the same email and password. Bank details for
+            Already a ServiceHubUAE customer? Use the same email and password. Bank details for
             payouts are added in Settings after approval.
           </p>
         )}

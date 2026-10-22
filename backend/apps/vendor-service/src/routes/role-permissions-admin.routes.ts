@@ -1,11 +1,11 @@
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 import {
   PERMISSIONS,
   bumpMatrixVersion,
   isPermission,
   jwtAuth,
   requireRole,
-} from "@mypickuae/guards";
+} from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 
 const ROLES = ["owner", "manager", "staff", "viewer"] as const;

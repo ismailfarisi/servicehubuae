@@ -1,6 +1,6 @@
 "use client";
 
-import { Input, Label } from "@mypickuae/ui";
+import { Input, Label } from "@servicehubuae/ui";
 
 /**
  * A date + time input pair that is explicitly read/written as wall-clock

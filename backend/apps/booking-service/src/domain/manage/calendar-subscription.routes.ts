@@ -5,8 +5,8 @@
 // `vendorMembership("products.write")` at the route level; the location-scoped
 // check runs inside CalendarSubscriptionService (staff->linked-locations
 // derivation, since :id is a staff member, not a location).
-import { UpsertCalendarSubscriptionBody } from "@mypickuae/dto";
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+import { UpsertCalendarSubscriptionBody } from "@servicehubuae/dto";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import { useTranslations } from "next-intl";
 import { useConsent } from "@/lib/consent/consent-state";
 

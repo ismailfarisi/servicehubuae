@@ -1,4 +1,4 @@
-import { AppDataSource, Reel, ReelView } from "@mypickuae/database";
+import { AppDataSource, Reel, ReelView } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 export interface RecordViewInput {

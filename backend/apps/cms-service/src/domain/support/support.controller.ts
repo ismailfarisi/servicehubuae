@@ -3,7 +3,7 @@ import type {
   CreateTicketBody,
   TicketListQuery,
   UpdateTicketBody,
-} from "@mypickuae/dto";
+} from "@servicehubuae/dto";
 import type { SupportService, TicketIdentity } from "./support.service.ts";
 
 export class SupportController {

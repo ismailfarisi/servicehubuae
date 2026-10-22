@@ -38,9 +38,9 @@ import {
   EngagementStatus,
   type StaffEngagement,
   type User,
-} from "@mypickuae/database";
-import type { ManageCalendarBookingSummary, ManageCalendarEngagement } from "@mypickuae/dto";
-import { UnprocessableEntityError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import type { ManageCalendarBookingSummary, ManageCalendarEngagement } from "@servicehubuae/dto";
+import { UnprocessableEntityError } from "@servicehubuae/plugins";
 import { In, type Repository } from "typeorm";
 import {
   type LocationScopeRepos,

@@ -32,7 +32,7 @@ import { useState } from "react";
  */
 const SERIF = "'Antic Didone', 'Playfair Display', Georgia, 'Times New Roman', serif";
 
-/** Warm tints from the MyPickUAE palette, in donut order. */
+/** Warm tints from the ServiceHubUAE palette, in donut order. */
 const SEGMENT_COLORS = [
   "hsl(var(--nl-russet))",
   "hsl(var(--nl-caramel))",

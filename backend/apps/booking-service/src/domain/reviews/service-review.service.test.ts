@@ -7,8 +7,8 @@
 // with the booking's vendor/staff ids. Real DB unique-index/ratings behaviour
 // is covered by the live-DB integration suite.
 import { describe, expect, it, mock } from "bun:test";
-import { BookingStatus, ServiceReviewStatus } from "@mypickuae/database";
-import type { HttpError } from "@mypickuae/plugins";
+import { BookingStatus, ServiceReviewStatus } from "@servicehubuae/database";
+import type { HttpError } from "@servicehubuae/plugins";
 import { ServiceReviewService } from "./service-review.service.ts";
 
 function baseBooking(overrides: Record<string, any> = {}) {

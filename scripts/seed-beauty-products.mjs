@@ -155,7 +155,7 @@ async function main() {
   const loginRes = await fetch(`${API}/auth/login`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email: "admin@mypickuae.com", password: "Admin@123" }),
+    body: JSON.stringify({ email: "admin@servicehubuae.com", password: "Admin@123" }),
   });
   const loginData = await loginRes.json();
   const token = loginData.data.tokens.accessToken;

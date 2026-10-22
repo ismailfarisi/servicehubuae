@@ -1,4 +1,4 @@
-import { AppDataSource, User, WalletTransaction } from "@mypickuae/database";
+import { AppDataSource, User, WalletTransaction } from "@servicehubuae/database";
 import type { EntityManager } from "typeorm";
 
 /**

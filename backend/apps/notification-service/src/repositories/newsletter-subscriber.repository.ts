@@ -1,4 +1,4 @@
-import { AppDataSource, NewsletterSubscriber } from "@mypickuae/database";
+import { AppDataSource, NewsletterSubscriber } from "@servicehubuae/database";
 
 export interface INewsletterSubscriberRepository {
   findByEmail(email: string): Promise<NewsletterSubscriber | null>;

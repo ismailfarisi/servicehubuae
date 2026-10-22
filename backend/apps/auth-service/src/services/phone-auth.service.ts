@@ -5,8 +5,8 @@ import {
   UserRole,
   UserSession,
   UserStatus,
-} from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import { IsNull, MoreThan, type Repository } from "typeorm";
 import type { DeviceInfo } from "../domain/types.ts";
 import { normalizePhoneForOtp } from "./phone-normalization.ts";

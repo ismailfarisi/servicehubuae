@@ -12,13 +12,13 @@ describe("generateICal", () => {
     const ics = generateICal(
       [
         {
-          uid: "evt-1@mypickuae.com",
+          uid: "evt-1@servicehubuae.com",
           summary: "Haircut",
           startsAt: new Date("2026-08-10T10:00:00Z"),
           endsAt: new Date("2026-08-10T10:30:00Z"),
         },
         {
-          uid: "evt-2@mypickuae.com",
+          uid: "evt-2@servicehubuae.com",
           summary: "Manicure",
           startsAt: new Date("2026-08-11T09:00:00Z"),
           endsAt: new Date("2026-08-11T09:45:00Z"),
@@ -33,12 +33,12 @@ describe("generateICal", () => {
     expect(lines).toContain("METHOD:PUBLISH");
     expect((ics.match(/BEGIN:VEVENT/g) ?? []).length).toBe(2);
     expect((ics.match(/END:VEVENT/g) ?? []).length).toBe(2);
-    expect(lines).toContain("UID:evt-1@mypickuae.com");
+    expect(lines).toContain("UID:evt-1@servicehubuae.com");
     expect(lines).toContain("DTSTAMP:20260809T100000Z");
     expect(lines).toContain("DTSTART:20260810T100000Z");
     expect(lines).toContain("DTEND:20260810T103000Z");
     expect(lines).toContain("SUMMARY:Haircut");
-    expect(lines).toContain("UID:evt-2@mypickuae.com");
+    expect(lines).toContain("UID:evt-2@servicehubuae.com");
     expect(lines).toContain("SUMMARY:Manicure");
     expect(lines[lines.length - 1]).toBe("END:VCALENDAR");
   });
@@ -46,13 +46,13 @@ describe("generateICal", () => {
   it("includes X-WR-CALNAME only when opts.calName is provided", () => {
     const endsAt = new Date(now.getTime() + 3600000); // 1 hour later
     const withName = generateICal(
-      [{ uid: "evt-1@mypickuae.com", summary: "Haircut", startsAt: now, endsAt }],
+      [{ uid: "evt-1@servicehubuae.com", summary: "Haircut", startsAt: now, endsAt }],
       { now, calName: "Test Salon Bookings" },
     );
     expect(withName).toContain("X-WR-CALNAME:Test Salon Bookings");
 
     const withoutName = generateICal(
-      [{ uid: "evt-1@mypickuae.com", summary: "Haircut", startsAt: now, endsAt }],
+      [{ uid: "evt-1@servicehubuae.com", summary: "Haircut", startsAt: now, endsAt }],
       { now },
     );
     expect(withoutName).not.toContain("X-WR-CALNAME");
@@ -61,7 +61,7 @@ describe("generateICal", () => {
   it("defaults DTSTAMP to now() when opts.now is omitted (non-deterministic but present)", () => {
     const endsAt = new Date(now.getTime() + 3600000); // 1 hour later
     const ics = generateICal([
-      { uid: "evt-1@mypickuae.com", summary: "Haircut", startsAt: now, endsAt },
+      { uid: "evt-1@servicehubuae.com", summary: "Haircut", startsAt: now, endsAt },
     ]);
     expect(ics).toMatch(/DTSTAMP:\d{8}T\d{6}Z/);
   });
@@ -70,7 +70,7 @@ describe("generateICal", () => {
     const ics = generateICal(
       [
         {
-          uid: "evt-esc@mypickuae.com",
+          uid: "evt-esc@servicehubuae.com",
           summary: "Wax; Trim, Style\\Extra\nLine",
           startsAt: now,
           endsAt: now,
@@ -86,7 +86,7 @@ describe("generateICal", () => {
   it("omits LOCATION/DESCRIPTION when not provided", () => {
     const endsAt = new Date(now.getTime() + 3600000); // 1 hour later
     const ics = generateICal(
-      [{ uid: "evt-1@mypickuae.com", summary: "Haircut", startsAt: now, endsAt }],
+      [{ uid: "evt-1@servicehubuae.com", summary: "Haircut", startsAt: now, endsAt }],
       { now },
     );
     expect(ics).not.toContain("LOCATION:");
@@ -98,7 +98,7 @@ describe("generateICal", () => {
     const ics = generateICal(
       [
         {
-          uid: "evt-long@mypickuae.com",
+          uid: "evt-long@servicehubuae.com",
           summary: longSummary,
           startsAt: now,
           endsAt: new Date(now.getTime() + 3600000), // 1 hour later
@@ -125,7 +125,7 @@ describe("generateICal", () => {
   it("round-trips: parseICal(generateICal(events)) returns the same uid/start/end set", () => {
     const events = [
       {
-        uid: "rt-1@mypickuae.com",
+        uid: "rt-1@servicehubuae.com",
         summary: "Deep Tissue Massage",
         startsAt: new Date("2026-09-01T08:00:00Z"),
         endsAt: new Date("2026-09-01T09:00:00Z"),
@@ -133,7 +133,7 @@ describe("generateICal", () => {
         description: "Booking BK-100",
       },
       {
-        uid: "rt-2@mypickuae.com",
+        uid: "rt-2@servicehubuae.com",
         summary: "Beard Trim",
         startsAt: new Date("2026-09-02T14:15:00Z"),
         endsAt: new Date("2026-09-02T14:45:00Z"),
@@ -153,7 +153,7 @@ describe("generateICal", () => {
   });
 
   it("round-trips UID containing RFC-special characters (comma, semicolon, backslash)", () => {
-    const originalUid = "booking-id,with;special\\chars@mypickuae.com";
+    const originalUid = "booking-id,with;special\\chars@servicehubuae.com";
     const events = [
       {
         uid: originalUid,
@@ -179,7 +179,7 @@ describe("buildBookingReminderIcs", () => {
 
   it("emits a single VEVENT with the required RFC 5545 properties, CRLF-joined", () => {
     const ics = buildBookingReminderIcs({
-      uid: "booking-abc123@mypickuae.com",
+      uid: "booking-abc123@servicehubuae.com",
       summary: "Deep Tissue Massage",
       description: "Booking BK-001 at Test Salon",
       location: "Marina Walk Salon",
@@ -192,7 +192,7 @@ describe("buildBookingReminderIcs", () => {
     expect(lines[0]).toBe("BEGIN:VCALENDAR");
     expect(lines).toContain("VERSION:2.0");
     expect(lines).toContain("BEGIN:VEVENT");
-    expect(lines).toContain("UID:booking-abc123@mypickuae.com");
+    expect(lines).toContain("UID:booking-abc123@servicehubuae.com");
     expect(lines).toContain("DTSTAMP:20260809T100000Z");
     expect(lines).toContain("DTSTART:20260810T100000Z");
     expect(lines).toContain("DTEND:20260810T103000Z");
@@ -205,7 +205,7 @@ describe("buildBookingReminderIcs", () => {
 
   it("omits LOCATION/DESCRIPTION lines entirely when not provided (not empty-valued)", () => {
     const ics = buildBookingReminderIcs({
-      uid: "booking-xyz@mypickuae.com",
+      uid: "booking-xyz@servicehubuae.com",
       summary: "Haircut",
       startsAt,
       endsAt,
@@ -218,7 +218,7 @@ describe("buildBookingReminderIcs", () => {
 
   it("escapes commas, semicolons, backslashes, and newlines in TEXT fields (RFC 5545 §3.3.11)", () => {
     const ics = buildBookingReminderIcs({
-      uid: "booking-esc@mypickuae.com",
+      uid: "booking-esc@servicehubuae.com",
       summary: "Wax; Trim, Style\\Extra\nLine",
       startsAt,
       endsAt,
@@ -230,7 +230,7 @@ describe("buildBookingReminderIcs", () => {
 
   it("defaults DTSTAMP to now when `now` is omitted (non-deterministic but present)", () => {
     const ics = buildBookingReminderIcs({
-      uid: "booking-nodate@mypickuae.com",
+      uid: "booking-nodate@servicehubuae.com",
       summary: "Facial",
       startsAt,
       endsAt,
@@ -247,7 +247,7 @@ describe("buildBookingReminderIcs", () => {
 // iCalendar properties.
 describe("escapeIcsText — line-break injection (review finding 9)", () => {
   const base = {
-    uid: "evt-inject@mypickuae.com",
+    uid: "evt-inject@servicehubuae.com",
     startsAt: new Date("2026-08-10T10:00:00Z"),
     endsAt: new Date("2026-08-10T10:30:00Z"),
   };

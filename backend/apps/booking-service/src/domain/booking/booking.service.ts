@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   Booking,
   BookingStatus,
@@ -15,14 +15,14 @@ import {
   StaffEngagement,
   type User,
   type Vendor,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import {
   BadRequestError,
   ConflictError,
   HttpError,
   NotFoundError,
   UnprocessableEntityError,
-} from "@mypickuae/plugins";
+} from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import type { AvailabilityCache } from "../availability/availability-cache.ts";
 import type { AvailabilityService } from "../availability/availability.service.ts";

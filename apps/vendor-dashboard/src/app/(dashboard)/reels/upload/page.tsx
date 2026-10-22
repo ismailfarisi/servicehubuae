@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import { ArrowLeft } from "@phosphor-icons/react";
 import Link from "next/link";
 import { ReelUploadForm } from "../_components/reel-upload-form";

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, mock } from "bun:test";
-import { AppDataSource, CreatorApplicationStatus, CreatorTier } from "@mypickuae/database";
-import type { MediaService } from "@mypickuae/utils";
+import { AppDataSource, CreatorApplicationStatus, CreatorTier } from "@servicehubuae/database";
+import type { MediaService } from "@servicehubuae/utils";
 import { CreatorApplicationService } from "./creator-application.service.ts";
 
 const baseDto = {

@@ -5,9 +5,9 @@ import {
 } from "@/components/layout/static-page-layout";
 
 export const metadata: Metadata = {
-	title: "Careers at MyPickUAE",
+	title: "Careers at ServiceHubUAE",
 	description:
-		"Help build the UAE's services marketplace. What we look for, how we work and how we hire at MyPickUAE.",
+		"Help build the UAE's services marketplace. What we look for, how we work and how we hire at ServiceHubUAE.",
 };
 
 const VALUES = [
@@ -34,7 +34,7 @@ export default function CareersPage() {
 		<StaticPageLayout
 			eyebrow="Careers"
 			title="Build the UAE's services marketplace."
-			intro="We're growing the team that powers MyPickUAE — from product and engineering in Dubai to vendor partnerships and customer support across the UAE."
+			intro="We're growing the team that powers ServiceHubUAE — from product and engineering in Dubai to vendor partnerships and customer support across the UAE."
 		>
 			<StaticSection heading="How we work">
 				<p>
@@ -74,10 +74,10 @@ export default function CareersPage() {
 				<p>
 					Send a short note and what you&rsquo;ve shipped to{" "}
 					<a
-						href="mailto:info@mypickuae.com"
+						href="mailto:info@servicehubuae.com"
 						className="font-medium text-nl-amber-text hover:underline"
 					>
-						info@mypickuae.com
+						info@servicehubuae.com
 					</a>
 					. Mention the team you&rsquo;d join and a project you&rsquo;re
 					proud of — a link beats a CV.
@@ -88,7 +88,7 @@ export default function CareersPage() {
 				<ol className="list-decimal ps-5 space-y-2">
 					<li>
 						<strong className="text-nl-cacao">Intro call (30 min).</strong>{" "}
-						Why MyPickUAE, what you&rsquo;re looking for, what we&rsquo;re
+						Why ServiceHubUAE, what you&rsquo;re looking for, what we&rsquo;re
 						hiring for.
 					</li>
 					<li>

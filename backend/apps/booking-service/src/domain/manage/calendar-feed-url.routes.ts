@@ -16,7 +16,7 @@
 // action-shaped `/manage` endpoints (e.g. manual-booking.routes.ts's POST
 // /manage/bookings) express as POST. Calling it twice is safe (same URL both
 // times) but it's not a resource read, so GET would be a stretch.
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 

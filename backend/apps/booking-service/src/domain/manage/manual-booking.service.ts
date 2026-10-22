@@ -23,7 +23,7 @@
 // route through BookingService.create()/BookingStatusService.confirmPayAtVenue
 // — that path fires postConfirm hooks (auto-complete scheduling, reminder
 // scheduling, booking_confirmed/vendor_new_booking notifications) which must
-// never fire for a booking with no MyPickUAE customer:
+// never fire for a booking with no ServiceHubUAE customer:
 //   - auto-complete would eventually call completeBooking() -> the
 //     BookingCompletionHook -> order-service's commission-accrual endpoint,
 //     violating "no commission accrual".
@@ -49,8 +49,8 @@ import {
   StaffEngagement,
   type StaffLocation,
   type StaffMember,
-} from "@mypickuae/database";
-import { BadRequestError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import type { AvailabilityCache } from "../availability/availability-cache.ts";
 import { EngagementService } from "../engagement/engagement.service.ts";

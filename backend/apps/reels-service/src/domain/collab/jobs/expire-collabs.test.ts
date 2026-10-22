@@ -10,7 +10,7 @@ import {
   CollabOpportunityType,
   CollabVisibility,
   SiteSetting,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { CollabService, INVITE_TTL_DAYS } from "../collab.service.ts";
 import { CollabDeadlineRemindersJob } from "./collab-deadline-reminders.job.ts";
 import { ExpireCollabsJob } from "./expire-collabs.job.ts";

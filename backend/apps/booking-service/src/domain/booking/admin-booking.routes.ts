@@ -7,8 +7,8 @@
 // accepts an admin caller for both and already bypasses the customer-only
 // windows (cancel.service.ts:203, reschedule.service.ts:263). Duplicating them
 // would mean two code paths for one action.
-import { jwtAuth, requireRole } from "@mypickuae/guards";
-import { NotFoundError } from "@mypickuae/plugins";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
+import { NotFoundError } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 

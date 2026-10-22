@@ -5,8 +5,8 @@ import type {
   StaffMember,
   StaffService as StaffServiceEntity,
   VendorLocation,
-} from "@mypickuae/database";
-import { NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { StaffService } from "./staff.service.ts";
 

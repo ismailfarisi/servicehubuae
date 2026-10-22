@@ -16,13 +16,13 @@ describe("buildUrlset", () => {
 	it("emits one <url> per locale with reciprocal hreflang links", () => {
 		const xml = buildUrlset([{ path: "/service/foo" }]);
 
-		expect(xml).toContain("<loc>https://www.mypickuae.com/en/service/foo</loc>");
-		expect(xml).toContain("<loc>https://www.mypickuae.com/ar/service/foo</loc>");
+		expect(xml).toContain("<loc>https://www.servicehubuae.com/en/service/foo</loc>");
+		expect(xml).toContain("<loc>https://www.servicehubuae.com/ar/service/foo</loc>");
 		expect(xml).toContain(
-			'<xhtml:link rel="alternate" hreflang="ar" href="https://www.mypickuae.com/ar/service/foo"/>',
+			'<xhtml:link rel="alternate" hreflang="ar" href="https://www.servicehubuae.com/ar/service/foo"/>',
 		);
 		expect(xml).toContain(
-			'<xhtml:link rel="alternate" hreflang="x-default" href="https://www.mypickuae.com/en/service/foo"/>',
+			'<xhtml:link rel="alternate" hreflang="x-default" href="https://www.servicehubuae.com/en/service/foo"/>',
 		);
 	});
 
@@ -124,10 +124,10 @@ describe("buildSitemapIndex", () => {
 
 		expect(xml).toContain("<sitemapindex");
 		expect(xml).toContain(
-			"<loc>https://www.mypickuae.com/sitemaps/static.xml</loc>",
+			"<loc>https://www.servicehubuae.com/sitemaps/static.xml</loc>",
 		);
 		expect(xml).toContain(
-			"<loc>https://www.mypickuae.com/sitemaps/services.xml</loc>",
+			"<loc>https://www.servicehubuae.com/sitemaps/services.xml</loc>",
 		);
 	});
 });

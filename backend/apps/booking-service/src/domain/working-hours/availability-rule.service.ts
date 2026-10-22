@@ -3,8 +3,8 @@ import type {
   StaffMember,
   StaffTimeOff,
   StaffWorkingHours,
-} from "@mypickuae/database";
-import { BadRequestError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import type { AvailabilityCache } from "../availability/availability-cache.ts";
 import { timeOfDayMinutes } from "../availability/interval-math.ts";

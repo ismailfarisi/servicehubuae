@@ -1,6 +1,6 @@
 import { bearer } from "@elysiajs/bearer";
 import { jwt } from "@elysiajs/jwt";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Elysia, status } from "elysia";
 import type { VendorMembershipClaim } from "./token-helpers.ts";
 import { getCurrentTokenVersion } from "./token-version.ts";

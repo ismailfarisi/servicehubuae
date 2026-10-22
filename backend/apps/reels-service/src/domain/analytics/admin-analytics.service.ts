@@ -1,4 +1,4 @@
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 import { reelLinkedToVendorSql } from "../shared/reel-vendor-link.ts";
 import {
   type Period,

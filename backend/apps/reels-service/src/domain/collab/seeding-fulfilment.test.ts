@@ -14,7 +14,7 @@ import {
   SiteSetting,
   User,
   UserAddress,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { CollabService, SEEDING_RECEIPT_TIMEOUT_DAYS } from "./collab.service.ts";
 import { toVendorFacingApplication, toVendorFacingApplications } from "./serializers.ts";
 

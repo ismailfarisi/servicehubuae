@@ -4,8 +4,8 @@ import type {
   StaffMember,
   StaffService as StaffServiceLink,
   VendorLocation,
-} from "@mypickuae/database";
-import { NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { NotFoundError } from "@servicehubuae/plugins";
 import { In, type Repository } from "typeorm";
 
 export interface CreateStaffMemberInput {

@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
-import { User, WalletTransaction } from "@mypickuae/database";
+import { User, WalletTransaction } from "@servicehubuae/database";
 import { CreatorWalletService } from "./creator-wallet.service.ts";
 
 /**

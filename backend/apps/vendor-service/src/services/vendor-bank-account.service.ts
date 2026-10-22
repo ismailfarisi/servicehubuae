@@ -1,6 +1,6 @@
-import { AppDataSource, VendorBankAccount } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
-import type { EncryptionService } from "@mypickuae/utils";
+import { AppDataSource, VendorBankAccount } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
+import type { EncryptionService } from "@servicehubuae/utils";
 
 export class VendorBankAccountService {
   constructor(private readonly encryption: EncryptionService) {}

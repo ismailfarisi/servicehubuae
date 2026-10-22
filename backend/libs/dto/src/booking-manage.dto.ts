@@ -2,7 +2,7 @@ import { type Static, Type } from "@sinclair/typebox";
 
 // ─── Manual walk-in / phone booking (Phase 6 Task 1) ───────────────────────
 // POST /manage/bookings — a vendor location manager records a walk-in/phone
-// customer directly against the capacity ledger (no MyPickUAE customer
+// customer directly against the capacity ledger (no ServiceHubUAE customer
 // account, no online payment/checkout). `service_id` is deliberately
 // optional: a phone booking may be taken before the exact service is
 // decided. Every nullable-optional field follows this repo's

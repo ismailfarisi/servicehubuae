@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Input } from "@mypickuae/ui";
+import { Button, Input } from "@servicehubuae/ui";
 import { useCreateLayout } from "@/lib/queries/layouts";
 import { ArrowLeft } from "lucide-react";
 

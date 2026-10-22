@@ -3,7 +3,7 @@ import type {
   NotificationChannel,
   NotificationPreference,
   NotificationType,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 
 // ─── Preference Domain Types ────────────────────────────────────────────────
 

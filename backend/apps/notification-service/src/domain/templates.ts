@@ -95,7 +95,8 @@ const TEMPLATES: Record<string, NotificationTemplate> = {
 
   booking_completed: {
     title: "Booking Completed",
-    bodyTemplate: "Your booking for {service_name} is complete. Thank you for choosing MyPickUAE!",
+    bodyTemplate:
+      "Your booking for {service_name} is complete. Thank you for choosing ServiceHubUAE!",
     actionUrlTemplate: "/bookings/{bookingId}",
   },
 
@@ -301,6 +302,6 @@ export function renderHtmlEmail(title: string, body: string, actionUrl?: string)
   <p style="color: #666; font-size: 16px;">${body}</p>
   ${actionUrl ? `<a href="${actionUrl}" style="display: inline-block; padding: 12px 24px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">View Details</a>` : ""}
   <hr style="margin-top: 30px; border: none; border-top: 1px solid #eee;">
-  <p style="color: #999; font-size: 12px;">MyPickUAE</p>
+  <p style="color: #999; font-size: 12px;">ServiceHubUAE</p>
 </body></html>`;
 }

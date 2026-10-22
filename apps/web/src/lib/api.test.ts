@@ -10,7 +10,7 @@ import {
 describe("shouldAttemptAuthRefresh", () => {
   test("does not refresh public phone auth endpoint failures", () => {
     expect(shouldAttemptAuthRefresh("/auth/phone/start")).toBe(false);
-    expect(shouldAttemptAuthRefresh("https://api.mypickuae.com/auth/phone/start")).toBe(false);
+    expect(shouldAttemptAuthRefresh("https://api.servicehubuae.com/auth/phone/start")).toBe(false);
   });
 
   test("still refreshes protected auth endpoint failures", () => {

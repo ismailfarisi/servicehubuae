@@ -1,4 +1,4 @@
-import type { IntegrationEventType } from "@mypickuae/database";
+import type { IntegrationEventType } from "@servicehubuae/database";
 import jwt from "jsonwebtoken";
 
 export interface DomainDispatchInput {

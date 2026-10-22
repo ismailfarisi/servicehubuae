@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 
 const ACCESS_TOKEN_MAX_AGE = 15 * 60; // 15 minutes in seconds
 const REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; // 7 days in seconds
@@ -47,8 +47,8 @@ export function setAuthCookies(
         const parts = hostname.split(".");
 
         // Set domain to root domain with leading dot for shared scoping
-        // For: admin.stage.mypickuae.com → .mypickuae.com
-        // For: mypickuae.com → .mypickuae.com
+        // For: admin.stage.servicehubuae.com → .servicehubuae.com
+        // For: servicehubuae.com → .servicehubuae.com
         if (parts.length >= 2) {
           cookieDomain = `.${parts.slice(-2).join(".")}`;
         }

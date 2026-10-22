@@ -5,8 +5,8 @@ import {
   LayoutVersion,
   PageLayout,
   SectionType,
-} from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import { type EntityManager, IsNull } from "typeorm";
 import type { BidService } from "../bid/bid.service.ts";
 

@@ -5,7 +5,7 @@
 // (no Postgres) and is trivially unit-testable. Mirrors the pattern in
 // ../availability/interval-math.ts.
 //
-// Deliberately does NOT import from @mypickuae/database: that package's index
+// Deliberately does NOT import from @servicehubuae/database: that package's index
 // re-exports AppDataSource (libs/database/src/data-source.ts) and side-effects
 // `import "reflect-metadata"` at module load, which would make this module
 // (and its test) fail without Postgres. Instead, CancellationPolicySnapshot
@@ -38,7 +38,7 @@ export type CancellationRefundPolicyValue = "full" | "deposit_forfeit" | "percen
 
 // Mirrors the subset of `bookings` columns (booking.entity.ts) that drive
 // cancellation/no-show math. Structurally compatible with the real
-// `CancellationRefundPolicy` TS enum from @mypickuae/database, so callers can
+// `CancellationRefundPolicy` TS enum from @servicehubuae/database, so callers can
 // pass `booking.cancellation_refund_policy` etc. straight through without a
 // cast.
 export interface CancellationPolicySnapshot {

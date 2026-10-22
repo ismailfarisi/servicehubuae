@@ -67,12 +67,12 @@ describe("SlackController", () => {
 
   it("test() delegates to SlackService.testConnection()", async () => {
     const settings = fakeSettings();
-    const slack = fakeSlack({ ok: true, team: "MyPickUAE" });
+    const slack = fakeSlack({ ok: true, team: "ServiceHubUAE" });
     const controller = new SlackController(settings as any, slack as any);
 
     const result = await controller.test();
 
     expect(slack.testConnection.mock.calls.length).toBe(1);
-    expect(result).toEqual({ ok: true, team: "MyPickUAE" });
+    expect(result).toEqual({ ok: true, team: "ServiceHubUAE" });
   });
 });

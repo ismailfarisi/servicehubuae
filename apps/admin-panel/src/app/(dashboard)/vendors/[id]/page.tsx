@@ -62,8 +62,8 @@ import {
 	TabsList,
 	TabsTrigger,
 	Textarea,
-} from "@mypickuae/ui";
-import { toast } from "@mypickuae/ui";
+} from "@servicehubuae/ui";
+import { toast } from "@servicehubuae/ui";
 import {
 	ArrowLeft,
 	Building2,

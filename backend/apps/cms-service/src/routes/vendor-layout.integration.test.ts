@@ -7,8 +7,8 @@
  * as test seams.
  */
 import { describe, expect, test } from "bun:test";
-import { AppDataSource } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 
 import { __assertVendorOwnsLayout, __resolveLayoutId } from "./vendor-layout.routes.ts";
 
@@ -43,7 +43,7 @@ describe("resolveLayoutId", () => {
   });
 
   test("resolves layoutId from sectionId via DB", async () => {
-    const { LayoutSection } = await import("@mypickuae/database");
+    const { LayoutSection } = await import("@servicehubuae/database");
     const fakeRepo = {
       findOne: async () => ({
         id: "sec-1",
@@ -58,7 +58,7 @@ describe("resolveLayoutId", () => {
   });
 
   test("returns null when sectionId does not exist", async () => {
-    const { LayoutSection } = await import("@mypickuae/database");
+    const { LayoutSection } = await import("@servicehubuae/database");
     const fakeRepo = { findOne: async () => null };
     let result: string | null = null;
     await withRepo(LayoutSection, fakeRepo, async () => {
@@ -73,7 +73,7 @@ describe("resolveLayoutId", () => {
 // ---------------------------------------------------------------------------
 describe("layout ownership inline check", () => {
   test("layout owned by current member.vid passes (no throw)", async () => {
-    const { PageLayout } = await import("@mypickuae/database");
+    const { PageLayout } = await import("@servicehubuae/database");
     const fakeRepo = {
       findOne: async () => ({ id: "L1", vendor_id: "V1" }),
     };
@@ -84,7 +84,7 @@ describe("layout ownership inline check", () => {
   });
 
   test("foreign vendor's layout returns 403 NOT_LAYOUT_OWNER", async () => {
-    const { PageLayout } = await import("@mypickuae/database");
+    const { PageLayout } = await import("@servicehubuae/database");
     const fakeRepo = {
       findOne: async () => ({ id: "L2", vendor_id: "V2" }),
     };
@@ -98,7 +98,7 @@ describe("layout ownership inline check", () => {
   });
 
   test("admin layout (vendor_id=null) returns 403 ADMIN_LAYOUT_FORBIDDEN", async () => {
-    const { PageLayout } = await import("@mypickuae/database");
+    const { PageLayout } = await import("@servicehubuae/database");
     const fakeRepo = {
       findOne: async () => ({ id: "L3", vendor_id: null }),
     };
@@ -112,7 +112,7 @@ describe("layout ownership inline check", () => {
   });
 
   test("nonexistent layout returns 404 LAYOUT_NOT_FOUND", async () => {
-    const { PageLayout } = await import("@mypickuae/database");
+    const { PageLayout } = await import("@servicehubuae/database");
     const fakeRepo = {
       findOne: async () => null,
     };
@@ -128,7 +128,7 @@ describe("layout ownership inline check", () => {
   });
 
   test("thrown errors are instances of HttpError", async () => {
-    const { PageLayout } = await import("@mypickuae/database");
+    const { PageLayout } = await import("@servicehubuae/database");
     const fakeRepo = {
       findOne: async () => null,
     };

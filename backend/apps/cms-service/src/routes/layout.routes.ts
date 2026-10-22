@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
+import { config } from "@servicehubuae/config";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import jwt from "jsonwebtoken";
 import { container } from "../container.ts";

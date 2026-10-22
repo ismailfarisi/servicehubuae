@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { ConflictError, ServiceUnavailableError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { ConflictError, ServiceUnavailableError } from "@servicehubuae/plugins";
 import { type RedisClientType, createClient } from "redis";
 
 // A hold is keyed by staff + the exact [start, end) instant range being held,

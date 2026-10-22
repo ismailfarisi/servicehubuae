@@ -8,8 +8,8 @@
 //     only (vendorMembership, NOT customer/admin).
 // Reaches booking-service via the existing gateway prefixes (`/bookings*` and
 // `/vendor/booking*` already proxy here — no new proxy entry needed).
-import { CreateServiceReviewBody, VendorReplyServiceReviewBody } from "@mypickuae/dto";
-import { jwtAuth, requireRole, vendorMembership } from "@mypickuae/guards";
+import { CreateServiceReviewBody, VendorReplyServiceReviewBody } from "@servicehubuae/dto";
+import { jwtAuth, requireRole, vendorMembership } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 

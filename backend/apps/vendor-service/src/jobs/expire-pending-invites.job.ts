@@ -1,4 +1,4 @@
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 import { Queue, Worker } from "bullmq";
 
 const QUEUE_NAME = "vendor-expire-pending-invites";

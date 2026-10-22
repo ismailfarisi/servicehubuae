@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Card, CardContent } from "@mypickuae/ui";
+import { Card, CardContent } from "@servicehubuae/ui";
 import { ReelAnalyticsHeader } from "@/components/reel-analytics/ReelAnalyticsHeader";
 import { ReelAnalyticsKpiCards } from "@/components/reel-analytics/ReelAnalyticsKpiCards";
 import { ReelAnalyticsTimeseries } from "@/components/reel-analytics/ReelAnalyticsTimeseries";

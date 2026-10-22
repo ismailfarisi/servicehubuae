@@ -7,8 +7,8 @@
 // narrow DI seam back into BookingStatusService via the BookingReminderHook
 // interface it defines, to avoid a circular import) — see that file's own
 // header comment for the general pattern this follows.
-import type { Booking } from "@mypickuae/database";
-import { BookingStatus, NotificationType } from "@mypickuae/database";
+import type { Booking } from "@servicehubuae/database";
+import { BookingStatus, NotificationType } from "@servicehubuae/database";
 import { buildBookingReminderIcs } from "../calendar/ical-feed.ts";
 
 const HOUR_MS = 3_600_000;
@@ -369,7 +369,7 @@ export class ReminderScheduler {
     // Task 8 needs rather than wiring an actual email attachment — that's
     // Task 8's job per the brief.
     const icsText = buildBookingReminderIcs({
-      uid: `booking-${booking.id}@mypickuae.com`,
+      uid: `booking-${booking.id}@servicehubuae.com`,
       summary: booking.service_name,
       description: `Booking ${booking.booking_number}${vendorName ? ` at ${vendorName}` : ""}`,
       location: icsLocation || undefined,
@@ -430,7 +430,7 @@ export class ReminderScheduler {
           endsAt: booking.ends_at.toISOString(),
           durationMinutes: booking.duration_minutes,
           ics: {
-            uid: `booking-${booking.id}@mypickuae.com`,
+            uid: `booking-${booking.id}@servicehubuae.com`,
             summary: booking.service_name,
             location: icsLocation,
             description: `Booking ${booking.booking_number}${vendorName ? ` at ${vendorName}` : ""}`,

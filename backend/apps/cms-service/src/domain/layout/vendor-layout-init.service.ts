@@ -5,8 +5,8 @@ import {
   LayoutVersion,
   PageLayout,
   type SectionType,
-} from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import type { EntityManager } from "typeorm";
 import { IsNull } from "typeorm";
 

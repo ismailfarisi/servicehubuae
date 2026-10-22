@@ -5,7 +5,7 @@
 // Redis hold, availability lookup, DB row or payment call. pay_at_venue is
 // unaffected. Pure unit test — every collaborator is a fake.
 import { describe, expect, it, mock } from "bun:test";
-import { ServiceOfferingStatus, ServicePaymentMode } from "@mypickuae/database";
+import { ServiceOfferingStatus, ServicePaymentMode } from "@servicehubuae/database";
 import { BookingService, OnlinePaymentUnavailableError } from "./booking.service.ts";
 
 const OFFERING_ID = "11111111-1111-4111-8111-111111111111";

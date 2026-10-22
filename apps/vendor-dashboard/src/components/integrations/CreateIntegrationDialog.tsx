@@ -12,7 +12,7 @@ import {
   Input,
   Label,
   toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Copy } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
@@ -107,7 +107,7 @@ function CreateForm({ onSuccess, onCancel }: CreateFormProps) {
           </Label>
           <Input
             id="int-url"
-            placeholder="https://partner.example.com/webhooks/mypickuae"
+            placeholder="https://partner.example.com/webhooks/servicehubuae"
             {...register("outbound_url")}
           />
           {errors.outbound_url ? (

@@ -1,5 +1,5 @@
 -- ============================================================
--- MyPickUAE Beauty & Fragrance Catalog Seed
+-- ServiceHubUAE Beauty & Fragrance Catalog Seed
 -- Complete categories, attributes, brands, and mappings
 -- ============================================================
 
@@ -12,7 +12,7 @@ UPDATE categories SET
   name = 'Beauty & Fragrance',
   slug = 'beauty-fragrance',
   description = 'Premium beauty, fragrance, skincare, and grooming products for the UAE market',
-  meta_title = 'Beauty & Fragrance | MyPickUAE',
+  meta_title = 'Beauty & Fragrance | ServiceHubUAE',
   meta_description = 'Shop luxury beauty, fragrance, skincare, makeup, and grooming products. Halal certified, authentic brands delivered across the UAE.',
   is_featured = true
 WHERE id = 'bafb8c75-2ef7-4d27-a275-2cce5838d27c';
@@ -22,23 +22,23 @@ WHERE id = 'bafb8c75-2ef7-4d27-a275-2cce5838d27c';
 -- ============================================================
 INSERT INTO categories (id, parent_id, name, slug, description, depth, path, sort_order, is_active, is_featured, meta_title, meta_description) VALUES
 -- Fragrance
-('a1000000-0000-0000-0000-000000000001', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Fragrance', 'fragrance', 'Luxury perfumes, oud, attars and Arabian fragrances', 1, 'beauty-fragrance/fragrance', 1, true, true, 'Fragrance | MyPickUAE', 'Shop luxury perfumes, oud, attars and designer fragrances'),
+('a1000000-0000-0000-0000-000000000001', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Fragrance', 'fragrance', 'Luxury perfumes, oud, attars and Arabian fragrances', 1, 'beauty-fragrance/fragrance', 1, true, true, 'Fragrance | ServiceHubUAE', 'Shop luxury perfumes, oud, attars and designer fragrances'),
 -- Skincare
-('a1000000-0000-0000-0000-000000000002', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Skincare', 'skincare', 'Cleansers, moisturizers, serums and treatments for every skin type', 1, 'beauty-fragrance/skincare', 2, true, true, 'Skincare | MyPickUAE', 'Premium skincare products for every skin type and concern'),
+('a1000000-0000-0000-0000-000000000002', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Skincare', 'skincare', 'Cleansers, moisturizers, serums and treatments for every skin type', 1, 'beauty-fragrance/skincare', 2, true, true, 'Skincare | ServiceHubUAE', 'Premium skincare products for every skin type and concern'),
 -- Makeup
-('a1000000-0000-0000-0000-000000000003', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Makeup', 'makeup', 'Foundation, lipstick, eyeshadow and complete makeup collections', 1, 'beauty-fragrance/makeup', 3, true, true, 'Makeup | MyPickUAE', 'Shop premium makeup from top beauty brands'),
+('a1000000-0000-0000-0000-000000000003', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Makeup', 'makeup', 'Foundation, lipstick, eyeshadow and complete makeup collections', 1, 'beauty-fragrance/makeup', 3, true, true, 'Makeup | ServiceHubUAE', 'Shop premium makeup from top beauty brands'),
 -- Haircare
-('a1000000-0000-0000-0000-000000000004', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Haircare', 'haircare', 'Shampoo, conditioner, treatments and styling for all hair types', 1, 'beauty-fragrance/haircare', 4, true, true, 'Haircare | MyPickUAE', 'Shop haircare products for every hair type'),
+('a1000000-0000-0000-0000-000000000004', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Haircare', 'haircare', 'Shampoo, conditioner, treatments and styling for all hair types', 1, 'beauty-fragrance/haircare', 4, true, true, 'Haircare | ServiceHubUAE', 'Shop haircare products for every hair type'),
 -- Bath & Body
-('a1000000-0000-0000-0000-000000000005', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Bath & Body', 'bath-body', 'Body wash, lotion, scrubs and pampering essentials', 1, 'beauty-fragrance/bath-body', 5, true, true, 'Bath & Body | MyPickUAE', 'Luxurious bath and body care products'),
+('a1000000-0000-0000-0000-000000000005', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Bath & Body', 'bath-body', 'Body wash, lotion, scrubs and pampering essentials', 1, 'beauty-fragrance/bath-body', 5, true, true, 'Bath & Body | ServiceHubUAE', 'Luxurious bath and body care products'),
 -- Men's Grooming
-('a1000000-0000-0000-0000-000000000006', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Men''s Grooming', 'mens-grooming', 'Shaving, beard care, skincare and grooming for men', 1, 'beauty-fragrance/mens-grooming', 6, true, true, 'Men''s Grooming | MyPickUAE', 'Premium grooming products for men'),
+('a1000000-0000-0000-0000-000000000006', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Men''s Grooming', 'mens-grooming', 'Shaving, beard care, skincare and grooming for men', 1, 'beauty-fragrance/mens-grooming', 6, true, true, 'Men''s Grooming | ServiceHubUAE', 'Premium grooming products for men'),
 -- Tools & Accessories
-('a1000000-0000-0000-0000-000000000007', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Tools & Accessories', 'tools-accessories', 'Brushes, devices, hair tools and beauty accessories', 1, 'beauty-fragrance/tools-accessories', 7, true, false, 'Beauty Tools | MyPickUAE', 'Professional beauty tools and accessories'),
+('a1000000-0000-0000-0000-000000000007', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Tools & Accessories', 'tools-accessories', 'Brushes, devices, hair tools and beauty accessories', 1, 'beauty-fragrance/tools-accessories', 7, true, false, 'Beauty Tools | ServiceHubUAE', 'Professional beauty tools and accessories'),
 -- Natural & Organic
-('a1000000-0000-0000-0000-000000000008', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Natural & Organic', 'natural-organic', 'Clean, organic, vegan and halal-certified beauty products', 1, 'beauty-fragrance/natural-organic', 8, true, true, 'Natural & Organic | MyPickUAE', 'Clean, organic and halal beauty products'),
+('a1000000-0000-0000-0000-000000000008', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'Natural & Organic', 'natural-organic', 'Clean, organic, vegan and halal-certified beauty products', 1, 'beauty-fragrance/natural-organic', 8, true, true, 'Natural & Organic | ServiceHubUAE', 'Clean, organic and halal beauty products'),
 -- K-Beauty & J-Beauty
-('a1000000-0000-0000-0000-000000000009', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'K-Beauty & J-Beauty', 'k-beauty-j-beauty', 'Korean and Japanese skincare and makeup innovations', 1, 'beauty-fragrance/k-beauty-j-beauty', 9, true, false, 'K-Beauty & J-Beauty | MyPickUAE', 'Korean and Japanese beauty products');
+('a1000000-0000-0000-0000-000000000009', 'bafb8c75-2ef7-4d27-a275-2cce5838d27c', 'K-Beauty & J-Beauty', 'k-beauty-j-beauty', 'Korean and Japanese skincare and makeup innovations', 1, 'beauty-fragrance/k-beauty-j-beauty', 9, true, false, 'K-Beauty & J-Beauty | ServiceHubUAE', 'Korean and Japanese beauty products');
 
 -- ============================================================
 -- 3. L2 CATEGORIES (depth=2)

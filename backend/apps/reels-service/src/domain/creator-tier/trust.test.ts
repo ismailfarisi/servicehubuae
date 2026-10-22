@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { CreatorTier } from "@mypickuae/database";
+import { CreatorTier } from "@servicehubuae/database";
 import { TrustService } from "./trust.service.ts";
 
 describe("TrustService.isTrusted", () => {

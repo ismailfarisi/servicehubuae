@@ -5,7 +5,7 @@
 // (no BOOKING_LIVE_DB gate) since everything here is pure math or a fake
 // queue/repo/status-service.
 import { describe, expect, it, mock } from "bun:test";
-import { BookingStatus } from "@mypickuae/database";
+import { BookingStatus } from "@servicehubuae/database";
 import {
   BookingAutoCompleteService,
   DEFAULT_AUTO_COMPLETE_GRACE_HOURS,

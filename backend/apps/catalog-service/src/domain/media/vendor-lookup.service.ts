@@ -1,4 +1,4 @@
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 
 export interface IVendorLookup {
   findVendorIdByUserId(userId: string): Promise<string | null>;

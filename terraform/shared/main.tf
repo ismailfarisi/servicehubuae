@@ -10,7 +10,7 @@ terraform {
 
   # Uncomment to use S3 backend for remote state
   # backend "s3" {
-  #   bucket = "mypickuae-terraform-state"
+  #   bucket = "servicehubuae-terraform-state"
   #   key    = "shared/terraform.tfstate"
   #   region = "ap-south-1"
   # }

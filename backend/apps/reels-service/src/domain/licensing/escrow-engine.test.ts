@@ -5,7 +5,7 @@ import {
   ReelLicenseGrant,
   ReelLicenseHoldStatus,
   ReelLicenseRightsScope,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { type DealLink, EscrowEngine } from "./escrow-engine.ts";
 
 /**

@@ -3,9 +3,9 @@ import {
   AdminUpdateDocumentBody,
   AdminUpdateVendorBody,
   AdminUploadDocumentBody,
-} from "@mypickuae/dto";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
-import { HttpError, auditPlugin } from "@mypickuae/plugins";
+} from "@servicehubuae/dto";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
+import { HttpError, auditPlugin } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

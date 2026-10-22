@@ -1,4 +1,4 @@
-import { AppDataSource, Reel } from "@mypickuae/database";
+import { AppDataSource, Reel } from "@servicehubuae/database";
 import type { RecomputeRankingJob } from "../feed/jobs/recompute-ranking.job.ts";
 
 export class ShareService {
@@ -13,7 +13,7 @@ export class ShareService {
     this.rankingJob?.enqueue(reelId);
     return {
       shareCount: reel?.share_count ?? 0,
-      shareableUrl: `${process.env.WEB_BASE_URL ?? "https://www.mypickuae.com"}/reels/${reelId}`,
+      shareableUrl: `${process.env.WEB_BASE_URL ?? "https://www.servicehubuae.com"}/reels/${reelId}`,
     };
   }
 }

@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/api-gateway",
+  "name": "@servicehubuae/api-gateway",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -16,10 +16,10 @@
     "@elysiajs/cors": "^1.2.0",
     "@elysiajs/bearer": "^1.2.0",
     "@elysiajs/jwt": "^1.2.0",
-    "@mypickuae/config": "workspace:*",
-    "@mypickuae/plugins": "workspace:*",
-    "@mypickuae/guards": "workspace:*",
-    "@mypickuae/utils": "workspace:*"
+    "@servicehubuae/config": "workspace:*",
+    "@servicehubuae/plugins": "workspace:*",
+    "@servicehubuae/guards": "workspace:*",
+    "@servicehubuae/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "^1.4.3",

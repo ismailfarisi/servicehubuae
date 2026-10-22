@@ -1,6 +1,6 @@
 "use client";
 
-import { Input } from "@mypickuae/ui";
+import { Input } from "@servicehubuae/ui";
 import { Plus, X } from "@phosphor-icons/react";
 import { type Control, type FieldPath, useFieldArray, useFormContext } from "react-hook-form";
 import type { SetupFormValues } from "./SetupForm";

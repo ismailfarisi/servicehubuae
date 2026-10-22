@@ -2,7 +2,7 @@
 
 import { PendingWritesTable } from "@/components/integrations/PendingWritesTable";
 import { usePendingWrites } from "@/lib/queries/integrations";
-import { Skeleton, Tabs, TabsList, TabsTrigger } from "@mypickuae/ui";
+import { Skeleton, Tabs, TabsList, TabsTrigger } from "@servicehubuae/ui";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 

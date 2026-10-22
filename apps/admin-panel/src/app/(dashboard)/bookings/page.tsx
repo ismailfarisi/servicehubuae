@@ -4,7 +4,7 @@ import { QueryError } from "@/components/query-error";
 import { formatDateTime, formatFils, marketplaceDayRange } from "@/lib/booking-format";
 import { useAdminBookings } from "@/lib/queries/bookings";
 import { useVendors } from "@/lib/queries/vendors";
-import { DataTable, FiltersBar, Input, StatusBadge } from "@mypickuae/ui";
+import { DataTable, FiltersBar, Input, StatusBadge } from "@servicehubuae/ui";
 import type { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";

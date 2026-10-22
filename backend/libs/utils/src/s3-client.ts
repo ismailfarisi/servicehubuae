@@ -1,6 +1,6 @@
 import { CloudFrontClient } from "@aws-sdk/client-cloudfront";
 import { S3Client } from "@aws-sdk/client-s3";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 
 let s3: S3Client | null = null;
 let cloudfront: CloudFrontClient | null = null;

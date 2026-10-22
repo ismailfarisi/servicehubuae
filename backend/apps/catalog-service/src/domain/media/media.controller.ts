@@ -1,6 +1,6 @@
-import type { AuthUser } from "@mypickuae/guards";
-import { BadRequestError, ForbiddenError } from "@mypickuae/plugins";
-import { ASSET_TYPE_CONFIG, type MediaService, isAssetType } from "@mypickuae/utils";
+import type { AuthUser } from "@servicehubuae/guards";
+import { BadRequestError, ForbiddenError } from "@servicehubuae/plugins";
+import { ASSET_TYPE_CONFIG, type MediaService, isAssetType } from "@servicehubuae/utils";
 import type { IVendorLookup } from "./vendor-lookup.service.ts";
 
 type MediaPort = Pick<

@@ -3,7 +3,7 @@
 /**
  * Availability picker — the conversion surface of the service PDP.
  *
- * Design (MyPickUAE blue & white UI):
+ * Design (ServiceHubUAE blue & white UI):
  * - Date strip: horizontal-scroll rounded day tabs (short weekday over a bold
  *   day number); the selected day fills brand blue with white text.
  * - Slot grid: slots are grouped into Morning / Afternoon / Evening — a

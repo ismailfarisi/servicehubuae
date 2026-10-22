@@ -1,7 +1,7 @@
 // booking.controller.ts
 //
 // Thin controller for the customer-facing booking APIs (Phase 4 Task 8).
-// Translates the snake_case wire DTOs (@mypickuae/dto's BookingHoldBody /
+// Translates the snake_case wire DTOs (@servicehubuae/dto's BookingHoldBody /
 // CreateBookingBody) into the camelCase inputs BookingService/BookingQueryService
 // expect, and back. customerId is ALWAYS the caller-supplied value derived by
 // the route from the verified JWT (`user.id`) — never trust a body field for it.
@@ -12,7 +12,7 @@ import type {
   MyBookingsQuery,
   NoShowBookingBody,
   RescheduleBookingBody,
-} from "@mypickuae/dto";
+} from "@servicehubuae/dto";
 import type { BookingQueryService } from "./booking-query.service.ts";
 import type { BookingActor } from "./booking-status.service.ts";
 import type { BookingService, HoldBookingResult } from "./booking.service.ts";

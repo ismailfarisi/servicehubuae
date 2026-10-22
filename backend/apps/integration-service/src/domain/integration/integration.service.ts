@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
-import type { AuditLog, VendorIntegration } from "@mypickuae/database";
-import type { EncryptionService } from "@mypickuae/utils";
+import type { AuditLog, VendorIntegration } from "@servicehubuae/database";
+import type { EncryptionService } from "@servicehubuae/utils";
 import type { Repository } from "typeorm";
 
 export interface CreateIntegrationInput {

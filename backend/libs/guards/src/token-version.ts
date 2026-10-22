@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { AppDataSource } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import { AppDataSource } from "@servicehubuae/database";
 import { type RedisClientType, createClient } from "redis";
 
 interface MinimalRedis {

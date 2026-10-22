@@ -3,7 +3,7 @@
 import { getMembershipsFromToken } from "@/lib/auth";
 import { useResendInvite, useTeamMembers } from "@/lib/queries/vendor-members";
 import { useActiveVendor } from "@/stores/active-vendor";
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import { Plus } from "@phosphor-icons/react";
 import { useState } from "react";
 import { ChangeRoleModal } from "./_components/change-role-modal";

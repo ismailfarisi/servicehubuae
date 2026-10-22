@@ -1,4 +1,4 @@
-import { NotificationChannel, NotificationType } from "@mypickuae/database";
+import { NotificationChannel, NotificationType } from "@servicehubuae/database";
 import type {
   INotificationPreferenceRepository,
   PreferenceMatrix,

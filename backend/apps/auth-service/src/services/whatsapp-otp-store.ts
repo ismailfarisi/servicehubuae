@@ -1,5 +1,5 @@
 import { createHash, randomInt, timingSafeEqual } from "node:crypto";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { type RedisClientType, createClient } from "redis";
 
 // Unlike Twilio Verify (which generates and checks codes on Twilio's side),

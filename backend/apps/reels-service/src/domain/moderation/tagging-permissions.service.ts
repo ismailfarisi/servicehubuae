@@ -1,4 +1,8 @@
-import { AppDataSource, type ReelTaggingScope, UserTaggingPermission } from "@mypickuae/database";
+import {
+  AppDataSource,
+  type ReelTaggingScope,
+  UserTaggingPermission,
+} from "@servicehubuae/database";
 
 export interface GrantInput {
   userId: string;

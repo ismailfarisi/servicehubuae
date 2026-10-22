@@ -6,8 +6,8 @@
  * Debounced per-reel at 2 minutes: a burst of events for the same reel
  * coalesces to a single recompute, which is cheap (O(1) DB read + one UPDATE).
  */
-import { config } from "@mypickuae/config";
-import { AppDataSource, Reel } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, Reel } from "@servicehubuae/database";
 import { type Job, Queue, Worker } from "bullmq";
 import { RankingService } from "../ranking.service.ts";
 
@@ -43,7 +43,7 @@ export class RecomputeRankingJob {
         const repo = AppDataSource.getRepository(Reel);
         const reel = await repo.findOne({ where: { id: job.data.reelId } });
         if (!reel || !reel.published_at) return;
-        // Product taps came from reel_product_tags, removed in the MyPickUAE
+        // Product taps came from reel_product_tags, removed in the ServiceHubUAE
         // fork; ranking runs on engagement + recency only.
         const score = this.ranker.computeScore({
           likeCount: reel.like_count,

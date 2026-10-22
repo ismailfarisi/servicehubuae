@@ -15,7 +15,7 @@ import {
 	EmptyState,
 	StatusBadge,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { CalendarCheck, PencilSimple, Plus } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

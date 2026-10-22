@@ -1,5 +1,5 @@
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
-import { sourceSchemas } from "@mypickuae/integration-events";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
+import { sourceSchemas } from "@servicehubuae/integration-events";
 import { Elysia, t } from "elysia";
 
 const ok = (data: unknown) => ({

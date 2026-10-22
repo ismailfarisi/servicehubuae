@@ -17,7 +17,7 @@ import {
 	todayKeyInZone,
 	wallClockInZoneToIso,
 } from "@/lib/booking/tz";
-import { EmptyState, Skeleton, toast } from "@mypickuae/ui";
+import { EmptyState, Skeleton, toast } from "@servicehubuae/ui";
 import { CalendarBlank, UsersThree } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { CalendarToolbar, type CalendarView } from "./CalendarToolbar";

@@ -41,7 +41,7 @@ import {
 	Textarea,
 	toast,
 	useS3Upload,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { ImageSquare, Plus, Trash } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";

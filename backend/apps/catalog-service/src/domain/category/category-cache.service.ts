@@ -1,8 +1,8 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { type RedisClientType, createClient } from "redis";
 import type { CategoryService } from "./category.service.ts";
 
-const CACHE_KEY = "mypickuae:catalog:categories:tree";
+const CACHE_KEY = "servicehubuae:catalog:categories:tree";
 
 export class CategoryCacheService {
   private redis: RedisClientType | null = null;

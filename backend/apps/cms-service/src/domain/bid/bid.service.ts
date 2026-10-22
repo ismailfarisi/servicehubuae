@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   BidStatus,
@@ -7,8 +7,8 @@ import {
   PageLayout,
   SectionBid,
   SourceMode,
-} from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import jwt from "jsonwebtoken";
 import type { EntityManager, FindOptionsWhere } from "typeorm";
 

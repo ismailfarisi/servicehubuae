@@ -22,7 +22,7 @@ export class StaffMember {
   @Column({ type: "uuid" })
   vendor_id!: string;
 
-  // Nullable — a stylist need not be a MyPickUAE login user.
+  // Nullable — a stylist need not be a ServiceHubUAE login user.
   @Column({ type: "uuid", nullable: true })
   user_id!: string | null;
 

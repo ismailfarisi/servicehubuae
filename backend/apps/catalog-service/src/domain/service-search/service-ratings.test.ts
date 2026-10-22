@@ -31,7 +31,7 @@ describe("defaultRatingsDeps.runQuery — approved-only filter (I1)", () => {
   it("filters on status::text = 'approved', matching booking-service's posture", async () => {
     let capturedSql = "";
     let capturedParams: unknown[] = [];
-    mock.module("@mypickuae/database", () => ({
+    mock.module("@servicehubuae/database", () => ({
       AppDataSource: {
         query: async (sql: string, params: unknown[]) => {
           capturedSql = sql;
@@ -55,7 +55,7 @@ describe("defaultRatingsDeps.runQuery — approved-only filter (I1)", () => {
     // `service_reviews.service_offering_id` fails this test instead of only
     // surfacing as a 42703 at runtime.
     let capturedSql = "";
-    mock.module("@mypickuae/database", () => ({
+    mock.module("@servicehubuae/database", () => ({
       AppDataSource: {
         query: async (sql: string) => {
           capturedSql = sql;

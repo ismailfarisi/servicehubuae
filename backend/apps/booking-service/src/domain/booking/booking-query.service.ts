@@ -6,7 +6,7 @@
 // `customer_user_id = customerId` so one customer can never read another
 // customer's booking — getById returns null (route maps to 404) rather than
 // throwing, matching order-service's OrderQueryService.getById convention.
-import type { Booking } from "@mypickuae/database";
+import type { Booking } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 export interface ListBookingsQuery {

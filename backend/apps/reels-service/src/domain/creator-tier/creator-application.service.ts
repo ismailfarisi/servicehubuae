@@ -4,8 +4,8 @@ import {
   CreatorApplicationStatus,
   CreatorTier,
   User,
-} from "@mypickuae/database";
-import { MediaService } from "@mypickuae/utils";
+} from "@servicehubuae/database";
+import { MediaService } from "@servicehubuae/utils";
 import { type EntityManager, In, type Repository } from "typeorm";
 
 export interface ApplyDto {

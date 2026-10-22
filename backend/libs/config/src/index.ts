@@ -36,9 +36,9 @@ export const config = {
   database: {
     host: process.env.DB_HOST || "127.0.0.1",
     port: Number(process.env.DB_PORT) || 5432,
-    username: process.env.DB_USERNAME || "mypickuae",
-    password: isProduction ? requireEnv("DB_PASSWORD") : process.env.DB_PASSWORD || "mypickuae",
-    database: process.env.DB_NAME || "mypickuae",
+    username: process.env.DB_USERNAME || "servicehubuae",
+    password: isProduction ? requireEnv("DB_PASSWORD") : process.env.DB_PASSWORD || "servicehubuae",
+    database: process.env.DB_NAME || "servicehubuae",
   },
   redis: {
     host: process.env.REDIS_HOST || "127.0.0.1",
@@ -57,7 +57,7 @@ export const config = {
   },
   aws: {
     region: process.env.AWS_REGION || "me-south-1",
-    // SES identities are region-scoped. The verified mypickuae.com identity
+    // SES identities are region-scoped. The verified servicehubuae.com identity
     // lives in a specific region that may differ from where S3/media run, so
     // SES gets its own region knob. Falls back to AWS_REGION when unset.
     sesRegion: process.env.SES_REGION || process.env.AWS_REGION || "me-south-1",
@@ -71,7 +71,7 @@ export const config = {
     s3Endpoint: process.env.S3_ENDPOINT || "",
   },
   media: {
-    s3Bucket: process.env.S3_MEDIA_BUCKET || "mypickuae-media-dev",
+    s3Bucket: process.env.S3_MEDIA_BUCKET || "servicehubuae-media-dev",
     cloudfrontDomain: process.env.CLOUDFRONT_DOMAIN || "",
     cloudfrontDistributionId: process.env.CLOUDFRONT_DISTRIBUTION_ID || "",
     maxFileSize: 10 * 1024 * 1024,
@@ -80,7 +80,7 @@ export const config = {
   },
   invoice: {
     trn: process.env.PLATFORM_TRN || null,
-    legalName: process.env.PLATFORM_LEGAL_NAME || "MyPickUAE",
+    legalName: process.env.PLATFORM_LEGAL_NAME || "ServiceHubUAE",
   },
   twoFa: {
     encryptionKey: isProduction

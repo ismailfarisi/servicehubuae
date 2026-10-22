@@ -1,4 +1,4 @@
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 import type { UserRole } from "./types.ts";
 
 export interface AccessJwtSigner {

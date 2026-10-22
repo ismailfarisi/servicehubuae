@@ -28,7 +28,7 @@ import {
 	TableHeader,
 	TableRow,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { MapPin, Pencil, Plus, Trash2 } from "lucide-react";
 import { useMemo, useState } from "react";
 

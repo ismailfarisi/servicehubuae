@@ -21,15 +21,15 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
     "paths": {
-      "@mypickuae/dto": ["./libs/dto/src/index.ts"],
-      "@mypickuae/guards": ["./libs/guards/src/index.ts"],
-      "@mypickuae/plugins": ["./libs/plugins/src/index.ts"],
-      "@mypickuae/utils": ["./libs/utils/src/index.ts"],
-      "@mypickuae/config": ["./libs/config/src/index.ts"],
-      "@mypickuae/database": ["./libs/database/src/index.ts"],
-      "@mypickuae/bulk-jobs": ["./libs/bulk-jobs/src/index.ts"],
-      "@mypickuae/integration-mapper": ["./libs/integration-mapper/src/index.ts"],
-      "@mypickuae/integration-events": ["./libs/integration-events/src/index.ts"]
+      "@servicehubuae/dto": ["./libs/dto/src/index.ts"],
+      "@servicehubuae/guards": ["./libs/guards/src/index.ts"],
+      "@servicehubuae/plugins": ["./libs/plugins/src/index.ts"],
+      "@servicehubuae/utils": ["./libs/utils/src/index.ts"],
+      "@servicehubuae/config": ["./libs/config/src/index.ts"],
+      "@servicehubuae/database": ["./libs/database/src/index.ts"],
+      "@servicehubuae/bulk-jobs": ["./libs/bulk-jobs/src/index.ts"],
+      "@servicehubuae/integration-mapper": ["./libs/integration-mapper/src/index.ts"],
+      "@servicehubuae/integration-events": ["./libs/integration-events/src/index.ts"]
     }
   }
 }

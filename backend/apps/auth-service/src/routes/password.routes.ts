@@ -1,7 +1,7 @@
 import { bearer } from "@elysiajs/bearer";
 import { jwt } from "@elysiajs/jwt";
-import { config } from "@mypickuae/config";
-import { bumpTokenVersion } from "@mypickuae/guards";
+import { config } from "@servicehubuae/config";
+import { bumpTokenVersion } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 import { getDeviceInfo } from "../domain/types.ts";

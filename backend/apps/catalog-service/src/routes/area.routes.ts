@@ -1,6 +1,6 @@
-import { CreateAreaBody, UpdateAreaBody } from "@mypickuae/dto";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
-import { auditPlugin } from "@mypickuae/plugins";
+import { CreateAreaBody, UpdateAreaBody } from "@servicehubuae/dto";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
+import { auditPlugin } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

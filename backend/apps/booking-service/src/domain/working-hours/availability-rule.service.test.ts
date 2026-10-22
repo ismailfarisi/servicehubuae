@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { StaffMember, StaffTimeOff, StaffWorkingHours } from "@mypickuae/database";
-import { BadRequestError, NotFoundError } from "@mypickuae/plugins";
+import type { StaffMember, StaffTimeOff, StaffWorkingHours } from "@servicehubuae/database";
+import { BadRequestError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { AvailabilityRuleService } from "./availability-rule.service.ts";
 

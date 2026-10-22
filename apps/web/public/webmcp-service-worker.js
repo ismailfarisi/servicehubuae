@@ -1,5 +1,5 @@
-const SEARCH_TOOL_NAME = "mypickuae.service.searchServices";
-const OPEN_BOOKINGS_TOOL_NAME = "mypickuae.service.openMyBookings";
+const SEARCH_TOOL_NAME = "servicehubuae.service.searchServices";
+const OPEN_BOOKINGS_TOOL_NAME = "servicehubuae.service.openMyBookings";
 
 self.addEventListener("install", () => {
 	self.skipWaiting();
@@ -23,9 +23,9 @@ function registerWebMcpTools() {
 		tools: [
 			{
 				name: SEARCH_TOOL_NAME,
-				title: "Search MyPickUAE services",
+				title: "Search ServiceHubUAE services",
 				description:
-					"Open MyPickUAE service search results for a concise customer-provided service, category, or job.",
+					"Open ServiceHubUAE service search results for a concise customer-provided service, category, or job.",
 				inputSchema: {
 					type: "object",
 					properties: {
@@ -63,7 +63,7 @@ function registerWebMcpTools() {
 
 					return {
 						content: [
-							{ type: "text", text: `Opened MyPickUAE search for "${query}".` },
+							{ type: "text", text: `Opened ServiceHubUAE search for "${query}".` },
 						],
 						structuredContent: { openedWindow: true, path, query },
 					};
@@ -71,9 +71,9 @@ function registerWebMcpTools() {
 			},
 			{
 				name: OPEN_BOOKINGS_TOOL_NAME,
-				title: "Open my MyPickUAE bookings",
+				title: "Open my ServiceHubUAE bookings",
 				description:
-					"Open the customer's MyPickUAE bookings page in a browser window.",
+					"Open the customer's ServiceHubUAE bookings page in a browser window.",
 				inputSchema: {
 					type: "object",
 					properties: {
@@ -91,7 +91,7 @@ function registerWebMcpTools() {
 					await self.clients.openWindow(path);
 
 					return {
-						content: [{ type: "text", text: "Opened MyPickUAE bookings." }],
+						content: [{ type: "text", text: "Opened ServiceHubUAE bookings." }],
 						structuredContent: { openedWindow: true, path },
 					};
 				},

@@ -35,8 +35,8 @@ import {
   Vendor,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
-import type { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import type { HttpError } from "@servicehubuae/plugins";
 import { EngagementService } from "../engagement/engagement.service.ts";
 import { ServiceReviewRatingService } from "./service-review-rating.service.ts";
 import { ServiceReviewService } from "./service-review.service.ts";

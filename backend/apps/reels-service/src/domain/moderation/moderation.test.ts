@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
-import { ReelModerationAction, ReelStatus } from "@mypickuae/database";
+import { ReelModerationAction, ReelStatus } from "@servicehubuae/database";
 import { ModerationService } from "./moderation.service.ts";
 
 function makeFakes(reel: any) {

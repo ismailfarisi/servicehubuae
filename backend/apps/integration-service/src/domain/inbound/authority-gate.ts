@@ -1,4 +1,4 @@
-import { IntegrationAuthority, IntegrationEventType } from "@mypickuae/database";
+import { IntegrationAuthority, IntegrationEventType } from "@servicehubuae/database";
 
 export interface AuthorityDecision {
   action: "apply" | "stage";

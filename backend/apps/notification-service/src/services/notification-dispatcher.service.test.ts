@@ -337,7 +337,7 @@ describe("NotificationDispatcherService", () => {
             policy: "percent",
             forfeit_fils: "1000",
             refund_fils: "0",
-            dispute_url: "https://app.mypickuae.com/support/bookings/bk-1",
+            dispute_url: "https://app.servicehubuae.com/support/bookings/bk-1",
           },
           data: { bookingId: "bk-1" },
         },
@@ -349,7 +349,7 @@ describe("NotificationDispatcherService", () => {
             booking_number: "BK-001",
             starts_at: "2026-08-10T10:00:00.000Z",
             reason: "Your card was declined.",
-            pay_now_url: "https://app.mypickuae.com/bookings/bk-1",
+            pay_now_url: "https://app.servicehubuae.com/bookings/bk-1",
           },
           data: { bookingId: "bk-1" },
         },
@@ -381,7 +381,7 @@ describe("NotificationDispatcherService", () => {
           data: {
             bookingId: "bk-1",
             ics: {
-              uid: "booking-bk-1@mypickuae.com",
+              uid: "booking-bk-1@servicehubuae.com",
               summary: "Deep Tissue Massage",
               text: "BEGIN:VCALENDAR\nEND:VCALENDAR",
             },
@@ -528,7 +528,7 @@ describe("NotificationDispatcherService", () => {
           policy: "percent",
           forfeit_fils: "1000",
           refund_fils: "500",
-          dispute_url: "https://app.mypickuae.com/support/bookings/bk-1",
+          dispute_url: "https://app.servicehubuae.com/support/bookings/bk-1",
         },
         data: {},
       });
@@ -536,8 +536,8 @@ describe("NotificationDispatcherService", () => {
       const sendArg = ctx2.notificationService.send.mock.calls[0]![0] as any;
       expect(sendArg.body).toContain("AED 10.00");
       expect(sendArg.body).toContain("AED 5.00");
-      expect(sendArg.body).toContain("https://app.mypickuae.com/support/bookings/bk-1");
-      expect(sendArg.action_url).toBe("https://app.mypickuae.com/support/bookings/bk-1");
+      expect(sendArg.body).toContain("https://app.servicehubuae.com/support/bookings/bk-1");
+      expect(sendArg.action_url).toBe("https://app.servicehubuae.com/support/bookings/bk-1");
     });
 
     it("booking_payment_failed: action_url is the pay-now link and the body includes it", async () => {
@@ -550,14 +550,14 @@ describe("NotificationDispatcherService", () => {
           booking_number: "BK-001",
           starts_at: "2026-08-10T10:00:00.000Z",
           reason: "Your card was declined.",
-          pay_now_url: "https://app.mypickuae.com/bookings/bk-1",
+          pay_now_url: "https://app.servicehubuae.com/bookings/bk-1",
         },
         data: {},
       });
 
       const sendArg = ctx2.notificationService.send.mock.calls[0]![0] as any;
-      expect(sendArg.action_url).toBe("https://app.mypickuae.com/bookings/bk-1");
-      expect(sendArg.body).toContain("https://app.mypickuae.com/bookings/bk-1");
+      expect(sendArg.action_url).toBe("https://app.servicehubuae.com/bookings/bk-1");
+      expect(sendArg.body).toContain("https://app.servicehubuae.com/bookings/bk-1");
       expect(sendArg.body).toContain("Your card was declined.");
     });
 
@@ -602,7 +602,7 @@ describe("NotificationDispatcherService", () => {
         data: {
           bookingId: "bk-1",
           ics: {
-            uid: "booking-bk-1@mypickuae.com",
+            uid: "booking-bk-1@servicehubuae.com",
             summary: "Deep Tissue Massage",
             text: "BEGIN:VCALENDAR\nEND:VCALENDAR",
           },

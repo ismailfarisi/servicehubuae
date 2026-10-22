@@ -1,5 +1,5 @@
 import { describe, expect, it } from "bun:test";
-import { IntegrationAuthority } from "@mypickuae/database";
+import { IntegrationAuthority } from "@servicehubuae/database";
 import { decideAuthority } from "./authority-gate.ts";
 
 describe("decideAuthority", () => {

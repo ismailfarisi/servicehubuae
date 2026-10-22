@@ -21,7 +21,7 @@ export interface WhatsAppTemplateMapping {
 
 const WHATSAPP_TEMPLATES: Record<string, WhatsAppTemplateMapping> = {
   // Booking/quotation templates are added here once they are approved in the
-  // MyPickUAE Meta WhatsApp Business account.
+  // ServiceHubUAE Meta WhatsApp Business account.
   payout_sent: { templateName: "payout_sent", paramOrder: ["amount"] },
 };
 

@@ -22,7 +22,7 @@ const nextConfig = {
         : []),
       {
         protocol: "https",
-        hostname: "cdn.mypickuae.com",
+        hostname: "cdn.servicehubuae.com",
       },
       {
         protocol: "https",

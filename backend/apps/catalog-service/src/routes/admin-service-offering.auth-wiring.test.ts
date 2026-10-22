@@ -47,8 +47,8 @@
 // CI is unaffected either way (backend/scripts/test-ci.sh runs one bun test
 // process per file), but local `bun test` runs every file in one process.
 import { beforeEach, describe, expect, it, mock } from "bun:test";
-import { config } from "@mypickuae/config";
-import { errorHandler } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { errorHandler } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 import jwt from "jsonwebtoken";
 

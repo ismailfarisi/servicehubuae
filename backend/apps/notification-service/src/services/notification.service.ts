@@ -1,5 +1,5 @@
-import type { Notification } from "@mypickuae/database";
-import { ForbiddenError, NotFoundError } from "@mypickuae/plugins";
+import type { Notification } from "@servicehubuae/database";
+import { ForbiddenError, NotFoundError } from "@servicehubuae/plugins";
 import type { INotificationRepository } from "../domain/types.ts";
 
 export class NotificationService {

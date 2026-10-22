@@ -29,14 +29,14 @@ import {
   type ServiceOffering,
   ServiceOfferingStatus,
   StaffEngagement,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import {
   BadRequestError,
   ConflictError,
   HttpError,
   NotFoundError,
   UnprocessableEntityError,
-} from "@mypickuae/plugins";
+} from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import type { AvailabilityCache } from "../availability/availability-cache.ts";
 import type { AvailabilityService } from "../availability/availability.service.ts";
@@ -227,12 +227,12 @@ export class RescheduleService {
 
     // Phase 6 (review I1): a manual walk-in/phone booking (customer_user_id
     // NULL <=> source !== 'marketplace', see booking.entity.ts) must NEVER be
-    // rescheduled through this flow. It has no MyPickUAE customer and no
+    // rescheduled through this flow. It has no ServiceHubUAE customer and no
     // commission accrual (ManualBookingService's binding capacity-only
     // decision), but reschedule() unconditionally re-arms the auto-complete
     // job at the end — which for a service-bearing walk-in would eventually
     // complete it with commissionFils:0 and post a zero-commission accrual row
-    // that pays the vendor the walk-in's full net price for money MyPickUAE
+    // that pays the vendor the walk-in's full net price for money ServiceHubUAE
     // never touched. A manager retiming a walk-in should just cancel + recreate
     // it (same rationale the service-offering guard below already states). 422
     // (well-formed request, business rule blocks it) — the actor CAN see this

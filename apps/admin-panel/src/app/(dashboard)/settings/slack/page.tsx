@@ -16,7 +16,7 @@ import {
 	Label,
 	Switch,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { Copy, Key, Slack } from "lucide-react";
 import { useEffect, useState } from "react";
 

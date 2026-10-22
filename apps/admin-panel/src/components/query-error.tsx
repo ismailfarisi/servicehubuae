@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 
 // A failed list query must never render as an empty table. That failure mode
 // shipped once already (PR #338: a missing gateway prefix 404'd every admin

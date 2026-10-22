@@ -6,7 +6,7 @@ import {
   PutObjectCommand,
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import sharp from "sharp";
 import { ASSET_TYPE_CONFIG, type MediaAssetType, buildAssetKey } from "./asset-type-config.ts";
 import { getCloudFrontClient, getS3Client } from "./s3-client.ts";

@@ -1,4 +1,4 @@
-import { NotFoundError } from "@mypickuae/plugins";
+import { NotFoundError } from "@servicehubuae/plugins";
 import type { IntegrationService } from "./integration.service.ts";
 
 export class IntegrationController {

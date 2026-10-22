@@ -4,7 +4,7 @@
 // pay_at_venue gate thresholds. Real COUNT-over-Postgres behaviour (per-vendor
 // isolation, platform-wide roll-up) is covered by the live-DB integration suite.
 import { describe, expect, it, mock } from "bun:test";
-import { BookingStatus } from "@mypickuae/database";
+import { BookingStatus } from "@servicehubuae/database";
 import { StrikeService } from "./strike.service.ts";
 
 const VENDOR_THRESHOLD = 3;

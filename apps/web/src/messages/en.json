@@ -63,7 +63,7 @@
     "myBookings": "My Bookings"
   },
   "home": {
-    "title": "MyPickUAE — Book trusted services across the UAE",
+    "title": "ServiceHubUAE — Book trusted services across the UAE",
     "description": "Compare vendors, book appointments and request quotations for home, wellness, auto and business services across the UAE.",
     "heroEyebrow": "Services marketplace · UAE",
     "heroTitle": "Book trusted services across the UAE",
@@ -151,7 +151,7 @@
     },
     "bookings": "Bookings",
     "creatorApplyTitle": "Become a Creator",
-    "creatorApplyIntro": "Share videos about the services you love and collaborate with vendors on MyPickUAE. Apply below — our team reviews every application.",
+    "creatorApplyIntro": "Share videos about the services you love and collaborate with vendors on ServiceHubUAE. Apply below — our team reviews every application.",
     "creatorApplyDisplayName": "Creator name",
     "creatorApplyBio": "Short bio",
     "creatorApplyCategory": "Primary niche",
@@ -286,13 +286,13 @@
     "createAccount": "Create account"
   },
   "footer": {
-    "about": "About MyPickUAE",
+    "about": "About ServiceHubUAE",
     "help": "Help Center",
     "sell": "Become a vendor",
     "categories": "Categories",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
-    "copyright": "© {year} MyPickUAE. All rights reserved."
+    "copyright": "© {year} ServiceHubUAE. All rights reserved."
   },
   "vendor": {
     "authorized_retailer": "Authorized Retailer",
@@ -301,7 +301,7 @@
   },
   "consent": {
     "title": "We use cookies to improve your experience",
-    "description": "We use analytics and marketing cookies to understand how visitors use MyPickUAE and to measure the effectiveness of our ads. You can change your decision at any time in account settings.",
+    "description": "We use analytics and marketing cookies to understand how visitors use ServiceHubUAE and to measure the effectiveness of our ads. You can change your decision at any time in account settings.",
     "accept": "Accept",
     "reject": "Reject"
   },
@@ -372,7 +372,7 @@
       },
       "reviews": {
         "title": "Customer reviews",
-        "empty": "No reviews yet. Reviews come only from customers who booked through MyPickUAE.",
+        "empty": "No reviews yet. Reviews come only from customers who booked through ServiceHubUAE.",
         "starsLabel": "{rating} out of 5 stars",
         "basedOn": "Based on {count, plural, one {# verified booking} other {# verified bookings}}",
         "vendorReply": "Reply from the vendor",

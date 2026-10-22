@@ -6,9 +6,9 @@
 // admin-only) via `vendorMembership("products.write")` at the route level,
 // plus BlockTimeController.create's location-scoped `assertLocationManager`
 // check for creation.
-import type { EngagementKind } from "@mypickuae/database";
-import { CreateBlockBody } from "@mypickuae/dto";
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+import type { EngagementKind } from "@servicehubuae/database";
+import { CreateBlockBody } from "@servicehubuae/dto";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 

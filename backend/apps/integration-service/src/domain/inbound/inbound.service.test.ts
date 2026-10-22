@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
-import { IntegrationAuthority, IntegrationEventType } from "@mypickuae/database";
+import { IntegrationAuthority, IntegrationEventType } from "@servicehubuae/database";
 import { InboundService } from "./inbound.service.ts";
 
 const integ = {

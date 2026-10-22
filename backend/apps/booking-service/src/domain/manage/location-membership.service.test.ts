@@ -6,7 +6,7 @@
 // subset of vendor membership" 422, find-then-write duplicate reactivation
 // (NOT a double-insert), and delete scoping (wrong-location/nonexistent 404).
 import { describe, expect, it, mock } from "bun:test";
-import { ForbiddenError, NotFoundError, UnprocessableEntityError } from "@mypickuae/plugins";
+import { ForbiddenError, NotFoundError, UnprocessableEntityError } from "@servicehubuae/plugins";
 import { LocationMembershipService } from "./location-membership.service.ts";
 
 const OWNER = { userId: "user-owner", vendorId: "vendor-1", role: "owner" };

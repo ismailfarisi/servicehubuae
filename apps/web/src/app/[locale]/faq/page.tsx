@@ -6,9 +6,9 @@ import {
 import { VENDOR_REGISTER_URL } from "@/lib/vendor-dashboard";
 
 export const metadata: Metadata = {
-	title: "Frequently Asked Questions — MyPickUAE",
+	title: "Frequently Asked Questions — ServiceHubUAE",
 	description:
-		"Answers to the most common MyPickUAE questions: booking services, changes and cancellations, payments, vendors and account.",
+		"Answers to the most common ServiceHubUAE questions: booking services, changes and cancellations, payments, vendors and account.",
 };
 
 const FAQ_GROUPS: Array<{
@@ -104,7 +104,7 @@ const FAQ_GROUPS: Array<{
 				a: (
 					<>
 						Online payments are handled by a PCI-DSS compliant payment
-						provider. Card details are never stored on MyPickUAE&rsquo;s
+						provider. Card details are never stored on ServiceHubUAE&rsquo;s
 						servers.
 					</>
 				),
@@ -134,7 +134,7 @@ const FAQ_GROUPS: Array<{
 				),
 			},
 			{
-				q: "How do I become a vendor on MyPickUAE?",
+				q: "How do I become a vendor on ServiceHubUAE?",
 				a: (
 					<>
 						Register your interest on the{" "}

@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { ServiceUnavailableError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { ServiceUnavailableError } from "@servicehubuae/plugins";
 
 export interface DownloadProvider {
   /** Mint a signed, expiring download URL for the given Cloudflare Stream asset. */

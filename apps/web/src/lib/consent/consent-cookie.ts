@@ -2,7 +2,7 @@ import { getCookie, setCookie } from "cookies-next/client";
 
 export type ConsentDecision = "accepted" | "rejected" | null;
 
-const COOKIE = "mypickuae_consent";
+const COOKIE = "servicehubuae_consent";
 const MAX_AGE = 60 * 60 * 24 * 365; // 365 days
 
 export function readConsentCookie(): ConsentDecision {

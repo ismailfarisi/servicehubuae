@@ -127,7 +127,7 @@ export const reducer = (state: State, action: Action): State => {
 // into separate route chunks) share the same state. Otherwise toast() ends up
 // in one bundle while the mounted Toaster's useToast lives in another, and
 // nothing renders.
-const GLOBAL_KEY = Symbol.for("@mypickuae/ui/use-toast/state");
+const GLOBAL_KEY = Symbol.for("@servicehubuae/ui/use-toast/state");
 type GlobalRegistry = {
 	memoryState: State;
 	listeners: Array<(state: State) => void>;

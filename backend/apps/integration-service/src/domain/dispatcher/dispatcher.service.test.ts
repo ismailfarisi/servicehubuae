@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from "bun:test";
-import { IntegrationEventType } from "@mypickuae/database";
+import { IntegrationEventType } from "@servicehubuae/database";
 import { startMockVendorServer } from "../../test-helpers/mock-vendor-server.ts";
 import { DispatcherService } from "./dispatcher.service.ts";
 

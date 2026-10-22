@@ -183,8 +183,8 @@ export default async function HomePage({
           __html: JSON.stringify({
             "@context": "https://schema.org",
             "@type": "Organization",
-            name: "MyPickUAE",
-            url: "https://www.mypickuae.com",
+            name: "ServiceHubUAE",
+            url: "https://www.servicehubuae.com",
             description: t("description"),
           }),
         }}

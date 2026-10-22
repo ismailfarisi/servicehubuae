@@ -47,8 +47,8 @@ echo "/dev/xvdf /data ext4 defaults,nofail 0 2" >> /etc/fstab
 mkdir -p /data/typesense /data/caddy_data /data/caddy_config
 
 # ─── Write base .env (non-secret config only) ─────────────────
-mkdir -p /opt/mypickuae
-cat > /opt/mypickuae/.env <<ENVEOF
+mkdir -p /opt/servicehubuae
+cat > /opt/servicehubuae/.env <<ENVEOF
 # ─── Infra ────────────────────────────────────────────────────
 NODE_ENV=production
 AWS_REGION=${aws_region}
@@ -108,33 +108,33 @@ ADMIN_PANEL_URL=${admin_panel_url}
 # code-default-only) so it's explicit in the deployed env, same as
 # APP_URL/PUBLIC_API_URL below. CI's SSM sync (deploy-prod.yml) overrides
 # this on every deploy; this is only the first-boot value.
-WEB_URL=https://mypickuae.com
-WEB_WWW_URL=https://www.mypickuae.com
+WEB_URL=https://servicehubuae.com
+WEB_WWW_URL=https://www.servicehubuae.com
 
 # ─── Email (AWS SES) ──────────────────────────────────────────
 # SES is region-scoped via SES_REGION (separate from AWS_REGION so S3/media
-# region is independent). mypickuae.com is the verified SES identity, with
+# region is independent). servicehubuae.com is the verified SES identity, with
 # production access, in ap-south-1. APP_URL backs verify/reset/magic-link
 # emails; PUBLIC_API_URL backs the newsletter unsubscribe link (API gateway).
 SES_REGION=ap-south-1
-SES_FROM_ADDRESS=noreply@mypickuae.com
-APP_URL=https://mypickuae.com
-PUBLIC_API_URL=https://api.mypickuae.com
+SES_FROM_ADDRESS=noreply@servicehubuae.com
+APP_URL=https://servicehubuae.com
+PUBLIC_API_URL=https://api.servicehubuae.com
 ENVEOF
 
 # ─── Pull the SSM refresher from S3 and run it ────────────────
 # Too large to embed in user_data (16 KB cap); lives in s3://${config_bucket}/.
 aws s3 cp \
   "s3://${config_bucket}/scripts/refresh-env-from-ssm.sh" \
-  /opt/mypickuae/refresh-env-from-ssm.sh \
+  /opt/servicehubuae/refresh-env-from-ssm.sh \
   --region "${aws_region}"
-chmod +x /opt/mypickuae/refresh-env-from-ssm.sh
+chmod +x /opt/servicehubuae/refresh-env-from-ssm.sh
 
-AWS_REGION=${aws_region} /opt/mypickuae/refresh-env-from-ssm.sh \
-  /opt/mypickuae/.env "${project_name}" production
+AWS_REGION=${aws_region} /opt/servicehubuae/refresh-env-from-ssm.sh \
+  /opt/servicehubuae/.env "${project_name}" production
 
 # ─── Caddyfile ────────────────────────────────────────────────
-cat > /opt/mypickuae/Caddyfile <<'CADDYEOF'
+cat > /opt/servicehubuae/Caddyfile <<'CADDYEOF'
 ${api_domain} {
   reverse_proxy {
     dynamic a api-gateway 3000
@@ -142,7 +142,7 @@ ${api_domain} {
 }
 CADDYEOF
 
-cat > /opt/mypickuae/config.alloy <<'ALLOYEOF'
+cat > /opt/servicehubuae/config.alloy <<'ALLOYEOF'
 logging {
   level  = "info"
   format = "logfmt"
@@ -229,7 +229,7 @@ prometheus.remote_write "grafana_cloud" {
 ALLOYEOF
 
 # ─── docker-compose.yml ──────────────────────────────────────
-cat > /opt/mypickuae/docker-compose.yml <<'COMPOSEEOF'
+cat > /opt/servicehubuae/docker-compose.yml <<'COMPOSEEOF'
 services:
   caddy:
     image: caddy:2-alpine
@@ -256,7 +256,7 @@ services:
       TYPESENSE_DATA_DIR: /data
 
   api-gateway:
-    image: $${ECR_REGISTRY}/mypickuae-api-gateway:production
+    image: $${ECR_REGISTRY}/servicehubuae-api-gateway:production
     restart: always
     mem_limit: 384m
     expose:
@@ -264,13 +264,13 @@ services:
     env_file: .env
 
   auth-service:
-    image: $${ECR_REGISTRY}/mypickuae-auth-service:production
+    image: $${ECR_REGISTRY}/servicehubuae-auth-service:production
     restart: always
     mem_limit: 384m
     env_file: .env
 
   catalog-service:
-    image: $${ECR_REGISTRY}/mypickuae-catalog-service:production
+    image: $${ECR_REGISTRY}/servicehubuae-catalog-service:production
     restart: always
     # 1g (not 384m): catalog-service runs the Typesense service reindex and
     # search-sync workers, which load offerings in batches with relations.
@@ -280,31 +280,31 @@ services:
       - typesense
 
   vendor-service:
-    image: $${ECR_REGISTRY}/mypickuae-vendor-service:production
+    image: $${ECR_REGISTRY}/servicehubuae-vendor-service:production
     restart: always
     mem_limit: 384m
     env_file: .env
 
   notification-service:
-    image: $${ECR_REGISTRY}/mypickuae-notification-service:production
+    image: $${ECR_REGISTRY}/servicehubuae-notification-service:production
     restart: always
     mem_limit: 384m
     env_file: .env
 
   cms-service:
-    image: $${ECR_REGISTRY}/mypickuae-cms-service:production
+    image: $${ECR_REGISTRY}/servicehubuae-cms-service:production
     restart: always
     mem_limit: 384m
     env_file: .env
 
   reels-service:
-    image: $${ECR_REGISTRY}/mypickuae-reels-service:production
+    image: $${ECR_REGISTRY}/servicehubuae-reels-service:production
     restart: always
     mem_limit: 384m
     env_file: .env
 
   integration-service:
-    image: $${ECR_REGISTRY}/mypickuae-integration-service:production
+    image: $${ECR_REGISTRY}/servicehubuae-integration-service:production
     restart: always
     # 1g: integration-service owns sales-channel feed generation. The feed
     # builder hydrates product relations and runs alongside BullMQ workers; 384m
@@ -313,7 +313,7 @@ services:
     env_file: .env
 
   booking-service:
-    image: $${ECR_REGISTRY}/mypickuae-booking-service:production
+    image: $${ECR_REGISTRY}/servicehubuae-booking-service:production
     restart: always
     mem_limit: 384m
     env_file: .env
@@ -336,14 +336,14 @@ services:
   # One-shot migration runner. profiles: ["tools"] keeps it out of `up`.
   # Invoke:  docker-compose --profile tools run --rm migrate
   migrate:
-    image: $${ECR_REGISTRY}/mypickuae-reels-service:production
+    image: $${ECR_REGISTRY}/servicehubuae-reels-service:production
     command: bun run libs/database/src/run-migrations.ts
     env_file: .env
     profiles: ["tools"]
 COMPOSEEOF
 
 # ─── Start services ──────────────────────────────────────────
-cd /opt/mypickuae
+cd /opt/servicehubuae
 
 aws ecr get-login-password --region "${aws_region}" | \
   docker login --username AWS --password-stdin "${ecr_registry}"

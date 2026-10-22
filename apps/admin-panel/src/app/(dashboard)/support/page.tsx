@@ -9,7 +9,7 @@ import {
   FiltersBar,
   Input,
   Skeleton,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useTickets } from "@/lib/queries/support";
 import { Search } from "lucide-react";
 

@@ -8,8 +8,8 @@
 // notification emission. The real slot-free / job-cleanup / DB transitions are
 // covered by the live-DB integration suite.
 import { describe, expect, it, mock } from "bun:test";
-import { BookingStatus, CancellationRefundPolicy, NotificationType } from "@mypickuae/database";
-import type { HttpError } from "@mypickuae/plugins";
+import { BookingStatus, CancellationRefundPolicy, NotificationType } from "@servicehubuae/database";
+import type { HttpError } from "@servicehubuae/plugins";
 import { InvalidBookingTransitionError } from "./booking-status.service.ts";
 import { CancelService } from "./cancel.service.ts";
 

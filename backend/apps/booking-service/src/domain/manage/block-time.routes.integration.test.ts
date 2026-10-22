@@ -18,7 +18,7 @@
 //   4. deleting a marketplace-kind engagement via this route -> 404 (never
 //      leaked, never released).
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   EngagementKind,
@@ -36,8 +36,8 @@ import {
   VendorMemberStatus,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
-import { permissionMatrix } from "@mypickuae/guards";
+} from "@servicehubuae/database";
+import { permissionMatrix } from "@servicehubuae/guards";
 import jwt from "jsonwebtoken";
 import { app } from "../../app.ts";
 

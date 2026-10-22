@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue, Worker } from "bullmq";
 import type { BookingReaperService } from "./booking-reaper.service.ts";
 

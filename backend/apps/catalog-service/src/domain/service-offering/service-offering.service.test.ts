@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { ServiceOffering, ServiceOfferingTranslation, Vendor } from "@mypickuae/database";
-import { NotFoundError } from "@mypickuae/plugins";
+import type { ServiceOffering, ServiceOfferingTranslation, Vendor } from "@servicehubuae/database";
+import { NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { ServiceOfferingService } from "./service-offering.service.ts";
 

@@ -1,5 +1,5 @@
-import { AppDataSource, CreatorPortfolioVideo } from "@mypickuae/database";
-import { MediaService } from "@mypickuae/utils";
+import { AppDataSource, CreatorPortfolioVideo } from "@servicehubuae/database";
+import { MediaService } from "@servicehubuae/utils";
 import type { Repository } from "typeorm";
 
 const SAMPLE_LIMIT = 6;

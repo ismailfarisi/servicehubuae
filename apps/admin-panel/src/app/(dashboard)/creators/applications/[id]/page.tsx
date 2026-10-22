@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Button, StatusBadge, Skeleton } from "@mypickuae/ui";
+import { Button, StatusBadge, Skeleton } from "@servicehubuae/ui";
 import {
   useCreatorApplication,
   useApproveCreatorApplication,

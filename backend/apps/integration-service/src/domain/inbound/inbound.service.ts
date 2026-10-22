@@ -5,9 +5,9 @@ import {
   type VendorIntegration,
   type VendorIntegrationDelivery,
   type VendorIntegrationMapping,
-} from "@mypickuae/database";
-import { transform, validateSpec } from "@mypickuae/integration-mapper";
-import type { EncryptionService } from "@mypickuae/utils";
+} from "@servicehubuae/database";
+import { transform, validateSpec } from "@servicehubuae/integration-mapper";
+import type { EncryptionService } from "@servicehubuae/utils";
 import type { Repository } from "typeorm";
 import { verify } from "../dispatcher/signer.ts";
 import type { PendingWritesService } from "../pending-writes/pending-writes.service.ts";

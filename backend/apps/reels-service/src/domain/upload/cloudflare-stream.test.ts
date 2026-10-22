@@ -1,5 +1,5 @@
 import { describe, expect, it, mock, spyOn } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { CloudflareStreamClient } from "./cloudflare-stream.client.ts";
 
 describe("CloudflareStreamClient", () => {

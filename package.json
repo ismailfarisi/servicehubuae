@@ -1,15 +1,15 @@
 {
-  "name": "mypickuae",
+  "name": "servicehubuae",
   "private": true,
   "packageManager": "bun@1.4.3",
   "scripts": {
     "dev": "turbo run dev --concurrency 15",
     "dev:local": "bun scripts/dev-local.ts",
     "prod:local": "bun scripts/dev-local.ts --prod",
-    "dev:web": "turbo run dev --filter=@mypickuae/web",
-    "dev:vendor": "turbo run dev --filter=@mypickuae/vendor-dashboard",
-    "dev:admin": "turbo run dev --filter=@mypickuae/admin-panel",
-    "dev:backend": "turbo run dev --filter=@mypickuae/api-gateway --filter=@mypickuae/auth-service --filter=@mypickuae/catalog-service --filter=@mypickuae/booking-service --filter=@mypickuae/vendor-service --filter=@mypickuae/notification-service --filter=@mypickuae/cms-service --filter=@mypickuae/integration-service --filter=@mypickuae/reels-service"
+    "dev:web": "turbo run dev --filter=@servicehubuae/web",
+    "dev:vendor": "turbo run dev --filter=@servicehubuae/vendor-dashboard",
+    "dev:admin": "turbo run dev --filter=@servicehubuae/admin-panel",
+    "dev:backend": "turbo run dev --filter=@servicehubuae/api-gateway --filter=@servicehubuae/auth-service --filter=@servicehubuae/catalog-service --filter=@servicehubuae/booking-service --filter=@servicehubuae/vendor-service --filter=@servicehubuae/notification-service --filter=@servicehubuae/cms-service --filter=@servicehubuae/integration-service --filter=@servicehubuae/reels-service"
   },
   "workspaces": [
     "apps/*",

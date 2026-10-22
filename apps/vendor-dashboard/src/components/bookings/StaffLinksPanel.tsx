@@ -1,6 +1,6 @@
 "use client";
 
-import { Badge, Button, EmptyState, toast } from "@mypickuae/ui";
+import { Badge, Button, EmptyState, toast } from "@servicehubuae/ui";
 import { Link as LinkIcon, LinkBreak } from "@phosphor-icons/react";
 import { type ReactNode, useState } from "react";
 

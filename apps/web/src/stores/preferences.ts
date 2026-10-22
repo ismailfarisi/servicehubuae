@@ -19,7 +19,7 @@ export const usePreferencesStore = create<PreferencesState>()(
       setCurrency: () => set({ currency: "AED" }),
     }),
     {
-      name: "mypickuae-preferences",
+      name: "servicehubuae-preferences",
     }
   )
 );

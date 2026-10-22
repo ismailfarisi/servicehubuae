@@ -1,4 +1,4 @@
-import { AppDataSource } from "@mypickuae/database";
+import { AppDataSource } from "@servicehubuae/database";
 
 const MAINTENANCE_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 hours
 

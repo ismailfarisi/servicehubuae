@@ -1,5 +1,5 @@
-import { ReelLicenseFundingSource } from "@mypickuae/database";
-import { BadRequestError, ServiceUnavailableError } from "@mypickuae/plugins";
+import { ReelLicenseFundingSource } from "@servicehubuae/database";
+import { BadRequestError, ServiceUnavailableError } from "@servicehubuae/plugins";
 import type { FundingRail, HoldInput, HoldResult } from "./funding-rail.ts";
 
 /**

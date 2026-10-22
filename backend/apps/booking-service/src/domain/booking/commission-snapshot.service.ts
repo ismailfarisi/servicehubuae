@@ -1,5 +1,10 @@
-import { type Category, CommissionType, type SiteSetting, type Vendor } from "@mypickuae/database";
-import { maxCommissionForNet } from "@mypickuae/utils";
+import {
+  type Category,
+  CommissionType,
+  type SiteSetting,
+  type Vendor,
+} from "@servicehubuae/database";
+import { maxCommissionForNet } from "@servicehubuae/utils";
 import type { Repository } from "typeorm";
 
 const FALLBACK_COMMISSION_RATE = 10; // 10%, mirrors order-service's CommissionService default.
@@ -37,7 +42,7 @@ export interface CommissionSnapshotResult {
  * an app-local class, not exported from a shared lib, and Phase 4 Task 2's
  * internal order-service routes cover payments only (no internal
  * "resolve rate" endpoint exists to call instead). booking-service and
- * order-service share ONE Postgres via `@mypickuae/database`, so this reads
+ * order-service share ONE Postgres via `@servicehubuae/database`, so this reads
  * the SAME `Vendor` / `Category` / `SiteSetting` rows CommissionService reads
  * and mirrors its `resolveRate` + `calculateAmount` logic verbatim (same
  * precedence, same rounding), rather than adding a network hop for a pure
@@ -103,7 +108,7 @@ export class CommissionSnapshotService {
     // — a NEGATIVE earning that subtracts from every other commission in
     // that vendor's payout. `maxCommissionForNet` is the same ceiling
     // order-service's creation and recompute paths use, from the same
-    // module (@mypickuae/utils), so the three cannot drift apart again.
+    // module (@servicehubuae/utils), so the three cannot drift apart again.
     const amountFils = Math.min(rawAmountFils, maxCommissionForNet(input.netAmountFils));
 
     return { rate, amountFils, type };

@@ -1,4 +1,4 @@
-import { AppDataSource, Vendor, VendorFollower } from "@mypickuae/database";
+import { AppDataSource, Vendor, VendorFollower } from "@servicehubuae/database";
 
 export class VendorFollowService {
   private get repo() {

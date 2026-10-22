@@ -7,7 +7,7 @@
 // `auth-followup:{bookingId}`) rather than a repeatable cron schedule — the
 // same `{delay, jobId}` idiom apps/product-service/src/domain/flash-deal
 // /effects.ts already uses for its per-deal expiry job.
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue, Worker } from "bullmq";
 import type { BookingAuthService } from "./booking-auth.service.ts";
 

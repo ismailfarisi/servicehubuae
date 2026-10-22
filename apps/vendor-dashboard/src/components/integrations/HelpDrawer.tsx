@@ -5,14 +5,14 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useState } from "react";
 
 // ─── Snippets ─────────────────────────────────────────────────────────────────
 
 const SNIPPET_NODE = `const crypto = require('node:crypto');
 
-function verifyMyPickUAESignature(secret, headers, rawBody) {
+function verifyServiceHubUAESignature(secret, headers, rawBody) {
   const sig = headers['x-signature']; // 'sha256=<hex>'
   const ts = headers['x-timestamp'];
   if (!sig || !ts) return false;
@@ -31,7 +31,7 @@ const SNIPPET_PYTHON = `import hashlib
 import hmac
 import time
 
-def verify_mypickuae_signature(secret: str, headers: dict, raw_body: bytes) -> bool:
+def verify_servicehubuae_signature(secret: str, headers: dict, raw_body: bytes) -> bool:
     sig = headers.get("X-Signature", "")
     ts = headers.get("X-Timestamp", "")
     if not sig or not ts:
@@ -46,7 +46,7 @@ def verify_mypickuae_signature(secret: str, headers: dict, raw_body: bytes) -> b
     return hmac.compare_digest(sig, expected)`;
 
 const SNIPPET_PHP = `<?php
-function verify_mypickuae_signature(string $secret, array $headers, string $rawBody): bool {
+function verify_servicehubuae_signature(string $secret, array $headers, string $rawBody): bool {
     $sig = $headers['X-Signature'] ?? '';
     $ts = $headers['X-Timestamp'] ?? '';
     if (!$sig || !$ts) return false;

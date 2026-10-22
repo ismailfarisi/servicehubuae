@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import type { VendorBankAccountService } from "../services/vendor-bank-account.service.ts";
 import type { VendorDocumentService } from "../services/vendor-document.service.ts";
 import type { VendorSettingsService } from "../services/vendor-settings.service.ts";

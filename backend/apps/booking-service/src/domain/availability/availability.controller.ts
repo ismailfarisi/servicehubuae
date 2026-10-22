@@ -1,5 +1,5 @@
-import type { ServiceOffering } from "@mypickuae/database";
-import { NotFoundError, UnprocessableEntityError } from "@mypickuae/plugins";
+import type { ServiceOffering } from "@servicehubuae/database";
+import { NotFoundError, UnprocessableEntityError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import type { AvailabilityResult, AvailabilityService } from "./availability.service.ts";
 

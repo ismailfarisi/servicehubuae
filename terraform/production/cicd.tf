@@ -14,7 +14,7 @@ resource "aws_iam_role_policy" "github_actions_production" {
     Version = "2012-10-17"
     Statement = [
       {
-        # sync-secrets-to-ssm job writes /mypickuae/production/*
+        # sync-secrets-to-ssm job writes /servicehubuae/production/*
         Effect = "Allow"
         Action = [
           "ssm:PutParameter",
@@ -56,7 +56,7 @@ resource "aws_iam_role_policy" "github_actions_production" {
         # whatever was last uploaded by hand).
         Effect   = "Allow"
         Action   = ["s3:PutObject"]
-        Resource = "arn:aws:s3:::mypickuae-config-prod/scripts/*"
+        Resource = "arn:aws:s3:::servicehubuae-config-prod/scripts/*"
       },
     ]
   })

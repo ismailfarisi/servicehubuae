@@ -12,8 +12,8 @@ import {
   type ReelLicenseRightsScope,
   ReelStatus,
   SiteSetting,
-} from "@mypickuae/database";
-import { BadRequestError, ForbiddenError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { BadRequestError, ForbiddenError, NotFoundError } from "@servicehubuae/plugins";
 import { In, LessThanOrEqual } from "typeorm";
 import type { CreatorWalletService } from "../wallet/creator-wallet.service.ts";
 import { EscrowEngine } from "./escrow-engine.ts";

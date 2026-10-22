@@ -1,5 +1,5 @@
-import { config } from "@mypickuae/config";
-import { AppDataSource, type VendorMemberRole } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, type VendorMemberRole } from "@servicehubuae/database";
 import { type RedisClientType, createClient } from "redis";
 
 interface MinimalRedis {

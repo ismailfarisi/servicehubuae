@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue, Worker } from "bullmq";
 import type { NotificationDispatcherService } from "../services/notification-dispatcher.service.ts";
 import type { DispatchEvent } from "../services/notification-dispatcher.service.ts";

@@ -35,8 +35,8 @@ import {
   VendorLocation,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
-import { ConflictError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { ConflictError } from "@servicehubuae/plugins";
 import { EngagementService } from "../engagement/engagement.service.ts";
 import { CalendarSubscriptionService } from "../manage/calendar-subscription.service.ts";
 import { IcalImportService } from "./ical-import.service.ts";
@@ -360,7 +360,7 @@ describeLive("IcalImportService.sync (live DB) — inbound iCal import", () => {
     const evt = notifications[0] as any;
     expect(evt.notificationType).toBe("vendor_booking_conflict");
     expect(evt.userId).toBe(ownerUserId);
-    expect(evt.variables.existing_summary).toBe("MyPickUAE booking");
+    expect(evt.variables.existing_summary).toBe("ServiceHubUAE booking");
     expect(evt.variables.conflicting_summary).toBe("Fresha C");
     expect(evt.variables.conflicting_starts_at).toBe(c.start.toISOString());
 

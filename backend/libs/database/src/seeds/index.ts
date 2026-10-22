@@ -17,7 +17,7 @@ async function seed() {
   // ── Admin & test users ──────────────────────────────────────────
   const userRepo = ds.getRepository(User);
 
-  const adminExists = await userRepo.findOne({ where: { email: "admin@mypickuae.com" } });
+  const adminExists = await userRepo.findOne({ where: { email: "admin@servicehubuae.com" } });
   if (!adminExists) {
     const adminPassword = process.env.SEED_ADMIN_PASSWORD || "Admin@123";
     const customerPassword = process.env.SEED_CUSTOMER_PASSWORD || "Customer@123";
@@ -30,7 +30,7 @@ async function seed() {
       userRepo.create({
         first_name: "Super",
         last_name: "Admin",
-        email: "admin@mypickuae.com",
+        email: "admin@servicehubuae.com",
         password_hash: adminHash,
         role: UserRole.super_admin,
         status: UserStatus.active,
@@ -41,7 +41,7 @@ async function seed() {
       userRepo.create({
         first_name: "Test",
         last_name: "Customer",
-        email: "customer@mypickuae.com",
+        email: "customer@servicehubuae.com",
         password_hash: customerHash,
         role: UserRole.customer,
         status: UserStatus.active,
@@ -124,7 +124,7 @@ async function seed() {
   );
 
   // ── CMS section types + storefront home layout ──────────────────
-  const admin = await userRepo.findOneOrFail({ where: { email: "admin@mypickuae.com" } });
+  const admin = await userRepo.findOneOrFail({ where: { email: "admin@servicehubuae.com" } });
   const cms = await seedCms(ds, admin.id);
   console.log(
     `  ${cms.sectionTypes > 0 ? "✓" : "–"} CMS: ${cms.sectionTypes} section types added, home layout ${cms.homeLayout ? "created" : "already present"}`,
@@ -164,7 +164,7 @@ async function seed() {
     await settingRepo.save([
       settingRepo.create({
         key: "site_name",
-        value: "MyPickUAE",
+        value: "ServiceHubUAE",
         value_type: "string",
         group: "general",
         description: "Marketplace name",

@@ -619,7 +619,7 @@ export class InitialSchema1792577665748 implements MigrationInterface {
     await queryRunner.query(
       `INSERT INTO "typeorm_metadata"("database", "schema", "table", "type", "name", "value") VALUES ($1, $2, $3, $4, $5, $6)`,
       [
-        "mypickuae",
+        "servicehubuae",
         "public",
         "staff_engagements",
         "GENERATED_COLUMN",
@@ -1337,7 +1337,7 @@ export class InitialSchema1792577665748 implements MigrationInterface {
     await queryRunner.query(`DROP TYPE "public"."staff_engagements_kind_enum"`);
     await queryRunner.query(
       `DELETE FROM "typeorm_metadata" WHERE "type" = $1 AND "name" = $2 AND "database" = $3 AND "schema" = $4 AND "table" = $5`,
-      ["GENERATED_COLUMN", "slot_range", "mypickuae", "public", "staff_engagements"],
+      ["GENERATED_COLUMN", "slot_range", "servicehubuae", "public", "staff_engagements"],
     );
     await queryRunner.query(`DROP TABLE "staff_engagements"`);
     await queryRunner.query(`DROP INDEX "public"."idx_engagement_vendor_start"`);

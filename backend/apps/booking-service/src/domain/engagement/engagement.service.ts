@@ -1,5 +1,9 @@
-import { type EngagementKind, EngagementStatus, type StaffEngagement } from "@mypickuae/database";
-import { ConflictError, NotFoundError } from "@mypickuae/plugins";
+import {
+  type EngagementKind,
+  EngagementStatus,
+  type StaffEngagement,
+} from "@servicehubuae/database";
+import { ConflictError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import type { AvailabilityCache } from "../availability/availability-cache.ts";
 

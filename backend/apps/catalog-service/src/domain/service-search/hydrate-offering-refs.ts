@@ -31,14 +31,14 @@ export interface HydrateOfferingRefsDeps {
 
 export const defaultHydrateOfferingRefsDeps: HydrateOfferingRefsDeps = {
   loadVendorRefs: async (vendorIds: string[]) => {
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     return AppDataSource.query(
       "SELECT id, name, slug FROM vendors WHERE id = ANY($1) AND deleted_at IS NULL",
       [vendorIds],
     );
   },
   loadCategoryRefs: async (categoryIds: string[]) => {
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     return AppDataSource.query(
       "SELECT id, name, slug FROM categories WHERE id = ANY($1) AND deleted_at IS NULL",
       [categoryIds],

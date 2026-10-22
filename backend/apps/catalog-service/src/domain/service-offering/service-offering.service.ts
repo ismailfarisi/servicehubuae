@@ -1,7 +1,7 @@
-import { config } from "@mypickuae/config";
-import { ServiceOfferingStatus } from "@mypickuae/database";
-import type { ServiceOffering, ServiceOfferingTranslation, Vendor } from "@mypickuae/database";
-import { BadRequestError, NotFoundError, UnprocessableEntityError } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { ServiceOfferingStatus } from "@servicehubuae/database";
+import type { ServiceOffering, ServiceOfferingTranslation, Vendor } from "@servicehubuae/database";
+import { BadRequestError, NotFoundError, UnprocessableEntityError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { enqueueServiceSearchSync } from "../service-search/service-search-sync.job.ts";
 

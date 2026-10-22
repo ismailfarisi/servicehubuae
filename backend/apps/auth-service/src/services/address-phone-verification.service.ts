@@ -1,5 +1,5 @@
-import { AppDataSource, User, UserVerifiedPhone } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, User, UserVerifiedPhone } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import { IsNull, type Repository } from "typeorm";
 import { type OtpCooldown, createOtpCooldown, redisOtpCooldownStore } from "./otp-cooldown.ts";
 import { normalizePhoneForOtp } from "./phone-normalization.ts";

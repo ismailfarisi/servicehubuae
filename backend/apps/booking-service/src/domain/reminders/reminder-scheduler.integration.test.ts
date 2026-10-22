@@ -35,7 +35,7 @@ import {
   VendorLocation,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import type { BookingReminderHook } from "../booking/booking-status.service.ts";
 import { BookingStatusService } from "../booking/booking-status.service.ts";
 import { EngagementService } from "../engagement/engagement.service.ts";

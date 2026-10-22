@@ -1,4 +1,4 @@
-import { ensureDatabase } from "@mypickuae/database";
+import { ensureDatabase } from "@servicehubuae/database";
 import { ServiceSearchReindexService } from "../apps/catalog-service/src/domain/service-search/service-search-reindex.service.ts";
 import { ServiceSearchAdapter } from "../apps/catalog-service/src/domain/service-search/service-search.adapter.ts";
 

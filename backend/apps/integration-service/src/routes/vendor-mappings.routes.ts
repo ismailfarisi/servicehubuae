@@ -1,5 +1,5 @@
-import type { IntegrationDirection, IntegrationEventType } from "@mypickuae/database";
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+import type { IntegrationDirection, IntegrationEventType } from "@servicehubuae/database";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

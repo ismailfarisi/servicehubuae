@@ -104,7 +104,7 @@ export function generateICal(events: GenerateIcalEvent[], opts: GenerateIcalOpti
   const lines: string[] = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//MyPickUAE//Booking Calendar//EN",
+    "PRODID:-//ServiceHubUAE//Booking Calendar//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
   ];
@@ -135,7 +135,7 @@ export function generateICal(events: GenerateIcalEvent[], opts: GenerateIcalOpti
 // ─── buildBookingReminderIcs (absorbed from reminders/ical-vevent.ts) ──────
 
 export interface BookingVeventInput {
-  /** Globally unique VEVENT UID — reminder-scheduler.ts uses `booking-{id}@mypickuae.com`. */
+  /** Globally unique VEVENT UID — reminder-scheduler.ts uses `booking-{id}@servicehubuae.com`. */
   uid: string;
   summary: string;
   description?: string;

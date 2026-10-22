@@ -7,7 +7,7 @@ import {
   INBOUND_EVENTS,
   OUTBOUND_EVENTS,
 } from "@/lib/integrations/spec-types";
-import { Skeleton } from "@mypickuae/ui";
+import { Skeleton } from "@servicehubuae/ui";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

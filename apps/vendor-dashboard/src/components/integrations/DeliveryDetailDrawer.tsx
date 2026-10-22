@@ -1,7 +1,7 @@
 "use client";
 
 import type { Delivery } from "@/lib/integrations/api";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@mypickuae/ui";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@servicehubuae/ui";
 
 interface DeliveryDetailDrawerProps {
   delivery: Delivery | null;

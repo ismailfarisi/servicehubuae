@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { type RedisClientType, createClient } from "redis";
 import { type Interval, localDaysInRange } from "./interval-math.ts";
 

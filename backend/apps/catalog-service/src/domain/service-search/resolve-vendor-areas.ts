@@ -20,7 +20,7 @@ export interface VendorAreaDeps {
  */
 export const defaultVendorAreaDeps: VendorAreaDeps = {
   loadBranchAreas: async (vendorIds: string[]) => {
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     return AppDataSource.query(
       `SELECT vl.vendor_id, vl.area_id, a.slug, a.name
          FROM vendor_locations vl
@@ -33,7 +33,7 @@ export const defaultVendorAreaDeps: VendorAreaDeps = {
     );
   },
   loadServiceAreas: async (vendorIds: string[]) => {
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     return AppDataSource.query(
       `SELECT sa.vendor_id, sa.area_id, a.slug, a.name
          FROM service_areas sa

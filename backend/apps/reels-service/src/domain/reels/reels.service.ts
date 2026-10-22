@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   Reel,
@@ -6,7 +6,7 @@ import {
   ReelStatus,
   VendorMember,
   VendorMemberStatus,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 import type { TrustService } from "../creator-tier/trust.service.ts";
 import type { CloudflareStreamClient } from "../upload/cloudflare-stream.client.ts";

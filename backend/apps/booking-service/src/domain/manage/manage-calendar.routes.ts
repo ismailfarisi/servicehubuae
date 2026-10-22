@@ -11,7 +11,7 @@
 // own required-field validation style rather than block-time's schema-less
 // BadRequestError check (see manage-calendar.service.ts's header comment for
 // why the error class differs from block-time's).
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia } from "elysia";
 import { container } from "../../container.ts";
 

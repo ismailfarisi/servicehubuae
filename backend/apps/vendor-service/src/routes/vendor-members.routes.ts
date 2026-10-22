@@ -1,5 +1,5 @@
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
-import { HttpError } from "@mypickuae/plugins";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
+import { HttpError } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 import { assertVendorIdMatches } from "../services/vendor-member.validators.ts";

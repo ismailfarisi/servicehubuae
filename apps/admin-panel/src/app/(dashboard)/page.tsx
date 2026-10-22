@@ -3,7 +3,7 @@
 import { QueryError } from "@/components/query-error";
 import { formatFils } from "@/lib/booking-format";
 import { useAdminBookingDashboard } from "@/lib/queries/dashboard";
-import { Skeleton, StatCard } from "@mypickuae/ui";
+import { Skeleton, StatCard } from "@servicehubuae/ui";
 import {
 	CalendarCheck,
 	CalendarDays,
@@ -29,7 +29,7 @@ export default function AdminDashboardPage() {
 			<div>
 				<h1 className="text-2xl font-bold text-cacao mb-1">Platform Dashboard</h1>
 				<p className="text-taupe text-sm">
-					Bookings, revenue and vendor activity across MyPickUAE. Rolling
+					Bookings, revenue and vendor activity across ServiceHubUAE. Rolling
 					figures cover the last 30 days.
 				</p>
 			</div>

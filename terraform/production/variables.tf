@@ -4,7 +4,7 @@ variable "aws_region" {
 }
 
 variable "project_name" {
-  default = "mypickuae"
+  default = "servicehubuae"
 }
 
 variable "environment" {
@@ -36,11 +36,11 @@ variable "db_username" {
   description = "RDS master username"
   type        = string
   sensitive   = true
-  default     = "mypickuae"
+  default     = "servicehubuae"
 }
 
 variable "db_name" {
-  default = "mypickuae_production"
+  default = "servicehubuae_production"
 }
 
 variable "db_instance_class" {
@@ -69,31 +69,31 @@ variable "github_repo" {
 
 variable "domain_name" {
   description = "Root domain with an existing Route 53 hosted zone"
-  default     = "mypickuae.com"
+  default     = "servicehubuae.com"
 }
 
 variable "api_subdomain" {
   description = "FQDN for the backend API (Caddy terminates TLS here)"
-  default     = "api.mypickuae.com"
+  default     = "api.servicehubuae.com"
 }
 
 variable "cdn_subdomain" {
   description = "FQDN for the CloudFront media CDN"
-  default     = "cdn.mypickuae.com"
+  default     = "cdn.servicehubuae.com"
 }
 
 variable "feed_subdomain" {
   description = "Public subdomain serving sales-channel feed files via CloudFront"
   type        = string
-  default     = "feeds.mypickuae.com"
+  default     = "feeds.servicehubuae.com"
 }
 
 variable "vendor_dashboard_url" {
   description = "Public URL of the vendor dashboard frontend (used in vendor-invite links)"
-  default     = "https://vendor.mypickuae.com"
+  default     = "https://vendor.servicehubuae.com"
 }
 
 variable "admin_panel_url" {
   description = "Public URL of the admin panel frontend"
-  default     = "https://admin.mypickuae.com"
+  default     = "https://admin.servicehubuae.com"
 }

@@ -12,7 +12,7 @@
 // rather than importing notification-service's module; the queue NAME is the
 // contract between services, not a shared TS import, since these are
 // separate deployables).
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue, Worker } from "bullmq";
 import type { ReminderScheduler } from "./reminder-scheduler.ts";
 

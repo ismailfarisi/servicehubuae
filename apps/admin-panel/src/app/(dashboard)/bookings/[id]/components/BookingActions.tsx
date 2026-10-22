@@ -9,7 +9,7 @@ import {
   DialogTitle,
   Textarea,
   toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useState } from "react";
 import { useCancelBooking, useCompleteBooking, useNoShowBooking } from "@/lib/queries/bookings";
 import { type BookingActionKey, availableActions } from "./booking-actions.helpers";

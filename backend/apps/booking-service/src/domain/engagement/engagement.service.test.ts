@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import { EngagementKind, type StaffEngagement } from "@mypickuae/database";
-import { ConflictError, NotFoundError } from "@mypickuae/plugins";
+import { EngagementKind, type StaffEngagement } from "@servicehubuae/database";
+import { ConflictError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { EngagementService } from "./engagement.service.ts";
 

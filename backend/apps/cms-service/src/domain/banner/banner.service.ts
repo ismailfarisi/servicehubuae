@@ -1,6 +1,6 @@
-import { AppDataSource, Banner } from "@mypickuae/database";
-import type { BannerListQuery, CreateBannerBody, UpdateBannerBody } from "@mypickuae/dto";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, Banner } from "@servicehubuae/database";
+import type { BannerListQuery, CreateBannerBody, UpdateBannerBody } from "@servicehubuae/dto";
+import { HttpError } from "@servicehubuae/plugins";
 import type { FindOptionsWhere } from "typeorm";
 
 export class BannerService {

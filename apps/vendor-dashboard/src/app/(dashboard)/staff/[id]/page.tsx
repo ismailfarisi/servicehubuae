@@ -17,7 +17,7 @@ import {
 	useUnlinkStaffService,
 	useVendorStaffMember,
 } from "@/lib/queries/staff";
-import { Button, StatusBadge, Tabs, TabsContent, TabsList, TabsTrigger } from "@mypickuae/ui";
+import { Button, StatusBadge, Tabs, TabsContent, TabsList, TabsTrigger } from "@servicehubuae/ui";
 import { ListChecks, MapPin } from "@phosphor-icons/react";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";

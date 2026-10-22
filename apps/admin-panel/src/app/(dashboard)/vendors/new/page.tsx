@@ -10,7 +10,7 @@ import {
   Separator,
   S3FileField,
   type S3FileEntry,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { ArrowLeft, ArrowRight, Copy, Check, Loader2, FileText, Trash2 } from "lucide-react";
 import {
   useCreateVendor,
@@ -19,7 +19,7 @@ import {
 } from "@/lib/queries/vendors";
 import { SUPPORTED_PAYOUT_SCHEDULES } from "@/lib/payout-schedule.helpers";
 import { s3UploadClient } from "@/lib/s3-upload-client";
-import { toast } from "@mypickuae/ui";
+import { toast } from "@servicehubuae/ui";
 
 const STEPS = ["User Account", "Business Info", "Documents", "Bank Account"];
 

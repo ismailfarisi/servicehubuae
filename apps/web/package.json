@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/web",
+  "name": "@servicehubuae/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -11,7 +11,7 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "@mypickuae/ui": "workspace:*",
+    "@servicehubuae/ui": "workspace:*",
     "@radix-ui/react-checkbox": "^1.1.0",
     "@radix-ui/react-dialog": "^1.1.0",
     "@radix-ui/react-dropdown-menu": "^2.1.0",

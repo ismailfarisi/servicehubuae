@@ -2,7 +2,7 @@
 
 import { LocationForm } from "@/components/bookings/LocationForm";
 import { useCanManageBookings } from "@/hooks/use-vendor-role";
-import { Button } from "@mypickuae/ui";
+import { Button } from "@servicehubuae/ui";
 import Link from "next/link";
 
 export default function NewLocationPage() {

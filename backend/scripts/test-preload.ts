@@ -8,5 +8,5 @@
 // Importing the barrels here forces them to evaluate ALONE, to completion,
 // before any test file runs — the cached modules are then complete. Combined
 // with per-file process isolation, this is deterministic.
-import "@mypickuae/database";
-import "@mypickuae/guards";
+import "@servicehubuae/database";
+import "@servicehubuae/guards";

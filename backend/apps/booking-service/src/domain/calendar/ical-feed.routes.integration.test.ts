@@ -14,7 +14,7 @@
 //   "create engagements of mixed kinds/statuses -> feed contains exactly the
 //   right ones; bad token -> 401."
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   EngagementKind,
@@ -25,7 +25,7 @@ import {
   VendorLocation,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { app } from "../../app.ts";
 import { signIcalFeedToken } from "./ical-feed-token.ts";
 import { parseICal } from "./ical-parse.ts";
@@ -218,14 +218,16 @@ describeLive("GET /calendar/staff/:id/feed.ics (live DB) — outbound iCal feed"
     const uids = events.map((e) => e.uid).sort();
     expect(uids).toEqual(
       [
-        `engagement-${included1.id}@mypickuae.com`,
-        `engagement-${included2.id}@mypickuae.com`,
+        `engagement-${included1.id}@servicehubuae.com`,
+        `engagement-${included2.id}@servicehubuae.com`,
       ].sort(),
     );
 
     const summaries = new Map(events.map((e) => [e.uid, e.summary]));
-    expect(summaries.get(`engagement-${included1.id}@mypickuae.com`)).toBe("MyPickUAE booking");
-    expect(summaries.get(`engagement-${included2.id}@mypickuae.com`)).toBe("Blocked");
+    expect(summaries.get(`engagement-${included1.id}@servicehubuae.com`)).toBe(
+      "ServiceHubUAE booking",
+    );
+    expect(summaries.get(`engagement-${included2.id}@servicehubuae.com`)).toBe("Blocked");
   });
 
   it("missing token: 401", async () => {

@@ -1,5 +1,5 @@
 // internal-booking.routes.ts
-import { internalServiceAuth } from "@mypickuae/guards";
+import { internalServiceAuth } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../../container.ts";
 

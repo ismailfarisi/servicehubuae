@@ -15,10 +15,10 @@ describe("transform", () => {
   it("merges constants at top level", () => {
     const spec: MappingSpec = {
       version: 1,
-      constants: { channel: "mypickuae" },
+      constants: { channel: "servicehubuae" },
       fields: [],
     };
-    expect(transform(spec, {})).toEqual({ channel: "mypickuae" });
+    expect(transform(spec, {})).toEqual({ channel: "servicehubuae" });
   });
 
   it("applies value_map after source", () => {

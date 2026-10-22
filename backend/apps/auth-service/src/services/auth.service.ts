@@ -1,9 +1,9 @@
-import { AppDataSource, TokenType, UserStatus } from "@mypickuae/database";
-import { User } from "@mypickuae/database";
-import { UserSession } from "@mypickuae/database";
-import { UserToken } from "@mypickuae/database";
-import { GuestSession } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, TokenType, UserStatus } from "@servicehubuae/database";
+import { User } from "@servicehubuae/database";
+import { UserSession } from "@servicehubuae/database";
+import { UserToken } from "@servicehubuae/database";
+import { GuestSession } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import { IsNull, MoreThan } from "typeorm";
 import type {
   AppleProfile,

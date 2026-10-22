@@ -6,8 +6,8 @@
  * The cohort key shape matches FeedService: `home:for_you:<lang>:<country>`.
  * Pool size caps at 500 per cohort — FeedService paginates within this pool.
  */
-import { config } from "@mypickuae/config";
-import { AppDataSource, Reel, ReelStatus } from "@mypickuae/database";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, Reel, ReelStatus } from "@servicehubuae/database";
 import { type Job, Queue, Worker } from "bullmq";
 import type { FeedCacheClient } from "../feed-cache.client.ts";
 

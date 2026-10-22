@@ -3,8 +3,8 @@ import {
   type HeaderNavConfig,
   type HeaderNavTab,
   HeaderNavigationConfig,
-} from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import { IsNull } from "typeorm";
 import { purgeHeaderNavCache } from "./cloudfront-purge.ts";
 

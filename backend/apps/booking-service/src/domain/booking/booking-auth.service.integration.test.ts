@@ -34,7 +34,7 @@ import {
   Vendor,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { EngagementService } from "../engagement/engagement.service.ts";
 import { getBookingAuthQueue } from "./booking-auth.job.ts";
 import { AUTO_COMPLETE_DELAY_HOURS, BookingAuthService } from "./booking-auth.service.ts";

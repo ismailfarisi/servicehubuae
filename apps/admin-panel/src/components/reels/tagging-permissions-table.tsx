@@ -11,7 +11,7 @@ import {
   Input,
   Label,
   SimpleSelect,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { Loader2 } from "lucide-react";
 import { EntityCombobox, type LookupItem } from "@/components/ui/entity-combobox";
 import {

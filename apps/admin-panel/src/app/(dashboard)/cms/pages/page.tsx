@@ -10,7 +10,7 @@ import {
   Button,
   EmptyState,
   Skeleton,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { usePages, useDeletePage } from "@/lib/queries/cms";
 import { FileText, Plus, Pencil, Trash2 } from "lucide-react";
 

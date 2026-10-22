@@ -1,4 +1,4 @@
-import { errorHandler, requestLogger } from "@mypickuae/plugins";
+import { errorHandler, requestLogger } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 import { newsletterRoutes } from "./routes/newsletter.routes.ts";
 import { notificationPreferenceRoutes } from "./routes/notification-preference.routes.ts";

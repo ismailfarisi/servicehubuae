@@ -1,4 +1,4 @@
-import { AppDataSource, UserToken } from "@mypickuae/database";
+import { AppDataSource, UserToken } from "@servicehubuae/database";
 
 const RETENTION_DAYS = 7;
 const CLEANUP_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24 hours

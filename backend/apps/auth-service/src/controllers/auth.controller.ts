@@ -1,6 +1,6 @@
-import { config } from "@mypickuae/config";
-import { BadRequestError, HttpError } from "@mypickuae/plugins";
-import type { EmailService } from "@mypickuae/utils";
+import { config } from "@servicehubuae/config";
+import { BadRequestError, HttpError } from "@servicehubuae/plugins";
+import type { EmailService } from "@servicehubuae/utils";
 import type { DeviceInfo, GuestInfo, RegisterData } from "../domain/types.ts";
 import type { AuthService } from "../services/auth.service.ts";
 import type { TwoFactorService } from "../services/two-factor.service.ts";

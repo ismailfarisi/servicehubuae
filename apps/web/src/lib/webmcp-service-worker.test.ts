@@ -1,9 +1,9 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { registerMyPickUAEWebMcpServiceWorker } from "./webmcp";
+import { registerServiceHubUAEWebMcpServiceWorker } from "./webmcp";
 
-describe("registerMyPickUAEWebMcpServiceWorker", () => {
+describe("registerServiceHubUAEWebMcpServiceWorker", () => {
 	afterEach(() => {
 		vi.restoreAllMocks();
 		Reflect.deleteProperty(navigator, "serviceWorker");
@@ -11,7 +11,7 @@ describe("registerMyPickUAEWebMcpServiceWorker", () => {
 
 	test("does nothing when service workers are unavailable", async () => {
 		await expect(
-			registerMyPickUAEWebMcpServiceWorker(),
+			registerServiceHubUAEWebMcpServiceWorker(),
 		).resolves.toBeUndefined();
 	});
 
@@ -23,7 +23,7 @@ describe("registerMyPickUAEWebMcpServiceWorker", () => {
 			value: { register },
 		});
 
-		await expect(registerMyPickUAEWebMcpServiceWorker()).resolves.toBe(
+		await expect(registerServiceHubUAEWebMcpServiceWorker()).resolves.toBe(
 			registration,
 		);
 		expect(register).toHaveBeenCalledWith("/webmcp-service-worker.js", {
@@ -41,12 +41,12 @@ describe("registerMyPickUAEWebMcpServiceWorker", () => {
 		});
 
 		await expect(
-			registerMyPickUAEWebMcpServiceWorker(),
+			registerServiceHubUAEWebMcpServiceWorker(),
 		).resolves.toBeUndefined();
 	});
 });
 
-describe("MyPickUAE WebMCP service worker assets", () => {
+describe("ServiceHubUAE WebMCP service worker assets", () => {
 	test("publishes a manifest with service worker installation metadata", () => {
 		const manifestPath = resolve(
 			__dirname,
@@ -70,6 +70,6 @@ describe("MyPickUAE WebMCP service worker assets", () => {
 
 		expect(worker).toContain("self.agent");
 		expect(worker).toContain("provideContext");
-		expect(worker).toContain("mypickuae.service.searchServices");
+		expect(worker).toContain("servicehubuae.service.searchServices");
 	});
 });

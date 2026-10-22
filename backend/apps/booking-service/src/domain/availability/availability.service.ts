@@ -7,8 +7,8 @@ import type {
   StaffWorkingHours,
   VendorHoliday,
   VendorLocation,
-} from "@mypickuae/database";
-import { NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { NotFoundError } from "@servicehubuae/plugins";
 import { IsNull, type Repository } from "typeorm";
 import type { AvailabilityCache } from "./availability-cache.ts";
 import {

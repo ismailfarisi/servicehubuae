@@ -1,4 +1,4 @@
-import type { NewsletterSubscribeBody } from "@mypickuae/dto";
+import type { NewsletterSubscribeBody } from "@servicehubuae/dto";
 import type { NewsletterService } from "../services/newsletter.service.ts";
 
 export class NewsletterController {

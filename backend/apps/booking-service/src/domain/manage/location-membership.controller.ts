@@ -4,7 +4,7 @@
 // mirroring block-time.controller.ts's split (snake_case body -> camelCase
 // input translation only; all authorization/validation lives in
 // LocationMembershipService).
-import type { CreateLocationMembershipBody } from "@mypickuae/dto";
+import type { CreateLocationMembershipBody } from "@servicehubuae/dto";
 import type {
   LocationMembershipActor,
   LocationMembershipService,

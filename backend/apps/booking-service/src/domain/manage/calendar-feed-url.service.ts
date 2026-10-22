@@ -22,8 +22,8 @@
 // through the same underlying `isVendorManagerRole`/`isLocationManagerOfAll`
 // helpers from guards/location-scope.ts, so the actual authorization LOGIC
 // is not duplicated, only the staff-lookup plumbing around it.
-import type { StaffLocation, StaffMember } from "@mypickuae/database";
-import { NotFoundError } from "@mypickuae/plugins";
+import type { StaffLocation, StaffMember } from "@servicehubuae/database";
+import { NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import {
   type LocationScopeRepos,

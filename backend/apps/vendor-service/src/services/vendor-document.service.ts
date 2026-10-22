@@ -1,5 +1,5 @@
-import { AppDataSource, VendorDocument } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, VendorDocument } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 
 export class VendorDocumentService {
   private get repo() {

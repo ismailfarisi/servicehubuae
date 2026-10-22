@@ -1,5 +1,5 @@
 {
-  "name": "@mypickuae/reels-service",
+  "name": "@servicehubuae/reels-service",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -17,13 +17,13 @@
     "@elysiajs/bearer": "^1.2.0",
     "bullmq": "^5.0.0",
     "stripe": "^21.0.1",
-    "@mypickuae/config": "workspace:*",
-    "@mypickuae/plugins": "workspace:*",
-    "@mypickuae/guards": "workspace:*",
-    "@mypickuae/database": "workspace:*",
+    "@servicehubuae/config": "workspace:*",
+    "@servicehubuae/plugins": "workspace:*",
+    "@servicehubuae/guards": "workspace:*",
+    "@servicehubuae/database": "workspace:*",
     "typeorm": "^0.3.0",
-    "@mypickuae/dto": "workspace:*",
-    "@mypickuae/utils": "workspace:*"
+    "@servicehubuae/dto": "workspace:*",
+    "@servicehubuae/utils": "workspace:*"
   },
   "devDependencies": {
     "@types/bun": "^1.4.3",

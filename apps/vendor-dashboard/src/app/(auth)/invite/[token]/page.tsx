@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@mypickuae/ui";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle } from "@servicehubuae/ui";
 import { api } from "@/lib/api";
 import {
   useAcceptInvite,

@@ -1,8 +1,8 @@
 import { bearer } from "@elysiajs/bearer";
 import { jwt } from "@elysiajs/jwt";
-import { config } from "@mypickuae/config";
-import { AppDataSource, User, WalletTransaction } from "@mypickuae/database";
-import { HttpError, auditPlugin } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, User, WalletTransaction } from "@servicehubuae/database";
+import { HttpError, auditPlugin } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 import { getDeviceInfo, requireAuth, tokenResponse } from "../domain/types.ts";

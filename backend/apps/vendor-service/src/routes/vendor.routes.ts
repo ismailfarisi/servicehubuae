@@ -1,4 +1,4 @@
-import { jwtAuth, requireRole, vendorMembership } from "@mypickuae/guards";
+import { jwtAuth, requireRole, vendorMembership } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

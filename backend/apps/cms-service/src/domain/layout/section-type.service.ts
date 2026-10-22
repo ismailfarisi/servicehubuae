@@ -1,5 +1,5 @@
-import { AppDataSource, SectionType } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, SectionType } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 
 export class SectionTypeService {
   private get repo() {

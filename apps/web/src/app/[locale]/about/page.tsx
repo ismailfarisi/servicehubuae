@@ -5,9 +5,9 @@ import {
 } from "@/components/layout/static-page-layout";
 
 export const metadata: Metadata = {
-	title: "About MyPickUAE — The UAE's Services Marketplace",
+	title: "About ServiceHubUAE — The UAE's Services Marketplace",
 	description:
-		"MyPickUAE is a UAE services marketplace: browse 440+ services, compare trusted independent vendors side by side, then book a time slot or request quotations.",
+		"ServiceHubUAE is a UAE services marketplace: browse 440+ services, compare trusted independent vendors side by side, then book a time slot or request quotations.",
 };
 
 export default function AboutPage() {
@@ -15,7 +15,7 @@ export default function AboutPage() {
 		<StaticPageLayout
 			eyebrow="Our story"
 			title="Every service your home and life need, in one place."
-			intro="MyPickUAE brings the UAE's independent service businesses — cleaners, technicians, salons, trainers, movers and more — into one marketplace where you can compare them honestly and book with confidence."
+			intro="ServiceHubUAE brings the UAE's independent service businesses — cleaners, technicians, salons, trainers, movers and more — into one marketplace where you can compare them honestly and book with confidence."
 		>
 			<StaticSection heading="Why we exist">
 				<p>
@@ -25,7 +25,7 @@ export default function AboutPage() {
 					it should feel as simple as choosing a time that suits you.
 				</p>
 				<p>
-					MyPickUAE puts services, prices and vendors side by side. For
+					ServiceHubUAE puts services, prices and vendors side by side. For
 					everyday jobs you pick a vendor and book a slot; for bigger jobs
 					you describe what you need, receive quotations from vendors and
 					chat with them before you decide.
@@ -80,7 +80,7 @@ export default function AboutPage() {
 
 			<StaticSection heading="Where we are">
 				<p>
-					MyPickUAE is headquartered in Dubai and built for customers and
+					ServiceHubUAE is headquartered in Dubai and built for customers and
 					vendors across the United Arab Emirates. The team brings
 					together operators, engineers and vendor partnership specialists
 					who know the UAE services market first-hand.

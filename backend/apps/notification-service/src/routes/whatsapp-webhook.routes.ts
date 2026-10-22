@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Elysia } from "elysia";
 
 /**

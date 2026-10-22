@@ -1,4 +1,4 @@
-import type { HeaderNavConfig } from "@mypickuae/database";
+import type { HeaderNavConfig } from "@servicehubuae/database";
 import type { HeaderNavigationResolverService } from "./header-navigation-resolver.service.ts";
 import type { HeaderNavigationService } from "./header-navigation.service.ts";
 

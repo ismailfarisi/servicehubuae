@@ -1,4 +1,4 @@
-import { jwtAuth } from "@mypickuae/guards";
+import { jwtAuth } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

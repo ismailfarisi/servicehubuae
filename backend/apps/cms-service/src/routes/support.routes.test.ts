@@ -1,5 +1,5 @@
 import { describe, expect, it, mock } from "bun:test";
-import { HttpError } from "@mypickuae/plugins";
+import { HttpError } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 
 // Stub Redis so no connection is opened during the test.

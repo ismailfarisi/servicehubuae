@@ -22,7 +22,7 @@ import {
 	Label,
 	Separator,
 	StatusBadge,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import {
 	ArrowSquareOut,
 	Gavel,

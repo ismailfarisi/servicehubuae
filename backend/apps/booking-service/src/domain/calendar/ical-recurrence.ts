@@ -11,7 +11,7 @@
 // Google/Outlook private `.ics` exports emit recurring events as master+RRULE,
 // NOT as expanded instances. Without expansion, a weekly standing client blocks
 // only its first occurrence — occurrences 2..N are invisible to availability
-// and MyPickUAE sells those slots (two-customers-one-chair, silently). Expansion
+// and ServiceHubUAE sells those slots (two-customers-one-chair, silently). Expansion
 // closes that.
 //
 // ── Per-occurrence uid (keeps the diff engine UNCHANGED) ─────────────────────

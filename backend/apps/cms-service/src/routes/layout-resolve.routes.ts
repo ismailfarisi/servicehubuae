@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Elysia, t } from "elysia";
 import jwt from "jsonwebtoken";
 import { container } from "../container.ts";

@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import Typesense from "typesense";
 import {
   type ServiceOfferingDocument,

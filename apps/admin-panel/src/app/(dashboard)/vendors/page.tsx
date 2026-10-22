@@ -15,7 +15,7 @@ import {
   TabsTrigger,
   TabsContent,
   Skeleton,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { useVendors } from "@/lib/queries/vendors";
 
 interface Vendor {

@@ -8,7 +8,7 @@ const SERVICE = {
   name: "Haircut",
   media_url: null,
   price_fils: 12000,
-  vendor_name: "MyPickUAE Demo Salon",
+  vendor_name: "ServiceHubUAE Demo Salon",
 };
 
 describe("ServiceSuggestService", () => {

@@ -17,7 +17,7 @@ import {
   SelectValue,
   Textarea,
   toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { Flask } from "@phosphor-icons/react";
 import { useState } from "react";
 

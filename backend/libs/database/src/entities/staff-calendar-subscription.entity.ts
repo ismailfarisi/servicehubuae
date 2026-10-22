@@ -14,7 +14,7 @@ import {
 // import). The `ical-import.job.ts` poller fetches `ical_url` every 15 min and
 // funnels each VEVENT into the SAME `staff_engagements` capacity ledger (as
 // `kind=external_import` rows keyed on `external_source=<this row's id>` +
-// `external_ref=<event uid>`), so an external booking blocks MyPickUAE
+// `external_ref=<event uid>`), so an external booking blocks ServiceHubUAE
 // availability like any other engagement.
 //
 // Soft-deleted (DeleteDateColumn): removing a subscription releases all its

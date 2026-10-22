@@ -13,7 +13,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket       = "mypickuae-terraform-state"
+    bucket       = "servicehubuae-terraform-state"
     key          = "production/terraform.tfstate"
     region       = "ap-south-1"
     encrypt      = true

@@ -18,8 +18,8 @@
 // "UNAUTHORIZED" — i.e. jwtAuth populated `user`. Pre-fix each of these routes
 // returned 401 UNAUTHORIZED here regardless of the token.
 import { beforeAll, describe, expect, it } from "bun:test";
-import { config } from "@mypickuae/config";
-import { permissionMatrix } from "@mypickuae/guards";
+import { config } from "@servicehubuae/config";
+import { permissionMatrix } from "@servicehubuae/guards";
 import jwt from "jsonwebtoken";
 import { app } from "./app.ts";
 

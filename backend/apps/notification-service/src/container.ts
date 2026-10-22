@@ -1,6 +1,6 @@
-import { config } from "@mypickuae/config";
-import { AppDataSource, User } from "@mypickuae/database";
-import { EmailService, WhatsAppService } from "@mypickuae/utils";
+import { config } from "@servicehubuae/config";
+import { AppDataSource, User } from "@servicehubuae/database";
+import { EmailService, WhatsAppService } from "@servicehubuae/utils";
 import { Elysia } from "elysia";
 import { createClient } from "redis";
 import { NewsletterController } from "./controllers/newsletter.controller.ts";

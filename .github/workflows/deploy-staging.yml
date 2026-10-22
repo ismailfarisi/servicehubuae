@@ -89,15 +89,15 @@ jobs:
       - name: Test
         run: >-
           bunx turbo run test
-          --filter='@mypickuae/api-gateway'
-          --filter='@mypickuae/auth-service'
-          --filter='@mypickuae/catalog-service'
-          --filter='@mypickuae/booking-service'
-          --filter='@mypickuae/vendor-service'
-          --filter='@mypickuae/notification-service'
-          --filter='@mypickuae/cms-service'
-          --filter='@mypickuae/reels-service'
-          --filter='@mypickuae/integration-service'
+          --filter='@servicehubuae/api-gateway'
+          --filter='@servicehubuae/auth-service'
+          --filter='@servicehubuae/catalog-service'
+          --filter='@servicehubuae/booking-service'
+          --filter='@servicehubuae/vendor-service'
+          --filter='@servicehubuae/notification-service'
+          --filter='@servicehubuae/cms-service'
+          --filter='@servicehubuae/reels-service'
+          --filter='@servicehubuae/integration-service'
 
   # ----- Sync GitHub Secrets to AWS SSM -----
   sync-secrets-to-ssm:
@@ -136,7 +136,7 @@ jobs:
           TWILIO_VERIFY_SERVICE_SID: ${{ secrets.STAGING_TWILIO_VERIFY_SERVICE_SID }}
         run: |
           set -euo pipefail
-          PREFIX="/mypickuae/staging"
+          PREFIX="/servicehubuae/staging"
           # Pairs: ssm_path_tail|env_var_name
           PAIRS=(
             "jwt/access-secret|JWT_ACCESS_SECRET"
@@ -322,7 +322,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # SCP into /tmp (writable by ec2-user) — /opt/mypickuae is root-owned and
+      # SCP into /tmp (writable by ec2-user) — /opt/servicehubuae is root-owned and
       # holds a root-owned copy from user-data, so direct overwrite as ec2-user
       # fails with "Permission denied". The SSH step below moves it into place.
       - name: Upload deploy artifacts to EC2
@@ -351,32 +351,32 @@ jobs:
             set -e
             ECR_REGISTRY="${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.ap-south-1.amazonaws.com"
 
-            # Move the SCP'd script into /opt/mypickuae over any root-owned copy.
+            # Move the SCP'd script into /opt/servicehubuae over any root-owned copy.
             sudo install -m 755 -o root -g root \
               /tmp/refresh-env-from-ssm.sh \
-              /opt/mypickuae/refresh-env-from-ssm.sh
+              /opt/servicehubuae/refresh-env-from-ssm.sh
             rm -f /tmp/refresh-env-from-ssm.sh
 
-            cd /opt/mypickuae
+            cd /opt/servicehubuae
 
             # Append the integration-service compose block if absent. The
-            # compose file at /opt/mypickuae/docker-compose.yml was written by
+            # compose file at /opt/servicehubuae/docker-compose.yml was written by
             # user-data on first boot and is patched here for service
             # additions that postdate the original bootstrap. Idempotent —
             # the fragment only lands when the service entry is missing.
             # Aesthetic note: the block lands after the migrate (tools) block
             # rather than between reels-service and migrate. Functionally
             # equivalent — docker-compose ignores service order.
-            if ! sudo grep -q "^  integration-service:" /opt/mypickuae/docker-compose.yml; then
+            if ! sudo grep -q "^  integration-service:" /opt/servicehubuae/docker-compose.yml; then
               cat /tmp/compose-fragments/integration-service.staging.yml \
-                | sudo tee -a /opt/mypickuae/docker-compose.yml >/dev/null
+                | sudo tee -a /opt/servicehubuae/docker-compose.yml >/dev/null
             fi
             rm -rf /tmp/compose-fragments
 
             # Refresh .env from SSM (idempotent; preserves non-SSM lines,
             # including the static entries appended above).
-            sudo AWS_REGION=ap-south-1 /opt/mypickuae/refresh-env-from-ssm.sh \
-              /opt/mypickuae/.env mypickuae staging
+            sudo AWS_REGION=ap-south-1 /opt/servicehubuae/refresh-env-from-ssm.sh \
+              /opt/servicehubuae/.env servicehubuae staging
 
             aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin $ECR_REGISTRY
             docker-compose pull

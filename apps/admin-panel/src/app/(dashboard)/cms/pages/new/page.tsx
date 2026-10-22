@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Textarea, RichEditor } from "@mypickuae/ui";
+import { Button, Input, Select, SelectTrigger, SelectValue, SelectContent, SelectItem, Textarea, RichEditor } from "@servicehubuae/ui";
 import { useCreatePage } from "@/lib/queries/cms";
 import { ArrowLeft, Eye } from "lucide-react";
 

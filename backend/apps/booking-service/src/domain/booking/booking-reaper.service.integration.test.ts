@@ -35,7 +35,7 @@ import {
   Vendor,
   VendorStatus,
   ensureDatabase,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { EngagementService } from "../engagement/engagement.service.ts";
 import type { BookingPaymentGateway } from "./booking-payment.gateway.ts";
 import { BookingReaperService } from "./booking-reaper.service.ts";

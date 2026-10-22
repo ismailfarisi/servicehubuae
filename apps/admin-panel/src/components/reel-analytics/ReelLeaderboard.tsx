@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Card, CardContent, CardHeader, Skeleton } from "@mypickuae/ui";
+import { Card, CardContent, CardHeader, Skeleton } from "@servicehubuae/ui";
 import {
   adminLeaderboardCsvUrl,
   formatCount,

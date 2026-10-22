@@ -33,8 +33,8 @@ import {
   NotificationType,
   type Payment,
   ServicePaymentMode,
-} from "@mypickuae/database";
-import { ForbiddenError, HttpError, NotFoundError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import { ForbiddenError, HttpError, NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { computeAutoCompleteFireTime } from "./booking-autocomplete.service.ts";
 import { deriveRecoverableAmount, resolveAuthPi } from "./booking-money.ts";

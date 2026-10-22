@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import { Queue, Worker } from "bullmq";
 import { hydrateOfferingRefs } from "./hydrate-offering-refs.ts";
 import { resolveVendorAreas } from "./resolve-vendor-areas.ts";
@@ -94,7 +94,7 @@ export interface ServiceSyncDeps {
 // Refs are hydrated separately via hydrateOfferingRefs below.
 export const defaultDeps: ServiceSyncDeps = {
   loadOffering: async (offeringId: string) => {
-    const { AppDataSource, ServiceOffering } = await import("@mypickuae/database");
+    const { AppDataSource, ServiceOffering } = await import("@servicehubuae/database");
     const offering = await AppDataSource.getRepository(ServiceOffering).findOne({
       where: { id: offeringId },
     });
@@ -104,7 +104,7 @@ export const defaultDeps: ServiceSyncDeps = {
     return hydrated;
   },
   loadPublishedOfferingIdsForVendor: async (vendorId: string) => {
-    const { AppDataSource } = await import("@mypickuae/database");
+    const { AppDataSource } = await import("@servicehubuae/database");
     const rows: Array<{ id: string }> = await AppDataSource.query(
       `SELECT id FROM service_offerings
         WHERE vendor_id = $1 AND status = 'published' AND deleted_at IS NULL`,

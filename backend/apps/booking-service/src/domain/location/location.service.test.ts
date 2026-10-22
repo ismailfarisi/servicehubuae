@@ -1,6 +1,6 @@
 import { describe, expect, it } from "bun:test";
-import type { ServiceArea, VendorLocation } from "@mypickuae/database";
-import { ConflictError, NotFoundError, UnprocessableEntityError } from "@mypickuae/plugins";
+import type { ServiceArea, VendorLocation } from "@servicehubuae/database";
+import { ConflictError, NotFoundError, UnprocessableEntityError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { LocationService } from "./location.service.ts";
 

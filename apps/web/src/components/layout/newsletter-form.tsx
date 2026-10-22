@@ -5,7 +5,7 @@ import { ArrowRight, Check } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuthStore } from "@/stores/auth";
 
-const SUBSCRIBED_FLAG = "mypickuae:newsletter-subscribed";
+const SUBSCRIBED_FLAG = "servicehubuae:newsletter-subscribed";
 
 export function NewsletterForm() {
 	const user = useAuthStore((s) => s.user);
@@ -48,7 +48,7 @@ export function NewsletterForm() {
 		if (status === "submitting") return;
 		setStatus("submitting");
 		try {
-			const locale = localStorage.getItem("mypickuae-locale") || "en";
+			const locale = localStorage.getItem("servicehubuae-locale") || "en";
 			await api.post("/newsletter/subscribe", { email, locale, source: "homepage" });
 			localStorage.setItem(SUBSCRIBED_FLAG, "true");
 			setStatus("just-subscribed");

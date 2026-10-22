@@ -49,14 +49,14 @@ describe("ConsentBanner", () => {
   });
 
   it("is not rendered when the cookie is already 'accepted'", async () => {
-    cookieStore.mypickuae_consent = "accepted";
+    cookieStore.servicehubuae_consent = "accepted";
     renderBanner();
     await act(async () => {});
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 
   it("is not rendered when the cookie is already 'rejected'", async () => {
-    cookieStore.mypickuae_consent = "rejected";
+    cookieStore.servicehubuae_consent = "rejected";
     renderBanner();
     await act(async () => {});
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -69,7 +69,7 @@ describe("ConsentBanner", () => {
       fireEvent.click(screen.getByText("consent.accept"));
     });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(cookieStore.mypickuae_consent).toBe("accepted");
+    expect(cookieStore.servicehubuae_consent).toBe("accepted");
   });
 
   it("hides itself and writes the cookie on Reject", async () => {
@@ -79,6 +79,6 @@ describe("ConsentBanner", () => {
       fireEvent.click(screen.getByText("consent.reject"));
     });
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    expect(cookieStore.mypickuae_consent).toBe("rejected");
+    expect(cookieStore.servicehubuae_consent).toBe("rejected");
   });
 });

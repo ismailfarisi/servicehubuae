@@ -8,10 +8,10 @@ import {
   VendorDocumentType,
   VendorStatus,
   VendorTranslation,
-} from "@mypickuae/database";
-import { bumpTokenVersion } from "@mypickuae/guards";
-import { HttpError } from "@mypickuae/plugins";
-import { generateSlug, kycApplicantPrefix } from "@mypickuae/utils";
+} from "@servicehubuae/database";
+import { bumpTokenVersion } from "@servicehubuae/guards";
+import { HttpError } from "@servicehubuae/plugins";
+import { generateSlug, kycApplicantPrefix } from "@servicehubuae/utils";
 import { type VendorApplyData, isValidTransition } from "../domain/types.ts";
 import type { PaymentProviderAdapter } from "../providers/payment/payment-provider.interface.ts";
 

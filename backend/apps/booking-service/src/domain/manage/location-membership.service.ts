@@ -36,9 +36,9 @@ import {
   type VendorLocation,
   type VendorMember,
   VendorMemberStatus,
-} from "@mypickuae/database";
-import type { LocationMembershipRow, MyLocationMembershipRow } from "@mypickuae/dto";
-import { ForbiddenError, NotFoundError, UnprocessableEntityError } from "@mypickuae/plugins";
+} from "@servicehubuae/database";
+import type { LocationMembershipRow, MyLocationMembershipRow } from "@servicehubuae/dto";
+import { ForbiddenError, NotFoundError, UnprocessableEntityError } from "@servicehubuae/plugins";
 import { In, type Repository } from "typeorm";
 import { isVendorManagerRole } from "../../guards/location-scope.ts";
 

@@ -4,8 +4,8 @@ import { Eyebrow, SerifTitle } from "@/components/ui/maison-primitives";
 import { BriefBoard, type PublicBrief } from "./_components/brief-board";
 
 export const metadata: Metadata = {
-  title: "Creator briefs — MyPickUAE",
-  description: "Open UGC briefs from MyPickUAE brands. Pitch your bid and create the reel.",
+  title: "Creator briefs — ServiceHubUAE",
+  description: "Open UGC briefs from ServiceHubUAE brands. Pitch your bid and create the reel.",
 };
 
 export const revalidate = 300;

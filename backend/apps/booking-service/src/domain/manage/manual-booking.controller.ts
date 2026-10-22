@@ -7,7 +7,7 @@
 // staff.controller.ts — the precedent the Task 1 brief points at). A vendor
 // owner/manager passes for any of their vendor's branches; a per-location
 // manager (location_membership) passes only for THEIR branch.
-import type { EngagementKind } from "@mypickuae/database";
+import type { EngagementKind } from "@servicehubuae/database";
 import { type LocationScopeRepos, assertLocationManager } from "../../guards/location-scope.ts";
 import type {
   CreateManualBookingInput,

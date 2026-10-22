@@ -21,9 +21,9 @@
 // "UNAUTHORIZED" — i.e. jwtAuth populated `user`. Pre-fix this route returned
 // 401 UNAUTHORIZED here.
 import { beforeAll, describe, expect, it, mock } from "bun:test";
-import { config } from "@mypickuae/config";
-import { permissionMatrix } from "@mypickuae/guards";
-import { errorHandler } from "@mypickuae/plugins";
+import { config } from "@servicehubuae/config";
+import { permissionMatrix } from "@servicehubuae/guards";
+import { errorHandler } from "@servicehubuae/plugins";
 import { Elysia } from "elysia";
 import jwt from "jsonwebtoken";
 

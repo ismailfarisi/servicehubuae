@@ -26,7 +26,7 @@ import {
 	Switch,
 	Textarea,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import {
 	ChevronDown,
 	ChevronRight,

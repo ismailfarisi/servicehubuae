@@ -5,7 +5,7 @@ import {
 	useDeleteTimeOff,
 	useTimeOff,
 } from "@/lib/queries/working-hours";
-import { Button, EmptyState, Input, Label, Textarea, toast } from "@mypickuae/ui";
+import { Button, EmptyState, Input, Label, Textarea, toast } from "@servicehubuae/ui";
 import { CalendarX, Trash } from "@phosphor-icons/react";
 import { useState } from "react";
 

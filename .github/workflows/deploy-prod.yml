@@ -86,10 +86,10 @@ jobs:
           WEB_WWW_URL: ${{ secrets.PROD_WEB_WWW_URL }}
         run: |
           set -euo pipefail
-          PREFIX="/mypickuae/production"
+          PREFIX="/servicehubuae/production"
           # Pairs: ssm_path_tail|env_var_name
           # DB_PASSWORD is omitted — Terraform generates it and writes
-          # /mypickuae/production/db/password directly.
+          # /servicehubuae/production/db/password directly.
           PAIRS=(
             "jwt/access-secret|JWT_ACCESS_SECRET"
             "jwt/refresh-secret|JWT_REFRESH_SECRET"
@@ -130,7 +130,7 @@ jobs:
           #    Twilio/Cloudflare/Google/Grafana) — the services boot and
           #    degrade feature-by-feature without them.
           #  - PUBLIC_API_URL / other URLs — terraform user-data seeds a
-          #    working value into /opt/mypickuae/.env at first boot, and the
+          #    working value into /opt/servicehubuae/.env at first boot, and the
           #    merge in refresh-env-from-ssm.sh preserves it when the SSM
           #    param is absent.
           #  - DB_PASSWORD is not in PAIRS at all (Terraform writes it).
@@ -301,7 +301,7 @@ jobs:
         # until someone manually `aws s3 cp`s it.
         run: |
           aws s3 cp scripts/refresh-env-from-ssm.sh \
-            s3://mypickuae-config-prod/scripts/refresh-env-from-ssm.sh \
+            s3://servicehubuae-config-prod/scripts/refresh-env-from-ssm.sh \
             --region ap-south-1
 
       - name: Deploy via SSM Run Command
@@ -314,17 +314,17 @@ jobs:
           # so no sudo and no SCP-into-/tmp dance is needed.
           read -r -d '' REMOTE_SCRIPT <<'EOS' || true
           set -euo pipefail
-          cd /opt/mypickuae
-          aws s3 cp s3://mypickuae-config-prod/scripts/refresh-env-from-ssm.sh \
-            /opt/mypickuae/refresh-env-from-ssm.sh --region ap-south-1
-          chmod +x /opt/mypickuae/refresh-env-from-ssm.sh
-          AWS_REGION=ap-south-1 /opt/mypickuae/refresh-env-from-ssm.sh \
-            /opt/mypickuae/.env mypickuae production
-          if ! grep -q "TWILIO_VERIFY_SERVICE_SID" /opt/mypickuae/docker-compose.yml; then
+          cd /opt/servicehubuae
+          aws s3 cp s3://servicehubuae-config-prod/scripts/refresh-env-from-ssm.sh \
+            /opt/servicehubuae/refresh-env-from-ssm.sh --region ap-south-1
+          chmod +x /opt/servicehubuae/refresh-env-from-ssm.sh
+          AWS_REGION=ap-south-1 /opt/servicehubuae/refresh-env-from-ssm.sh \
+            /opt/servicehubuae/.env servicehubuae production
+          if ! grep -q "TWILIO_VERIFY_SERVICE_SID" /opt/servicehubuae/docker-compose.yml; then
             sed -i '/TWO_FA_ENCRYPTION_KEY=${TWO_FA_ENCRYPTION_KEY}/a\      - SMS_OTP_PROVIDER=${SMS_OTP_PROVIDER}\n      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}\n      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}\n      - TWILIO_VERIFY_SERVICE_SID=${TWILIO_VERIFY_SERVICE_SID}' \
-              /opt/mypickuae/docker-compose.yml
+              /opt/servicehubuae/docker-compose.yml
           fi
-          cat > /opt/mypickuae/config.alloy <<'ALLOYEOF'
+          cat > /opt/servicehubuae/config.alloy <<'ALLOYEOF'
           logging {
             level  = "info"
             format = "logfmt"
@@ -409,8 +409,8 @@ jobs:
             }
           }
           ALLOYEOF
-          if ! grep -q "^  alloy:" /opt/mypickuae/docker-compose.yml; then
-            cat >> /opt/mypickuae/docker-compose.yml <<'COMPOSEEOF'
+          if ! grep -q "^  alloy:" /opt/servicehubuae/docker-compose.yml; then
+            cat >> /opt/servicehubuae/docker-compose.yml <<'COMPOSEEOF'
 
             alloy:
               image: grafana/alloy:latest
@@ -436,9 +436,9 @@ jobs:
                 - /dev/kmsg:/dev/kmsg
           COMPOSEEOF
           fi
-          ECR_REGISTRY="$(grep '^ECR_REGISTRY=' /opt/mypickuae/.env | cut -d= -f2)"
+          ECR_REGISTRY="$(grep '^ECR_REGISTRY=' /opt/servicehubuae/.env | cut -d= -f2)"
           if [ -z "$ECR_REGISTRY" ]; then
-            echo "ERROR: ECR_REGISTRY not found in /opt/mypickuae/.env" >&2
+            echo "ERROR: ECR_REGISTRY not found in /opt/servicehubuae/.env" >&2
             exit 1
           fi
           aws ecr get-login-password --region ap-south-1 \

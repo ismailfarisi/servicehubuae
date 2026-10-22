@@ -35,7 +35,7 @@ import {
   TabsList,
   TabsTrigger,
   toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import {
   ArrowLeft,
   BadgeCheck,

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "bun:test";
-import type { AuthUser } from "@mypickuae/guards";
+import type { AuthUser } from "@servicehubuae/guards";
 import { MediaController } from "./media.controller.ts";
 
 class FakeMedia {

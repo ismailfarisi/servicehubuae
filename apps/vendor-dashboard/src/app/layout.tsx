@@ -6,8 +6,8 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"], display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "Vendor Dashboard — MyPickUAE", template: "%s | Vendor Dashboard" },
-  description: "Manage your MyPickUAE vendor store",
+  title: { default: "Vendor Dashboard — ServiceHubUAE", template: "%s | Vendor Dashboard" },
+  description: "Manage your ServiceHubUAE vendor store",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

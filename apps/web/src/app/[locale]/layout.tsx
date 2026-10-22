@@ -38,8 +38,8 @@ const plexArabic = IBM_Plex_Sans_Arabic({
 export const metadata: Metadata = {
 	metadataBase: new URL(SITE_URL),
 	title: {
-		default: "MyPickUAE — Book Trusted Services in the UAE",
-		template: "%s | MyPickUAE",
+		default: "ServiceHubUAE — Book Trusted Services in the UAE",
+		template: "%s | ServiceHubUAE",
 	},
 	description:
 		"Compare and book cleaning, AC maintenance, beauty, pest control and more from trusted vendors across the UAE.",

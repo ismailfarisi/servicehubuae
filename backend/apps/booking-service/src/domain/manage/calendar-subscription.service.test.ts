@@ -6,7 +6,7 @@
 // scheme check. Uses IP literals (not hostnames) so `assertSafeIcalUrl` never
 // performs a real DNS lookup in this mocked/offline test.
 import { describe, expect, it, mock } from "bun:test";
-import { BadRequestError } from "@mypickuae/plugins";
+import { BadRequestError } from "@servicehubuae/plugins";
 import { CalendarSubscriptionService } from "./calendar-subscription.service.ts";
 
 const OWNER_ACTOR = { userId: "user-1", vendorId: "vendor-1", role: "owner" };

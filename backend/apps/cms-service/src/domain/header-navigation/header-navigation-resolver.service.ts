@@ -5,7 +5,7 @@ import {
   type HeaderNavPromoTile,
   type HeaderNavTab,
   HeaderNavigationConfig,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { In, IsNull } from "typeorm";
 
 interface ResolvedSubcategory {

@@ -73,12 +73,12 @@ export function Header({ tabs }: HeaderProps) {
 					{/* Logo */}
 					<Link
 						href={`/${locale}`}
-						aria-label="MyPickUAE"
+						aria-label="ServiceHubUAE"
 						className="shrink-0 inline-flex items-center"
 					>
 						<Image
-							src="/mypickuae-logo.png"
-							alt="MyPickUAE"
+							src="/servicehubuae-logo.png"
+							alt="ServiceHubUAE"
 							width={216}
 							height={120}
 							priority

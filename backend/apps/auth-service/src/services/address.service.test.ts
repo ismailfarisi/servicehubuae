@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import type { UserAddress } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import type { UserAddress } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import { AddressService } from "./address.service.ts";
 

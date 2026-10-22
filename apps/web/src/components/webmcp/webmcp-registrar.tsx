@@ -1,8 +1,8 @@
 "use client";
 
 import {
-	registerMyPickUAEWebMcpServiceWorker,
-	registerMyPickUAEWebMcpTools,
+	registerServiceHubUAEWebMcpServiceWorker,
+	registerServiceHubUAEWebMcpTools,
 } from "@/lib/webmcp";
 import { useLocale } from "next-intl";
 import { useEffect } from "react";
@@ -11,11 +11,11 @@ export function WebMcpRegistrar() {
 	const locale = useLocale();
 
 	useEffect(() => {
-		return registerMyPickUAEWebMcpTools({ locale });
+		return registerServiceHubUAEWebMcpTools({ locale });
 	}, [locale]);
 
 	useEffect(() => {
-		void registerMyPickUAEWebMcpServiceWorker();
+		void registerServiceHubUAEWebMcpServiceWorker();
 	}, []);
 
 	return null;

@@ -5,7 +5,7 @@
 // vendorMembership("products.write"); see location.routes.ts for why jwtAuth
 // must be `.use()`d here). The admin counterpart lives in
 // admin-booking.routes.ts under /admin/bookings/dashboard.
-import { jwtAuth, vendorMembership } from "@mypickuae/guards";
+import { jwtAuth, vendorMembership } from "@servicehubuae/guards";
 import { Elysia } from "elysia";
 import { container } from "../../container.ts";
 

@@ -7,7 +7,7 @@ const intlProxy = createMiddleware(routing);
 // NOTE: Auth guarding is done client-side via the `useRequireAuth` hook
 // (see `src/hooks/use-require-auth.ts`). A middleware cookie check isn't
 // usable here because the access-token cookie is set by the API domain
-// (e.g. api.stage.mypickuae.com) and is never sent to the web origin, so
+// (e.g. api.stage.servicehubuae.com) and is never sent to the web origin, so
 // `request.cookies.get("web_access_token")` would always be undefined and
 // redirect every authenticated user back to login.
 

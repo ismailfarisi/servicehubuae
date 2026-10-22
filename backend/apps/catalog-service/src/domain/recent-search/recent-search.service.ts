@@ -1,4 +1,4 @@
-import type { RecentSearch } from "@mypickuae/database";
+import type { RecentSearch } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 const MAX_PER_USER = 10;

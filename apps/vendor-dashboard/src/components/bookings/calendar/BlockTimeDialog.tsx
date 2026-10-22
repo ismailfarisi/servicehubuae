@@ -21,7 +21,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 	toast,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 
 export interface BlockDialogPrefill {
 	staffId?: string;

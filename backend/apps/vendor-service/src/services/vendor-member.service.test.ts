@@ -1,9 +1,9 @@
 import { describe, expect, mock, test } from "bun:test";
-import { HttpError } from "@mypickuae/plugins";
+import { HttpError } from "@servicehubuae/plugins";
 
-// Mock @mypickuae/guards so bumpTokenVersion does not hit the real DB/Redis
+// Mock @servicehubuae/guards so bumpTokenVersion does not hit the real DB/Redis
 const bumpTokenVersionMock = mock(async (_userId: string) => 2);
-mock.module("@mypickuae/guards", () => ({
+mock.module("@servicehubuae/guards", () => ({
   bumpTokenVersion: bumpTokenVersionMock,
 }));
 

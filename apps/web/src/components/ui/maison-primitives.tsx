@@ -189,7 +189,7 @@ export function MaisonMark({
       aria-hidden="true"
       focusable="false"
     >
-      <title>MyPickUAE mark</title>
+      <title>ServiceHubUAE mark</title>
       <path d="M 15 4 A 8 8 0 1 0 15 20 A 6 6 0 1 1 15 4 Z" fill="currentColor" />
       <circle cx="20.5" cy="6" r="1.3" fill="currentColor" />
     </svg>

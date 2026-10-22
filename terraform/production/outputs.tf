@@ -4,7 +4,7 @@ output "ec2_instance_id" {
 }
 
 output "elastic_ip" {
-  description = "Production app host public IP (also the api.mypickuae.com A record)"
+  description = "Production app host public IP (also the api.servicehubuae.com A record)"
   value       = aws_eip.app.public_ip
 }
 
@@ -19,7 +19,7 @@ output "redis_endpoint" {
 }
 
 output "cloudfront_domain" {
-  description = "CloudFront distribution domain (cdn.mypickuae.com aliases to this)"
+  description = "CloudFront distribution domain (cdn.servicehubuae.com aliases to this)"
   value       = aws_cloudfront_distribution.media.domain_name
 }
 

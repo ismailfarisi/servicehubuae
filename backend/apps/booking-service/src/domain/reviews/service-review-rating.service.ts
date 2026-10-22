@@ -41,7 +41,7 @@
 // they converge instead of flip-flopping. Any change to the blend's predicates
 // here MUST be mirrored in order-service's recomputeReviewRatings (and vice
 // versa) or the two writers desync again.
-import { ServiceReviewStatus, type StaffMember, type Vendor } from "@mypickuae/database";
+import { ServiceReviewStatus, type StaffMember, type Vendor } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 export type RawAggregateQuery = (

@@ -1,4 +1,4 @@
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   IntegrationDeliveryStatus,
   IntegrationDirection,
@@ -6,8 +6,8 @@ import {
   type VendorIntegration,
   type VendorIntegrationDelivery,
   type VendorIntegrationMapping,
-} from "@mypickuae/database";
-import type { EncryptionService } from "@mypickuae/utils";
+} from "@servicehubuae/database";
+import type { EncryptionService } from "@servicehubuae/utils";
 import { Worker } from "bullmq";
 import type { RedisClientType } from "redis";
 import type { Repository } from "typeorm";

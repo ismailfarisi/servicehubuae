@@ -1,4 +1,4 @@
-import type { EmailService } from "@mypickuae/utils";
+import type { EmailService } from "@servicehubuae/utils";
 
 export interface EmailDispatcher {
   send(to: string, subject: string, htmlBody: string): Promise<void>;

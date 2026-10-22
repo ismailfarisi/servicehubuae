@@ -1,4 +1,4 @@
-import type { S3UploadClient } from "@mypickuae/ui";
+import type { S3UploadClient } from "@servicehubuae/ui";
 import { api } from "./api";
 
 // Presign + process-asset only. Layout video upload (/media/videos/layout/*)

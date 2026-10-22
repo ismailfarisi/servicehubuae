@@ -44,7 +44,7 @@ jobs:
         run: |
           docker build \
             -f backend/apps/${{ inputs.service }}/Dockerfile \
-            -t $ECR_REGISTRY/mypickuae-${{ inputs.service }}:${{ inputs.image-tag }} \
-            -t $ECR_REGISTRY/mypickuae-${{ inputs.service }}:${{ inputs.environment }} \
+            -t $ECR_REGISTRY/servicehubuae-${{ inputs.service }}:${{ inputs.image-tag }} \
+            -t $ECR_REGISTRY/servicehubuae-${{ inputs.service }}:${{ inputs.environment }} \
             .
-          docker push $ECR_REGISTRY/mypickuae-${{ inputs.service }} --all-tags
+          docker push $ECR_REGISTRY/servicehubuae-${{ inputs.service }} --all-tags

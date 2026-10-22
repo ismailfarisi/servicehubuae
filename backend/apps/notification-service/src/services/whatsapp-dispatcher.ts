@@ -1,4 +1,4 @@
-import type { WhatsAppService } from "@mypickuae/utils";
+import type { WhatsAppService } from "@servicehubuae/utils";
 import { getWhatsAppTemplate } from "../domain/whatsapp-templates.ts";
 
 export interface WhatsAppDispatcher {

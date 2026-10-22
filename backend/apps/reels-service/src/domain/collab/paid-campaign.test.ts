@@ -16,7 +16,7 @@ import {
   ReelLicenseHoldStatus,
   SiteSetting,
   User,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import { CollabService } from "./collab.service.ts";
 
 /**

@@ -17,7 +17,7 @@
 // booking types only, and the pre-existing types are asserted below to keep
 // their historical `false`.
 import { describe, expect, it, mock } from "bun:test";
-import { NotificationChannel, NotificationType } from "@mypickuae/database";
+import { NotificationChannel, NotificationType } from "@servicehubuae/database";
 import { NotificationPreferenceService } from "./notification-preference.service.ts";
 
 function makeService(rows: any[] = []) {

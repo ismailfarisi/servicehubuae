@@ -27,7 +27,7 @@ export interface RatingsDeps {
 // rating shown on /services.
 export const defaultRatingsDeps: RatingsDeps = {
   runQuery: async (offeringIds: string[]) => {
-    const { AppDataSource, ServiceReviewStatus } = await import("@mypickuae/database");
+    const { AppDataSource, ServiceReviewStatus } = await import("@servicehubuae/database");
     return AppDataSource.query(
       `SELECT b.service_offering_id AS service_offering_id,
               AVG(r.rating)::numeric(3,2) AS avg,

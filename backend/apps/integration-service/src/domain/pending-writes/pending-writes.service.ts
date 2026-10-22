@@ -1,4 +1,4 @@
-import type { VendorIntegrationPendingWrite } from "@mypickuae/database";
+import type { VendorIntegrationPendingWrite } from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 export class PendingWritesService {

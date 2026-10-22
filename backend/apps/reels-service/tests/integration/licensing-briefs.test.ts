@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "bun:test";
 import { jwt as jwtPlugin } from "@elysiajs/jwt";
-import { config } from "@mypickuae/config";
+import { config } from "@servicehubuae/config";
 import {
   AppDataSource,
   Commission,
@@ -28,8 +28,8 @@ import {
   VendorStatus,
   WalletTransaction,
   ensureDatabase,
-} from "@mypickuae/database";
-import { permissionMatrix, signAccessToken } from "@mypickuae/guards";
+} from "@servicehubuae/database";
+import { permissionMatrix, signAccessToken } from "@servicehubuae/guards";
 import { Elysia } from "elysia";
 import { app } from "../../src/app.ts";
 import { BriefService } from "../../src/domain/licensing/brief.service.ts";

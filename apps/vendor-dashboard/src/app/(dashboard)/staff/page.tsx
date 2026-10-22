@@ -10,7 +10,7 @@ import {
 	DataTable,
 	EmptyState,
 	StatusBadge,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { Plus, UsersThree } from "@phosphor-icons/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";

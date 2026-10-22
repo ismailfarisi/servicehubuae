@@ -5,9 +5,9 @@ import {
 } from "@/components/layout/static-page-layout";
 
 export const metadata: Metadata = {
-	title: "Privacy Policy — MyPickUAE",
+	title: "Privacy Policy — ServiceHubUAE",
 	description:
-		"How MyPickUAE collects, uses, shares and protects your personal data when you browse, book and request quotations for services, in line with UAE Federal Decree-Law No. 45 of 2021.",
+		"How ServiceHubUAE collects, uses, shares and protects your personal data when you browse, book and request quotations for services, in line with UAE Federal Decree-Law No. 45 of 2021.",
 };
 
 const LAST_UPDATED = "22 October 2026";
@@ -21,9 +21,9 @@ export default function PrivacyPage() {
 		>
 			<StaticSection heading="1. Who we are">
 				<p>
-					MyPickUAE FZ-LLC (&ldquo;MyPickUAE&rdquo;, &ldquo;we&rdquo;,
+					ServiceHubUAE FZ-LLC (&ldquo;ServiceHubUAE&rdquo;, &ldquo;we&rdquo;,
 					&ldquo;us&rdquo;) is registered in Dubai, United Arab Emirates,
-					and operates the mypickuae.com services marketplace and mobile
+					and operates the servicehubuae.com services marketplace and mobile
 					apps. We are the data controller for personal data processed in
 					connection with your account, bookings and quotation requests.
 					The vendor you book is responsible for the personal data they
@@ -141,10 +141,10 @@ export default function PrivacyPage() {
 					port your personal data, and to withdraw consent at any time.
 					Email{" "}
 					<a
-						href="mailto:info@mypickuae.com"
+						href="mailto:info@servicehubuae.com"
 						className="font-medium text-nl-amber-text hover:underline"
 					>
-						info@mypickuae.com
+						info@servicehubuae.com
 					</a>{" "}
 					with your request — we respond within 30 days.
 				</p>
@@ -165,14 +165,14 @@ export default function PrivacyPage() {
 
 			<StaticSection heading="9. Children">
 				<p>
-					MyPickUAE is intended for users aged 18 and over. We do not
+					ServiceHubUAE is intended for users aged 18 and over. We do not
 					knowingly collect data from children. If you believe a minor
 					has created an account, email{" "}
 					<a
-						href="mailto:info@mypickuae.com"
+						href="mailto:info@servicehubuae.com"
 						className="font-medium text-nl-amber-text hover:underline"
 					>
-						info@mypickuae.com
+						info@servicehubuae.com
 					</a>{" "}
 					and we will remove it.
 				</p>
@@ -182,7 +182,7 @@ export default function PrivacyPage() {
 				<p>
 					When we update this policy, we change the date at the top and,
 					for material changes, notify you by email. Continuing to use
-					MyPickUAE after the effective date means you accept the
+					ServiceHubUAE after the effective date means you accept the
 					updated policy.
 				</p>
 			</StaticSection>

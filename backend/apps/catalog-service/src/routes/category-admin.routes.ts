@@ -1,6 +1,6 @@
-import { CreateCategoryBody, ReorderCategoriesBody, UpdateCategoryBody } from "@mypickuae/dto";
-import { jwtAuth, requireRole } from "@mypickuae/guards";
-import { auditPlugin } from "@mypickuae/plugins";
+import { CreateCategoryBody, ReorderCategoriesBody, UpdateCategoryBody } from "@servicehubuae/dto";
+import { jwtAuth, requireRole } from "@servicehubuae/guards";
+import { auditPlugin } from "@servicehubuae/plugins";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

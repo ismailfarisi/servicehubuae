@@ -1,5 +1,5 @@
-import { CollabActor } from "@mypickuae/database";
-import { jwtAuth } from "@mypickuae/guards";
+import { CollabActor } from "@servicehubuae/database";
+import { jwtAuth } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

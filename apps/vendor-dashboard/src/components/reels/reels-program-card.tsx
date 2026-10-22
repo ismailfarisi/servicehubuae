@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
   Skeleton,
-} from "@mypickuae/ui";
+} from "@servicehubuae/ui";
 import { Sparkle } from "@phosphor-icons/react";
 import {
   useOptInReelsProgram,
@@ -105,7 +105,7 @@ export function ReelsProgramCard() {
             </p>
             {subsidyActive && (
               <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
-                MyPickUAE is paying half the commission until{" "}
+                ServiceHubUAE is paying half the commission until{" "}
                 <strong>{formatDate(status.subsidyEndsAt)}</strong>. Your real
                 cost during this window is{" "}
                 <strong>{subsidiedRate.toFixed(1)}%</strong>.
@@ -144,7 +144,7 @@ export function ReelsProgramCard() {
               attributed to their videos.
             </p>
             <div className="rounded-lg border border-green-200 bg-green-50 p-3 text-sm text-green-800">
-              MyPickUAE pays half the commission for the first 6 months — your
+              ServiceHubUAE pays half the commission for the first 6 months — your
               real cost during that window is just{" "}
               <strong>{(BASE_RATE_PERCENT / 2).toFixed(1)}%</strong>.
             </div>

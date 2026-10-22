@@ -3,7 +3,7 @@ import {
   CreatorMediaKit,
   type CreatorMediaKitSegment,
   type CreatorMediaKitStat,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 import type { Repository } from "typeorm";
 
 /** Caps mirrored by the DTO and by CHECK constraints on the table. */

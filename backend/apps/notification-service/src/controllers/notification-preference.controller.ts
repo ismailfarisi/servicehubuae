@@ -1,5 +1,5 @@
-import type { NotificationChannel, NotificationType } from "@mypickuae/database";
-import type { AuthUser } from "@mypickuae/guards";
+import type { NotificationChannel, NotificationType } from "@servicehubuae/database";
+import type { AuthUser } from "@servicehubuae/guards";
 import type { PreferenceUpdate } from "../domain/types.ts";
 import type { NotificationPreferenceService } from "../services/notification-preference.service.ts";
 

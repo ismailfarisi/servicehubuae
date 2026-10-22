@@ -34,9 +34,9 @@
 // ── PII-free shape (binding decision) ───────────────────────────────────────
 // Only id/name/avatar_url/bio/rating/rating_count are read off StaffMember —
 // user_id is never selected or returned.
-import type { ServiceOffering } from "@mypickuae/database";
-import type { PublicStaffMember } from "@mypickuae/dto";
-import { NotFoundError } from "@mypickuae/plugins";
+import type { ServiceOffering } from "@servicehubuae/database";
+import type { PublicStaffMember } from "@servicehubuae/dto";
+import { NotFoundError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 import type { StaffService } from "./staff.service.ts";
 

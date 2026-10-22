@@ -13,8 +13,8 @@
  *   REELS_LIVE_DB=1 bun test tests/integration/upload-to-publish
  *
  * Requires:
- *   - Postgres reachable on localhost:5432 (credentials from @mypickuae/config
- *     defaults: mypickuae / mypickuae / mypickuae)
+ *   - Postgres reachable on localhost:5432 (credentials from @servicehubuae/config
+ *     defaults: servicehubuae / servicehubuae / servicehubuae)
  *   - All migrations applied
  */
 
@@ -26,7 +26,7 @@ import {
   User,
   UserRole,
   UserStatus,
-} from "@mypickuae/database";
+} from "@servicehubuae/database";
 
 import { TrustService } from "../../src/domain/creator-tier/trust.service.ts";
 import { ModerationService } from "../../src/domain/moderation/moderation.service.ts";

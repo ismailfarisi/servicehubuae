@@ -1,5 +1,5 @@
-import { AppDataSource, Reel, ReelStatus, ReelVendorShortlist } from "@mypickuae/database";
-import { NotFoundError } from "@mypickuae/plugins";
+import { AppDataSource, Reel, ReelStatus, ReelVendorShortlist } from "@servicehubuae/database";
+import { NotFoundError } from "@servicehubuae/plugins";
 
 export interface ShortlistInput {
   vendorId: string;

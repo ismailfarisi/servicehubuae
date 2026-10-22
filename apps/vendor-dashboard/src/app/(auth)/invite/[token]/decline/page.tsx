@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@mypickuae/ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@servicehubuae/ui";
 import { useDeclineInvite } from "@/lib/queries/vendor-members";
 
 interface DeclinePageProps {

@@ -229,7 +229,7 @@ export const HOME_SECTIONS: HomeSectionSeed[] = [
     source_mode: SourceMode.manual,
     settings: {
       variant: "cards",
-      eyebrow: { en: "Why MyPickUAE", ar: "لماذا MyPickUAE" },
+      eyebrow: { en: "Why ServiceHubUAE", ar: "لماذا ServiceHubUAE" },
       title: { en: "Service you can count on", ar: "خدمة يمكنك الاعتماد عليها" },
     },
     blocks: [
@@ -265,8 +265,8 @@ export const HOME_SECTIONS: HomeSectionSeed[] = [
         "star",
         { en: "Honest ratings", ar: "تقييمات حقيقية" },
         {
-          en: "Ratings come from customers who booked through MyPickUAE.",
-          ar: "تأتي التقييمات من عملاء حجزوا عبر MyPickUAE.",
+          en: "Ratings come from customers who booked through ServiceHubUAE.",
+          ar: "تأتي التقييمات من عملاء حجزوا عبر ServiceHubUAE.",
         },
       ),
     ],
@@ -307,7 +307,7 @@ export const HOME_SECTIONS: HomeSectionSeed[] = [
     type: "newsletter_signup",
     source_mode: SourceMode.manual,
     settings: {
-      eyebrow: { en: "MyPickUAE updates", ar: "تحديثات MyPickUAE" },
+      eyebrow: { en: "ServiceHubUAE updates", ar: "تحديثات ServiceHubUAE" },
       title: { en: "Offers worth knowing about", ar: "عروض تستحق المعرفة" },
       subtitle: {
         en: "New services, trusted vendors and seasonal offers, once a month.",

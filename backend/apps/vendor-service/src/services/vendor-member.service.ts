@@ -1,9 +1,9 @@
 import { randomBytes } from "node:crypto";
-import { config } from "@mypickuae/config";
-import { AppDataSource } from "@mypickuae/database";
-import { bumpTokenVersion } from "@mypickuae/guards";
-import { HttpError } from "@mypickuae/plugins";
-import type { EmailService } from "@mypickuae/utils";
+import { config } from "@servicehubuae/config";
+import { AppDataSource } from "@servicehubuae/database";
+import { bumpTokenVersion } from "@servicehubuae/guards";
+import { HttpError } from "@servicehubuae/plugins";
+import type { EmailService } from "@servicehubuae/utils";
 import { assertNonOwnerRole, normalizeEmail } from "./vendor-member.validators.ts";
 
 export type VendorMemberRole = "owner" | "manager" | "staff" | "viewer";

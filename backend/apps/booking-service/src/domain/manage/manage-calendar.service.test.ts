@@ -10,8 +10,8 @@
 // per repo convention (bun test + a shared pg pool flakes on multi-op live-DB
 // tests).
 import { describe, expect, it, mock } from "bun:test";
-import { EngagementKind, EngagementStatus } from "@mypickuae/database";
-import { ForbiddenError, UnprocessableEntityError } from "@mypickuae/plugins";
+import { EngagementKind, EngagementStatus } from "@servicehubuae/database";
+import { ForbiddenError, UnprocessableEntityError } from "@servicehubuae/plugins";
 import { ManageCalendarService } from "./manage-calendar.service.ts";
 
 const ACTOR = { userId: "user-1", vendorId: "vendor-1", role: "manager" };

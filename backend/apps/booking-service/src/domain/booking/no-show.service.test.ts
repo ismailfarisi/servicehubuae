@@ -8,15 +8,15 @@
 // reason, and the booking_no_show notification (penalty breakdown + dispute
 // link). Real slot/job/DB behaviour is covered by the live-DB integration suite.
 import { describe, expect, it, mock } from "bun:test";
-import { BookingStatus, CancellationRefundPolicy, NotificationType } from "@mypickuae/database";
-import type { HttpError } from "@mypickuae/plugins";
+import { BookingStatus, CancellationRefundPolicy, NotificationType } from "@servicehubuae/database";
+import type { HttpError } from "@servicehubuae/plugins";
 import { InvalidBookingTransitionError } from "./booking-status.service.ts";
 import { NoShowService, NoShowWindowError } from "./no-show.service.ts";
 
 const HOUR_MS = 3_600_000;
 const NOW = new Date("2026-08-01T12:00:00Z");
 const GRACE_HOURS = 24;
-const APP_URL = "https://mypickuae.com";
+const APP_URL = "https://servicehubuae.com";
 
 // In-window "now": booking started 1h ago, ended 30m ago; auto-complete moment
 // is ends_at + 24h = NOW + 23.5h — so NOW is comfortably inside the window.
@@ -357,8 +357,8 @@ describe("NoShowService.markNoShow — audit + notification + resilience", () =>
       action: "refund",
     });
     // Dispute/support deep link.
-    expect(evt.data.disputeUrl).toBe("https://mypickuae.com/support/bookings/booking-1");
-    expect(evt.variables.dispute_url).toBe("https://mypickuae.com/support/bookings/booking-1");
+    expect(evt.data.disputeUrl).toBe("https://servicehubuae.com/support/bookings/booking-1");
+    expect(evt.variables.dispute_url).toBe("https://servicehubuae.com/support/bookings/booking-1");
   });
 
   it("a best-effort gateway failure does NOT fail the no-show (booking stays no_show)", async () => {

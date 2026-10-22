@@ -1,5 +1,5 @@
-import { CreatorApplicationApplyBody, CreatorProfileUpdateBody } from "@mypickuae/dto";
-import { jwtAuth } from "@mypickuae/guards";
+import { CreatorApplicationApplyBody, CreatorProfileUpdateBody } from "@servicehubuae/dto";
+import { jwtAuth } from "@servicehubuae/guards";
 import { Elysia, t } from "elysia";
 import { container } from "../container.ts";
 

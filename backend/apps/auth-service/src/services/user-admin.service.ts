@@ -1,5 +1,5 @@
-import { AppDataSource, CreatorTier, User } from "@mypickuae/database";
-import { HttpError } from "@mypickuae/plugins";
+import { AppDataSource, CreatorTier, User } from "@servicehubuae/database";
+import { HttpError } from "@servicehubuae/plugins";
 import type { Repository } from "typeorm";
 
 export class UserAdminService {

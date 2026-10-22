@@ -93,8 +93,8 @@ describe("config", () => {
       VENDOR_ENCRYPTION_KEY: "test-vendor-encryption-key",
       ENCRYPTION_KEY: "test-encryption-key",
       TYPESENSE_API_KEY: "test-typesense-key",
-      VENDOR_DASHBOARD_URL: "https://vendor.mypickuae.com",
-      ADMIN_PANEL_URL: "https://admin.mypickuae.com",
+      VENDOR_DASHBOARD_URL: "https://vendor.servicehubuae.com",
+      ADMIN_PANEL_URL: "https://admin.servicehubuae.com",
     } as const;
     const keys = Object.keys(required) as (keyof typeof required)[];
     const originalValues = Object.fromEntries(keys.map((k) => [k, process.env[k]]));
